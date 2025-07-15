@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import reactLogo from "./assets/react.svg";
+import { PlayVideo } from "./components/PlayVideo";
 import "./Home.css";
 import viteLogo from "/vite.svg";
 
@@ -41,6 +42,15 @@ export function Home() {
       <div className="card">
         <Link to={googleOAuthUrl}>Login google</Link>
       </div>
+      <h2>Video Streaming</h2>
+      <video
+        src="http://localhost:9000/videos-streaming/6ZbvApnUPurTuUk4qeX9V.mp4"
+        height={500}
+        controls
+      ></video>
+      <hr />
+      <h2>Video HLS</h2>
+      <PlayVideo src="http://localhost:9000/videos-hls/6ZbvApnUPurTuUk4qeX9V/master.m3u8" />
     </>
   );
 }
