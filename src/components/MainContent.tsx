@@ -2,7 +2,7 @@ import { PlayVideo } from "./playVideo";
 
 export function MainContent() {
   return (
-    <main className="col-span-12 md:col-span-7 p-4">
+    <main className="col-span-12 md:col-span-7 p-4 border-r border-l border-gray-200">
       <h2 className="text-xl font-bold mb-4 text-center">🎥 Video Streaming</h2>
       <video
         src="http://localhost:9000/videos-streaming/6ZbvApnUPurTuUk4qeX9V.mp4"

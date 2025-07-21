@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useSearchParams } from "react-router";
+import { useSearchParams } from "react-router-dom";
 
 export default function StatusLoginOAuth() {
   const [params] = useSearchParams();

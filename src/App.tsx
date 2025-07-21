@@ -1,18 +1,14 @@
-import { lazy, Suspense } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router";
-import { Loading } from "./components/loading";
-
-// Lazy-loaded components
-const Home = lazy(() => import("./pages/Home"));
-const Login = lazy(() => import("./pages/Login"));
-const RootLayout = lazy(() => import("./RootLayout"));
-const StatusLoginOAuth = lazy(() => import("./pages/StatusLoginOAuth"));
+import Home from "./pages/Home";
+import { createBrowserRouter, RouterProvider } from "react-router-dom"; // ✅ SỬA Ở ĐÂY
+import Login from "./pages/Login";
+import StatusLoginOAuth from "./pages/StatusLoginOAuth";
+import RootLayout from "./RootLayout";
 
 // Router config
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout />, // layout bọc tất cả
+    element: <RootLayout />,
     children: [
       { path: "", element: <Login /> },
       { path: "home", element: <Home /> },
@@ -22,9 +18,5 @@ const router = createBrowserRouter([
 ]);
 
 export function App() {
-  return (
-    <Suspense fallback={<Loading />}>
-      <RouterProvider router={router} />
-    </Suspense>
-  );
+  return <RouterProvider router={router} />;
 }

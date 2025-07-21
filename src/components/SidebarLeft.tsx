@@ -1,10 +1,13 @@
 import { Logo } from "./logo";
+import { WrapIon } from "./wrapIcon";
 
 export function SidebarLeft() {
   return (
-    <aside className="col-span-2 border-r border-gray-200 p-4 hidden md:block">
+    <aside className="col-span-2 p-4 hidden md:block">
       <h2 className="text-lg font-semibold mb-4">
-        <Logo size={32} />
+        <WrapIon>
+          <Logo size={32} />
+        </WrapIon>
       </h2>
       <ul className="space-y-3 text-sm text-gray-700">
         <li className="hover:text-black cursor-pointer">Trang chủ</li>

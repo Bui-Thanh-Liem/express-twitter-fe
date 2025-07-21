@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Divider } from "@/components/ui/divider";
 import type { ReactNode } from "react";
 import React from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { Logo } from "../components/logo";
 
 function RegisterItem({

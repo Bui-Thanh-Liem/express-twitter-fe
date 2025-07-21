@@ -1,9 +1,9 @@
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import type { IPropLogo } from "../interfaces/props-component";
 
 export function Logo({ size = 100, className = "text-black" }: IPropLogo) {
   return (
-    <Link to={"/"}>
+    <Link to={"/home"}>
       <svg
         width={size}
         height={size}
