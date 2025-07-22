@@ -1,15 +1,19 @@
-import { createBrowserRouter, RouterProvider } from "react-router";
-import { Home } from "./Home";
-import { Login } from "./Login";
+import Home from "./pages/Home";
+import { createBrowserRouter, RouterProvider } from "react-router-dom"; // ✅ SỬA Ở ĐÂY
+import Login from "./pages/Login";
+import StatusLoginOAuth from "./pages/StatusLoginOAuth";
+import RootLayout from "./RootLayout";
 
+// Router config
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
-  },
-  {
-    path: "/login/oauth",
-    element: <Login />,
+    element: <RootLayout />,
+    children: [
+      { path: "", element: <Login /> },
+      { path: "home", element: <Home /> },
+      { path: "oauth", element: <StatusLoginOAuth /> },
+    ],
   },
 ]);
 
