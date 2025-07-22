@@ -98,7 +98,7 @@ export default function Login() {
 
   return (
     <>
-      <div className="flex justify-between items-center">
+      <div className="h-screen flex justify-between items-center">
         <div className="flex-1">
           <Logo size={332} />
         </div>
@@ -109,7 +109,7 @@ export default function Login() {
           <TypographyH2 className="mt-12 text-4xl mb-8">
             Tham gia ngay.
           </TypographyH2>
-          <Link to={googleOAuthUrl}>
+          <Link to={googleOAuthUrl} className="inline-block w-80">
             <RegisterItem>
               <GoogleIcon /> <span>Đăng kí với Google</span>
             </RegisterItem>
