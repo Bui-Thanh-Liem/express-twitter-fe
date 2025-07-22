@@ -1,8 +1,8 @@
 import { Link } from "react-router";
 import reactLogo from "./assets/react.svg";
-import { PlayVideo } from "./components/PlayVideo";
 import "./Home.css";
 import viteLogo from "/vite.svg";
+import { HLSPlayer } from "./components/hls/HLSPlayer";
 
 function getGoogleAuthUrl() {
   const { VITE_GOOGLE_CLIENT_ID, VITE_GOOGLE_REDIRECT_URIS } = import.meta.env;
@@ -50,7 +50,7 @@ export function Home() {
       ></video>
       <hr />
       <h2>Video HLS</h2>
-      <PlayVideo src="http://localhost:9000/videos-hls/6ZbvApnUPurTuUk4qeX9V/master.m3u8" />
+      <HLSPlayer src="http://localhost:9000/videos-hls/6ZbvApnUPurTuUk4qeX9V/master.m3u8" />
     </>
   );
 }
