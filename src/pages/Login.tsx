@@ -49,7 +49,7 @@ export function Footer() {
   ];
 
   return (
-    <div className="text-sm text-gray-600 fixed bottom-0 px-4 py-2 w-[1200px]">
+    <div className="text-sm text-gray-600  bottom-0 px-4 py-2 w-[1200px]">
       <div className="flex flex-wrap justify-center text-center gap-x-1 gap-y-1">
         {links.map((label, idx) => (
           <React.Fragment key={idx}>
@@ -97,13 +97,13 @@ export default function Login() {
   const googleOAuthUrl = getGoogleAuthUrl();
 
   return (
-    <>
+    <div>
       <div className="h-screen flex justify-between items-center">
         <div className="flex-1">
           <Logo size={332} />
         </div>
         <div className="flex-1">
-          <TypographyH1 className="text-7xl">
+          <TypographyH1 className="text-7xl lg:text-5xl">
             Đang diễn ra ngay bây giờ
           </TypographyH1>
           <TypographyH2 className="mt-12 text-4xl mb-8">
@@ -141,11 +141,11 @@ export default function Login() {
             Đã có tài khoản?
           </TypographyH2>
           <Button className="w-80 block mt-3" variant={"outline"}>
-            Tạo tài khoản
+            Đăng nhập
           </Button>
         </div>
       </div>
       <Footer />
-    </>
+    </div>
   );
 }
