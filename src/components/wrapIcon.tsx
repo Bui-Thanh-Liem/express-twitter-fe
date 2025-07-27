@@ -1,6 +1,10 @@
-import type { IPropWrapIcon } from "@/interfaces/props-component";
+import type { ReactNode } from "react";
 
-export function WrapIon({ children }: IPropWrapIcon) {
+type PropWrapIconType = {
+  children: ReactNode;
+};
+
+export function WrapIon({ children }: PropWrapIconType) {
   return (
     <div className="p-3 rounded-full bg-white hover:bg-gray-100 inline-block transition-all">
       {children}

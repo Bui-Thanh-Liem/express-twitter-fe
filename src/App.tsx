@@ -1,6 +1,8 @@
-import Home from "./pages/Home";
 import { createBrowserRouter, RouterProvider } from "react-router-dom"; // ✅ SỬA Ở ĐÂY
-import Login from "./pages/Login";
+import { HomeLayout } from "./HomeLayout";
+import { AuthPage } from "./pages/AuthPage";
+import { ExplorePage } from "./pages/explore/Explore";
+import { HomePage } from "./pages/home/HomePage";
 import StatusLoginOAuth from "./pages/StatusLoginOAuth";
 import RootLayout from "./RootLayout";
 
@@ -10,9 +12,17 @@ const router = createBrowserRouter([
     path: "/",
     element: <RootLayout />,
     children: [
-      { path: "", element: <Login /> },
-      { path: "home", element: <Home /> },
+      { index: true, element: <AuthPage /> },
       { path: "oauth", element: <StatusLoginOAuth /> },
+
+      // ✅ Bọc các route cần HomeLayout ở đây
+      {
+        element: <HomeLayout />,
+        children: [
+          { path: "home", element: <HomePage /> },
+          { path: "explore", element: <ExplorePage /> },
+        ],
+      },
     ],
   },
 ]);

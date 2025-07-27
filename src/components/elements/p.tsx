@@ -8,7 +8,9 @@ export function TypographyP({
   className?: string;
 }) {
   return (
-    <p className={`leading-7 [&:not(:first-child)]:mt-6 ${className}`}>
+    <p
+      className={`leading-7 [&:not(:first-child)]:mt-1 text-[16px] ${className} `}
+    >
       {children}
     </p>
   );

@@ -14,5 +14,5 @@ export default function StatusLoginOAuth() {
     localStorage.setItem("refresh_token", refresh_token);
   }, [status]);
 
-  return <div>Login page {status}</div>;
+  return <div>Login oauth page {status}</div>;
 }
