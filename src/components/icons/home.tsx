@@ -3,8 +3,8 @@ export function HomeIcon({ active = false }) {
     <>
       {!active ? (
         <svg
-          width={20}
-          height={20}
+          width={24}
+          height={24}
           viewBox="0 0 24 24"
           aria-hidden="true"
           className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-lwhw9o r-cnnz9e"
@@ -15,8 +15,8 @@ export function HomeIcon({ active = false }) {
         </svg>
       ) : (
         <svg
-          width={20}
-          height={20}
+          width={24}
+          height={24}
           viewBox="0 0 24 24"
           aria-hidden="true"
           className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-lwhw9o r-cnnz9e"

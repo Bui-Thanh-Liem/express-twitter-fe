@@ -78,7 +78,7 @@ export function SidebarLeft() {
               <Link to={x.path}>
                 <TypographyP
                   className={cn(
-                    "text-[20px] p-3 group-hover:bg-gray-100 rounded-3xl flex items-center gap-3",
+                    "text-[22px] p-3 group-hover:bg-gray-100 rounded-3xl flex items-center gap-3",
                     isActive ? "font-semibold" : ""
                   )}
                 >
