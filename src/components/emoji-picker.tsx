@@ -15,7 +15,7 @@ export function EmojiSelector({
         <EmojiIcon />
       </span>
       <EmojiPicker
-        className="fixed left-0 -bottom-6"
+        className="absolute left-0 -bottom-6"
         open={open}
         onEmojiClick={(emojiData) => onEmojiClick(emojiData.emoji)}
       />

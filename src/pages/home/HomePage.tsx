@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
-import { EarthIcon, ImageIcon } from "lucide-react";
-import { useState } from "react";
+
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { ButtonMain } from "~/components/button-main";
@@ -11,7 +11,8 @@ import { WrapIon } from "~/components/wrapIcon";
 import { cn } from "~/lib/utils";
 import { FollowingContent } from "./FollowingContent";
 import { ForYouContent } from "./ForYouContent";
-
+import { EarthIcon } from "~/components/icons/earth";
+import { ImageIcon } from "~/components/icons/image";
 
 const FormSchema = z.object({
   content: z.string().trim(),
@@ -19,7 +20,8 @@ const FormSchema = z.object({
 type FormValues = z.infer<typeof FormSchema>;
 
 export function HomePage() {
-  const { register, handleSubmit } = useForm<FormValues>({
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { register, handleSubmit, getValues, setValue } = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       content: "",
@@ -27,6 +29,7 @@ export function HomePage() {
   });
 
   // State để quản lý tab hiện tại
+  const [emoji, setEmoji] = useState<undefined | string>(undefined);
   const [activeTab, setActiveTab] = useState<"for-you" | "following">(
     "for-you"
   );
@@ -35,6 +38,39 @@ export function HomePage() {
     "flex-1 h-full flex items-center justify-center text-gray-500 cursor-pointer hover:bg-gray-100 font-semibold transition-colors relative";
   const classActive =
     "text-black font-bold after:absolute after:bottom-0.5 after:left-1/2 after:-translate-x-1/2 after:w-26 after:h-1 after:rounded-full after:bg-[#1D9BF0]";
+
+  // Hàm xử lý khi chọn emoji
+  const handleEmojiClick = (emoji: string) => {
+    //
+    console.log("emoji:::", emoji);
+
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const currentContent = getValues("content") || "";
+    const cursorPosition = textarea.selectionStart ?? currentContent.length;
+
+    // Chèn emoji vào vị trí con trỏ
+    const newContent =
+      currentContent.slice(0, cursorPosition) +
+      emoji +
+      currentContent.slice(cursorPosition);
+
+    // Cập nhật giá trị content trong form
+    setValue("content", newContent, { shouldValidate: true });
+
+    // Đặt lại vị trí con trỏ sau khi chèn emoji
+    setTimeout(() => {
+      textarea.focus();
+      textarea.selectionStart = cursorPosition + emoji.length;
+      textarea.selectionEnd = cursorPosition + emoji.length;
+    }, 0);
+
+    // Cập nhật state emoji nếu cần
+    setEmoji(emoji);
+  };
+
+  //
 
   //
   const onSubmit = (data: FormValues) => {
@@ -103,14 +139,14 @@ export function HomePage() {
               </span>
               <div className="w-full border-b border-gray-200 mt-3" />
 
-              {/* Optional: Submit button */}
+              {/* Optional - Submit button */}
               <div className="flex justify-between my-2">
                 <div>
                   <WrapIon>
                     <ImageIcon />
                   </WrapIon>
                   <WrapIon>
-                    <EmojiSelector onEmojiClick={() => {}} />
+                    <EmojiSelector onEmojiClick={handleEmojiClick} />
                   </WrapIon>
                 </div>
                 <ButtonMain>Đăng Bài</ButtonMain>
