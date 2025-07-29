@@ -9,7 +9,7 @@ export function HomeLayout() {
         <aside className="col-span-3 pr-4 min-h-screen">
           <SidebarLeft />
         </aside>
-        <main className="col-span-6 px-4 border-r border-l border-gray-200 max-h-screen overflow-y-scroll">
+        <main className="col-span-6 border-r border-l border-gray-200">
           <Outlet />
         </main>
         <aside className="col-span-3 pl-4 min-h-screen">

@@ -3,14 +3,14 @@ import type { ReactNode } from "react";
 export function TypographyP({
   children,
   className,
+  onClick,
 }: {
   children: string | ReactNode;
   className?: string;
+  onClick?: () => void;
 }) {
   return (
-    <p
-      className={`leading-7 [&:not(:first-child)]:mt-1 text-[16px] ${className} `}
-    >
+    <p className={`text-[16px] ${className} `} onClick={onClick}>
       {children}
     </p>
   );
