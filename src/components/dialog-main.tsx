@@ -19,7 +19,7 @@ export function DialogMain({
 }: {
   open: boolean;
   textDesc?: string;
-  textHeader: string;
+  textHeader?: string;
   children: ReactNode;
   onOpenChange: (open: boolean) => void;
 }) {

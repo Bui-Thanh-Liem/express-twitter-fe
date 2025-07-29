@@ -1,5 +1,6 @@
 import { EUserVerifyStatus } from '~/shared/enums/status.enum'
-import { IBase } from './base.interface'
+import type { IBase } from './base.interface'
+// import { IBase } from './base.interface'
 
 export interface IUser extends IBase {
   name: string

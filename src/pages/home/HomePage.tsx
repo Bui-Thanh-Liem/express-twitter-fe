@@ -1,38 +1,47 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import z from "zod";
 import { ButtonMain } from "~/components/button-main";
 import { TypographyP } from "~/components/elements/p";
 import { EmojiSelector } from "~/components/emoji-picker";
-import { WrapIon } from "~/components/wrapIcon";
-import { cn } from "~/lib/utils";
-import { FollowingContent } from "./FollowingContent";
-import { ForYouContent } from "./ForYouContent";
 import { EarthIcon } from "~/components/icons/earth";
 import { ImageIcon } from "~/components/icons/image";
-
-const FormSchema = z.object({
-  content: z.string().trim(),
-});
-type FormValues = z.infer<typeof FormSchema>;
+import { WrapIon } from "~/components/wrapIcon";
+import { useCreateTweet } from "~/hooks/useFetchTweet";
+import { cn } from "~/lib/utils";
+import {
+  CreateTweetDtoSchema,
+  type CreateTweetDto,
+} from "~/shared/dtos/req/tweet.dto";
+import { ETweetAudience } from "~/shared/enums/common.enum";
+import { ETweetType } from "~/shared/enums/type.enum";
+import { handleResponse } from "~/utils/handleResponse";
+import { FollowingContent } from "./FollowingContent";
+import { ForYouContent } from "./ForYouContent";
 
 export function HomePage() {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { register, handleSubmit, getValues, setValue } = useForm<FormValues>({
-    resolver: zodResolver(FormSchema),
+  const apiCreateTweet = useCreateTweet();
+  const { reset, handleSubmit, setValue } = useForm<CreateTweetDto>({
+    resolver: zodResolver(CreateTweetDtoSchema),
     defaultValues: {
       content: "",
+      audience: ETweetAudience.Everyone,
+      type: ETweetType.Tweet,
     },
   });
 
+  // Ref để truy cập textarea
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   // State để quản lý tab hiện tại
-  const [emoji, setEmoji] = useState<undefined | string>(undefined);
   const [activeTab, setActiveTab] = useState<"for-you" | "following">(
     "for-you"
   );
+
+  // State local để quản lý content
+  const [contentValue, setContentValue] = useState("");
 
   const classNav =
     "flex-1 h-full flex items-center justify-center text-gray-500 cursor-pointer hover:bg-gray-100 font-semibold transition-colors relative";
@@ -41,42 +50,75 @@ export function HomePage() {
 
   // Hàm xử lý khi chọn emoji
   const handleEmojiClick = (emoji: string) => {
-    //
-    console.log("emoji:::", emoji);
-
     const textarea = textareaRef.current;
     if (!textarea) return;
 
-    const currentContent = getValues("content") || "";
-    const cursorPosition = textarea.selectionStart ?? currentContent.length;
+    const cursorPosition = textarea.selectionStart;
+    const textBefore = contentValue.substring(0, cursorPosition);
+    const textAfter = contentValue.substring(cursorPosition);
 
-    // Chèn emoji vào vị trí con trỏ
-    const newContent =
-      currentContent.slice(0, cursorPosition) +
-      emoji +
-      currentContent.slice(cursorPosition);
+    const newContent = textBefore + emoji + textAfter;
 
-    // Cập nhật giá trị content trong form
-    setValue("content", newContent, { shouldValidate: true });
+    // Cập nhật state local và form
+    setContentValue(newContent);
+    setValue("content", newContent);
 
-    // Đặt lại vị trí con trỏ sau khi chèn emoji
+    // Focus lại textarea và đặt cursor sau emoji
     setTimeout(() => {
       textarea.focus();
-      textarea.selectionStart = cursorPosition + emoji.length;
-      textarea.selectionEnd = cursorPosition + emoji.length;
+      textarea.setSelectionRange(
+        cursorPosition + emoji.length,
+        cursorPosition + emoji.length
+      );
+      // Auto resize
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
     }, 0);
+  };
 
-    // Cập nhật state emoji nếu cần
-    setEmoji(emoji);
+  // Hàm xử lý khi content thay đổi
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setContentValue(value);
+    setValue("content", value);
+  };
+
+  // Hàm xử lý auto resize
+  const handleTextareaInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    const el = e.currentTarget;
+    let value = el.value;
+
+    // Cắt bớt nếu quá 12 dòng
+    const lines = value.split("\n");
+    if (lines.length > 12) {
+      value = lines.slice(0, 12).join("\n");
+      el.value = value;
+      setContentValue(value);
+      setValue("content", value);
+    }
+
+    // Auto resize chiều cao
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
   };
 
   //
-
-  //
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: CreateTweetDto) => {
     console.log("Form submitted:", data);
-    // Xử lý submit form ở đây
+
+    const _data = {
+      ...data,
+      type: ETweetType.Tweet,
+      audience: ETweetAudience.Everyone,
+    } as CreateTweetDto;
+    const res = await apiCreateTweet.mutateAsync(_data);
+    handleResponse(res, successForm);
   };
+
+  //
+  function successForm() {
+    reset();
+  }
 
   return (
     <main className="relative h-screen flex flex-col">
@@ -111,25 +153,15 @@ export function HomePage() {
             </Avatar>
             <div className="flex-1 mt-2">
               <textarea
+                ref={textareaRef}
                 autoComplete="off"
                 autoCorrect="off"
                 spellCheck="false"
-                {...register("content")}
+                value={contentValue}
+                onChange={handleContentChange}
                 className="border-0 outline-0 w-full text-lg placeholder:text-gray-500 bg-transparent resize-none"
                 placeholder="Có chuyện gì thế ?"
-                onInput={(e) => {
-                  const el = e.currentTarget;
-
-                  // Cắt bớt nếu quá 12 dòng
-                  const lines = el.value.split("\n");
-                  if (lines.length > 12) {
-                    el.value = lines.slice(0, 12).join("\n");
-                  }
-
-                  // Auto resize chiều cao
-                  el.style.height = "auto";
-                  el.style.height = `${el.scrollHeight}px`;
-                }}
+                onInput={handleTextareaInput}
               />
               <span className="px-3 -ml-3 text-[#1D9BF0] hover:bg-[#E8F5FD] rounded-full inline-flex gap-2 items-center cursor-pointer">
                 <EarthIcon />
@@ -149,7 +181,9 @@ export function HomePage() {
                     <EmojiSelector onEmojiClick={handleEmojiClick} />
                   </WrapIon>
                 </div>
-                <ButtonMain>Đăng Bài</ButtonMain>
+                <ButtonMain disabled={!contentValue.trim()}>
+                  Đăng Bài
+                </ButtonMain>
               </div>
             </div>
           </div>

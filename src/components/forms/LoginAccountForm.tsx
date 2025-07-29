@@ -9,7 +9,7 @@ import {
   LoginUserDtoSchema,
   type LoginUserDto,
 } from "~/shared/dtos/req/auth.dto";
-import { handleResponse } from "~/utils/HandleResponse";
+import { handleResponse } from "~/utils/handleResponse";
 import { AuthApple } from "../auth-apple";
 import { AuthGoogle } from "../auth-google";
 import { TypographyP } from "../elements/p";

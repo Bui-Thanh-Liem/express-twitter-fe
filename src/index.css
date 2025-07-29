@@ -133,6 +133,11 @@
   html {
     @apply scroll-smooth;
   }
+
+  #root {
+    margin: 0;
+    padding: 0;
+  }
   * {
     @apply border-border outline-ring/50;
     scrollbar-width: thin;

@@ -7,7 +7,7 @@ export const apiCall = async <T>(
   endpoint: string,
   options: any = {}
 ): Promise<OkResponse<T>> => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("access_token");
 
   const config = {
     method: "GET",
