@@ -1,6 +1,6 @@
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-import { getNestedError } from "@/utils/getNestedError";
+import { Label } from "~/components/ui/label";
+import { cn } from "~/lib/utils";
+import { getNestedError } from "~/utils/getNestedError";
 import type {
   Control,
   FieldErrors,

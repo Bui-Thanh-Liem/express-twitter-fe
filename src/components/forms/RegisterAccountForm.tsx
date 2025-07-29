@@ -1,7 +1,7 @@
 "use client";
 
-import { ButtonMain } from "@/components/button-main";
-import { Label } from "@/components/ui/label";
+import { ButtonMain } from "~/components/button-main";
+import { Label } from "~/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

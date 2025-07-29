@@ -1,10 +1,12 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom"; // ✅ SỬA Ở ĐÂY
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { HomeLayout } from "./HomeLayout";
 import { AuthPage } from "./pages/AuthPage";
 import { ExplorePage } from "./pages/explore/Explore";
 import { HomePage } from "./pages/home/HomePage";
 import StatusLoginOAuth from "./pages/StatusLoginOAuth";
 import RootLayout from "./RootLayout";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 // Router config
 const router = createBrowserRouter([
@@ -27,6 +29,29 @@ const router = createBrowserRouter([
   },
 ]);
 
+// Tạo Query Client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1, // Retry 1 lần nếu fail
+      refetchOnWindowFocus: false, // Không refetch khi focus lại window
+      staleTime: 5 * 60 * 1000, // Data được coi là fresh trong 5 phút
+    },
+    mutations: {
+      retry: 0, // Không retry mutations
+    },
+  },
+});
+
 export function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />;
+
+      {/* Dev tools chỉ hiện trong development */}
+      {process.env.NODE_ENV === "development" && (
+        <ReactQueryDevtools initialIsOpen={false} />
+      )}
+    </QueryClientProvider>
+  );
 }

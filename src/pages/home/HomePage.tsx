@@ -1,4 +1,4 @@
-import { HLSPlayer } from "@/components/hls/HLSPlayer";
+import { HLSPlayer } from "~/components/hls/HLSPlayer";
 
 export function HomePage() {
   return (

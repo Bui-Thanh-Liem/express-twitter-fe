@@ -1,13 +1,13 @@
-import { Label } from "@/components/ui/label";
+import { Label } from "~/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-import { getNestedError } from "@/utils/getNestedError";
+} from "~/components/ui/select";
+import { cn } from "~/lib/utils";
+import { getNestedError } from "~/utils/getNestedError";
 import {
   Controller,
   type Control,

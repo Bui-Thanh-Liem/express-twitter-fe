@@ -1,4 +1,4 @@
-import { getGoogleAuthUrl } from "@/utils/getGoogleAuthUrl";
+import { getGoogleAuthUrl } from "~/utils/getGoogleAuthUrl";
 import { Link } from "react-router-dom";
 import { GoogleIcon } from "./icons/google";
 

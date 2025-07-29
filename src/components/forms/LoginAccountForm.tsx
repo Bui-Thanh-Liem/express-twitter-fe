@@ -1,21 +1,20 @@
 "use client";
 
-import { ButtonMain } from "@/components/button-main";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useNavigate } from "react-router-dom";
+import { ButtonMain } from "~/components/button-main";
+import { useLogin } from "~/hooks/useFetchAuth";
+import {
+  LoginUserDtoSchema,
+  type LoginUserDto,
+} from "~/shared/dtos/req/auth.dto";
+import { handleResponse } from "~/utils/HandleResponse";
 import { AuthApple } from "../auth-apple";
 import { AuthGoogle } from "../auth-google";
+import { TypographyP } from "../elements/p";
 import { InputMain } from "../input-main";
 import { Divider } from "../ui/divider";
-import { TypographyP } from "../elements/p";
-
-const FormSchema = z.object({
-  password: z.string().trim().min(1, "Vui lòng nhập mật khẩu"),
-  email: z.string().email("Email không hợp lệ"),
-});
-
-type FormValues = z.infer<typeof FormSchema>;
 
 export function LoginAccountForm({
   setOpenForm,
@@ -26,14 +25,19 @@ export function LoginAccountForm({
   onClickForgotPass: () => void;
   onClickRegister: () => void;
 }) {
+  //
+  const navigate = useNavigate();
+  const apiLogin = useLogin();
+
+  //
   const {
     reset,
     control,
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({
-    resolver: zodResolver(FormSchema),
+  } = useForm<LoginUserDto>({
+    resolver: zodResolver(LoginUserDtoSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -41,11 +45,17 @@ export function LoginAccountForm({
   });
 
   //
-  const onSubmit = (data: FormValues) => {
-    console.log("✅ Dữ liệu LoginAccountForm :", data);
-    setOpenForm(false);
-    reset();
+  const onSubmit = async (data: LoginUserDto) => {
+    const res = await apiLogin.mutateAsync(data);
+    handleResponse(res, successForm);
   };
+
+  //
+  function successForm() {
+    setOpenForm(false);
+    navigate("/home");
+    reset();
+  }
 
   return (
     <form

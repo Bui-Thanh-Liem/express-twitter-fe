@@ -1,19 +1,19 @@
-import { AuthApple } from "@/components/auth-apple";
-import { AuthGoogle } from "@/components/auth-google";
-import { ButtonMain } from "@/components/button-main";
-import { DialogMain } from "@/components/dialog-main";
-import { TypographyH1 } from "@/components/elements/h1";
-import { TypographyH2 } from "@/components/elements/h2";
-import { TypographyP } from "@/components/elements/p";
-import { ConfirmOtpForm } from "@/components/forms/ConfirmOtpForm";
-import { ForgotPasswordForm } from "@/components/forms/ForgotPasswordForm";
-import { LoginAccountForm } from "@/components/forms/LoginAccountForm";
-import { RegisterAccountForm } from "@/components/forms/RegisterAccountForm";
-import { Divider } from "@/components/ui/divider";
+import { AuthApple } from "~/components/auth-apple";
+import { AuthGoogle } from "~/components/auth-google";
+import { ButtonMain } from "~/components/button-main";
+import { DialogMain } from "~/components/dialog-main";
+import { TypographyH1 } from "~/components/elements/h1";
+import { TypographyH2 } from "~/components/elements/h2";
+import { TypographyP } from "~/components/elements/p";
+import { ConfirmOtpForm } from "~/components/forms/ConfirmOtpForm";
+import { ForgotPasswordForm } from "~/components/forms/ForgotPasswordForm";
+import { LoginAccountForm } from "~/components/forms/LoginAccountForm";
+import { RegisterAccountForm } from "~/components/forms/RegisterAccountForm";
+import { Divider } from "~/components/ui/divider";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Logo } from "../components/logo";
-import { ResetPasswordForm } from "@/components/forms/ResetPasswordForm";
+import { ResetPasswordForm } from "~/components/forms/ResetPasswordForm";
 
 export function Footer() {
   const links = [

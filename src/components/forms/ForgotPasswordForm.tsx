@@ -1,6 +1,6 @@
 "use client";
 
-import { ButtonMain } from "@/components/button-main";
+import { ButtonMain } from "~/components/button-main";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

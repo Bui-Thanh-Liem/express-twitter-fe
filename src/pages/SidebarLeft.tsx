@@ -1,20 +1,20 @@
-import { TypographyP } from "@/components/elements/p";
-import { BookmarkIcon } from "@/components/icons/bookmark";
-import { CommunityIcon } from "@/components/icons/communities";
-import { ExploreIcon } from "@/components/icons/explore";
-import { HomeIcon } from "@/components/icons/home";
-import { MessageIcon } from "@/components/icons/messages";
-import { NotificationIcon } from "@/components/icons/notifications";
-import { ProfileIcon } from "@/components/icons/profile";
-import { cn } from "@/lib/utils";
+import { TypographyP } from "~/components/elements/p";
+import { BookmarkIcon } from "~/components/icons/bookmark";
+import { CommunityIcon } from "~/components/icons/communities";
+import { ExploreIcon } from "~/components/icons/explore";
+import { HomeIcon } from "~/components/icons/home";
+import { MessageIcon } from "~/components/icons/messages";
+import { NotificationIcon } from "~/components/icons/notifications";
+import { ProfileIcon } from "~/components/icons/profile";
+import { cn } from "~/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import type { ReactNode } from "react";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Logo } from "../components/logo";
 import { WrapIon } from "../components/wrapIcon";
-import { DotIcon } from "@/components/icons/dot";
-import { ButtonMain } from "@/components/button-main";
+import { DotIcon } from "~/components/icons/dot";
+import { ButtonMain } from "~/components/button-main";
 
 type NavItem = {
   name: string;

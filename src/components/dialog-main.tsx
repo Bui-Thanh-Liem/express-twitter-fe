@@ -6,7 +6,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "~/components/ui/dialog";
 import type { ReactNode } from "react";
 import { Logo } from "./logo";
 
