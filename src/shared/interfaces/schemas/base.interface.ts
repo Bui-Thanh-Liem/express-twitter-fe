@@ -1,5 +1,7 @@
+import { ObjectId } from 'mongodb'
+
 export interface IBase {
-  _id?: string;
-  created_at?: Date;
-  updated_at?: Date;
+  _id?: ObjectId
+  created_at?: Date
+  updated_at?: Date
 }

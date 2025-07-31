@@ -1,4 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  MAX_SIZE_IMAGE_UPLOAD,
+  MAX_SIZE_VIDEO_UPLOAD,
+} from "~/shared/constants";
 import { apiCall } from "~/utils/callApi.util";
 
 // 📸 POST - Upload single image/video (Dynamic endpoint)
@@ -14,7 +18,7 @@ export const useUploadMedia = () => {
       const isImage = file.type.startsWith("image/");
       const endpoint = isImage ? "/api/images" : "/api/videos";
 
-      return apiCall(endpoint, {
+      return apiCall<{ url: string }>(endpoint, {
         method: "POST",
         body: formData,
         // Không set Content-Type để browser tự động set với boundary
@@ -158,11 +162,9 @@ export const useUploadMediaWithProgress = () => {
 
 // 🔍 Validate file trước khi upload
 export const validateMediaFile = (file: File) => {
-  const maxSize = 10 * 1024 * 1024; // 10MB
-  const allowedTypes = [
-    "image/jpeg",
-    "image/jpg",
-    "image/png",
+  const allowedImgTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+  const allowedVideoTypes = [
     "image/gif",
     "image/webp",
     "video/mp4",
@@ -171,15 +173,21 @@ export const validateMediaFile = (file: File) => {
     "video/avi",
   ];
 
-  if (file.size > maxSize) {
-    throw new Error("File quá lớn. Tối đa 10MB.");
+  if (allowedImgTypes.includes(file.type)) {
+    if (file.size > MAX_SIZE_IMAGE_UPLOAD) {
+      throw new Error("File quá lớn. Tối đa 10MB.");
+    }
+    return true;
   }
 
-  if (!allowedTypes.includes(file.type)) {
-    throw new Error("Định dạng file không được hỗ trợ.");
+  if (allowedVideoTypes.includes(file.type)) {
+    if (file.size > MAX_SIZE_VIDEO_UPLOAD) {
+      throw new Error("File quá lớn. Tối đa 50MB.");
+    }
+    return true;
   }
 
-  return true;
+  throw new Error("Định dạng file không được hỗ trợ.");
 };
 
 // 🎯 Hook tiện ích để upload với validation

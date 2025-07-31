@@ -12,7 +12,7 @@ import type { ReactNode } from "react";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Logo } from "../components/logo";
-import { WrapIon } from "../components/wrapIcon";
+import { WrapIcon } from "../components/wrapIcon";
 import { DotIcon } from "~/components/icons/dot";
 import { ButtonMain } from "~/components/button-main";
 
@@ -66,9 +66,9 @@ export function SidebarLeft() {
   return (
     <div className="relative h-full">
       <h2 className="text-lg font-semibold mb-4">
-        <WrapIon>
+        <WrapIcon>
           <Logo size={30} />
-        </WrapIon>
+        </WrapIcon>
       </h2>
       <ul className="space-y-3 text-sm text-gray-700">
         {navs.map((x) => {
@@ -116,9 +116,9 @@ export function SidebarLeft() {
         </div>
 
         <div className="absolute right-4">
-          <WrapIon>
+          <WrapIcon>
             <DotIcon />
-          </WrapIon>
+          </WrapIcon>
         </div>
       </div>
     </div>
