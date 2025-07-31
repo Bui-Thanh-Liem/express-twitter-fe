@@ -1,16 +1,17 @@
 import { useState, useCallback, useEffect } from "react";
+import { EMediaType } from "~/shared/enums/type.enum";
 
 // Custom hook for media preview and upload
 export const useMediaPreview = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [uploadedMediaUrl, setUploadedMediaUrl] = useState<string>("");
-  const [mediaType, setMediaType] = useState<"image" | "video" | null>(null);
+  const [mediaType, setMediaType] = useState<EMediaType | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
-  const getMediaType = (file: File): "image" | "video" | null => {
-    if (file.type.startsWith("image/")) return "image";
-    if (file.type.startsWith("video/")) return "video";
+  const getMediaType = (file: File): EMediaType | null => {
+    if (file.type.startsWith("image/")) return EMediaType.Image;
+    if (file.type.startsWith("video/")) return EMediaType.Video;
     return null;
   };
 
@@ -62,13 +63,13 @@ export const useMediaPreview = () => {
         // Validate file size (different limits for image and video)
         const maxImageSize = 5 * 1024 * 1024; // 5MB for images
         const maxVideoSize = 100 * 1024 * 1024; // 100MB for videos
-        const maxSize = type === "video" ? maxVideoSize : maxImageSize;
+        const maxSize = type === EMediaType.Video ? maxVideoSize : maxImageSize;
 
         if (file.size > maxSize) {
-          const sizeLimitText = type === "video" ? "100MB" : "5MB";
+          const sizeLimitText = type === EMediaType.Video ? "100MB" : "5MB";
           alert(
             `File ${
-              type === "video" ? "video" : "ảnh"
+              type === EMediaType.Video ? "video" : "ảnh"
             } không được vượt quá ${sizeLimitText}\nFile hiện tại: ${formatFileSize(
               file.size
             )}`

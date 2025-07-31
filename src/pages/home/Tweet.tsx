@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { ButtonMain } from "~/components/button-main";
 import { TypographyP } from "~/components/elements/p";
 import { EmojiSelector } from "~/components/emoji-picker";
@@ -20,8 +19,9 @@ import {
   type CreateTweetDto,
 } from "~/shared/dtos/req/tweet.dto";
 import { ETweetAudience } from "~/shared/enums/common.enum";
-import { ETweetType } from "~/shared/enums/type.enum";
+import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import { handleResponse } from "~/utils/handleResponse";
+import { toastSimple } from "~/utils/toastSimple.util";
 
 // Constants
 const DEFAULT_VALUES: CreateTweetDto = {
@@ -65,6 +65,7 @@ export function Tweet() {
     defaultValues: DEFAULT_VALUES,
     mode: "onChange", // Enable real-time validation
   });
+  console.log("Tweet - isValid:::", isValid);
 
   // Watch content for real-time updates
   const contentValue = watch("content");
@@ -78,6 +79,7 @@ export function Tweet() {
     [insertEmoji, contentValue, setValue]
   );
 
+  //
   const handleTextareaInput = useCallback(
     (e: React.FormEvent<HTMLTextAreaElement>) => {
       const newValue = autoResize(e.currentTarget, MAX_LINES);
@@ -88,12 +90,20 @@ export function Tweet() {
     [autoResize, setValue, contentValue]
   );
 
+  //
   const handleFileSelect = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       handleFileChange(e);
     },
     [handleFileChange]
   );
+
+  const successForm = useCallback(() => {
+    reset(DEFAULT_VALUES);
+    removeMedia(); // Clear media after successful submission
+    setUploadedMediaUrl("");
+    setUploadProgress(0);
+  }, [removeMedia, reset, setUploadProgress, setUploadedMediaUrl]);
 
   const onSubmit = useCallback(
     async (data: CreateTweetDto) => {
@@ -109,71 +119,56 @@ export function Tweet() {
           setUploadProgress(10);
 
           try {
-            const resUploadMedia = await apiUploadMedia.mutateAsync(
-              selectedFile
-            );
+            const resUploadMedia = await apiUploadMedia.mutateAsync([
+              selectedFile,
+            ]);
             setUploadProgress(90);
-
-            // Assuming the upload response contains the media URL
-            // Adjust this based on your actual API response structure
-            mediaUrl = resUploadMedia.data?.url || "";
+            if (resUploadMedia.statusCode !== 200 || !resUploadMedia.data) {
+              handleResponse(resUploadMedia);
+              return;
+            }
+            mediaUrl = resUploadMedia.data[0] || "";
             setUploadedMediaUrl(mediaUrl);
             setUploadProgress(100);
-
-            if (!mediaUrl) {
-              throw new Error("Upload thất bại, không nhận được URL");
-            }
           } catch (uploadError) {
             setUploadProgress(0);
-            throw uploadError;
+            console.error("Error submitting uploadMedia:", uploadError);
+            toastSimple((uploadError as { message: string }).message);
           }
         }
 
         // Create tweet with media URL if available
+
         const tweetData: CreateTweetDto = {
           ...data,
           type: ETweetType.Tweet,
           audience: ETweetAudience.Everyone,
-          // Add media URL to tweet data - adjust field name based on your DTO
-          medias: [{ url: mediaUrl, type: mediaType }] || undefined,
-          mediaType: mediaType || undefined, // Include media type if your API needs it
-          // or if your DTO expects an array:
-          // mediaUrls: mediaUrl ? [mediaUrl] : undefined,
+          medias: mediaUrl ? [{ url: mediaUrl, type: mediaType! }] : [],
         };
 
         console.log("Creating tweet with data:", tweetData);
         const resCreateTweet = await apiCreateTweet.mutateAsync(tweetData);
 
-        handleResponse(resCreateTweet, () => {
-          reset(DEFAULT_VALUES);
-          removeMedia(); // Clear media after successful submission
-          setUploadedMediaUrl("");
-          setUploadProgress(0);
-        });
+        handleResponse(resCreateTweet, successForm);
       } catch (error) {
         console.error("Error submitting tweet:", error);
-        // Handle error - maybe show toast notification
         const errorMessage =
           error instanceof Error ? error.message : "Có lỗi xảy ra khi đăng bài";
-        toast.error(errorMessage, {
-          position: "top-center",
-          description: new Date().toJSON(),
-        });
+        toastSimple(errorMessage);
         setUploadProgress(0);
       } finally {
         setIsUploading(false);
       }
     },
     [
+      mediaType,
+      successForm,
+      selectedFile,
       apiCreateTweet,
       apiUploadMedia,
-      reset,
-      selectedFile,
       uploadedMediaUrl,
-      mediaType,
-      setUploadedMediaUrl,
       setUploadProgress,
-      removeMedia,
+      setUploadedMediaUrl,
     ]
   );
 
@@ -199,6 +194,7 @@ export function Tweet() {
               {...register("content")}
               ref={textareaRef}
               autoComplete="off"
+              value={contentValue}
               autoCorrect="off"
               spellCheck="false"
               className="border-0 outline-0 w-full text-lg placeholder:text-gray-500 bg-transparent resize-none"
@@ -210,13 +206,13 @@ export function Tweet() {
             {/* Media preview */}
             {previewUrl && (
               <div className="relative mt-3 rounded-xl overflow-hidden border border-gray-200 inline-block max-w-full">
-                {mediaType === "image" ? (
+                {mediaType === EMediaType.Image ? (
                   <img
                     src={previewUrl}
                     alt="Preview"
                     className="max-w-full max-h-80 object-cover"
                   />
-                ) : mediaType === "video" ? (
+                ) : mediaType === EMediaType.Video ? (
                   <video
                     src={previewUrl}
                     controls
@@ -239,9 +235,10 @@ export function Tweet() {
                     <div className="text-white text-sm bg-black bg-opacity-70 px-3 py-2 rounded-2xl flex flex-col items-center gap-2">
                       <div className="flex items-center gap-2">
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Đang đăng {mediaType === "video" ? "video" : "ảnh"}...
+                        Đang đăng{" "}
+                        {mediaType === EMediaType.Video ? "video" : "ảnh"}...
                       </div>
-                      {mediaType === "video" && uploadProgress > 0 && (
+                      {mediaType === EMediaType.Video && uploadProgress > 0 && (
                         <div className="w-32">
                           <div className="bg-gray-700 rounded-full h-2">
                             <div
@@ -260,7 +257,8 @@ export function Tweet() {
 
                 {uploadedMediaUrl && !isUploading && (
                   <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
-                    ✓ Đã upload {mediaType === "video" ? "video" : "ảnh"}
+                    ✓ Đã upload{" "}
+                    {mediaType === EMediaType.Video ? "video" : "ảnh"}
                   </div>
                 )}
               </div>
@@ -269,8 +267,8 @@ export function Tweet() {
             {/* File info */}
             {mediaType && (
               <div className="bg-[#EAFAFF] bg-opacity-60 text-black font-semibold text-xs p-2 rounded">
-                {mediaType === "video" ? "🎬" : "🖼️"} {selectedFile?.name} (
-                {formatFileSize(selectedFile?.size || 0)})
+                {mediaType === EMediaType.Video ? "🎬" : "🖼️"}{" "}
+                {selectedFile?.name} ({formatFileSize(selectedFile?.size || 0)})
               </div>
             )}
 
@@ -318,13 +316,11 @@ export function Tweet() {
                   {contentValue.length}/280
                 </span>
 
-                <ButtonMain
-                  type="submit"
-                  disabled={isFormDisabled}
-                  loading={isSubmitting || isUploading}
-                >
+                <ButtonMain type="submit" disabled={isFormDisabled}>
                   {isUploading
-                    ? `Đang đăng ${mediaType === "video" ? "video" : "ảnh"}...`
+                    ? `Đang đăng ${
+                        mediaType === EMediaType.Video ? "video" : "ảnh"
+                      }...`
                     : isSubmitting
                     ? "Đang đăng..."
                     : "Đăng Bài"}

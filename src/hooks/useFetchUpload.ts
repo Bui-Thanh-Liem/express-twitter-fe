@@ -1,4 +1,5 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { OkResponse } from "~/shared/classes/response.class";
 import {
   MAX_SIZE_IMAGE_UPLOAD,
   MAX_SIZE_VIDEO_UPLOAD,
@@ -7,155 +8,60 @@ import { apiCall } from "~/utils/callApi.util";
 
 // 📸 POST - Upload single image/video (Dynamic endpoint)
 export const useUploadMedia = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: (file: File) => {
-      const formData = new FormData();
-      formData.append("file", file);
+    mutationFn: async (files: File[]): Promise<OkResponse<string[]>> => {
+      // Phân loại files theo type
+      const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+      const videoFiles = files.filter((file) => file.type.startsWith("video/"));
 
-      // Dynamic endpoint dựa trên file type
-      const isImage = file.type.startsWith("image/");
-      const endpoint = isImage ? "/api/images" : "/api/videos";
-
-      return apiCall<{ url: string }>(endpoint, {
-        method: "POST",
-        body: formData,
-        // Không set Content-Type để browser tự động set với boundary
-      });
-    },
-    onSuccess: (data, file) => {
-      // Invalidate cache dựa trên file type
-      const isImage = file.type.startsWith("image/");
-      if (isImage) {
-        queryClient.invalidateQueries({ queryKey: ["images"] });
-      } else {
-        queryClient.invalidateQueries({ queryKey: ["videos"] });
-      }
-      // Invalidate general media list
-      queryClient.invalidateQueries({ queryKey: ["media"] });
-    },
-  });
-};
-
-// 📷 POST - Upload multiple images/videos (Dynamic endpoints)
-export const useUploadMultipleMedia = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (files: File[]) => {
-      // Tách files thành images và videos
-      const images = files.filter((file) => file.type.startsWith("image/"));
-      const videos = files.filter((file) => !file.type.startsWith("image/"));
-
-      const uploadPromises = [];
+      const uploadPromises: Promise<string[]>[] = [];
 
       // Upload images nếu có
-      if (images.length > 0) {
+      if (imageFiles.length > 0) {
         const imageFormData = new FormData();
-        images.forEach((file) => {
-          imageFormData.append(`files`, file);
+        imageFiles.forEach((file) => {
+          imageFormData.append("images", file);
         });
 
-        uploadPromises.push(
-          apiCall("/api/img/multiple", {
-            method: "POST",
-            body: imageFormData,
-          })
-        );
+        const imageUpload = apiCall<string[]>("/uploads/images", {
+          method: "POST",
+          body: imageFormData,
+        }).then((response) => {
+          if (response.statusCode >= 200 && response.statusCode < 300) {
+            return response.data || [];
+          }
+          throw new Error(response.message);
+        });
+
+        uploadPromises.push(imageUpload);
       }
 
       // Upload videos nếu có
-      if (videos.length > 0) {
+      if (videoFiles.length > 0) {
         const videoFormData = new FormData();
-        videos.forEach((file) => {
-          videoFormData.append(`files`, file);
+        videoFiles.forEach((file) => {
+          videoFormData.append("videos", file);
         });
 
-        uploadPromises.push(
-          apiCall("/api/media/multiple", {
-            method: "POST",
-            body: videoFormData,
-          })
-        );
-      }
-
-      // Chờ tất cả upload xong
-      return Promise.all(uploadPromises);
-    },
-    onSuccess: (results, files) => {
-      const hasImages = files.some((file) => file.type.startsWith("image/"));
-      const hasVideos = files.some((file) => !file.type.startsWith("image/"));
-
-      if (hasImages) {
-        queryClient.invalidateQueries({ queryKey: ["images"] });
-      }
-      if (hasVideos) {
-        queryClient.invalidateQueries({ queryKey: ["videos"] });
-      }
-      queryClient.invalidateQueries({ queryKey: ["media"] });
-    },
-  });
-};
-
-// 🎬 POST - Upload với progress tracking (Dynamic endpoint)
-export const useUploadMediaWithProgress = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({
-      file,
-      onProgress,
-    }: {
-      file: File;
-      onProgress?: (progress: number) => void;
-    }) => {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      // Dynamic endpoint dựa trên file type
-      const isImage = file.type.startsWith("image/");
-      const endpoint = isImage ? "/api/images" : "/api/videos";
-
-      return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-
-        // Track upload progress
-        xhr.upload.addEventListener("progress", (event) => {
-          if (event.lengthComputable && onProgress) {
-            const progress = Math.round((event.loaded / event.total) * 100);
-            onProgress(progress);
+        const videoUpload = apiCall<string[]>("/uploads/videos", {
+          method: "POST",
+          body: videoFormData,
+        }).then((response) => {
+          if (response.statusCode >= 200 && response.statusCode < 300) {
+            return response.data || [];
           }
+          throw new Error(response.message);
         });
 
-        xhr.addEventListener("load", () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            try {
-              resolve(JSON.parse(xhr.responseText));
-            } catch {
-              resolve(xhr.responseText);
-            }
-          } else {
-            reject(new Error(`Upload failed: ${xhr.status}`));
-          }
-        });
-
-        xhr.addEventListener("error", () => {
-          reject(new Error("Upload failed"));
-        });
-
-        xhr.open("POST", endpoint);
-        xhr.send(formData);
-      });
-    },
-    onSuccess: (data, { file }) => {
-      const isImage = file.type.startsWith("image/");
-      if (isImage) {
-        queryClient.invalidateQueries({ queryKey: ["images"] });
-      } else {
-        queryClient.invalidateQueries({ queryKey: ["videos"] });
+        uploadPromises.push(videoUpload);
       }
-      queryClient.invalidateQueries({ queryKey: ["media"] });
+
+      // Chờ tất cả uploads hoàn thành và merge kết quả
+      const results = await Promise.all(uploadPromises);
+      return new OkResponse("Success", results.flat()); // Merge tất cả string[] thành một string[] duy nhất
+    },
+    onSuccess: () => {
+      console.log("Uploaded success");
     },
   });
 };
@@ -195,12 +101,12 @@ export const useUploadWithValidation = () => {
   const uploadMutation = useUploadMedia();
 
   return useMutation({
-    mutationFn: async (file: File) => {
+    mutationFn: async (files: File[]) => {
       // Validate trước khi upload
-      validateMediaFile(file);
+      files.forEach((file) => validateMediaFile(file));
 
       // Thực hiện upload
-      return uploadMutation.mutateAsync(file);
+      return uploadMutation.mutateAsync(files);
     },
   });
 };

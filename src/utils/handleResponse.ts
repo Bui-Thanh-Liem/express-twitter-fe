@@ -7,7 +7,7 @@ export function handleResponse(
 ) {
   const { statusCode, message } = res;
 
-  if (statusCode === 200) {
+  if (statusCode === 200 || statusCode === 201) {
     callbacks.forEach((fn) => fn());
     toast.success(message, {
       position: "top-center",
