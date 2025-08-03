@@ -10,13 +10,15 @@ export function handleResponse(
   if (statusCode === 200 || statusCode === 201) {
     callbacks.forEach((fn) => fn());
     toast.success(message, {
-      position: "top-center",
+      // position: "top-center",
       description: new Date().toJSON(),
+      richColors: true,
     });
   } else {
     toast.error(message, {
-      position: "top-center",
+      // position: "top-center",
       description: new Date().toJSON(),
+      richColors: true,
     });
   }
 }

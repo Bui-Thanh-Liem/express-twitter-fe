@@ -36,5 +36,19 @@ export const GetOneTweetByIdDtoSchema = z.object({
   })
 })
 
+export const getTweetChildrenDtoSchemaParams = z.object({
+  tweet_id: z.string().trim().regex(CONSTANT_REGEX.ID_MONGO, {
+    message: 'Invalid MongoDB ObjectId'
+  })
+})
+
+export const getTweetChildrenDtoSchemaBody = z.object({
+  tweet_type: z.nativeEnum(ETweetType, {
+    errorMap: () => ({ message: 'Invalid Tweet Type' })
+  })
+})
+
 export type GetOneTweetByIdDto = z.infer<typeof GetOneTweetByIdDtoSchema>
 export type CreateTweetDto = z.infer<typeof CreateTweetDtoSchema>
+export type getTweetChildrenDtoParams = z.infer<typeof getTweetChildrenDtoSchemaParams>
+export type getTweetChildrenDtoBody = z.infer<typeof getTweetChildrenDtoSchemaBody>
