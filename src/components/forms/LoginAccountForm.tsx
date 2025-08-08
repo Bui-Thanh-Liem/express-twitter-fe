@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { ButtonMain } from "~/components/button-main";
 import { useLogin } from "~/hooks/useFetchAuth";
 import {
@@ -26,7 +25,7 @@ export function LoginAccountForm({
   onClickRegister: () => void;
 }) {
   //
-  const navigate = useNavigate();
+
   const apiLogin = useLogin();
 
   //
@@ -53,7 +52,6 @@ export function LoginAccountForm({
   //
   function successForm() {
     setOpenForm(false);
-    navigate("/home");
     reset();
   }
 

@@ -10,10 +10,12 @@ import { ForgotPasswordForm } from "~/components/forms/ForgotPasswordForm";
 import { LoginAccountForm } from "~/components/forms/LoginAccountForm";
 import { RegisterAccountForm } from "~/components/forms/RegisterAccountForm";
 import { Divider } from "~/components/ui/divider";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { Logo } from "../components/logo";
 import { ResetPasswordForm } from "~/components/forms/ResetPasswordForm";
+import { useUserStore } from "~/store/useUserStore";
+import { useGetMe } from "~/hooks/useFetchAuth";
 
 export function Footer() {
   const links = [
@@ -58,6 +60,29 @@ export function Footer() {
 }
 
 export function AuthPage() {
+  const getMe = useGetMe();
+  const { setUser } = useUserStore();
+
+  // OAUTH
+  const [params] = useSearchParams();
+  const status = params.get("s") || "";
+  useEffect(() => {
+    async function onLoginOAuthSuccess() {
+      const access_token = params.get("access_token") || "";
+      const refresh_token = params.get("refresh_token") || "";
+
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("refresh_token", refresh_token);
+
+      // Nếu đăng nhập thành công thì gọi api getMe lưu vào Store global
+      const resGetMe = await getMe.mutateAsync();
+      if (resGetMe.statusCode === 200 && resGetMe?.data) {
+        setUser(resGetMe.data);
+      }
+    }
+    if (status) onLoginOAuthSuccess();
+  }, [getMe, params, setUser, status]);
+
   //
   const [isOpenRegister, setIsOpenRegister] = useState(false);
   const [isOpenLogin, setIsOpenLogin] = useState(false);

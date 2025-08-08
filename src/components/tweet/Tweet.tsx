@@ -3,11 +3,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ButtonMain } from "~/components/button-main";
-import { TypographyP } from "~/components/elements/p";
 import { EmojiSelector } from "~/components/emoji-picker";
 import { CloseIcon } from "~/components/icons/close";
-import { EarthIcon } from "~/components/icons/earth";
 import { ImageIcon } from "~/components/icons/image";
+import { ReplyDropdown } from "~/components/tweet/ReplyDropdown";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useCreateTweet } from "~/hooks/useFetchTweet";
@@ -20,6 +19,7 @@ import {
 } from "~/shared/dtos/req/tweet.dto";
 import { ETweetAudience } from "~/shared/enums/common.enum";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
+import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { toastSimple } from "~/utils/toastSimple.util";
 
@@ -33,10 +33,14 @@ const DEFAULT_VALUES: CreateTweetDto = {
 const MAX_LINES = 12;
 
 export function Tweet() {
+  const { user } = useUserStore();
   const apiCreateTweet = useCreateTweet();
   const apiUploadMedia = useUploadWithValidation();
 
   const { textareaRef, autoResize } = useTextareaAutoResize();
+  const [audience, setAudience] = useState<ETweetAudience>(
+    ETweetAudience.Everyone
+  );
   const { insertEmoji } = useEmojiInsertion(textareaRef);
   const {
     selectedFile,
@@ -65,7 +69,7 @@ export function Tweet() {
     defaultValues: DEFAULT_VALUES,
     mode: "onChange", // Enable real-time validation
   });
-  console.log("Tweet - isValid:::", isValid);
+  console.log("Tweet - form - isValid:::", isValid);
 
   // Watch content for real-time updates
   const contentValue = watch("content");
@@ -141,9 +145,9 @@ export function Tweet() {
 
         const tweetData: CreateTweetDto = {
           ...data,
+          audience: audience,
           type: ETweetType.Tweet,
-          audience: ETweetAudience.Everyone,
-          medias: mediaUrl ? [{ url: mediaUrl, type: mediaType! }] : [],
+          media: mediaUrl ? { url: mediaUrl, type: mediaType! } : undefined,
         };
 
         console.log("Creating tweet with data:", tweetData);
@@ -161,14 +165,15 @@ export function Tweet() {
       }
     },
     [
-      mediaType,
-      successForm,
-      selectedFile,
       apiCreateTweet,
       apiUploadMedia,
-      uploadedMediaUrl,
+      audience,
+      mediaType,
+      selectedFile,
       setUploadProgress,
       setUploadedMediaUrl,
+      successForm,
+      uploadedMediaUrl,
     ]
   );
 
@@ -183,10 +188,10 @@ export function Tweet() {
           <Avatar>
             <AvatarImage
               className="w-11 h-11 rounded-full"
-              src="https://github.com/shadcn.png"
-              alt="User avatar"
+              src={user?.avatar}
+              alt={user?.name}
             />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback>{user?.name}</AvatarFallback>
           </Avatar>
 
           <div className="flex-1 mt-2">
@@ -265,23 +270,19 @@ export function Tweet() {
             )}
 
             {/* File info */}
-            {mediaType && (
+            {(mediaType === EMediaType.Video ||
+              mediaType === EMediaType.Image) && (
               <div className="bg-[#EAFAFF] bg-opacity-60 text-black font-semibold text-xs p-2 rounded">
                 {mediaType === EMediaType.Video ? "🎬" : "🖼️"}{" "}
                 {selectedFile?.name} ({formatFileSize(selectedFile?.size || 0)})
               </div>
             )}
 
-            <div className="mt-3 px-3 text-[#1D9BF0] hover:bg-blue-100/60 rounded inline-flex gap-2 items-center cursor-pointer transition-colors">
-              <EarthIcon />
-              <TypographyP className="font-semibold">
-                Mọi người đều có thể trả lời
-              </TypographyP>
-            </div>
+            <ReplyDropdown onChangeReply={setAudience} />
 
             <div className="w-full border-b border-gray-200 mt-3" />
 
-            <div className="flex justify-between items-center my-2">
+            <div className="flex justify-between items-center -ml-2 my-2">
               <div className="flex items-center gap-1">
                 <WrapIcon className="hover:bg-blue-100/60">
                   <label

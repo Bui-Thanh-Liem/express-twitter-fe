@@ -1,16 +1,18 @@
 import type { OkResponse } from "~/shared/classes/response.class";
+import type { ResLoginUser } from "~/shared/dtos/res/auth.dto";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export const apiCall = async <T>(
   endpoint: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options: any = {}
 ): Promise<OkResponse<T>> => {
-  const token = localStorage.getItem("access_token");
+  const access_token = localStorage.getItem("access_token");
 
   // Tạo headers object
   const headers: HeadersInit = {
-    Authorization: token ? `Bearer ${token}` : "",
+    Authorization: access_token ? `Bearer ${access_token}` : "",
   };
 
   // CHỈ set Content-Type cho non-FormData requests
@@ -28,7 +30,60 @@ export const apiCall = async <T>(
     },
   };
 
-  //
-  const response = await fetch(`${apiUrl}${endpoint}`, config);
-  return response.json();
+  // Initial API call
+  let response = await fetch(`${apiUrl}${endpoint}`, config);
+  let result = await response.json();
+
+  // Tại đây kiểm tra xem có hết hạn access_token không, có thì refresh lại access_token
+  if (
+    (result as any).statusCode === 401 &&
+    (result as any).message === "TokenExpiredError: jwt expired"
+  ) {
+    console.log("Token đã hết hạn tiến hành refresh");
+
+    // Fix: Get refresh_token, not access_token again
+    const refresh_token = localStorage.getItem("refresh_token") || "";
+
+    // Fix: Proper fetch call with headers
+    const refreshResponse = await fetch(`${apiUrl}/auth/refresh-token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ refresh_token }),
+    });
+
+    const resRefreshToken =
+      (await refreshResponse.json()) as OkResponse<ResLoginUser>;
+
+    if (resRefreshToken.statusCode === 200) {
+      localStorage.setItem(
+        "access_token",
+        resRefreshToken.data?.access_token || ""
+      );
+      localStorage.setItem(
+        "refresh_token",
+        resRefreshToken.data?.refresh_token || ""
+      );
+
+      // Update the Authorization header with new token
+      config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${resRefreshToken.data?.access_token}`,
+      };
+
+      // Retry the original request with new token
+      response = await fetch(`${apiUrl}${endpoint}`, config);
+      result = await response.json();
+    } else {
+      // If refresh fails, redirect to login or handle accordingly
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      // You might want to redirect to login page here
+      // window.location.href = '/login';
+      throw new Error("Authentication failed");
+    }
+  }
+
+  return result;
 };

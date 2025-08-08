@@ -1,15 +1,13 @@
 import { useState } from "react";
 import { TypographyP } from "~/components/elements/p";
 import { cn } from "~/lib/utils";
-import { FollowingContent } from "./FollowingContent";
-import { ForYouContent } from "./ForYouContent";
-import { Tweet } from "./Tweet";
+import { EFeedType } from "~/shared/enums/type.enum";
+import { Tweet } from "../../components/tweet/Tweet";
+import { FollowingListTweets } from "../../components/ListTweets";
 
 export function HomePage() {
   // State để quản lý tab hiện tại
-  const [activeTab, setActiveTab] = useState<"for-you" | "following">(
-    "for-you"
-  );
+  const [activeTab, setActiveTab] = useState<EFeedType>(EFeedType.All);
 
   const classNav =
     "flex-1 h-full flex items-center justify-center text-gray-500 cursor-pointer hover:bg-gray-100 font-semibold transition-colors relative";
@@ -19,17 +17,20 @@ export function HomePage() {
   return (
     <main className="relative h-screen flex flex-col">
       {/* Fixed Navigation Bar */}
-      <div className="h-14 bg-white/50 backdrop-blur-md z-50 flex border-b border-gray-200 flex-shrink-0">
+      <div className="h-14 bg-white/50 backdrop-blur-md z-30 flex border-b border-gray-200 flex-shrink-0">
         <div className="flex w-full h-full">
           <TypographyP
-            className={cn(classNav, activeTab === "for-you" && classActive)}
-            onClick={() => setActiveTab("for-you")}
+            className={cn(classNav, activeTab === EFeedType.All && classActive)}
+            onClick={() => setActiveTab(EFeedType.All)}
           >
             Dành Cho Bạn
           </TypographyP>
           <TypographyP
-            className={cn(classNav, activeTab === "following" && classActive)}
-            onClick={() => setActiveTab("following")}
+            className={cn(
+              classNav,
+              activeTab === EFeedType.Following && classActive
+            )}
+            onClick={() => setActiveTab(EFeedType.Following)}
           >
             Đã Theo Dõi
           </TypographyP>
@@ -41,7 +42,8 @@ export function HomePage() {
       <div className="border-b border-gray-200" />
 
       <div className="flex-1 overflow-y-auto px-4 pt-4">
-        {activeTab === "for-you" ? <ForYouContent /> : <FollowingContent />}
+        <FollowingListTweets feedType={activeTab} />
+        {/* {activeTab === EFeedType.All ? <ForYouContent /> : <FollowingContent />} */}
       </div>
     </main>
   );

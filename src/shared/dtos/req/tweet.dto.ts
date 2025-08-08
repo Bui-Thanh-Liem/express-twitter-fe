@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { CONSTANT_REGEX } from '~/shared/constants'
 import { ETweetAudience } from '~/shared/enums/common.enum'
-import { EMediaType, ETweetType } from '~/shared/enums/type.enum'
+import { EFeedType, EMediaType, ETweetType } from '~/shared/enums/type.enum'
 
 const MediaSchema = z.object({
   url: z.string().url({ message: 'Invalid media URL' }),
@@ -27,7 +27,7 @@ export const CreateTweetDtoSchema = z.object({
       })
     )
     .optional(),
-  medias: z.array(MediaSchema).optional()
+  media: MediaSchema.optional()
 })
 
 export const GetOneTweetByIdDtoSchema = z.object({
@@ -48,7 +48,14 @@ export const getTweetChildrenDtoSchemaBody = z.object({
   })
 })
 
+export const getNewFeedTypeDtoSchema = z.object({
+  feed_type: z.nativeEnum(EFeedType, {
+    errorMap: () => ({ message: 'Invalid Feed Type' })
+  })
+})
+
 export type GetOneTweetByIdDto = z.infer<typeof GetOneTweetByIdDtoSchema>
 export type CreateTweetDto = z.infer<typeof CreateTweetDtoSchema>
 export type getTweetChildrenDtoParams = z.infer<typeof getTweetChildrenDtoSchemaParams>
 export type getTweetChildrenDtoBody = z.infer<typeof getTweetChildrenDtoSchemaBody>
+export type getNewFeedTypeDto = z.infer<typeof getNewFeedTypeDtoSchema>

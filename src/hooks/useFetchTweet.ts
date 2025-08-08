@@ -1,10 +1,11 @@
-import {
-  useMutation,
-  useQuery,
-  useQueryClient
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CreateTweetDto } from "~/shared/dtos/req/tweet.dto";
 import type { ResCreateTweet } from "~/shared/dtos/res/tweet.dto";
+import type { EFeedType } from "~/shared/enums/type.enum";
+import type { IQuery } from "~/shared/interfaces/common/query.interface";
+import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
+import type { ResMultiType } from "~/shared/types/response.type";
+import { buildQueryString } from "~/utils/buildQueryString";
 import { apiCall } from "~/utils/callApi.util";
 
 // ➕ POST - Tạo tweet mới
@@ -30,5 +31,27 @@ export const useGetDetailTweet = (id: string | number, enabled = true) => {
     queryKey: ["tweets", id],
     queryFn: () => apiCall(`/tweets/${id}`),
     enabled: enabled && !!id,
+  });
+};
+
+// 📄 GET - Lấy tweet mới nhất theo type feed: all - everyone - following
+export const useGetNewFeeds = (
+  feed_type: EFeedType,
+  queries?: IQuery<ITweet>
+) => {
+  return useQuery({
+    queryKey: ["tweets/feeds", feed_type, queries],
+    queryFn: () => {
+      // Tạo query string từ queries object
+      const queryString = queries ? buildQueryString(queries) : "";
+      const url = `/tweets/feeds/${feed_type}${
+        queryString ? `?${queryString}` : ""
+      }`;
+      return apiCall<ResMultiType<ITweet>>(url);
+    },
+    // Các options bổ sung
+    enabled: !!feed_type, // Chỉ chạy query khi có feed_type
+    staleTime: 30000, // Cache 30 giây
+    refetchOnWindowFocus: true,
   });
 };

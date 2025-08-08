@@ -1,0 +1,109 @@
+import React, { useEffect, useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import { ETweetAudience } from "~/shared/enums/common.enum";
+import { TypographyP } from "../elements/p";
+import { AccountFollowIcon } from "../icons/account-follow";
+import { CheckIcon } from "../icons/check";
+import { EarthIcon } from "../icons/earth";
+
+// Mock components for demo
+const replyOptions = [
+  {
+    id: ETweetAudience.Everyone,
+    title: "Everyone",
+    icon: <EarthIcon color="#fff" />,
+  },
+  {
+    id: ETweetAudience.Followers,
+    title: "Accounts you follow",
+    icon: <AccountFollowIcon color="#fff" />,
+  },
+  // {
+  //   id: "verified",
+  //   title: "Verified accounts",
+  //   icon: <AccountVerifyIcon color="#fff" />,
+  // },
+  // {
+  //   id: "mentioned",
+  //   title: "Only accounts you mention",
+  //   icon: <MentionsIcon color="#fff" />,
+  // },
+];
+
+export function ReplyDropdown({
+  onChangeReply,
+}: {
+  onChangeReply: (audience: ETweetAudience) => void;
+}) {
+  const [selectedOption, setSelectedOption] = useState<ETweetAudience>(
+    ETweetAudience.Everyone
+  );
+
+  useEffect(() => {
+    onChangeReply(selectedOption);
+  }, [onChangeReply, selectedOption]);
+
+  const selectedOptionData = replyOptions.find(
+    (opt) => opt.id === selectedOption
+  );
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="outline-0 outline-transparent -ml-3 mt-3 px-3 text-[#1D9BF0] hover:bg-blue-100/60 rounded-2xl inline-flex gap-2 items-center cursor-pointer transition-colors py-1">
+          {selectedOptionData?.icon &&
+            React.isValidElement(selectedOptionData.icon) &&
+            React.cloneElement(selectedOptionData.icon, {
+              color: "rgb(29, 155, 240)",
+            } as { color: string })}
+          <TypographyP className="font-semibold text-sm">
+            {selectedOptionData?.title} can reply
+          </TypographyP>
+        </button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        side="bottom"
+        align="start"
+        className="rounded-2xl w-80 px-0 py-2"
+      >
+        {/* Header */}
+        <div className="px-4 py-3 border-b border-gray-100">
+          <h3 className="font-semibold text-gray-900">Who can reply?</h3>
+          <p className="text-sm text-gray-500 mt-1">
+            Choose who can reply to this post.
+          </p>
+          <p className="text-sm text-gray-500">
+            Anyone mentioned can always reply.
+          </p>
+        </div>
+
+        {/* Options */}
+        {replyOptions.map((option) => (
+          <DropdownMenuItem
+            key={option.id}
+            className="cursor-pointer px-4 py-3 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
+            onClick={() => setSelectedOption(option.id)}
+          >
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-3">
+                <div className={`bg-blue-500 rounded-full p-2 text-white`}>
+                  {option.icon}
+                </div>
+                <span className="font-medium text-gray-900">
+                  {option.title}
+                </span>
+              </div>
+              {selectedOption === option.id && <CheckIcon />}
+            </div>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}

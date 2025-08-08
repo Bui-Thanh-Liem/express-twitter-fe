@@ -7,6 +7,8 @@ import StatusLoginOAuth from "./pages/StatusLoginOAuth";
 import RootLayout from "./RootLayout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import MessagesPage from "./pages/messages/Messages";
+import { RedirectIfAuthenticated } from "./components/RedirectIfAuthenticated";
 
 // Router config
 const router = createBrowserRouter([
@@ -14,7 +16,14 @@ const router = createBrowserRouter([
     path: "/",
     element: <RootLayout />,
     children: [
-      { index: true, element: <AuthPage /> },
+      {
+        index: true,
+        element: (
+          <RedirectIfAuthenticated>
+            <AuthPage />
+          </RedirectIfAuthenticated>
+        ),
+      },
       { path: "oauth", element: <StatusLoginOAuth /> },
 
       // ✅ Bọc các route cần HomeLayout ở đây
@@ -23,6 +32,7 @@ const router = createBrowserRouter([
         children: [
           { path: "home", element: <HomePage /> },
           { path: "explore", element: <ExplorePage /> },
+          { path: "messages", element: <MessagesPage /> },
         ],
       },
     ],
