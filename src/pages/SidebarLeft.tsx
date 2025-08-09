@@ -30,48 +30,48 @@ type NavItem = {
   path: string;
 };
 
-const navs: NavItem[] = [
-  {
-    name: "Trang chủ",
-    icon: <HomeIcon />,
-    path: "/home",
-  },
-  {
-    name: "Khám phá",
-    icon: <ExploreIcon />,
-    path: "/explore",
-  },
-  {
-    name: "Dấu trang",
-    icon: <BookmarkIcon />,
-    path: "/bookmarks",
-  },
-  {
-    name: "Thông báo",
-    icon: <NotificationIcon />,
-    path: "/notifications",
-  },
-  {
-    name: "Tin nhắn",
-    icon: <MessageIcon />,
-    path: "/messages",
-  },
-  {
-    name: "Cộng đồng",
-    icon: <CommunityIcon />,
-    path: "/communities",
-  },
-  {
-    name: "Hồ sơ",
-    icon: <ProfileIcon />,
-    path: "/Bui_Thanh_Liem",
-  },
-];
-
 export function SidebarLeft() {
   const { pathname } = useLocation();
   const { user } = useUserStore();
   const logout = useLogout();
+
+  const navs: NavItem[] = [
+    {
+      name: "Trang chủ",
+      icon: <HomeIcon />,
+      path: "/home",
+    },
+    {
+      name: "Khám phá",
+      icon: <ExploreIcon />,
+      path: "/explore",
+    },
+    {
+      name: "Dấu trang",
+      icon: <BookmarkIcon />,
+      path: "/bookmarks",
+    },
+    {
+      name: "Thông báo",
+      icon: <NotificationIcon />,
+      path: "/notifications",
+    },
+    {
+      name: "Tin nhắn",
+      icon: <MessageIcon />,
+      path: "/messages",
+    },
+    {
+      name: "Cộng đồng",
+      icon: <CommunityIcon />,
+      path: "/communities",
+    },
+    {
+      name: "Hồ sơ",
+      icon: <ProfileIcon />,
+      path: `/${user?.username}`,
+    },
+  ];
 
   //
   async function onLogout() {

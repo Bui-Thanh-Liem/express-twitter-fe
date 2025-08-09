@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import MessagesPage from "./pages/messages/Messages";
 import { RedirectIfAuthenticated } from "./components/RedirectIfAuthenticated";
+import { ProfilePage } from "./pages/profile/Profile";
 
 // Router config
 const router = createBrowserRouter([
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
           { path: "home", element: <HomePage /> },
           { path: "explore", element: <ExplorePage /> },
           { path: "messages", element: <MessagesPage /> },
+          { path: ":username", element: <ProfilePage /> },
         ],
       },
     ],
