@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ButtonMain } from "~/components/button-main";
 import { useLogin } from "~/hooks/useFetchAuth";
 import {
   LoginUserDtoSchema,
@@ -12,8 +11,9 @@ import { handleResponse } from "~/utils/handleResponse";
 import { AuthApple } from "../auth-apple";
 import { AuthGoogle } from "../auth-google";
 import { TypographyP } from "../elements/p";
-import { InputMain } from "../input-main";
 import { Divider } from "../ui/divider";
+import { ButtonMain } from "../ui/button";
+import { InputMain } from "../ui/input";
 
 export function LoginAccountForm({
   setOpenForm,

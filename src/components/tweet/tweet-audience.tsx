@@ -35,18 +35,18 @@ const replyOptions = [
   // },
 ];
 
-export function ReplyDropdown({
-  onChangeReply,
+export function TweetAudience({
+  onChangeAudience,
 }: {
-  onChangeReply: (audience: ETweetAudience) => void;
+  onChangeAudience: (audience: ETweetAudience) => void;
 }) {
   const [selectedOption, setSelectedOption] = useState<ETweetAudience>(
     ETweetAudience.Everyone
   );
 
   useEffect(() => {
-    onChangeReply(selectedOption);
-  }, [onChangeReply, selectedOption]);
+    onChangeAudience(selectedOption);
+  }, [onChangeAudience, selectedOption]);
 
   const selectedOptionData = replyOptions.find(
     (opt) => opt.id === selectedOption

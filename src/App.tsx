@@ -8,7 +8,7 @@ import RootLayout from "./RootLayout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import MessagesPage from "./pages/messages/Messages";
-import { RedirectIfAuthenticated } from "./components/RedirectIfAuthenticated";
+import { RedirectIfAuthenticated } from "./components/redirectIf-authenticated";
 import { ProfilePage } from "./pages/profile/Profile";
 
 // Router config

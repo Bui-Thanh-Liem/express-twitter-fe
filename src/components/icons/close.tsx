@@ -1,12 +1,12 @@
-export function CloseIcon() {
+export function CloseIcon({ color, size }: { color?: string; size?: number }) {
   return (
     <svg
-      width={12}
-      height={12}
+      width={size ? size : 12}
+      height={size ? size : 12}
       viewBox="0 0 24 24"
       aria-hidden="true"
       className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1hjwoze r-12ym1je"
-      style={{ color: "rgb(255, 255, 255)" }}
+      style={{ color: color ? color : "rgb(255, 255, 255)" }}
       fill="currentColor"
     >
       <g>

@@ -2,8 +2,8 @@ import { useState } from "react";
 import { TypographyP } from "~/components/elements/p";
 import { cn } from "~/lib/utils";
 import { EFeedType } from "~/shared/enums/type.enum";
-import { Tweet } from "../../components/tweet/Tweet";
-import { FollowingListTweets } from "../../components/ListTweets";
+import { FollowingListTweets } from "../../components/list-tweets/list-tweets";
+import { Tweet } from "../../components/tweet/tweet";
 
 export function HomePage() {
   // State để quản lý tab hiện tại
@@ -38,12 +38,13 @@ export function HomePage() {
       </div>
 
       {/* Scrollable Content */}
-      <Tweet />
+      <div className="px-4 pt-4">
+        <Tweet />
+      </div>
       <div className="border-b border-gray-200" />
 
       <div className="flex-1 overflow-y-auto px-4 pt-4">
         <FollowingListTweets feedType={activeTab} />
-        {/* {activeTab === EFeedType.All ? <ForYouContent /> : <FollowingContent />} */}
       </div>
     </main>
   );

@@ -3,6 +3,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { XIcon } from "lucide-react";
 
 import { cn } from "~/lib/utils";
+import { Logo } from "../logo";
 
 function Dialog({
   ...props
@@ -124,6 +125,75 @@ function DialogDescription({
       className={cn("text-muted-foreground text-sm", className)}
       {...props}
     />
+  );
+}
+
+export function DialogMain({
+  open,
+  isLogo = true,
+  children,
+  textHeader,
+  textDesc = "",
+  onOpenChange,
+  width = "lg",
+}: {
+  open: boolean;
+  isLogo?: boolean;
+  textDesc?: string;
+  textHeader?: string;
+  children: React.ReactNode;
+  onOpenChange: (open: boolean) => void;
+  width?:
+    | "sm"
+    | "md"
+    | "lg"
+    | "xl"
+    | "2xl"
+    | "3xl"
+    | "4xl"
+    | "5xl"
+    | "6xl"
+    | "7xl";
+}) {
+  const widthClasses = {
+    sm: "sm:max-w-sm",
+    md: "sm:max-w-md",
+    lg: "sm:max-w-lg",
+    xl: "sm:max-w-xl",
+    "2xl": "sm:max-w-2xl",
+    "3xl": "sm:max-w-3xl",
+    "4xl": "sm:max-w-4xl",
+    "5xl": "sm:max-w-5xl",
+    "6xl": "sm:max-w-6xl",
+    "7xl": "sm:max-w-7xl",
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        className={cn(
+          "rounded-2xl px-6 pt-4 pb-6 shadow-xl",
+          widthClasses[width]
+        )}
+      >
+        <div className="relative">
+          <DialogHeader>
+            {isLogo && (
+              <div className="flex justify-center">
+                <Logo size={40} />
+              </div>
+            )}
+            <DialogTitle className="text-center text-xl">
+              {textHeader}
+            </DialogTitle>
+          </DialogHeader>
+          <DialogDescription className="text-center">
+            {textDesc}
+          </DialogDescription>
+          {children}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

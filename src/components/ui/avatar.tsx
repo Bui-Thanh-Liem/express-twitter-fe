@@ -1,6 +1,5 @@
-import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
-
+import * as React from "react";
 import { cn } from "~/lib/utils";
 
 function Avatar({
@@ -48,4 +47,21 @@ function AvatarFallback({
   );
 }
 
-export { Avatar, AvatarImage, AvatarFallback };
+function AvatarMain({
+  src,
+  className,
+  alt = "avatar",
+}: {
+  className?: string;
+  alt: string | undefined;
+  src: string | undefined;
+}) {
+  return (
+    <Avatar className={cn("w-10 h-10", className)}>
+      <AvatarImage src={src} alt={alt} className="object-cover" />
+      <AvatarFallback>{alt[0].toLocaleUpperCase()}</AvatarFallback>
+    </Avatar>
+  );
+}
+
+export { Avatar, AvatarFallback, AvatarImage, AvatarMain };

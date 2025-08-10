@@ -1,10 +1,10 @@
 "use client";
 
-import { ButtonMain } from "~/components/button-main";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { InputMain } from "../input-main";
+import { ButtonMain } from "../ui/button";
+import { InputMain } from "../ui/input";
 
 const FormSchema = z.object({
   email: z.string().email("Email không hợp lệ"),

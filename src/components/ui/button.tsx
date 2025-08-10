@@ -4,6 +4,19 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "~/lib/utils";
 
+type ButtonSize = "sm" | "md" | "lg";
+
+type ButtonMainProps = React.ComponentProps<typeof Button> & {
+  fullWidth?: boolean;
+  size?: ButtonSize;
+};
+
+const sizeStyles: Record<ButtonSize, string> = {
+  sm: "h-8 px-3 text-sm",
+  md: "h-10 px-4 text-base",
+  lg: "h-13 px-6 text-lg",
+};
+
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
@@ -56,5 +69,30 @@ function Button({
   );
 }
 
+function ButtonMain({
+  className,
+  fullWidth,
+  size = "md",
+  variant,
+  ...props
+}: ButtonMainProps) {
+  const classes = variant
+    ? ""
+    : "bg-black hover:bg-[#333] text-white rounded-full shadow  cursor-pointer";
+
+  return (
+    <Button
+      variant={variant}
+      className={cn(
+        classes,
+        sizeStyles[size],
+        fullWidth && "w-full",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
 // eslint-disable-next-line react-refresh/only-export-components
-export { Button, buttonVariants };
+export { Button, buttonVariants, ButtonMain };

@@ -1,8 +1,6 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import type { ReactNode } from "react";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ButtonMain } from "~/components/button-main";
 import { TypographyP } from "~/components/elements/p";
 import { BookmarkIcon } from "~/components/icons/bookmark";
 import { CommunityIcon } from "~/components/icons/communities";
@@ -12,6 +10,7 @@ import { HomeIcon } from "~/components/icons/home";
 import { MessageIcon } from "~/components/icons/messages";
 import { NotificationIcon } from "~/components/icons/notifications";
 import { ProfileIcon } from "~/components/icons/profile";
+import { AvatarMain } from "~/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +22,7 @@ import { cn } from "~/lib/utils";
 import { useUserStore } from "~/store/useUserStore";
 import { Logo } from "../components/logo";
 import { WrapIcon } from "../components/wrapIcon";
+import { ButtonMain } from "~/components/ui/button";
 
 type NavItem = {
   name: string;
@@ -69,7 +69,7 @@ export function SidebarLeft() {
     {
       name: "Hồ sơ",
       icon: <ProfileIcon />,
-      path: `/${user?.username}`,
+      path: user?.username ? `/${user.username}` : "/profile",
     },
   ];
 
@@ -79,7 +79,7 @@ export function SidebarLeft() {
   }
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full pt-1">
       <h2 className="text-lg font-semibold mb-4">
         <WrapIcon>
           <Logo size={30} />
@@ -118,44 +118,39 @@ export function SidebarLeft() {
       </div>
 
       <div className="absolute w-full bottom-3 p-2 px-3 rounded-4xl hover:bg-gray-100 cursor-pointer flex items-center gap-3">
-        <Avatar>
-          <AvatarImage className="w-11 h-11 rounded-full" src={user?.avatar} />
-          <AvatarFallback>{user?.name}</AvatarFallback>
-        </Avatar>
+        <AvatarMain src={user?.avatar} alt={user?.name} />
         <div>
           <span className="block font-bold">{user?.name}</span>
           <span className="text-sm text-gray-400">@{user?.username}</span>
         </div>
 
         <div className="absolute right-4">
-          <div className="flex items-center justify-between px-4 py-2 rounded-xl transition">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="outline-0 outline-transparent">
-                  <WrapIcon>
-                    <DotIcon />
-                  </WrapIcon>
-                </button>
-              </DropdownMenuTrigger>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="outline-0 outline-transparent">
+                <WrapIcon>
+                  <DotIcon />
+                </WrapIcon>
+              </button>
+            </DropdownMenuTrigger>
 
-              {/*  */}
-              <DropdownMenuContent
-                side="top"
-                align="end"
-                className="rounded-2xl w-60 px-0 py-2"
+            {/*  */}
+            <DropdownMenuContent
+              side="top"
+              align="end"
+              className="rounded-2xl w-60 px-0 py-2"
+            >
+              <DropdownMenuItem className="cursor-pointer h-10 px-4">
+                Add an existing account
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer h-10 px-4"
+                onClick={onLogout}
               >
-                <DropdownMenuItem className="cursor-pointer h-10 px-4">
-                  Add an existing account
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer h-10 px-4"
-                  onClick={onLogout}
-                >
-                  Log out @{user?.username}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+                Log out @{user?.username}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>

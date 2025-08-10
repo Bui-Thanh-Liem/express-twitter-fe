@@ -1,6 +1,5 @@
 "use client";
 
-import { ButtonMain } from "~/components/button-main";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -11,6 +10,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "../ui/input-otp";
+import { ButtonMain } from "../ui/button";
 
 const FormSchema = z.object({
   otp: z.string().length(6, "Otp không hợp lệ"),

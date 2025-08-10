@@ -1,12 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ButtonMain } from "~/components/button-main";
 import { EmojiSelector } from "~/components/emoji-picker";
 import { CloseIcon } from "~/components/icons/close";
 import { ImageIcon } from "~/components/icons/image";
-import { ReplyDropdown } from "~/components/tweet/ReplyDropdown";
+import { TweetAudience } from "~/components/tweet/tweet-audience";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useCreateTweet } from "~/hooks/useFetchTweet";
@@ -22,6 +20,8 @@ import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { toastSimple } from "~/utils/toastSimple.util";
+import { AvatarMain } from "../ui/avatar";
+import { ButtonMain } from "../ui/button";
 
 // Constants
 const DEFAULT_VALUES: CreateTweetDto = {
@@ -32,7 +32,19 @@ const DEFAULT_VALUES: CreateTweetDto = {
 
 const MAX_LINES = 12;
 
-export function Tweet() {
+export function Tweet({
+  parent_id,
+  onSuccess,
+  tweetType = ETweetType.Tweet,
+  contentBtn = "Đăng Bài",
+  placeholder = "Có chuyện gì thế ?",
+}: {
+  parent_id?: string;
+  placeholder?: string;
+  contentBtn?: string;
+  onSuccess?: () => void;
+  tweetType?: ETweetType;
+}) {
   const { user } = useUserStore();
   const apiCreateTweet = useCreateTweet();
   const apiUploadMedia = useUploadWithValidation();
@@ -107,7 +119,8 @@ export function Tweet() {
     removeMedia(); // Clear media after successful submission
     setUploadedMediaUrl("");
     setUploadProgress(0);
-  }, [removeMedia, reset, setUploadProgress, setUploadedMediaUrl]);
+    if (onSuccess) onSuccess(); // Sử dụng cho bên ngoài component cha (VD: đống modal)
+  }, [removeMedia, reset, setUploadProgress, setUploadedMediaUrl, onSuccess]);
 
   const onSubmit = useCallback(
     async (data: CreateTweetDto) => {
@@ -141,12 +154,12 @@ export function Tweet() {
           }
         }
 
-        // Create tweet with media URL if available
-
+        //
         const tweetData: CreateTweetDto = {
           ...data,
           audience: audience,
-          type: ETweetType.Tweet,
+          ...(parent_id && { parent_id: parent_id }), // Nếu có giá trị thì không phải tweet chính
+          type: tweetType,
           media: mediaUrl ? { url: mediaUrl, type: mediaType! } : undefined,
         };
 
@@ -165,15 +178,17 @@ export function Tweet() {
       }
     },
     [
-      apiCreateTweet,
-      apiUploadMedia,
       audience,
+      tweetType,
       mediaType,
+      parent_id,
+      successForm,
       selectedFile,
+      apiUploadMedia,
+      apiCreateTweet,
+      uploadedMediaUrl,
       setUploadProgress,
       setUploadedMediaUrl,
-      successForm,
-      uploadedMediaUrl,
     ]
   );
 
@@ -182,18 +197,10 @@ export function Tweet() {
   const isFormDisabled = isContentEmpty || isSubmitting || isUploading;
 
   return (
-    <div className="px-4 pt-4">
+    <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex gap-4">
-          <Avatar>
-            <AvatarImage
-              className="w-11 h-11 rounded-full"
-              src={user?.avatar}
-              alt={user?.name}
-            />
-            <AvatarFallback>{user?.name}</AvatarFallback>
-          </Avatar>
-
+          <AvatarMain src={user?.avatar} alt={user?.name} />
           <div className="flex-1 mt-2">
             <textarea
               {...register("content")}
@@ -203,7 +210,7 @@ export function Tweet() {
               autoCorrect="off"
               spellCheck="false"
               className="border-0 outline-0 w-full text-lg placeholder:text-gray-500 bg-transparent resize-none"
-              placeholder="Có chuyện gì thế ?"
+              placeholder={placeholder}
               onInput={handleTextareaInput}
               rows={1}
             />
@@ -278,7 +285,10 @@ export function Tweet() {
               </div>
             )}
 
-            <ReplyDropdown onChangeReply={setAudience} />
+            {(tweetType === ETweetType.Tweet ||
+              tweetType === ETweetType.QuoteTweet) && (
+              <TweetAudience onChangeAudience={setAudience} />
+            )}
 
             <div className="w-full border-b border-gray-200 mt-3" />
 
@@ -311,20 +321,22 @@ export function Tweet() {
                 {/* Character count indicator */}
                 <span
                   className={`text-sm ${
-                    contentValue.length > 280 ? "text-red-500" : "text-gray-500"
+                    contentValue?.length > 280
+                      ? "text-red-500"
+                      : "text-gray-500"
                   }`}
                 >
-                  {contentValue.length}/280
+                  {contentValue?.length}/280
                 </span>
 
                 <ButtonMain type="submit" disabled={isFormDisabled}>
                   {isUploading
-                    ? `Đang đăng ${
+                    ? `${contentBtn} ${
                         mediaType === EMediaType.Video ? "video" : "ảnh"
                       }...`
                     : isSubmitting
                     ? "Đang đăng..."
-                    : "Đăng Bài"}
+                    : contentBtn}
                 </ButtonMain>
               </div>
             </div>

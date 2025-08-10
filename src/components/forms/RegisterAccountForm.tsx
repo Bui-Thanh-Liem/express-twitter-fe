@@ -1,12 +1,12 @@
 "use client";
 
-import { ButtonMain } from "~/components/button-main";
 import { Label } from "~/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { InputMain } from "../input-main";
-import { SelectMain } from "../select-main";
+import { ButtonMain } from "../ui/button";
+import { InputMain } from "../ui/input";
+import { SelectMain } from "../ui/select";
 
 const FormSchema = z
   .object({
