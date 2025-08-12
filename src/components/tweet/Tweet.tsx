@@ -11,15 +11,18 @@ import { useCreateTweet } from "~/hooks/useFetchTweet";
 import { useUploadWithValidation } from "~/hooks/useFetchUpload";
 import { useMediaPreview } from "~/hooks/useMediaPreview";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
+import { cn } from "~/lib/utils";
 import {
   CreateTweetDtoSchema,
   type CreateTweetDto,
 } from "~/shared/dtos/req/tweet.dto";
 import { ETweetAudience } from "~/shared/enums/common.enum";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
+import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { toastSimple } from "~/utils/toastSimple.util";
+import { TweetItem } from "../list-tweets/item-tweet";
 import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
 
@@ -33,13 +36,13 @@ const DEFAULT_VALUES: CreateTweetDto = {
 const MAX_LINES = 12;
 
 export function Tweet({
-  parent_id,
+  tweet,
   onSuccess,
   tweetType = ETweetType.Tweet,
   contentBtn = "Đăng Bài",
   placeholder = "Có chuyện gì thế ?",
 }: {
-  parent_id?: string;
+  tweet?: ITweet;
   placeholder?: string;
   contentBtn?: string;
   onSuccess?: () => void;
@@ -158,7 +161,7 @@ export function Tweet({
         const tweetData: CreateTweetDto = {
           ...data,
           audience: audience,
-          ...(parent_id && { parent_id: parent_id }), // Nếu có giá trị thì không phải tweet chính
+          ...(tweet?._id && { parent_id: tweet?._id }), // Nếu có giá trị thì không phải tweet chính
           type: tweetType,
           media: mediaUrl ? { url: mediaUrl, type: mediaType! } : undefined,
         };
@@ -178,16 +181,16 @@ export function Tweet({
       }
     },
     [
+      uploadedMediaUrl,
+      selectedFile,
       audience,
+      tweet?._id,
       tweetType,
       mediaType,
-      parent_id,
-      successForm,
-      selectedFile,
-      apiUploadMedia,
       apiCreateTweet,
-      uploadedMediaUrl,
+      successForm,
       setUploadProgress,
+      apiUploadMedia,
       setUploadedMediaUrl,
     ]
   );
@@ -217,7 +220,10 @@ export function Tweet({
 
             {/* Media preview */}
             {previewUrl && (
-              <div className="relative mt-3 rounded-xl overflow-hidden border border-gray-200 inline-block max-w-full">
+              <div
+                key={tweetType}
+                className="relative mt-3 rounded-xl overflow-hidden border border-gray-200 inline-block max-w-full"
+              >
                 {mediaType === EMediaType.Image ? (
                   <img
                     src={previewUrl}
@@ -285,24 +291,36 @@ export function Tweet({
               </div>
             )}
 
+            {/*  */}
             {(tweetType === ETweetType.Tweet ||
               tweetType === ETweetType.QuoteTweet) && (
               <TweetAudience onChangeAudience={setAudience} />
             )}
 
+            {/*  */}
+            {tweetType === ETweetType.QuoteTweet && tweet && (
+              <div className="w-ful mt-1 rounded-3xl border overflow-hidden">
+                <TweetItem isAction={false} tweet={tweet} />
+              </div>
+            )}
             <div className="w-full border-b border-gray-200 mt-3" />
 
-            <div className="flex justify-between items-center -ml-2 my-2">
+            <div
+              className={cn(
+                "flex justify-between items-center -ml-2 my-2 bg-white",
+                tweetType === ETweetType.QuoteTweet ? "" : ""
+              )}
+            >
               <div className="flex items-center gap-1">
                 <WrapIcon className="hover:bg-blue-100/60">
                   <label
-                    htmlFor="image-upload"
+                    htmlFor={`image-upload-${tweetType}`}
                     className="cursor-pointer"
                     title="Thêm ảnh hoặc video"
                   >
                     <ImageIcon />
                     <input
-                      id="image-upload"
+                      id={`image-upload-${tweetType}`}
                       className="hidden"
                       type="file"
                       accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/mov,video/avi,video/quicktime"

@@ -54,7 +54,7 @@ function DialogContent({
   showCloseButton?: boolean;
 }) {
   return (
-    <DialogPortal data-slot="dialog-portal">
+    <DialogPortal data-slot="dialog-portal" container={document.body}>
       <DialogOverlay />
       <DialogPrimitive.Content
         data-slot="dialog-content"
@@ -172,11 +172,12 @@ export function DialogMain({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          "rounded-2xl px-6 pt-4 pb-6 shadow-xl",
+          "rounded-2xl px-0 pt-0 pb-0 shadow-xl max-h-[90vh] flex flex-col", // px-0 để scroll không đè padding
           widthClasses[width]
         )}
       >
-        <div className="relative">
+        {/* Header cố định */}
+        <div className="px-6 pt-4">
           <DialogHeader>
             {isLogo && (
               <div className="flex justify-center">
@@ -190,8 +191,17 @@ export function DialogMain({
           <DialogDescription className="text-center">
             {textDesc}
           </DialogDescription>
+        </div>
+
+        {/* Nội dung cuộn nằm trong dialog */}
+        <div
+          className="overflow-auto px-6 pb-6"
+          style={{ maxHeight: "calc(90vh - 100px)" }}
+        >
           {children}
         </div>
+
+        <div className="h-.5" />
       </DialogContent>
     </Dialog>
   );

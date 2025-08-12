@@ -136,7 +136,10 @@ export function ProfilePage() {
 
           {/* <!-- Name and Username --> */}
           <div className="mb-3">
-            <h2 className="text-2xl font-bold">{profile?.name}</h2>
+            <h2 className="text-xl font-bold flex items-center gap-1">
+              {profile?.name}{" "}
+              <VerifyIcon active={!!profile?.verify} size={20} />
+            </h2>
             <p className="text-gray-500">@{profile?.username}</p>
           </div>
 
@@ -165,11 +168,11 @@ export function ProfilePage() {
           {/* <!-- Following and Followers --> */}
           <div className="flex items-center space-x-4 text-sm mb-4">
             <div className="hover:underline cursor-pointer">
-              <span className="font-semibold">123</span>
+              <span className="font-semibold">{profile?.following_count}</span>
               <span className="text-gray-500"> Following</span>
             </div>
             <div className="hover:underline cursor-pointer">
-              <span className="font-semibold">1.2K</span>
+              <span className="font-semibold">{profile?.follower_count}</span>
               <span className="text-gray-500"> Followers</span>
             </div>
           </div>

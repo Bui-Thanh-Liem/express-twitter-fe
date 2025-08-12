@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { TypographyP } from "~/components/elements/p";
 import { cn } from "~/lib/utils";
-import { EFeedType } from "~/shared/enums/type.enum";
-import { FollowingListTweets } from "../../components/list-tweets/list-tweets";
+import { EFeedType, ETweetType } from "~/shared/enums/type.enum";
+import { ListTweets } from "../../components/list-tweets/list-tweets";
 import { Tweet } from "../../components/tweet/tweet";
 
 export function HomePage() {
@@ -39,12 +39,12 @@ export function HomePage() {
 
       {/* Scrollable Content */}
       <div className="px-4 pt-4">
-        <Tweet />
+        <Tweet key={ETweetType.Tweet} />
       </div>
       <div className="border-b border-gray-200" />
 
-      <div className="flex-1 overflow-y-auto px-4 pt-4">
-        <FollowingListTweets feedType={activeTab} />
+      <div className="flex-1 overflow-y-auto">
+        <ListTweets feedType={activeTab} />
       </div>
     </main>
   );

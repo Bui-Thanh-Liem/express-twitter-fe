@@ -7,7 +7,7 @@ import { TweetItem } from "./item-tweet";
 // Loading skeleton component
 const LoadingSkeleton = ({ count = 3 }: { count?: number }) => {
   return (
-    <div className="animate-pulse">
+    <div className="animate-pulse px-4 py-2">
       {Array.from({ length: count }, (_, index) => (
         <div key={index} className="mb-6">
           <div className="flex items-center mb-3">
@@ -17,8 +17,9 @@ const LoadingSkeleton = ({ count = 3 }: { count?: number }) => {
               <div className="h-3 bg-gray-200 rounded w-24"></div>
             </div>
           </div>
-          <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-full my-2"></div>
           <div className="h-4 bg-gray-200 rounded w-3/4 mb-3"></div>
+          <div className="h-3 bg-gray-200 rounded w-3/4 my-3"></div>
           <div className="w-full aspect-video bg-gray-200 rounded-lg mb-4"></div>
           <div className="flex space-x-6">
             <div className="h-3 bg-gray-200 rounded w-12"></div>
@@ -31,7 +32,7 @@ const LoadingSkeleton = ({ count = 3 }: { count?: number }) => {
   );
 };
 
-export const FollowingListTweets = ({ feedType }: { feedType: EFeedType }) => {
+export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
   // State để quản lý pagination và data
   const [page, setPage] = useState(1);
   const [allTweets, setAllTweets] = useState<ITweet[]>([]);
@@ -171,7 +172,6 @@ export const FollowingListTweets = ({ feedType }: { feedType: EFeedType }) => {
               <TweetItem
                 key={tweet._id || `${tweet._id}-${index}`}
                 tweet={tweet}
-                index={index}
               />
               {index < allTweets.length - 1 && (
                 <hr className="border-gray-200" />

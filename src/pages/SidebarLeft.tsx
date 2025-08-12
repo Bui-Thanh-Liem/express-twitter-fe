@@ -140,11 +140,11 @@ export function SidebarLeft() {
               align="end"
               className="rounded-2xl w-60 px-0 py-2"
             >
-              <DropdownMenuItem className="cursor-pointer h-10 px-4">
+              <DropdownMenuItem className="cursor-pointer h-10 px-4 font-semibold">
                 Add an existing account
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="cursor-pointer h-10 px-4"
+                className="cursor-pointer h-10 px-4 font-semibold"
                 onClick={onLogout}
               >
                 Log out @{user?.username}
