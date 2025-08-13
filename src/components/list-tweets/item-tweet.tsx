@@ -15,8 +15,6 @@ import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
 // Component cho Media (Image hoặc Video)
 const MediaContent = ({ url, type }: IMedia) => {
   if (!url) return null;
-  console.log("MediaContent");
-
   return (
     <>
       <div className="w-full aspect-video rounded-lg shadow overflow-hidden mb-6 bg-black">

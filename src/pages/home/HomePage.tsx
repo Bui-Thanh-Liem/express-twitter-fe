@@ -44,6 +44,10 @@ export function HomePage() {
       <div className="border-b border-gray-200" />
 
       <div className="flex-1 overflow-y-auto">
+        {/* <div className="px-4 pt-4">
+          <Tweet key={ETweetType.Tweet} />
+        </div>
+        <div className="border-b border-gray-200" /> */}
         <ListTweets feedType={activeTab} />
       </div>
     </main>

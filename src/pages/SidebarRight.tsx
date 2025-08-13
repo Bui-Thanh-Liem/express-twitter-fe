@@ -1,13 +1,23 @@
+import { useState } from "react";
+import { SearchMain } from "~/components/ui/search";
+
 export function SidebarRight() {
+  const [searchVal, setSearchVal] = useState("");
+  
   return (
-    <>
-      <h2 className="text-lg font-semibold mb-4">🔥 Xu hướng</h2>
-      <ul className="space-y-2 text-sm text-gray-700">
-        <li>#VideoHot</li>
-        <li>#StreamNow</li>
-        <li>#TechTrends</li>
-        <li>#TinTuc24h</li>
-      </ul>
-    </>
+    <div>
+      <div className="px-4 pt-2 flex items-center gap-3">
+        <SearchMain
+          size="lg"
+          // suggestions={[
+          //   { id: "1", label: "liem 1" },
+          //   { id: "1", label: "liem 2" },
+          // ]}
+          value={searchVal}
+          onClear={() => setSearchVal("")}
+          onChange={setSearchVal}
+        />
+      </div>
+    </div>
   );
 }
