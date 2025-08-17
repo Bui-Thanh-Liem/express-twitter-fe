@@ -1,5 +1,5 @@
-import { BarChart3, Bookmark, Heart, MessageCircle, Share } from "lucide-react";
-import { useState } from "react";
+import { BarChart3, Bookmark, MessageCircle, Share } from "lucide-react";
+import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { EMediaType } from "~/shared/enums/type.enum";
 import type { IMedia } from "~/shared/interfaces/common/media.interface";
@@ -7,10 +7,27 @@ import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
 import { HLSPlayer } from "../hls/HLSPlayer";
+import { MessageIcon } from "../icons/messages";
 import { VerifyIcon } from "../icons/verify";
 import { AvatarMain } from "../ui/avatar";
+import { ButtonMain } from "../ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { WrapIcon } from "../wrapIcon";
 import { ActionCommentTweet } from "./action-comment-tweet";
+import { ActionLikeTweet } from "./action-like-tweet";
 import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
+
+//
+function NameItemUser({ user }: { user: IUser }) {
+  return (
+    <Link to={`/${user.username}`} className="flex items-center gap-2">
+      <h3 className="text-lg font-semibold hover:underline hover:cursor-pointer">
+        {user.name}
+      </h3>
+      <VerifyIcon active={!!user.verify} size={20} />
+    </Link>
+  );
+}
 
 // Component cho Media (Image hoặc Video)
 const MediaContent = ({ url, type }: IMedia) => {
@@ -40,6 +57,68 @@ const MediaContent = ({ url, type }: IMedia) => {
   );
 };
 
+//
+function ProfileHover({
+  tweet,
+  children,
+}: {
+  tweet: ITweet;
+  children: ReactNode;
+}) {
+  const { user_id } = tweet;
+  const author = user_id as IUser;
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  function onOpen() {
+    setTimeout(() => {
+      setIsOpen(true);
+    }, 200);
+  }
+
+  return (
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger
+        className="outline-0 border-0"
+        asChild
+        onMouseEnter={onOpen}
+      >
+        {children}
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-72 p-4 bg-white border rounded-2xl shadow-lg"
+        onMouseEnter={onOpen}
+        onMouseLeave={() => setIsOpen(false)}
+      >
+        <div className="flex items-center justify-between">
+          <AvatarMain
+            src={author.avatar}
+            alt={author.name}
+            className="mr-3 w-16 h-16"
+          />
+          <div className="flex items-center gap-2">
+            <WrapIcon className="border">
+              <MessageIcon size={18} />
+            </WrapIcon>
+            <ButtonMain size="sm">Follow</ButtonMain>
+          </div>
+        </div>
+        <div className="mt-1.5">
+          <NameItemUser user={author} />
+          <p className="text-sm text-gray-500">@{author.username}</p>
+        </div>
+        <div className="text-sm mt-1.5">
+          {author?.bio?.split("\\n").map((p) => (
+            <p className="leading-relaxed" key={p}>
+              {p}
+            </p>
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 export const TweetItem = ({
   tweet,
   isAction = true,
@@ -50,13 +129,11 @@ export const TweetItem = ({
   const {
     _id,
     media,
-    isLike,
     content,
     user_id,
     hashtags,
     user_view,
     created_at,
-    likes_count,
     guest_view,
     isBookmark,
     comments_count,
@@ -73,15 +150,17 @@ export const TweetItem = ({
         <div className="flex items-center mb-3">
           <AvatarMain src={author.avatar} alt={author.name} className="mr-3" />
           <div>
-            <Link
-              to={`/${author.username}`}
-              className="flex items-center gap-2"
-            >
-              <h3 className="text-lg font-semibold hover:underline hover:cursor-pointer">
-                {author.name}
-              </h3>
-              <VerifyIcon active={!!author.verify} size={20} />
-            </Link>
+            <ProfileHover tweet={tweet}>
+              <Link
+                to={`/${author.username}`}
+                className="flex items-center gap-2"
+              >
+                <h3 className="text-lg font-semibold hover:underline hover:cursor-pointer">
+                  {author.name}
+                </h3>
+                <VerifyIcon active={!!author.verify} size={20} />
+              </Link>
+            </ProfileHover>
             <p className="text-sm text-gray-500">
               @{author.username} •{" "}
               {formatTimeAgo(created_at as unknown as string)}
@@ -132,16 +211,20 @@ export const TweetItem = ({
             <ActionRetweetQuoteTweet tweet={tweet} />
 
             {/* Likes */}
-            <button
+            {/* <button
               className={`flex items-center space-x-2 transition-colors group cursor-pointer ${
-                isLike ? "text-red-500" : "hover:text-red-500"
+                isLike ? "text-pink-500" : "hover:text-pink-500"
               }`}
+              onClick={() => {
+                toggleLike.mutate(_id);
+              }}
             >
               <div className="p-2 rounded-full group-hover:bg-red-50 transition-colors">
                 <Heart size={18} fill={isLike ? "currentColor" : "none"} />
               </div>
-              <span className="text-sm">{likes_count || 0}</span>
-            </button>
+              <span className="text-sm">{likes_count}</span>
+            </button> */}
+            <ActionLikeTweet tweet={tweet} />
 
             {/* Views */}
             <button className="flex items-center space-x-2 hover:text-blue-500 transition-colors group">
@@ -180,8 +263,6 @@ export const TweetItem = ({
         isOpen={isOpenComment}
         setOpen={setOpenComment}
       />
-
-      {/*  */}
     </>
   );
 };

@@ -32,6 +32,7 @@ export const apiCall = async <T>(
 
   // Initial API call
   let response = await fetch(`${apiUrl}${endpoint}`, config);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let result = (await response.json()) as OkResponse<any>;
 
   // Tại đây kiểm tra xem có hết hạn access_token không, có thì refresh lại access_token
@@ -77,8 +78,8 @@ export const apiCall = async <T>(
       result = await response.json();
     } else {
       // If refresh fails, redirect to login or handle accordingly
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
+      // localStorage.removeItem("access_token");
+      // localStorage.removeItem("refresh_token");
 
       // You might want to redirect to login page here
       console.log("Lỗi khi gọi api refresh token:::", resRefreshToken);

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useGetNewFeeds } from "~/hooks/useFetchTweet";
 import { EFeedType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
+import { ErrorProcess } from "../error-process";
 import { TweetItem } from "./item-tweet";
 
 // Loading skeleton component
@@ -138,20 +139,14 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
 
       {/* Error state */}
       {error && (
-        <div className="text-center py-8">
-          <p className="text-red-500 mb-2">❌ Có lỗi xảy ra khi tải dữ liệu</p>
-          <button
-            onClick={() => {
-              setPage(1);
-              setAllTweets([]);
-              setHasMore(true);
-              window.location.reload();
-            }}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Thử lại
-          </button>
-        </div>
+        <ErrorProcess
+          onClick={() => {
+            setPage(1);
+            setAllTweets([]);
+            setHasMore(true);
+            window.location.reload();
+          }}
+        />
       )}
 
       {/* Empty state */}

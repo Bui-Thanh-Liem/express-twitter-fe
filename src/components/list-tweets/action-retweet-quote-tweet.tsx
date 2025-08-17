@@ -29,7 +29,7 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
     const tweetData: CreateTweetDto = {
       parent_id: tweet._id,
       content: tweet.content,
-      hashtags: hashtags?.map((hashtag) => hashtag._id),
+      hashtags: hashtags?.map((hashtag) => hashtag.name),
       audience: tweet.audience,
       type: ETweetType.Retweet,
       media: tweet.media ? tweet.media : undefined,

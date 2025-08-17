@@ -28,7 +28,7 @@ export const useCreateTweet = () => {
 // 📄 GET - Lấy chi tiết 1 tweet
 export const useGetDetailTweet = (id: string | number, enabled = true) => {
   return useQuery({
-    queryKey: ["tweets", id],
+    queryKey: ["tweet", id],
     queryFn: () => apiCall(`/tweets/${id}`),
     enabled: enabled && !!id,
   });
@@ -39,8 +39,10 @@ export const useGetNewFeeds = (
   feed_type: EFeedType,
   queries?: IQuery<ITweet>
 ) => {
+  const normalizedQueries = queries ? JSON.stringify(queries) : "";
+
   return useQuery({
-    queryKey: ["tweets/feeds", feed_type, queries],
+    queryKey: ["tweets/feeds", feed_type, normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
@@ -49,9 +51,11 @@ export const useGetNewFeeds = (
       }`;
       return apiCall<ResMultiType<ITweet>>(url);
     },
+
     // Các options bổ sung
     enabled: !!feed_type, // Chỉ chạy query khi có feed_type
-    staleTime: 30000, // Cache 30 giây
-    refetchOnWindowFocus: true,
+    staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
+    refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
+    refetchOnMount: false, // ✅ Tắt refetch khi mount
   });
 };
