@@ -1,19 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { OkResponse } from "~/shared/classes/response.class";
-import type { ResToggleLike } from "~/shared/dtos/res/like.dto";
+import type { ResToggleBookmark } from "~/shared/dtos/res/bookmark.dto";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { ResMultiType } from "~/shared/types/response.type";
 import { apiCall } from "~/utils/callApi.util";
 
 //
-export const useLikeTweet = () => {
+export const useBookmarkTweet = () => {
   // Lấy instance của React Query client để thao tác với cache
   const queryClient = useQueryClient();
 
   return useMutation({
     // Function thực hiện call API
-    mutationFn: async (tweetId: string): Promise<OkResponse<ResToggleLike>> => {
-      return apiCall<ResToggleLike>(`/likes/toggle/${tweetId}`, {
+    mutationFn: async (
+      tweetId: string
+    ): Promise<OkResponse<ResToggleBookmark>> => {
+      return apiCall<ResToggleBookmark>(`/bookmarks/toggle/${tweetId}`, {
         method: "POST",
       });
     },
@@ -34,7 +36,7 @@ export const useLikeTweet = () => {
         exact: false,
       });
 
-      // Hàm cập nhật like trước khi gọi api
+      // Hàm cập nhật bookmark trước khi gọi api
       const updateTweetInData = (
         old: OkResponse<ResMultiType<ITweet>> | undefined
       ) => {
@@ -46,15 +48,11 @@ export const useLikeTweet = () => {
             ...old.data,
             items: old.data.items.map((tweet: ITweet) => {
               if (tweet._id === tweetId) {
-                const isCurrentlyLiked = tweet.isLike ?? false;
-                const currentCount = tweet.likes_count ?? 0;
+                const isCurrentlyBookmarked = tweet.isBookmark ?? false;
 
                 return {
                   ...tweet,
-                  isLike: !isCurrentlyLiked,
-                  likes_count: isCurrentlyLiked
-                    ? Math.max(0, currentCount - 1)
-                    : currentCount + 1,
+                  isBookmark: !isCurrentlyBookmarked,
                 };
               }
               return tweet;
@@ -70,7 +68,6 @@ export const useLikeTweet = () => {
           return updateTweetInData(old);
         }
       );
-      
 
       // Tương tự trên thực hiện cập nhật cache trước khi gọi api (cho Details)
       queryClient.setQueryData<OkResponse<ITweet>>(
@@ -78,17 +75,13 @@ export const useLikeTweet = () => {
         (old) => {
           if (!old?.data) return old;
 
-          const isCurrentlyLiked = old.data.isLike ?? false;
-          const currentCount = old.data.likes_count ?? 0;
+          const isCurrentlyBookmarked = old.data.isBookmark ?? false;
 
           return {
             ...old,
             data: {
               ...old.data,
-              isLike: !isCurrentlyLiked,
-              likes_count: isCurrentlyLiked
-                ? Math.max(0, currentCount - 1)
-                : currentCount + 1,
+              isBookmark: !isCurrentlyBookmarked,
             },
           };
         }
@@ -129,8 +122,7 @@ export const useLikeTweet = () => {
               if (tweet._id === tweetId) {
                 return {
                   ...tweet,
-                  isLike: result.data?.status === "Like",
-                  likes_count: result.data?.likes_count ?? tweet.likes_count,
+                  isBookmark: result.data?.status === "Bookmark",
                 };
               }
               return tweet;
@@ -155,8 +147,7 @@ export const useLikeTweet = () => {
             ...old,
             data: {
               ...old.data,
-              isLike: result.data?.status === "Like",
-              likes_count: result.data?.likes_count ?? old.data.likes_count,
+              isBookmark: result.data?.status === "Bookmark",
             },
           };
         }

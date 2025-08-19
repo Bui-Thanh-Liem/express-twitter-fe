@@ -29,7 +29,7 @@ export const useCreateTweet = () => {
 export const useGetDetailTweet = (id: string | number, enabled = true) => {
   return useQuery({
     queryKey: ["tweet", id],
-    queryFn: () => apiCall(`/tweets/${id}`),
+    queryFn: () => apiCall<ITweet>(`/tweets/${id}`),
     enabled: enabled && !!id,
   });
 };
