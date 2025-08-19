@@ -14,7 +14,9 @@ import { ButtonMain } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useGetOneByUsername } from "~/hooks/useFetchUser";
+import { ETweetType } from "~/shared/enums/type.enum";
 import { useUserStore } from "~/store/useUserStore";
+import { ProfileTweetsByType } from "./ProfileTweetsByType";
 
 export function ProfilePage() {
   const navigate = useNavigate();
@@ -206,41 +208,45 @@ export function ProfilePage() {
         </div>
 
         {/*  */}
-        <Tabs defaultValue="posts" className="mb-12">
+        <Tabs defaultValue={ETweetType.Tweet.toString()} className="mb-12">
           <div className="bg-white p-2 px-4 sticky top-0">
             <TabsList className="w-full">
-              <TabsTrigger className="cursor-pointer" value="posts">
-                Posts
+              <TabsTrigger
+                className="cursor-pointer"
+                value={ETweetType.Tweet.toString()}
+              >
+                Bài viết
               </TabsTrigger>
-              <TabsTrigger className="cursor-pointer" value="replies">
-                Replies
+              <TabsTrigger
+                className="cursor-pointer"
+                value={ETweetType.Retweet.toString()}
+              >
+                Trả lời bài viết
               </TabsTrigger>
               <TabsTrigger className="cursor-pointer" value="highlights">
-                Highlights
-              </TabsTrigger>
-              <TabsTrigger className="cursor-pointer" value="articles">
-                Articles
+                Nổi bật
               </TabsTrigger>
               <TabsTrigger className="cursor-pointer" value="media">
-                Media
+                Hình ảnh/âm thanh
               </TabsTrigger>
               <TabsTrigger className="cursor-pointer" value="likes">
-                Likes
+                Đã thích
               </TabsTrigger>
             </TabsList>
           </div>
 
           {/* Tab Content */}
           <div className="p-4 pt-0">
-            <TabsContent value="posts" className="px-0 py-4">
+            <TabsContent
+              value={ETweetType.Tweet.toString()}
+              className="px-0 py-4"
+            >
               <div className="space-y-4">
                 <p>Posts content here...</p>
-                {/* Add more content to demonstrate scrolling */}
-                {Array.from({ length: 20 }, (_, i) => (
-                  <div key={i} className="p-4 border rounded-lg">
-                    <p>Post {i + 1} content...</p>
-                  </div>
-                ))}
+                <ProfileTweetsByType
+                  tweetType={ETweetType.Tweet}
+                  user_owner_tweet_id={profile?._id}
+                />
               </div>
             </TabsContent>
             <TabsContent value="replies" className="px-0 py-4">
@@ -263,16 +269,7 @@ export function ProfilePage() {
                 ))}
               </div>
             </TabsContent>
-            <TabsContent value="articles" className="px-0 py-4">
-              <div className="space-y-4">
-                <p>Articles content here...</p>
-                {Array.from({ length: 12 }, (_, i) => (
-                  <div key={i} className="p-4 border rounded-lg">
-                    <p>Article {i + 1} content...</p>
-                  </div>
-                ))}
-              </div>
-            </TabsContent>
+
             <TabsContent value="media" className="px-0 py-4">
               <div className="space-y-4">
                 <p>Media content here...</p>

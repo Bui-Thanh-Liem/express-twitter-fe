@@ -9,7 +9,7 @@ import { textTracks } from "./track";
 
 export function HLSPlayer({ src }: { src: string }) {
   return (
-    <MediaPlayer title="twitter" src={src}>
+    <MediaPlayer title="" src={src}>
       <MediaProvider>
         {textTracks.map((track) => (
           <Track {...track} key={track.src} />
