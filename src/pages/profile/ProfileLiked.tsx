@@ -1,39 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useGetNewFeeds } from "~/hooks/useFetchTweet";
-import { EFeedType } from "~/shared/enums/type.enum";
+import { useEffect, useRef, useState } from "react";
+import { TweetItem } from "~/components/list-tweets/item-tweet";
+import { SkeletonTweet } from "~/components/list-tweets/list-tweets";
+import { useGetProfileTweetLiked } from "~/hooks/useFetchTweet";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
-import { ErrorProcess } from "../error-process";
-import { TweetItem } from "./item-tweet";
+import { NotFountProfileTweet } from "./not-found";
 
-// Loading skeleton component
-export const SkeletonTweet = ({ count = 3 }: { count?: number }) => {
-  return (
-    <div className="animate-pulse px-4 py-2">
-      {Array.from({ length: count }, (_, index) => (
-        <div key={index} className="mb-6">
-          <div className="flex items-center mb-3">
-            <div className="w-10 h-10 bg-gray-200 rounded-full mr-3"></div>
-            <div>
-              <div className="h-4 bg-gray-200 rounded w-32 mb-1"></div>
-              <div className="h-3 bg-gray-200 rounded w-24"></div>
-            </div>
-          </div>
-          <div className="h-4 bg-gray-200 rounded w-full my-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-3/4 mb-3"></div>
-          <div className="h-3 bg-gray-200 rounded w-3/4 my-3"></div>
-          <div className="w-full aspect-video bg-gray-200 rounded-lg mb-4"></div>
-          <div className="flex space-x-6">
-            <div className="h-3 bg-gray-200 rounded w-12"></div>
-            <div className="h-3 bg-gray-200 rounded w-12"></div>
-            <div className="h-3 bg-gray-200 rounded w-12"></div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
+export function ProfileLiked({ profile_id }: { profile_id: string }) {
   // State để quản lý pagination và data
   const [page, setPage] = useState(1);
   const [allTweets, setAllTweets] = useState<ITweet[]>([]);
@@ -44,9 +16,10 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
   const observerRef = useRef<HTMLDivElement>(null);
   const observerInstanceRef = useRef<IntersectionObserver | null>(null);
 
-  const { data, isLoading, error } = useGetNewFeeds(feedType, {
+  const { data, isLoading, error } = useGetProfileTweetLiked({
+    limit: "10",
     page: page.toString(),
-    limit: "10", // Giảm limit để load nhanh hơn
+    profile_id,
   });
 
   // Effect để xử lý khi có data mới
@@ -80,17 +53,14 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
   }, [data, page]);
 
   // Callback khi element cuối cùng xuất hiện trên viewport
-  const handleObserver = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      const [entry] = entries;
-      if (entry.isIntersecting && hasMore && !isLoading && !isLoadingMore) {
-        console.log("Loading more tweets...");
-        setIsLoadingMore(true);
-        setPage((prev) => prev + 1);
-      }
-    },
-    [hasMore, isLoading, isLoadingMore]
-  );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleObserver = (entries: IntersectionObserverEntry[]) => {
+    const [entry] = entries;
+    if (entry.isIntersecting && hasMore && !isLoading && !isLoadingMore) {
+      setIsLoadingMore(true);
+      setPage((prev) => prev + 1);
+    }
+  };
 
   // Setup Intersection Observer
   useEffect(() => {
@@ -118,7 +88,7 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
     };
   }, [handleObserver]);
 
-  // Reset khi feedType thay đổi
+  // Reset khi profile_id thay đổi
   useEffect(() => {
     setPage(1);
     setAllTweets([]);
@@ -130,35 +100,54 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
       top: 0,
       behavior: "smooth",
     });
-  }, [feedType]);
+  }, [profile_id]);
 
-  return (
-    <div className="max-w-2xl mx-auto">
-      {/* Loading state cho lần load đầu tiên */}
-      {isLoading && page === 1 && <SkeletonTweet />}
+  // Loading state cho lần load đầu tiên
+  if (isLoading && page === 1) {
+    return <SkeletonTweet />;
+  }
 
-      {/* Error state */}
-      {error && (
-        <ErrorProcess
+  // Error state
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-500 mb-4">❌ Có lỗi xảy ra khi tải dữ liệu</p>
+        <button
           onClick={() => {
             setPage(1);
             setAllTweets([]);
             setHasMore(true);
             window.location.reload();
           }}
-        />
-      )}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+        >
+          Thử lại
+        </button>
+      </div>
+    );
+  }
 
-      {/* Empty state */}
-      {!isLoading && !error && allTweets.length === 0 && page === 1 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500 text-lg mb-2">📭 Chưa có nội dung nào</p>
-          <p className="text-gray-400">
-            Hãy theo dõi thêm người dùng để xem nội dung của họ!
-          </p>
-        </div>
-      )}
+  // Empty state - không có tweets được like
+  if (!isLoading && data?.data?.total === 0) {
+    return <NotFountProfileTweet />;
+  }
 
+  // Empty state - chưa có data nhưng không phải total = 0
+  if (!isLoading && allTweets.length === 0 && page === 1) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-500 text-lg mb-2">
+          ❤️ Chưa có tweet nào được thích
+        </p>
+        <p className="text-gray-400">
+          Hãy thích một số tweet để chúng xuất hiện ở đây!
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
       {/* Tweets list */}
       {allTweets.length > 0 && (
         <div className="space-y-6">
@@ -187,15 +176,17 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
       <div
         ref={observerRef}
         className="h-10 w-full"
-        style={{ visibility: "hidden" }}
+        // style={{ visibility: "hidden" }}
       />
 
       {/* End of content indicator */}
       {!hasMore && allTweets.length > 0 && (
         <div className="text-center py-8">
-          <p className="text-gray-500">🎉 Bạn đã xem hết tất cả nội dung!</p>
+          <p className="text-gray-500">
+            🎉 Bạn đã xem hết tất cả tweet đã thích!
+          </p>
         </div>
       )}
     </div>
   );
-};
+}

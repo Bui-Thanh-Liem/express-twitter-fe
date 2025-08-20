@@ -16,7 +16,9 @@ import { WrapIcon } from "~/components/wrapIcon";
 import { useGetOneByUsername } from "~/hooks/useFetchUser";
 import { ETweetType } from "~/shared/enums/type.enum";
 import { useUserStore } from "~/store/useUserStore";
-import { ProfileTweetsByType } from "./ProfileTweetsByType";
+import { ProfileLiked } from "./ProfileLiked";
+import { ProfileMedia } from "./ProfileMedia";
+import { ProfileTweets } from "./ProfileTweets";
 
 export function ProfilePage() {
   const navigate = useNavigate();
@@ -209,7 +211,7 @@ export function ProfilePage() {
 
         {/*  */}
         <Tabs defaultValue={ETweetType.Tweet.toString()} className="mb-12">
-          <div className="bg-white p-2 px-4 sticky top-0">
+          <div className="bg-white p-2 px-4 sticky top-0 z-50">
             <TabsList className="w-full">
               <TabsTrigger
                 className="cursor-pointer"
@@ -221,13 +223,13 @@ export function ProfilePage() {
                 className="cursor-pointer"
                 value={ETweetType.Retweet.toString()}
               >
-                Trả lời bài viết
+                Bài viết đã đăng lại
               </TabsTrigger>
               <TabsTrigger className="cursor-pointer" value="highlights">
                 Nổi bật
               </TabsTrigger>
               <TabsTrigger className="cursor-pointer" value="media">
-                Hình ảnh/âm thanh
+                Hình ảnh/video
               </TabsTrigger>
               <TabsTrigger className="cursor-pointer" value="likes">
                 Đã thích
@@ -242,52 +244,41 @@ export function ProfilePage() {
               className="px-0 py-4"
             >
               <div className="space-y-4">
-                <p>Posts content here...</p>
-                <ProfileTweetsByType
+                <ProfileTweets
                   tweetType={ETweetType.Tweet}
-                  user_owner_tweet_id={profile?._id}
+                  profile_id={profile?._id}
                 />
               </div>
             </TabsContent>
-            <TabsContent value="replies" className="px-0 py-4">
+            <TabsContent
+              value={ETweetType.Retweet.toString()}
+              className="px-0 py-4"
+            >
               <div className="space-y-4">
-                <p>Replies content here...</p>
-                {Array.from({ length: 15 }, (_, i) => (
-                  <div key={i} className="p-4 border rounded-lg">
-                    <p>Reply {i + 1} content...</p>
-                  </div>
-                ))}
+                <ProfileTweets
+                  tweetType={ETweetType.Retweet}
+                  profile_id={profile?._id}
+                />
               </div>
             </TabsContent>
             <TabsContent value="highlights" className="px-0 py-4">
               <div className="space-y-4">
-                <p>Highlights content here...</p>
-                {Array.from({ length: 10 }, (_, i) => (
-                  <div key={i} className="p-4 border rounded-lg">
-                    <p>Highlight {i + 1} content...</p>
-                  </div>
-                ))}
+                <ProfileTweets
+                  ishl={1}
+                  tweetType={ETweetType.Tweet}
+                  profile_id={profile?._id}
+                />
               </div>
             </TabsContent>
 
             <TabsContent value="media" className="px-0 py-4">
               <div className="space-y-4">
-                <p>Media content here...</p>
-                {Array.from({ length: 8 }, (_, i) => (
-                  <div key={i} className="p-4 border rounded-lg">
-                    <p>Media {i + 1} content...</p>
-                  </div>
-                ))}
+                <ProfileMedia profile_id={profile?._id} />
               </div>
             </TabsContent>
             <TabsContent value="likes" className="px-0 py-4">
               <div className="space-y-4">
-                <p>Likes content here...</p>
-                {Array.from({ length: 25 }, (_, i) => (
-                  <div key={i} className="p-4 border rounded-lg">
-                    <p>Liked post {i + 1} content...</p>
-                  </div>
-                ))}
+                <ProfileLiked profile_id={profile?._id} />
               </div>
             </TabsContent>
           </div>

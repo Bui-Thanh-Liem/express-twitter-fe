@@ -32,7 +32,7 @@ function NameItemUser({ user }: { user: IUser }) {
 }
 
 // Component cho Media (Image hoặc Video)
-const MediaContent = ({ url, type }: IMedia) => {
+export const MediaContent = ({ url, type }: IMedia) => {
   if (!url) return null;
   return (
     <>
@@ -143,14 +143,6 @@ export const TweetItem = ({
   const { data } = useGetDetailTweet(parent_id);
   const quoteTweet = data?.data ? data?.data : ({} as ITweet);
   const [isOpenComment, setOpenComment] = useState(false);
-
-  if (tweet.type === ETweetType.Retweet) {
-    console.log("Retweet:::", tweet.isRetweet);
-  }
-
-  if (tweet.type === ETweetType.QuoteTweet) {
-    console.log("QuoteTweet:::", tweet.isQuote);
-  }
 
   return (
     <>
