@@ -15,7 +15,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useGetOneByUsername } from "~/hooks/useFetchUser";
 import { ETweetType } from "~/shared/enums/type.enum";
+import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
+import { ProfileEdit } from "./ProfileEdit";
 import { ProfileLiked } from "./ProfileLiked";
 import { ProfileMedia } from "./ProfileMedia";
 import { ProfileTweets } from "./ProfileTweets";
@@ -24,16 +26,16 @@ export function ProfilePage() {
   const navigate = useNavigate();
   const { username } = useParams(); // Đặt tên params ở <App />
   const { user } = useUserStore();
-  const [isOpenVerify, setOpenVerify] = useState(true);
   const { data, refetch, isLoading, error } = useGetOneByUsername(username!);
 
   // Extract profile data to avoid repetitive data?.data calls
   const profile = data?.data;
+  const [isOpenVerify, setOpenVerify] = useState(Boolean(profile?.verify));
 
   // Check if current user is viewing their own profile
   const isOwnProfile = useMemo(
-    () => user?._id === profile?._id && Boolean(!user?.verify),
-    [user?._id, profile?._id, user?.verify]
+    () => user?._id === profile?._id,
+    [user?._id, profile?._id]
   );
 
   useEffect(() => {
@@ -80,14 +82,11 @@ export function ProfilePage() {
     <div>
       {/* Header */}
       <div className="px-3 flex justify-between items-center border border-gray-100">
-        <div className="flex items-center gap-6 ">
+        <div className="flex h-12 items-center gap-6 ">
           <WrapIcon onClick={() => navigate(-1)}>
             <ArrowLeftIcon />
           </WrapIcon>
-          <div>
-            <p className="font-semibold text-[20px]">{profile?.name}</p>
-            <p className="text-gray-400 text-sm">2 posts</p>
-          </div>
+          <p className="font-semibold text-[20px]">{profile?.name}</p>
         </div>
 
         <WrapIcon>
@@ -122,9 +121,7 @@ export function ProfilePage() {
             />
 
             {isOwnProfile ? (
-              <ButtonMain variant="outline" className="mt-20">
-                Edit profile
-              </ButtonMain>
+              <ProfileEdit currentUser={profile as IUser} />
             ) : (
               <div className="flex items-center gap-x-3 mt-20">
                 <WrapIcon className="border">
@@ -209,7 +206,7 @@ export function ProfilePage() {
           )}
         </div>
 
-        {/*  */}
+        {/* Tweets and media*/}
         <Tabs defaultValue={ETweetType.Tweet.toString()} className="mb-12">
           <div className="bg-white p-2 px-4 sticky top-0 z-50">
             <TabsList className="w-full">
@@ -264,7 +261,7 @@ export function ProfilePage() {
             <TabsContent value="highlights" className="px-0 py-4">
               <div className="space-y-4">
                 <ProfileTweets
-                  ishl={1}
+                  ishl={"1"}
                   tweetType={ETweetType.Tweet}
                   profile_id={profile?._id}
                 />

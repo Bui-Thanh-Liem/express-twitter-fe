@@ -26,10 +26,13 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
   useEffect(() => {
     if (data?.data?.items) {
       const newTweets = data.data.items as ITweet[];
-
       if (page === 1) {
         // Nếu là trang đầu tiên, replace toàn bộ
-        setAllTweets(newTweets);
+        setAllTweets(() => {
+          console.log("cos vaof dayad set state lai roi nah");
+          console.log("trong state newTweets:::", newTweets);
+          return newTweets;
+        });
       } else {
         // Nếu là trang tiếp theo, append vào cuối
         setAllTweets((prev) => {
@@ -91,7 +94,7 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
   // Reset khi profile_id thay đổi
   useEffect(() => {
     setPage(1);
-    setAllTweets([]);
+    // setAllTweets([]);
     setHasMore(true);
     setIsLoadingMore(false);
 

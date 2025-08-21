@@ -70,7 +70,7 @@ export const useGetNewFeeds = (
 export const useGetProfileTweets = (
   tweet_type: ETweetType,
   queries?: IQuery<ITweet> & {
-    ishl?: 1 | 0;
+    ishl?: "0" | "1";
     profile_id: string;
   }
 ) => {

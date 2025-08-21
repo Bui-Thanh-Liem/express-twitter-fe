@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import type { LoginUserDto, RegisterUserDto } from "~/shared/dtos/req/auth.dto";
+import type { UpdateMeDto } from "~/shared/dtos/req/user.dto";
 import type { ResLoginUser } from "~/shared/dtos/res/auth.dto";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
@@ -95,6 +96,18 @@ export const useLogout = () => {
 export const useGetMe = () => {
   return useMutation({
     mutationFn: () => apiCall<IUser>("/auth/me", { method: "GET" }),
+    onSuccess: () => {},
+  });
+};
+
+// 🔐 PATCH - UPDATE ME
+export const useUpdateMe = () => {
+  return useMutation({
+    mutationFn: (credentials: UpdateMeDto) =>
+      apiCall<ResLoginUser>("/auth/me", {
+        method: "PATCH",
+        body: JSON.stringify(credentials),
+      }),
     onSuccess: () => {},
   });
 };

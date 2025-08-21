@@ -118,4 +118,3 @@ function InputMain<T extends object>({
 }
 
 export { Input, InputMain };
-
