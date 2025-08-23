@@ -1,8 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Calendar, Globe, MapPin, Upload } from "lucide-react";
-import { useState } from "react";
+import { Globe, MapPin, Upload } from "lucide-react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 // Assuming you have these hooks and schemas
@@ -13,42 +13,46 @@ import {
 import { handleResponse } from "~/utils/handleResponse";
 
 // UI components - theo cách import của bạn
+import { useNavigate } from "react-router-dom";
 import { useUpdateMe } from "~/hooks/useFetchAuth";
+import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import { useUserStore } from "~/store/useUserStore";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
-import { Calendar as CalendarComponent } from "../ui/calendar";
+import { DatePicker } from "../ui/date-picker";
 import { InputMain } from "../ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { TextareaMain } from "../ui/textarea";
+import { WrapIcon } from "../wrapIcon";
 
 interface UpdateUserFormProps {
   setOpenForm: (open: boolean) => void;
-  currentUser?: {
-    name?: string;
-    bio?: string;
-    avatar?: string;
-    cover_photo?: string;
-    day_of_birth?: Date;
-    location?: string;
-    username?: string;
-    website?: string;
-  };
+  currentUser?: Pick<
+    IUser,
+    | "name"
+    | "bio"
+    | "avatar"
+    | "cover_photo"
+    | "day_of_birth"
+    | "location"
+    | "website"
+    | "username"
+  >;
 }
 
 export function UpdateUserForm({
   setOpenForm,
   currentUser,
 }: UpdateUserFormProps) {
+  const navigate = useNavigate();
+  const { user } = useUserStore();
+  const usernameRef = useRef(user?.username);
+  const apiUpdateMe = useUpdateMe();
   const [avatarPreview, setAvatarPreview] = useState<string>(
     currentUser?.avatar || ""
   );
   const [coverPreview, setCoverPreview] = useState<string>(
     currentUser?.cover_photo || ""
   );
-
-  const apiUpdateMe = useUpdateMe();
-
-  console.log("currentUser:::", currentUser);
 
   const {
     reset,
@@ -59,7 +63,7 @@ export function UpdateUserForm({
     setValue,
     formState: { errors },
   } = useForm<UpdateMeDto>({
-    resolver: zodResolver(UpdateMeDtoSchema) as any,
+    resolver: zodResolver(UpdateMeDtoSchema),
     defaultValues: {
       name: currentUser?.name || "",
       bio: currentUser?.bio || "",
@@ -68,24 +72,35 @@ export function UpdateUserForm({
       location: currentUser?.location || "",
       username: currentUser?.username || "",
       website: currentUser?.website || "",
-      day_of_birth: new Date(currentUser?.day_of_birth || ""),
+      day_of_birth: currentUser?.day_of_birth
+        ? new Date(currentUser?.day_of_birth)
+        : undefined,
     },
   });
 
+  //
   const onSubmit = async (data: UpdateMeDto) => {
     try {
+      if (data?.day_of_birth) {
+        data.day_of_birth = data.day_of_birth?.toISOString() as unknown as Date;
+      }
       const res = await apiUpdateMe.mutateAsync(data);
       handleResponse(res, successForm);
+      if (res.data?.username !== usernameRef.current) {
+        navigate(`/${res.data?.username}`, { replace: true });
+      }
     } catch (error) {
       console.error("Update failed:", error);
     }
   };
 
+  //
   function successForm() {
     setOpenForm(false);
     reset();
   }
 
+  //
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -99,6 +114,7 @@ export function UpdateUserForm({
     }
   };
 
+  //
   const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -115,42 +131,38 @@ export function UpdateUserForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-6">
-        {/* Cover Photo Section */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Ảnh bìa</label>
-          <div
-            className="relative h-32 w-full bg-gray-100 rounded-lg overflow-hidden cursor-pointer hover:bg-gray-200 transition-colors"
-            style={{
-              backgroundImage: coverPreview ? `url(${coverPreview})` : "none",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleCoverChange}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-black bg-opacity-50 rounded-full p-3">
-                <Upload className="h-6 w-6 text-white" />
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Cover Photo, avatar Section */}
+        <div
+          className="relative h-44 w-full bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200 transition-colors"
+          style={{
+            backgroundImage: coverPreview ? `url(${coverPreview})` : "none",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleCoverChange}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          />
 
-        {/* Avatar Section */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Ảnh đại diện</label>
-          <div className="flex items-center space-x-4">
-            <Avatar className="h-20 w-20">
+          {/* Icon upload */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <WrapIcon>
+              <Upload className="w-5 h-5" />
+            </WrapIcon>
+          </div>
+
+          {/* Avatar Section */}
+          <div className="top-28 left-4 relative w-28 h-28">
+            <Avatar className="w-full h-full border-4 border-white">
               <AvatarImage src={avatarPreview} />
               <AvatarFallback>
                 {watch("name")?.charAt(0)?.toUpperCase() || "U"}
               </AvatarFallback>
             </Avatar>
-            <div>
+            <div className="absolute bottom-0 right-0">
               <input
                 type="file"
                 accept="image/*"
@@ -158,125 +170,97 @@ export function UpdateUserForm({
                 className="hidden"
                 id="avatar-upload"
               />
-              <ButtonMain
-                type="button"
-                variant="outline"
+
+              <WrapIcon
                 onClick={() =>
                   document.getElementById("avatar-upload")?.click()
                 }
-                className="flex items-center space-x-2"
               >
                 <Upload className="h-4 w-4" />
-                <span>Thay đổi ảnh</span>
-              </ButtonMain>
+              </WrapIcon>
             </div>
           </div>
         </div>
 
         {/* Basic Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Họ và tên *</label>
+        <div className="mt-14 space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <InputMain
               id="name"
               name="name"
+              label="Họ và tên *"
               placeholder="Nhập họ và tên"
               errors={errors}
               control={control}
               register={register}
             />
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Tên người dùng</label>
             <InputMain
               id="username"
               name="username"
+              label="Tên người dùng"
               placeholder="@username"
               errors={errors}
               control={control}
               register={register}
             />
           </div>
-        </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Tiểu sử</label>
+          <DatePicker
+            id="day_of_birth"
+            name="day_of_birth"
+            label="Ngày sinh"
+            placeholder="08 tháng 01, 2000"
+            errors={errors}
+            control={control}
+            register={register}
+            setValue={setValue}
+          />
+
           <TextareaMain
             id="bio"
             name="bio"
-            placeholder="Viết một vài dòng về bản thân..."
+            label="Tiểu sử"
             errors={errors}
             control={control}
             register={register}
             className="min-h-[100px] resize-none"
+            placeholder="Viết một vài dòng về bản thân..."
           />
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Vị trí</label>
-            <div className="relative">
-              <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <InputMain
-                id="location"
-                name="location"
-                placeholder="Thành phố, Quốc gia"
-                errors={errors}
-                control={control}
-                register={register}
-                className="pl-10"
-              />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Vị trí</label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <InputMain
+                  id="location"
+                  name="location"
+                  placeholder="Thành phố, Quốc gia"
+                  errors={errors}
+                  control={control}
+                  register={register}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Website</label>
+              <div className="relative">
+                <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <InputMain
+                  id="website"
+                  name="website"
+                  placeholder="https://example.com"
+                  errors={errors}
+                  control={control}
+                  register={register}
+                  className="pl-10"
+                />
+              </div>
             </div>
           </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Website</label>
-            <div className="relative">
-              <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <InputMain
-                id="website"
-                name="website"
-                placeholder="https://example.com"
-                errors={errors}
-                control={control}
-                register={register}
-                className="pl-10"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Ngày sinh</label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <ButtonMain
-                type="button"
-                variant="outline"
-                className="w-full justify-start text-left font-normal"
-              >
-                <Calendar className="mr-2 h-4 w-4" />
-                {/* {watch("day_of_birth") ? (
-                  format(watch("day_of_birth"), "dd/MM/yyyy")
-                ) : (
-                  <span>Chọn ngày sinh</span>
-                )} */}
-              </ButtonMain>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <CalendarComponent
-                mode="single"
-                selected={watch("day_of_birth")}
-                onSelect={(date) =>
-                  setValue("day_of_birth", date || new Date())
-                }
-                disabled={(date) =>
-                  date > new Date() || date < new Date("1900-01-01")
-                }
-              />
-            </PopoverContent>
-          </Popover>
         </div>
 
         {/* Action Buttons */}

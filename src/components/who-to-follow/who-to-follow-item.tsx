@@ -14,7 +14,7 @@ export function WhoToFollowItem({ item }: { item: Partial<IUser> }) {
               {item.name}
               <VerifyIcon active={!!item.verify} size={20} />
             </p>
-            <p className="text-xs text-muted-foreground">@{item.username}</p>
+            <p className="text-xs text-muted-foreground">{item.username}</p>
           </div>
         </div>
         <ButtonMain size="sm">Theo dõi</ButtonMain>

@@ -1,10 +1,9 @@
+import { Calendar, Globe, MapPin } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftIcon } from "~/components/icons/arrow-left";
-import { CalendarIcon } from "~/components/icons/calendar";
 import { CloseIcon } from "~/components/icons/close";
 import { DotIcon } from "~/components/icons/dot";
-import { LocationIcon } from "~/components/icons/location";
 import { MessageIcon } from "~/components/icons/messages";
 import { SearchIcon } from "~/components/icons/search";
 import { VerifyIcon } from "~/components/icons/verify";
@@ -17,6 +16,7 @@ import { useGetOneByUsername } from "~/hooks/useFetchUser";
 import { ETweetType } from "~/shared/enums/type.enum";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
+import { formatDateToDateVN } from "~/utils/formatDateToDateVN";
 import { ProfileEdit } from "./ProfileEdit";
 import { ProfileLiked } from "./ProfileLiked";
 import { ProfileMedia } from "./ProfileMedia";
@@ -71,9 +71,7 @@ export function ProfilePage() {
         <h2 className="text-xl font-bold text-gray-600 mb-2">
           Không tìm thấy người dùng
         </h2>
-        <p className="text-gray-500">
-          @{username} không tồn tại hoặc đã bị xóa
-        </p>
+        <p className="text-gray-500">{username} không tồn tại hoặc đã bị xóa</p>
       </div>
     );
   }
@@ -141,7 +139,7 @@ export function ProfilePage() {
               {profile?.name}{" "}
               <VerifyIcon active={!!profile?.verify} size={20} />
             </h2>
-            <p className="text-gray-500">@{profile?.username}</p>
+            <p className="text-gray-500">{profile?.username}</p>
           </div>
 
           {/* <!-- Bio --> */}
@@ -153,19 +151,27 @@ export function ProfilePage() {
             ))}
           </div>
 
-          {/* <!-- Location and Join Date --> */}
+          {/* <!-- Location, Website and Join Date --> */}
           <div className="flex items-center space-x-4 text-gray-500 text-sm mb-3">
             {profile?.location && (
               <div className="flex items-center space-x-1">
-                <LocationIcon />
+                <MapPin className="w-4 h-4" />
                 <span>{profile?.location}</span>
               </div>
             )}
+            {profile?.website && (
+              <a href={profile.website} target="_blank">
+                <div className="flex items-center space-x-1">
+                  <Globe className="w-4 h-4" />
+                  <span>{profile?.website}</span>
+                </div>
+              </a>
+            )}
             <div className="flex items-center space-x-1">
-              <CalendarIcon />
+              <Calendar className="w-4 h-4" />
               <span>
-                Joined March{" "}
-                {new Date(profile?.created_at || "").getUTCFullYear()}
+                Đã tham gia{" "}
+                {formatDateToDateVN(new Date(profile?.created_at || ""))}
               </span>
             </div>
           </div>

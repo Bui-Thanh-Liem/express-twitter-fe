@@ -4,9 +4,9 @@ import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
 import { VerifyIcon } from "../icons/verify";
-import { Tweet } from "../tweet/tweet";
 import { AvatarMain } from "../ui/avatar";
 import { DialogMain } from "../ui/dialog";
+import { Tweet } from "../tweet/tweet";
 
 export function ActionCommentTweet({
   tweet,
@@ -39,7 +39,7 @@ export function ActionCommentTweet({
             <VerifyIcon active={!!author.verify} size={20} />
           </Link>
           <p className="text-sm text-gray-500">
-            @{author.username} •{" "}
+            {author.username} •{" "}
             {formatTimeAgo(created_at as unknown as string)}
           </p>
 

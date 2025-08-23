@@ -92,8 +92,8 @@ function ProfileHover({
       >
         <div className="flex items-center justify-between">
           <AvatarMain
-            src={author.avatar}
-            alt={author.name}
+            src={author?.avatar}
+            alt={author?.name}
             className="mr-3 w-16 h-16"
           />
           <div className="flex items-center gap-2">
@@ -105,7 +105,7 @@ function ProfileHover({
         </div>
         <div className="mt-1.5">
           <NameItemUser user={author} />
-          <p className="text-sm text-gray-500">@{author.username}</p>
+          <p className="text-sm text-gray-500">{author?.username}</p>
         </div>
         <div className="text-sm mt-1.5">
           {author?.bio?.split("\\n").map((p) => (
@@ -164,7 +164,7 @@ export const TweetItem = ({
               </Link>
             </ProfileHover>
             <p className="text-sm text-gray-500">
-              @{author.username} •{" "}
+              {author.username} •{" "}
               {formatTimeAgo(created_at as unknown as string)}
             </p>
           </div>
@@ -198,7 +198,7 @@ export const TweetItem = ({
             />
           )}
 
-          {/* QuoteTweet */}
+          {/* QuoteTweet and Retweet */}
           {tweet.type === ETweetType.QuoteTweet ||
           tweet.type === ETweetType.Retweet ? (
             <div className="border border-gray-300 rounded-2xl p-3 pb-0">
@@ -210,7 +210,7 @@ export const TweetItem = ({
                   className="mr-3"
                 />
                 <div>
-                  <ProfileHover tweet={tweet}>
+                  <ProfileHover tweet={quoteTweet}>
                     <Link
                       to={`/${quoteTweet.user_id?.username}`}
                       className="flex items-center gap-2"
@@ -225,7 +225,7 @@ export const TweetItem = ({
                     </Link>
                   </ProfileHover>
                   <p className="text-sm text-gray-500">
-                    @{quoteTweet.user_id?.username} •{" "}
+                    {quoteTweet.user_id?.username} •{" "}
                     {formatTimeAgo(quoteTweet.created_at as unknown as string)}
                   </p>
                 </div>

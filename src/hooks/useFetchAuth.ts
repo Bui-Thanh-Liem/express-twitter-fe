@@ -102,12 +102,26 @@ export const useGetMe = () => {
 
 // 🔐 PATCH - UPDATE ME
 export const useUpdateMe = () => {
+  const queryClient = useQueryClient();
+  const { user, setUser } = useUserStore();
+
   return useMutation({
     mutationFn: (credentials: UpdateMeDto) =>
-      apiCall<ResLoginUser>("/auth/me", {
+      apiCall<IUser>("/auth/me", {
         method: "PATCH",
         body: JSON.stringify(credentials),
       }),
-    onSuccess: () => {},
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["users", variables.username],
+      });
+
+      if (_data.statusCode === 200 && _data?.data) {
+        setUser({
+          ...user,
+          ..._data.data,
+        });
+      }
+    },
   });
 };

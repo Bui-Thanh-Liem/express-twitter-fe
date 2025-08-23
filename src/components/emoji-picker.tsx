@@ -15,19 +15,17 @@ export function EmojiSelector({
   const [open, setOpen] = useState(false);
 
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <span onClick={() => setOpen(!open)}>
-            <EmojiIcon />
-          </span>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="p-0 border-0">
-          <EmojiPicker
-            onEmojiClick={(emojiData) => onEmojiClick(emojiData.emoji)}
-          />
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <span onClick={() => setOpen(!open)}>
+          <EmojiIcon />
+        </span>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-0 border-0">
+        <EmojiPicker
+          onEmojiClick={(emojiData) => onEmojiClick(emojiData.emoji)}
+        />
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

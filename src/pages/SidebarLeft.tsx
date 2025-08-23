@@ -121,7 +121,7 @@ export function SidebarLeft() {
         <AvatarMain src={user?.avatar} alt={user?.name} />
         <div>
           <span className="block font-bold">{user?.name}</span>
-          <span className="text-sm text-gray-400">@{user?.username}</span>
+          <span className="text-sm text-gray-400">{user?.username}</span>
         </div>
 
         <div className="absolute right-4">
@@ -147,7 +147,7 @@ export function SidebarLeft() {
                 className="cursor-pointer h-10 px-4 font-semibold"
                 onClick={onLogout}
               >
-                Log out @{user?.username}
+                Log out {user?.username}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
