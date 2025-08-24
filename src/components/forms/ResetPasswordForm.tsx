@@ -2,25 +2,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import {
+  ResetPasswordDtoSchema,
+  type ResetPasswordDto
+} from "~/shared/dtos/req/auth.dto";
 import { ButtonMain } from "../ui/button";
 import { InputMain } from "../ui/input";
-
-const FormSchema = z
-  .object({
-    password: z
-      .string()
-      .trim()
-      .min(1, "Vui lòng nhập mật khẩu")
-      .min(8, "Tối thiểu 8 kí tự"),
-    confirmPassword: z.string().trim().min(1, "Vui lòng xác nhận mật khẩu"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Mật khẩu xác nhận không khớp",
-    path: ["confirmPassword"],
-  });
-
-type FormValues = z.infer<typeof FormSchema>;
 
 export function ResetPasswordForm({
   setOpenForm,
@@ -33,11 +20,12 @@ export function ResetPasswordForm({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({
-    resolver: zodResolver(FormSchema),
+  } = useForm<ResetPasswordDto>({
+    resolver: zodResolver(ResetPasswordDtoSchema),
     defaultValues: {
       password: "",
-      confirmPassword: "",
+      confirm_password: "",
+      forgot_password_token: "",
     },
   });
 
@@ -48,7 +36,7 @@ export function ResetPasswordForm({
   }
 
   //
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = (data: ResetPasswordDto) => {
     console.log("✅ Dữ liệu ResetPasswordForm :", data);
     setOpenForm(false);
     reset();
@@ -73,8 +61,8 @@ export function ResetPasswordForm({
         />
 
         <InputMain
-          id="confirmPassword"
-          name="confirmPassword"
+          id="confirm_password"
+          name="confirm_password"
           sizeInput="lg"
           label="Xác nhận mật khẩu mới"
           errors={errors}

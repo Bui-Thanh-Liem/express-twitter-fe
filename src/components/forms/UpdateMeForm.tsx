@@ -6,23 +6,24 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 // Assuming you have these hooks and schemas
-import {
-  UpdateMeDtoSchema,
-  type UpdateMeDto,
-} from "~/shared/dtos/req/user.dto";
 import { handleResponse } from "~/utils/handleResponse";
 
 // UI components - theo cách import của bạn
 import { useNavigate } from "react-router-dom";
 import { useUpdateMe } from "~/hooks/useFetchAuth";
+import {
+  useRemoveImages,
+  useUploadWithValidation,
+} from "~/hooks/useFetchUpload";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
 import { DatePicker } from "../ui/date-picker";
 import { InputMain } from "../ui/input";
 import { TextareaMain } from "../ui/textarea";
 import { WrapIcon } from "../wrapIcon";
+import { UpdateMeDtoSchema, type UpdateMeDto } from "~/shared/dtos/req/auth.dto";
 
 interface UpdateUserFormProps {
   setOpenForm: (open: boolean) => void;
@@ -39,7 +40,7 @@ interface UpdateUserFormProps {
   >;
 }
 
-export function UpdateUserForm({
+export function UpdateMeForm({
   setOpenForm,
   currentUser,
 }: UpdateUserFormProps) {
@@ -47,12 +48,16 @@ export function UpdateUserForm({
   const { user } = useUserStore();
   const usernameRef = useRef(user?.username);
   const apiUpdateMe = useUpdateMe();
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>(
     currentUser?.avatar || ""
   );
   const [coverPreview, setCoverPreview] = useState<string>(
     currentUser?.cover_photo || ""
   );
+  const apiUploadMedia = useUploadWithValidation();
+  const apiRemoteImages = useRemoveImages();
 
   const {
     reset,
@@ -61,6 +66,7 @@ export function UpdateUserForm({
     handleSubmit,
     watch,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<UpdateMeDto>({
     resolver: zodResolver(UpdateMeDtoSchema),
@@ -79,11 +85,45 @@ export function UpdateUserForm({
   });
 
   //
+  console.log("errors:::", errors);
   const onSubmit = async (data: UpdateMeDto) => {
     try {
+      if (avatarFile) {
+        const resRemoteImages = await apiRemoteImages.mutateAsync({
+          urls: [getValues("avatar") || ""],
+        });
+
+        if (resRemoteImages.statusCode === 200) {
+          const resUploadAvatar = await apiUploadMedia.mutateAsync([
+            avatarFile,
+          ]);
+          if (resUploadAvatar.statusCode !== 200 || !resUploadAvatar.data) {
+            handleResponse(resUploadAvatar);
+            return;
+          }
+          data.avatar = resUploadAvatar?.data[0];
+        }
+      }
+
+      if (coverFile) {
+        const resRemoteImages = await apiRemoteImages.mutateAsync({
+          urls: [getValues("cover_photo") || ""],
+        });
+
+        if (resRemoteImages.statusCode === 200) {
+          const resUploadCover = await apiUploadMedia.mutateAsync([coverFile]);
+          if (resUploadCover.statusCode !== 200 || !resUploadCover.data) {
+            handleResponse(resUploadCover);
+            return;
+          }
+          data.cover_photo = resUploadCover?.data[0];
+        }
+      }
+
       if (data?.day_of_birth) {
         data.day_of_birth = data.day_of_birth?.toISOString() as unknown as Date;
       }
+
       const res = await apiUpdateMe.mutateAsync(data);
       handleResponse(res, successForm);
       if (res.data?.username !== usernameRef.current) {
@@ -104,13 +144,9 @@ export function UpdateUserForm({
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        setAvatarPreview(result);
-        setValue("avatar", result);
-      };
-      reader.readAsDataURL(file);
+      setAvatarFile(file);
+      const avatarUrl = URL.createObjectURL(file);
+      setAvatarPreview(avatarUrl);
     }
   };
 
@@ -118,13 +154,9 @@ export function UpdateUserForm({
   const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        setCoverPreview(result);
-        setValue("cover_photo", result);
-      };
-      reader.readAsDataURL(file);
+      setCoverFile(file);
+      const coverUrl = URL.createObjectURL(file);
+      setCoverPreview(coverUrl);
     }
   };
 
@@ -144,24 +176,28 @@ export function UpdateUserForm({
             type="file"
             accept="image/*"
             onChange={handleCoverChange}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            className="hidden"
+            id="cover-photo-upload"
           />
 
           {/* Icon upload */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <WrapIcon>
+            <WrapIcon
+              onClick={() =>
+                document.getElementById("cover-photo-upload")?.click()
+              }
+            >
               <Upload className="w-5 h-5" />
             </WrapIcon>
           </div>
 
           {/* Avatar Section */}
           <div className="top-28 left-4 relative w-28 h-28">
-            <Avatar className="w-full h-full border-4 border-white">
-              <AvatarImage src={avatarPreview} />
-              <AvatarFallback>
-                {watch("name")?.charAt(0)?.toUpperCase() || "U"}
-              </AvatarFallback>
-            </Avatar>
+            <AvatarMain
+              src={avatarPreview}
+              alt={watch("name")}
+              className="w-28 h-28 border-4 border-white"
+            />
             <div className="absolute bottom-0 right-0">
               <input
                 type="file"
@@ -230,10 +266,10 @@ export function UpdateUserForm({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Vị trí</label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <MapPin className="absolute left-3 top-10 h-4 w-4 text-gray-400" />
                 <InputMain
+                  label="Vị trí"
                   id="location"
                   name="location"
                   placeholder="Thành phố, Quốc gia"
@@ -246,10 +282,10 @@ export function UpdateUserForm({
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Website</label>
               <div className="relative">
-                <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Globe className="absolute left-3 top-10 h-4 w-4 text-gray-400" />
                 <InputMain
+                  label="Website"
                   id="website"
                   name="website"
                   placeholder="https://example.com"

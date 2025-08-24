@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { MediaContent } from "~/components/list-tweets/item-tweet";
 import { useGetProfileMedia } from "~/hooks/useFetchTweet";
 import { EMediaType } from "~/shared/enums/type.enum";
-import { NotFountProfileTweet } from "./not-found";
 
 // Type cho media item (adjust theo interface thực tế của bạn)
 interface IMediaItem {
@@ -153,15 +152,10 @@ export function ProfileMedia({ profile_id }: { profile_id: string }) {
     );
   }
 
-  // Empty state - không có media
-  if (!isLoading && data?.data?.total === 0) {
-    return <NotFountProfileTweet />;
-  }
-
   // Empty state - chưa có data nhưng không phải total = 0
   if (!isLoading && allMedia.length === 0 && page === 1) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-8">
         <p className="text-gray-500 text-lg mb-2">📷 Chưa có media nào</p>
         <p className="text-gray-400">
           Hãy đăng ảnh hoặc video để chúng xuất hiện ở đây!

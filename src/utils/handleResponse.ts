@@ -2,7 +2,7 @@ import { toast } from "sonner";
 import type { OkResponse } from "~/shared/classes/response.class";
 
 export function handleResponse(
-  res: OkResponse<object>,
+  res: OkResponse<object | boolean>,
   ...callbacks: (() => void)[]
 ) {
   const { statusCode, message } = res;

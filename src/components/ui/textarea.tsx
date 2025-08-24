@@ -65,7 +65,11 @@ function TextareaMain<T extends object>({
 
   return (
     <div className={cn(fullWidth && "w-full")}>
-      {label && <Label htmlFor={id}>{label}</Label>}
+      {label && (
+        <Label htmlFor={id} className="text-sm font-medium">
+          {label}
+        </Label>
+      )}
       <div className="relative">
         <Textarea
           id={id}
@@ -97,5 +101,4 @@ function TextareaMain<T extends object>({
 
 export { TextareaMain };
 
-  export { Textarea };
-
+export { Textarea };

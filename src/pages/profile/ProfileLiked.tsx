@@ -3,7 +3,6 @@ import { TweetItem } from "~/components/list-tweets/item-tweet";
 import { SkeletonTweet } from "~/components/list-tweets/list-tweets";
 import { useGetProfileTweetLiked } from "~/hooks/useFetchTweet";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
-import { NotFountProfileTweet } from "./not-found";
 
 export function ProfileLiked({ profile_id }: { profile_id: string }) {
   // State để quản lý pagination và data
@@ -130,15 +129,10 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
     );
   }
 
-  // Empty state - không có tweets được like
-  if (!isLoading && data?.data?.total === 0) {
-    return <NotFountProfileTweet />;
-  }
-
   // Empty state - chưa có data nhưng không phải total = 0
   if (!isLoading && allTweets.length === 0 && page === 1) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-8">
         <p className="text-gray-500 text-lg mb-2">
           ❤️ Chưa có tweet nào được thích
         </p>

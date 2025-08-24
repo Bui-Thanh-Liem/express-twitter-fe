@@ -1,68 +1,54 @@
 "use client";
 
-import { Label } from "~/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Label } from "~/components/ui/label";
+import { useRegister } from "~/hooks/useFetchAuth";
+import {
+  RegisterUserDtoSchema,
+  type RegisterUserDto,
+} from "~/shared/dtos/req/auth.dto";
+import { handleResponse } from "~/utils/handleResponse";
 import { ButtonMain } from "../ui/button";
+import { DatePicker } from "../ui/date-picker";
 import { InputMain } from "../ui/input";
-import { SelectMain } from "../ui/select";
-
-const FormSchema = z
-  .object({
-    name: z
-      .string()
-      .min(1, "Vui lòng nhập tên")
-      .min(5, "Tối thiểu 5 kí tự")
-      .max(50, "Tối đa 50 kí tự"),
-    email: z.string().email("Email không hợp lệ"),
-    day: z.string().min(1, "Chọn ngày"),
-    month: z.string().min(1, "Chọn tháng"),
-    year: z.string().min(1, "Chọn năm"),
-    password: z
-      .string()
-      .trim()
-      .min(1, "Vui lòng nhập mật khẩu")
-      .min(8, "Tối thiểu 8 kí tự"),
-    confirmPassword: z.string().trim().min(1, "Vui lòng xác nhận mật khẩu"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Mật khẩu xác nhận không khớp",
-    path: ["confirmPassword"],
-  });
-
-type FormValues = z.infer<typeof FormSchema>;
 
 export function RegisterAccountForm({
   setOpenForm,
 }: {
   setOpenForm: (open: boolean) => void;
 }) {
+  const apiRegister = useRegister();
+
   const {
     reset,
     control,
     register,
+    setValue,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({
-    resolver: zodResolver(FormSchema),
+  } = useForm<RegisterUserDto>({
+    resolver: zodResolver(RegisterUserDtoSchema),
     defaultValues: {
       name: "",
       email: "",
-      day: "",
-      month: "",
-      year: "",
+      day_of_birth: new Date(),
       password: "",
-      confirmPassword: "",
+      confirm_password: "",
     },
   });
 
   //
-  const onSubmit = (data: FormValues) => {
-    console.log("✅ Dữ liệu RegisterAccountForm :", data);
+  const onSubmit = async (data: RegisterUserDto) => {
+    const res = await apiRegister.mutateAsync(data);
+    handleResponse(res, successForm);
+  };
+
+  //
+  function successForm() {
     setOpenForm(false);
     reset();
-  };
+  }
 
   return (
     <form
@@ -79,7 +65,7 @@ export function RegisterAccountForm({
           errors={errors}
           control={control}
           register={register}
-          maxCountLength={50}
+          maxCountLength={16}
           placeholder="Nhập tên của bạn"
         />
 
@@ -95,55 +81,17 @@ export function RegisterAccountForm({
         />
 
         <div>
-          <div className="flex gap-2 mt-2">
-            <SelectMain
-              options={Array.from({ length: 31 }, (_, i) => ({
-                label: `Ngày ${i + 1}`,
-                value: `${i + 1}`,
-              }))}
-              size="lg"
-              id="day"
-              name="day"
-              label="Ngày"
-              errors={errors}
-              control={control}
-              classname="flex-1"
-              placeholder="Chọn ngày"
-            />
-
-            <SelectMain
-              options={Array.from({ length: 12 }, (_, i) => ({
-                label: `Tháng ${i + 1}`,
-                value: `${i + 1}`,
-              }))}
-              size="lg"
-              id="month"
-              name="month"
-              label="Tháng"
-              errors={errors}
-              control={control}
-              classname="flex-1"
-              placeholder="Chọn tháng"
-            />
-
-            <SelectMain
-              options={Array.from({ length: 2025 - 1950 + 1 }, (_, i) => {
-                const year = 1950 + i;
-                return {
-                  label: `${year}`,
-                  value: `${year}`,
-                };
-              })}
-              size="lg"
-              id="year"
-              name="year"
-              label="Năm"
-              errors={errors}
-              control={control}
-              classname="flex-1"
-              placeholder="Chọn năm"
-            />
-          </div>
+          <DatePicker
+            sizeInput="lg"
+            id="day_of_birth"
+            name="day_of_birth"
+            label="Ngày sinh"
+            placeholder="08 tháng 01, 2000"
+            errors={errors}
+            control={control}
+            register={register}
+            setValue={setValue}
+          />
 
           <div className="mt-3">
             <Label>Ngày sinh</Label>
@@ -168,8 +116,8 @@ export function RegisterAccountForm({
         />
 
         <InputMain
-          id="confirmPassword"
-          name="confirmPassword"
+          id="confirm_password"
+          name="confirm_password"
           sizeInput="lg"
           label="Xác nhận mật khẩu"
           errors={errors}

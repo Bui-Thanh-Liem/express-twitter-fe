@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import type { LoginUserDto, RegisterUserDto } from "~/shared/dtos/req/auth.dto";
-import type { UpdateMeDto } from "~/shared/dtos/req/user.dto";
+import type { LoginUserDto, RegisterUserDto, UpdateMeDto } from "~/shared/dtos/req/auth.dto";
 import type { ResLoginUser } from "~/shared/dtos/res/auth.dto";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
@@ -10,16 +9,36 @@ import { apiCall } from "~/utils/callApi.util";
 // 🔐 POST - Register
 export const useRegister = () => {
   const queryClient = useQueryClient();
+  const { setUser } = useUserStore();
+  const getMe = useGetMe();
+  const navigate = useNavigate();
 
   return useMutation({
     mutationFn: (credentials: RegisterUserDto) =>
-      apiCall("/auth/register", {
+      apiCall<ResLoginUser>("/auth/register", {
+        // tại vì khi đăng nhập thành công thì cho vào luôn
         method: "POST",
         body: JSON.stringify(credentials),
       }),
-    onSuccess: () => {
-      // Invalidate user data để refetch
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+    onSuccess: (data) => {
+      if (data.statusCode === 201) {
+        // Lưu token
+        localStorage.setItem("access_token", data.data?.access_token || "");
+        localStorage.setItem("refresh_token", data.data?.refresh_token || "");
+        // Invalidate user data để refetch
+        queryClient.invalidateQueries({ queryKey: ["user"] });
+
+        // Nếu đăng nhập thành công thì gọi api getMe lưu vào Store global
+        (async () => {
+          const resGetMe = await getMe.mutateAsync();
+          if (resGetMe.statusCode === 200 && resGetMe?.data) {
+            setUser(resGetMe.data);
+          }
+        })();
+
+        //
+        navigate("/home");
+      }
     },
   });
 };

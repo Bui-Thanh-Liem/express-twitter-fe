@@ -20,8 +20,8 @@ import {
 import { useLogout } from "~/hooks/useFetchAuth";
 import { cn } from "~/lib/utils";
 import { useUserStore } from "~/store/useUserStore";
-import { Logo } from "../components/logo";
-import { WrapIcon } from "../components/wrapIcon";
+import { Logo } from "../../components/logo";
+import { WrapIcon } from "../../components/wrapIcon";
 import { ButtonMain } from "~/components/ui/button";
 
 type NavItem = {

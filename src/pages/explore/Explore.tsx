@@ -72,7 +72,7 @@ export function ExplorePage() {
                 ))}
               </div>
               <p className="text-xl font-bold mt-4">Ai để theo dõi</p>
-              <div className="space-y-4">
+              <div>
                 {initial_whoToFollows.map((item) => (
                   <WhoToFollowItem key={item._id} item={item} />
                 ))}

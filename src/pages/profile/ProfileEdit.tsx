@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { UpdateUserForm } from "~/components/forms/UpdateAccountForm";
+import { UpdateMeForm } from "~/components/forms/UpdateMeForm";
 import { ButtonMain } from "~/components/ui/button";
 import { DialogMain } from "~/components/ui/dialog";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
@@ -25,7 +25,7 @@ export function ProfileEdit({ currentUser }: { currentUser: IUser }) {
         textDesc=""
         isLogo={false}
       >
-        <UpdateUserForm setOpenForm={setIsOpen} currentUser={currentUser} />
+        <UpdateMeForm setOpenForm={setIsOpen} currentUser={currentUser} />
       </DialogMain>
     </>
   );

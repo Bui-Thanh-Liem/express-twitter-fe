@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import { ErrorProcess } from "~/components/error-process";
 import { TweetItem } from "~/components/list-tweets/item-tweet";
 import { SkeletonTweet } from "~/components/list-tweets/list-tweets";
+import { NotFoundTweet } from "~/components/list-tweets/not-found-tweet";
 import { useGetProfileTweets } from "~/hooks/useFetchTweet";
 import { ETweetType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
-import { NotFountProfileTweet } from "./not-found";
 
 export function ProfileTweets({
   ishl = "0",
@@ -113,48 +114,16 @@ export function ProfileTweets({
     });
   }, [profile_id, tweetType]);
 
-  // Loading state cho lần load đầu tiên
-  if (isLoading && page === 1) {
-    return <SkeletonTweet />;
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-red-500 mb-4">❌ Có lỗi xảy ra khi tải dữ liệu</p>
-        <button
-          onClick={() => {
-            setPage(1);
-            setAllTweets([]);
-            setHasMore(true);
-            window.location.reload();
-          }}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-        >
-          Thử lại
-        </button>
-      </div>
-    );
-  }
-
-  // Empty state - không có tweets
-  if (!isLoading && data?.data?.total === 0) {
-    return <NotFountProfileTweet />;
-  }
-
   // Empty state - chưa có data nhưng không phải total = 0
   if (!isLoading && allTweets.length === 0 && page === 1) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-gray-500 text-lg mb-2">📝 Chưa có tweet nào</p>
-        <p className="text-gray-400">Hãy tạo tweet đầu tiên của bạn!</p>
-      </div>
-    );
+    return <NotFoundTweet />;
   }
 
   return (
     <div>
+      {/* Loading state cho lần load đầu tiên */}
+      {isLoading && page === 1 && <SkeletonTweet />}
+
       {/* Tweets list */}
       {allTweets.length > 0 && (
         <div className="space-y-6">
@@ -170,6 +139,18 @@ export function ProfileTweets({
             </span>
           ))}
         </div>
+      )}
+
+      {/* Error state */}
+      {error && (
+        <ErrorProcess
+          onClick={() => {
+            setPage(1);
+            setAllTweets([]);
+            setHasMore(true);
+            window.location.reload();
+          }}
+        />
       )}
 
       {/* Loading more indicator */}

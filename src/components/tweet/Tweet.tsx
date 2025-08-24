@@ -147,7 +147,7 @@ export function Tweet({
               handleResponse(resUploadMedia);
               return;
             }
-            mediaUrl = resUploadMedia.data[0] || "";
+            mediaUrl = resUploadMedia.data[0];
             setUploadedMediaUrl(mediaUrl);
             setUploadProgress(100);
           } catch (uploadError) {

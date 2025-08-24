@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import { SidebarLeft } from "./pages/SidebarLeft";
-import { SidebarRight } from "./pages/SidebarRight";
+import { SidebarLeft } from "./SidebarLeft";
+import { SidebarRight } from "./SidebarRight";
 
 export function HomeLayout() {
   return (

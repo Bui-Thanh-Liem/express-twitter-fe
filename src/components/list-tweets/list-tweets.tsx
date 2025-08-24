@@ -2,8 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useGetNewFeeds } from "~/hooks/useFetchTweet";
 import { EFeedType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
+import { useUserStore } from "~/store/useUserStore";
 import { ErrorProcess } from "../error-process";
 import { TweetItem } from "./item-tweet";
+import { NotFoundTweet } from "./not-found-tweet";
 
 // Loading skeleton component
 export const SkeletonTweet = ({ count = 3 }: { count?: number }) => {
@@ -34,6 +36,8 @@ export const SkeletonTweet = ({ count = 3 }: { count?: number }) => {
 };
 
 export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
+  const { user } = useUserStore();
+
   // State để quản lý pagination và data
   const [page, setPage] = useState(1);
   const [allTweets, setAllTweets] = useState<ITweet[]>([]);
@@ -121,7 +125,7 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
   // Reset khi feedType thay đổi
   useEffect(() => {
     setPage(1);
-    setAllTweets([]);
+    // setAllTweets([]);
     setHasMore(true);
     setIsLoadingMore(false);
 
@@ -131,6 +135,27 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
       behavior: "smooth",
     });
   }, [feedType]);
+
+  // Verify
+  if (!user?.verify) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500 text-lg mb-2">
+          📝 Bạn chưa xác minh tài khoản
+        </p>
+        <p className="text-gray-400">
+          Hãy vào trang cá nhân xác minh tài khoản của bạn.
+        </p>
+      </div>
+    );
+  }
+
+  // Empty state - chưa có data nhưng không phải total = 0
+  if (!isLoading && allTweets.length === 0 && page === 1) {
+    return <NotFoundTweet />;
+  }
+
+  console.log("ListTweets::");
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -186,7 +211,7 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
       {/* Observer element - invisible trigger cho infinite scroll */}
       <div
         ref={observerRef}
-        className="h-10 w-full"
+        className="h-10 w-full bg-red-300"
         style={{ visibility: "hidden" }}
       />
 

@@ -1,14 +1,15 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { HomeLayout } from "./HomeLayout";
-import { AuthPage } from "./pages/AuthPage";
-import { ExplorePage } from "./pages/explore/Explore";
-import { HomePage } from "./pages/home/HomePage";
-import StatusLoginOAuth from "./pages/StatusLoginOAuth";
-import RootLayout from "./RootLayout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import MessagesPage from "./pages/messages/Messages";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RedirectIfAuthenticated } from "./components/redirectIf-authenticated";
+import { RedirectIfNotAuthenticated } from "./components/redirectIf-not-authenticated";
+import { AuthPage } from "./layouts/AuthPage";
+import { VerifyEmail } from "./layouts/VerifyEmail";
+import { HomeLayout } from "./layouts/home-layout/HomeLayout";
+import RootLayout from "./layouts/root-layout/RootLayout";
+import { ExplorePage } from "./pages/explore/Explore";
+import { HomePage } from "./pages/home/HomePage";
+import MessagesPage from "./pages/messages/Messages";
 import { ProfilePage } from "./pages/profile/Profile";
 
 // Router config
@@ -25,11 +26,15 @@ const router = createBrowserRouter([
           </RedirectIfAuthenticated>
         ),
       },
-      { path: "oauth", element: <StatusLoginOAuth /> },
+      { path: "verify", element: <VerifyEmail /> },
 
       // ✅ Bọc các route cần HomeLayout ở đây
       {
-        element: <HomeLayout />,
+        element: (
+          <RedirectIfNotAuthenticated>
+            <HomeLayout />
+          </RedirectIfNotAuthenticated>
+        ),
         children: [
           { path: "home", element: <HomePage /> },
           { path: "explore", element: <ExplorePage /> },

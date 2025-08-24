@@ -12,11 +12,15 @@ import { AvatarMain } from "~/components/ui/avatar";
 import { ButtonMain } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useGetOneByUsername } from "~/hooks/useFetchUser";
+import {
+  useGetOneByUsername,
+  useResendVerifyEmail,
+} from "~/hooks/useFetchUser";
 import { ETweetType } from "~/shared/enums/type.enum";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
 import { formatDateToDateVN } from "~/utils/formatDateToDateVN";
+import { handleResponse } from "~/utils/handleResponse";
 import { ProfileEdit } from "./ProfileEdit";
 import { ProfileLiked } from "./ProfileLiked";
 import { ProfileMedia } from "./ProfileMedia";
@@ -27,10 +31,13 @@ export function ProfilePage() {
   const { username } = useParams(); // Đặt tên params ở <App />
   const { user } = useUserStore();
   const { data, refetch, isLoading, error } = useGetOneByUsername(username!);
+  const apiResendVerifyEmail = useResendVerifyEmail();
 
   // Extract profile data to avoid repetitive data?.data calls
   const profile = data?.data;
-  const [isOpenVerify, setOpenVerify] = useState(Boolean(profile?.verify));
+
+  //
+  const [isOpenVerify, setOpenVerify] = useState(Boolean(!profile?.verify));
 
   // Check if current user is viewing their own profile
   const isOwnProfile = useMemo(
@@ -74,6 +81,11 @@ export function ProfilePage() {
         <p className="text-gray-500">{username} không tồn tại hoặc đã bị xóa</p>
       </div>
     );
+  }
+
+  async function resendVerifyEmail() {
+    const res = await apiResendVerifyEmail.mutateAsync();
+    handleResponse(res);
   }
 
   return (
@@ -207,7 +219,7 @@ export function ProfilePage() {
                 Hãy xác minh để nhận được phản hồi tốt hơn, phân tích, duyệt web
                 không quảng cáo và nhiều hơn nữa. Nâng cấp hồ sơ của bạn ngay.
               </p>
-              <ButtonMain>Xác minh</ButtonMain>
+              <ButtonMain onClick={resendVerifyEmail}>Xác minh</ButtonMain>
             </div>
           )}
         </div>

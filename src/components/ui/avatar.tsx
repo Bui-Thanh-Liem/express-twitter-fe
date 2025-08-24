@@ -59,7 +59,7 @@ function AvatarMain({
   return (
     <Avatar className={cn("w-10 h-10", className)}>
       <AvatarImage src={src} alt={alt} className="object-cover" />
-      <AvatarFallback>{alt[0].toLocaleUpperCase()}</AvatarFallback>
+      <AvatarFallback>{alt[0]?.toLocaleUpperCase()}</AvatarFallback>
     </Avatar>
   );
 }

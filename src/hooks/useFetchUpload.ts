@@ -4,6 +4,7 @@ import {
   MAX_SIZE_IMAGE_UPLOAD,
   MAX_SIZE_VIDEO_UPLOAD,
 } from "~/shared/constants";
+import type { RemoteImagesDto } from "~/shared/dtos/req/upload.dto";
 import { apiCall } from "~/utils/callApi.util";
 
 // 📸 POST - Upload single image/video (Dynamic endpoint)
@@ -108,5 +109,16 @@ export const useUploadWithValidation = () => {
       // Thực hiện upload
       return uploadMutation.mutateAsync(files);
     },
+  });
+};
+
+// 🎯 Hook để xóa nhiều ảnh từ urls
+export const useRemoveImages = () => {
+  return useMutation({
+    mutationFn: async (credentials: RemoteImagesDto) =>
+      apiCall("/uploads/remote/images", {
+        method: "POST",
+        body: JSON.stringify(credentials),
+      }),
   });
 };

@@ -2,16 +2,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import {
+  ForgotPasswordDtoSchema,
+  type ForgotPasswordDto,
+} from "~/shared/dtos/req/auth.dto";
 import { ButtonMain } from "../ui/button";
 import { InputMain } from "../ui/input";
-
-const FormSchema = z.object({
-  email: z.string().email("Email không hợp lệ"),
-});
-
-type FormValues = z.infer<typeof FormSchema>;
-
 export function ForgotPasswordForm({
   setOpenForm,
   onSuccess,
@@ -25,8 +21,8 @@ export function ForgotPasswordForm({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({
-    resolver: zodResolver(FormSchema),
+  } = useForm<ForgotPasswordDto>({
+    resolver: zodResolver(ForgotPasswordDtoSchema),
     defaultValues: {
       email: "",
     },
@@ -39,7 +35,7 @@ export function ForgotPasswordForm({
   }
 
   //
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = (data: ForgotPasswordDto) => {
     console.log("✅ Dữ liệu ForgotPasswordForm :", data);
     setOpenForm(false);
     onSuccess();

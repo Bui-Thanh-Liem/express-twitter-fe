@@ -75,10 +75,10 @@ export function DatePicker<T extends object>({
           {label}
         </Label>
       )}
-      <div className="relative flex gap-2">
+      <div className="relative">
         <Input
           readOnly
-          id="date"
+          id={id}
           value={formatDateToDateVN(valueDate)}
           placeholder={placeholder}
           className={cn(
@@ -91,7 +91,7 @@ export function DatePicker<T extends object>({
         />
         <DropdownMenuTrigger asChild>
           <Button
-            id="date-picker"
+            id={id}
             variant="ghost"
             className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
             onClick={(e) => e.stopPropagation()}

@@ -25,7 +25,6 @@ export function LoginAccountForm({
   onClickRegister: () => void;
 }) {
   //
-
   const apiLogin = useLogin();
 
   //
