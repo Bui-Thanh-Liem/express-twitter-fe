@@ -14,7 +14,7 @@
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": true, // Bắt buộc import là type hoặc giá trị
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
