@@ -88,7 +88,7 @@ export function UpdateMeForm({
   });
 
   //
-  logger.info("errors:::", errors);
+  console.log("errors:::", errors);
   const onSubmit = async (data: UpdateMeDto) => {
     try {
       if (avatarFile) {

@@ -37,8 +37,8 @@ export function ProfileMedia({ profile_id }: { profile_id: string }) {
       if (page === 1) {
         // Nếu là trang đầu tiên, replace toàn bộ
         setAllMedia(() => {
-          logger.info("Setting initial media for profile:", profile_id);
-          logger.info("New media:", newMedia);
+          console.log("Setting initial media for profile:", profile_id);
+          console.log("New media:", newMedia);
           return newMedia;
         });
       } else {
@@ -63,7 +63,7 @@ export function ProfileMedia({ profile_id }: { profile_id: string }) {
     }
   }, [data, page, profile_id]);
 
-  logger.info("allMedia:", allMedia);
+  console.log("allMedia:", allMedia);
 
   // Callback khi element cuối cùng xuất hiện trên viewport
   // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -88,7 +88,7 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
     (entries: IntersectionObserverEntry[]) => {
       const [entry] = entries;
       if (entry.isIntersecting && hasMore && !isLoading && !isLoadingMore) {
-        logger.info("Loading more tweets...");
+        console.log("Loading more tweets...");
         setIsLoadingMore(true);
         setPage((prev) => prev + 1);
       }
@@ -155,7 +155,7 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
     return <NotFoundTweet />;
   }
 
-  logger.info("ListTweets::");
+  console.log("ListTweets::");
 
   return (
     <div className="max-w-2xl mx-auto">
