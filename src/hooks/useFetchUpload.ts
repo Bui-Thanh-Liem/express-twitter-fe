@@ -62,7 +62,7 @@ export const useUploadMedia = () => {
       return new OkResponse("Success", results.flat()); // Merge tất cả string[] thành một string[] duy nhất
     },
     onSuccess: () => {
-      console.log("Uploaded success");
+      logger.info("Uploaded success");
     },
   });
 };

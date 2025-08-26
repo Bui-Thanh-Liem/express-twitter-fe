@@ -25,7 +25,7 @@ export const useVerifyEmail = () => {
       }),
     onSuccess: (res) => {
       if (res.statusCode === 200) {
-        console.log("useVerifyEmail - res :::", res);
+        logger.info("useVerifyEmail - res :::", res);
 
         //
         navigate("/home");
@@ -43,7 +43,7 @@ export const useResendVerifyEmail = () => {
       }),
     onSuccess: (res) => {
       if (res.statusCode === 200) {
-        console.log("useResendVerifyEmail - res :::", res);
+        logger.info("useResendVerifyEmail - res :::", res);
       }
     },
   });

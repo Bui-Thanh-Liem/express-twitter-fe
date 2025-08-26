@@ -40,7 +40,7 @@ export const apiCall = async <T>(
     result.statusCode === 401 &&
     result.message === "TokenExpiredError: jwt expired"
   ) {
-    console.log("Token đã hết hạn tiến hành refresh");
+    logger.info("Token đã hết hạn tiến hành refresh");
 
     // Fix: Get refresh_token, not access_token again
     const refresh_token = localStorage.getItem("refresh_token") || "";
@@ -82,7 +82,7 @@ export const apiCall = async <T>(
       // localStorage.removeItem("refresh_token");
 
       // You might want to redirect to login page here
-      console.log("Lỗi khi gọi api refresh token:::", resRefreshToken);
+      logger.info("Lỗi khi gọi api refresh token:::", resRefreshToken);
       window.location.href = "/";
     }
   }

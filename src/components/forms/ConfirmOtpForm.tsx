@@ -48,7 +48,7 @@ export function ConfirmOtpForm({
 
   //
   const onSubmit = (data: FormValues) => {
-    console.log("✅ Dữ liệu ConfirmOtpForm :", data);
+    logger.info("✅ Dữ liệu ConfirmOtpForm :", data);
     setOpenForm(false);
     onSuccess();
     reset();

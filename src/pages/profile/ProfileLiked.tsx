@@ -28,8 +28,8 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
       if (page === 1) {
         // Nếu là trang đầu tiên, replace toàn bộ
         setAllTweets(() => {
-          console.log("cos vaof dayad set state lai roi nah");
-          console.log("trong state newTweets:::", newTweets);
+          logger.info("cos vaof dayad set state lai roi nah");
+          logger.info("trong state newTweets:::", newTweets);
           return newTweets;
         });
       } else {

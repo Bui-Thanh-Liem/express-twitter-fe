@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
   ResetPasswordDtoSchema,
-  type ResetPasswordDto
+  type ResetPasswordDto,
 } from "~/shared/dtos/req/auth.dto";
 import { ButtonMain } from "../ui/button";
 import { InputMain } from "../ui/input";
@@ -37,7 +37,7 @@ export function ResetPasswordForm({
 
   //
   const onSubmit = (data: ResetPasswordDto) => {
-    console.log("✅ Dữ liệu ResetPasswordForm :", data);
+    logger.info("✅ Dữ liệu ResetPasswordForm :", data);
     setOpenForm(false);
     reset();
   };

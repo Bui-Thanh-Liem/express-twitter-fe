@@ -84,7 +84,7 @@ export function Tweet({
     defaultValues: DEFAULT_VALUES,
     mode: "onChange", // Enable real-time validation
   });
-  console.log("Tweet - form - isValid:::", isValid);
+  logger.info("Tweet - form - isValid:::", isValid);
 
   // Watch content for real-time updates
   const contentValue = watch("content");
@@ -133,7 +133,7 @@ export function Tweet({
 
         // Upload media first if file is selected and not already uploaded
         if (selectedFile && !uploadedMediaUrl) {
-          console.log(`Uploading ${mediaType}...`);
+          logger.info(`Uploading ${mediaType}...`);
 
           // Simulate progress for better UX (if your API doesn't support progress)
           setUploadProgress(10);
@@ -166,7 +166,7 @@ export function Tweet({
           media: mediaUrl ? { url: mediaUrl, type: mediaType! } : undefined,
         };
 
-        console.log("Creating tweet with data:", tweetData);
+        logger.info("Creating tweet with data:", tweetData);
         const resCreateTweet = await apiCreateTweet.mutateAsync(tweetData);
 
         handleResponse(resCreateTweet, successForm);

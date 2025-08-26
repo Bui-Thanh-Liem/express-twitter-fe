@@ -23,7 +23,10 @@ import { DatePicker } from "../ui/date-picker";
 import { InputMain } from "../ui/input";
 import { TextareaMain } from "../ui/textarea";
 import { WrapIcon } from "../wrapIcon";
-import { UpdateMeDtoSchema, type UpdateMeDto } from "~/shared/dtos/req/auth.dto";
+import {
+  UpdateMeDtoSchema,
+  type UpdateMeDto,
+} from "~/shared/dtos/req/auth.dto";
 
 interface UpdateUserFormProps {
   setOpenForm: (open: boolean) => void;
@@ -85,7 +88,7 @@ export function UpdateMeForm({
   });
 
   //
-  console.log("errors:::", errors);
+  logger.info("errors:::", errors);
   const onSubmit = async (data: UpdateMeDto) => {
     try {
       if (avatarFile) {
