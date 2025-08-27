@@ -7,7 +7,7 @@ import { apiCall } from "~/utils/callApi.util";
 // 🚪 GET - Get User By username
 export const useGetOneByUsername = (username: string, enabled = true) => {
   return useQuery({
-    queryKey: ["users", username],
+    queryKey: ["user", username],
     queryFn: () => apiCall<IUser>(`/users/username/${username}`),
     enabled: enabled && !!username,
   });
@@ -25,7 +25,7 @@ export const useVerifyEmail = () => {
       }),
     onSuccess: (res) => {
       if (res.statusCode === 200) {
-        logger.info("useVerifyEmail - res :::", res);
+        console.log("useVerifyEmail - res :::", res);
 
         //
         navigate("/home");
@@ -43,7 +43,7 @@ export const useResendVerifyEmail = () => {
       }),
     onSuccess: (res) => {
       if (res.statusCode === 200) {
-        logger.info("useResendVerifyEmail - res :::", res);
+        console.log("useResendVerifyEmail - res :::", res);
       }
     },
   });

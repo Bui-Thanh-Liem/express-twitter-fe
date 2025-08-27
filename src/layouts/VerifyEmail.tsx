@@ -14,7 +14,7 @@ export function VerifyEmail() {
         const res = await apiVerifyEmail.mutateAsync({
           email_verify_token: token,
         });
-        logger.info("VerifyEmail - res:::", res);
+        console.log("VerifyEmail - res:::", res);
         handleResponse(res);
       })();
     }

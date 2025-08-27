@@ -3,8 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftIcon } from "~/components/icons/arrow-left";
 import { CloseIcon } from "~/components/icons/close";
-import { DotIcon } from "~/components/icons/dot";
-import { MessageIcon } from "~/components/icons/messages";
 import { SearchIcon } from "~/components/icons/search";
 import { VerifyIcon } from "~/components/icons/verify";
 import { LoadingProcess } from "~/components/loading-process";
@@ -17,11 +15,10 @@ import {
   useResendVerifyEmail,
 } from "~/hooks/useFetchUser";
 import { ETweetType } from "~/shared/enums/type.enum";
-import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
 import { formatDateToDateVN } from "~/utils/formatDateToDateVN";
 import { handleResponse } from "~/utils/handleResponse";
-import { ProfileEdit } from "./ProfileEdit";
+import { ProfileAction } from "./ProfileAction";
 import { ProfileLiked } from "./ProfileLiked";
 import { ProfileMedia } from "./ProfileMedia";
 import { ProfileTweets } from "./ProfileTweets";
@@ -59,7 +56,7 @@ export function ProfilePage() {
           Không thể tải profile
         </h2>
         <p className="text-gray-500 mb-4">
-          {error.message || "Đã xảy ra lỗi khi tải dữ liệu"}
+          {error?.message || "Đã xảy ra lỗi khi tải dữ liệu"}
         </p>
         <ButtonMain onClick={() => refetch()}>Thử lại</ButtonMain>
       </div>
@@ -87,6 +84,8 @@ export function ProfilePage() {
     const res = await apiResendVerifyEmail.mutateAsync();
     handleResponse(res);
   }
+
+  console.log("profile:::", profile);
 
   return (
     <div>
@@ -130,19 +129,7 @@ export function ProfilePage() {
               className="w-32 h-32 border-4 border-white"
             />
 
-            {isOwnProfile ? (
-              <ProfileEdit currentUser={profile as IUser} />
-            ) : (
-              <div className="flex items-center gap-x-3 mt-20">
-                <WrapIcon className="border">
-                  <DotIcon size={18} />
-                </WrapIcon>
-                <WrapIcon className="border">
-                  <MessageIcon size={18} />
-                </WrapIcon>
-                <ButtonMain size="sm">Theo dõi</ButtonMain>
-              </div>
-            )}
+            <ProfileAction profile={profile!} isOwnProfile={isOwnProfile} />
           </div>
 
           {/* <!-- Name and Username --> */}

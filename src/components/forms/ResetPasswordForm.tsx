@@ -37,7 +37,7 @@ export function ResetPasswordForm({
 
   //
   const onSubmit = (data: ResetPasswordDto) => {
-    logger.info("✅ Dữ liệu ResetPasswordForm :", data);
+    console.log("✅ Dữ liệu ResetPasswordForm :", data);
     setOpenForm(false);
     reset();
   };

@@ -6,14 +6,14 @@ export default function MessagesPage() {
     const socket = io(import.meta.env.VITE_API_URL);
     // client-side
     socket.on("connect", () => {
-      logger.info(`User ${socket.id} connect to server`);
+      console.log(`User ${socket.id} connect to server`);
     });
     socket.on("disconnect", () => {
-      logger.info(`User disconnect connect server`);
+      console.log(`User disconnect connect server`);
     });
 
     socket.on("getting", (arg) => {
-      logger.info("arg:::", arg);
+      console.log("arg:::", arg);
     });
 
     return () => {
