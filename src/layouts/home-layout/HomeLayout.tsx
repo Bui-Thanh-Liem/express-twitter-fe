@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { SidebarLeft } from "./SidebarLeft";
 import { SidebarRight } from "./SidebarRight";
+import ChatBox from "~/pages/profile/ProfileAction";
 
 export function HomeLayout() {
   return (
@@ -16,6 +17,8 @@ export function HomeLayout() {
           <SidebarRight />
         </aside>
       </div>
+
+      <ChatBox />
     </div>
   );
 }

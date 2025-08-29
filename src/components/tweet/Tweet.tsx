@@ -33,8 +33,6 @@ const DEFAULT_VALUES: CreateTweetDto = {
   type: ETweetType.Tweet,
 };
 
-const MAX_LINES = 12;
-
 export function Tweet({
   tweet,
   onSuccess,
@@ -101,7 +99,7 @@ export function Tweet({
   //
   const handleTextareaInput = useCallback(
     (e: React.FormEvent<HTMLTextAreaElement>) => {
-      const newValue = autoResize(e.currentTarget, MAX_LINES);
+      const newValue = autoResize(e.currentTarget, 12);
       if (newValue !== contentValue) {
         setValue("content", newValue);
       }

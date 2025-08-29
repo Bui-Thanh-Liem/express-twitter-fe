@@ -1,5 +1,7 @@
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { EmojiSelector } from "~/components/emoji-picker";
 import { UpdateMeForm } from "~/components/forms/UpdateMeForm";
 import { MessageIcon } from "~/components/icons/messages";
 import { AvatarMain } from "~/components/ui/avatar";
@@ -13,11 +15,13 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { DialogMain } from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { WrapIcon } from "~/components/wrapIcon";
+import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useFollowUser } from "~/hooks/useFetchFollow";
+import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import { useChatBoxStore } from "~/store/useChatBoxStore";
 
 type Message = {
   id: number;
@@ -25,10 +29,9 @@ type Message = {
   text: string;
 };
 
+// Edit profile
 export function ProfileEdit({ currentUser }: { currentUser: IUser }) {
   const [isOpen, setIsOpen] = useState(false);
-
-  console.log("ProfileEdit");
 
   return (
     <>
@@ -54,33 +57,97 @@ export function ProfileEdit({ currentUser }: { currentUser: IUser }) {
   );
 }
 
-export default function ChatBox({
-  profile,
-  onClose,
-}: {
-  profile: IUser;
-  onClose: () => void;
-}) {
+//
+export default function ChatBox() {
+  //
+  const { close, isOpen, profile } = useChatBoxStore();
+
+  //
+  const { register, reset, handleSubmit, setValue, watch } = useForm<{
+    text: string;
+  }>({
+    defaultValues: { text: "" },
+  });
+
+  //
   const [messages, setMessages] = useState<Message[]>([
     { id: 1, sender: "other", text: "Xin chào 👋" },
     { id: 2, sender: "me", text: "Chào bạn, mình có thể giúp gì?" },
+    { id: 1, sender: "other", text: "Xin chào 👋" },
+    {
+      id: 2,
+      sender: "me",
+      text: "Chào bạn, mình có thể giúp gì? bạn không hiểu tiếng Việt à ?",
+    },
+    {
+      id: 2,
+      sender: "me",
+      text: "Chào bạn, mình có thể giúp gì? bạn không hiểu tiếng Việt à ? bạn không hiểu tiếng Việt à ?",
+    },
+    { id: 1, sender: "other", text: "Xin chào 👋" },
+    {
+      id: 2,
+      sender: "me",
+      text: "Chào bạn, mình có thể giúp gì? bạn không hiểu tiếng Việt à ?",
+    },
+    {
+      id: 2,
+      sender: "me",
+      text: "Chào bạn, mình có thể giúp gì? bạn không hiểu tiếng Việt à ?",
+    },
   ]);
-  const [input, setInput] = useState("");
 
-  const sendMessage = () => {
-    if (!input.trim()) return;
-    setMessages((prev) => [
-      ...prev,
-      { id: Date.now(), sender: "me", text: input },
-    ]);
-    setInput("");
-  };
+  //
+  const { textareaRef, autoResize } = useTextareaAutoResize();
+  const { insertEmoji } = useEmojiInsertion(textareaRef);
 
-  console.log("ChatBox");
+  // Watch content for real-time updates
+  const contentValue = watch("text");
+
+  //
+  const endOfMessagesRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Memoized handlers
+  const handleEmojiClick = useCallback(
+    (emoji: string) => {
+      const newContent = insertEmoji(emoji, contentValue);
+      setValue("text", newContent);
+    },
+    [contentValue, insertEmoji, setValue]
+  );
+
+  //
+  const handleTextareaInput = useCallback(
+    (e: React.FormEvent<HTMLTextAreaElement>) => {
+      const newValue = autoResize(e.currentTarget, 1);
+      if (newValue !== contentValue) {
+        setValue("text", newValue);
+      }
+    },
+    [autoResize, setValue, contentValue]
+  );
+
+  //
+  const onSubmit = useCallback(
+    (data: { text: string }) => {
+      reset();
+    },
+    [reset]
+  );
+
+  if (!profile)
+    return (
+      <div className="w-[400px] h-[600px] flex flex-col rounded-2xl shadow-lg">
+        <p>Có lỗi xảy ra vui lòng thử lại 😓</p>
+      </div>
+    );
 
   return (
-    <div className="fixed bottom-8 right-8 bg-white">
-      <Card className="w-[400px] h-[600px] flex flex-col rounded-2xl shadow-lg">
+    <div className="fixed bottom-8 right-8 bg-white" hidden={!isOpen}>
+      <Card className="w-[400px] h-[580px] gap-2 rounded-2xl shadow-lg">
         <CardHeader>
           <div className="flex gap-x-4 items-center">
             <AvatarMain src={profile.avatar} alt={profile.name} />
@@ -92,13 +159,13 @@ export default function ChatBox({
             </div>
           </div>
           <CardAction>
-            <WrapIcon onClick={onClose}>
+            <WrapIcon onClick={close}>
               <X className="h-4 w-4" />
             </WrapIcon>
           </CardAction>
         </CardHeader>
-        <CardContent className="flex-1 flex flex-col border-t pt-3">
-          <ScrollArea className="flex-1 pr-4">
+        <CardContent className="flex-1 flex flex-col border-t pt-4">
+          <ScrollArea className="pr-4 h-full max-h-[380px]">
             <div className="flex flex-col gap-3">
               {messages.map((msg) => (
                 <div
@@ -125,18 +192,43 @@ export default function ChatBox({
                   </div>
                 </div>
               ))}
+
+              <div ref={endOfMessagesRef} />
             </div>
           </ScrollArea>
 
-          <div className="flex gap-2 pt-2 border-t">
-            <Input
-              placeholder="Nhập tin nhắn..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            />
-            <ButtonMain onClick={sendMessage}>Gửi</ButtonMain>
-          </div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="relative flex gap-2 pt-4 border-t">
+              <p className="absolute top-1 -left-2.5 w-5 h-5 flex items-center justify-center rounded-full bg-blue-400 text-[10px] text-white">
+                {60 - (isNaN(contentValue?.length) ? 0 : contentValue?.length)}
+              </p>
+              <textarea
+                {...register("text")}
+                ref={textareaRef}
+                autoComplete="off"
+                value={contentValue}
+                autoCorrect="off"
+                spellCheck="false"
+                className="outline-0 w-full text-md placeholder:text-gray-500 bg-blue-50 rounded-xl resize-none p-2"
+                placeholder="Nhập văn bản"
+                onInput={handleTextareaInput}
+                rows={2}
+                maxLength={60}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault(); // chặn xuống dòng mặc định
+                    handleSubmit(onSubmit)(); // gọi submit form
+                  }
+                }}
+              />
+              <span>
+                <WrapIcon className="hover:bg-blue-100/60">
+                  <EmojiSelector onEmojiClick={handleEmojiClick} />
+                </WrapIcon>
+              </span>
+              <ButtonMain type="submit">Gửi</ButtonMain>
+            </div>
+          </form>
         </CardContent>
       </Card>
     </div>
@@ -150,9 +242,12 @@ interface IProfileActiveProps {
 
 export function ProfileAction({ profile, isOwnProfile }: IProfileActiveProps) {
   const { mutate } = useFollowUser();
-  const [openChatBox, setOpenChatBox] = useState(false);
+  const { open, setProfile } = useChatBoxStore();
 
-  console.log("ProfileAction");
+  function handleOpenCheckBox() {
+    setProfile(profile);
+    open();
+  }
 
   return (
     <>
@@ -160,7 +255,7 @@ export function ProfileAction({ profile, isOwnProfile }: IProfileActiveProps) {
         <ProfileEdit currentUser={profile as IUser} />
       ) : (
         <div className="flex items-center gap-x-3 mt-20">
-          <WrapIcon className="border" onClick={() => setOpenChatBox(true)}>
+          <WrapIcon className="border" onClick={handleOpenCheckBox}>
             <MessageIcon size={18} />
           </WrapIcon>
           {
@@ -177,10 +272,6 @@ export function ProfileAction({ profile, isOwnProfile }: IProfileActiveProps) {
             </ButtonMain>
           }
         </div>
-      )}
-
-      {openChatBox && (
-        <ChatBox profile={profile} onClose={() => setOpenChatBox(false)} />
       )}
     </>
   );
