@@ -138,12 +138,7 @@ export default function ChatBox() {
     [reset]
   );
 
-  if (!profile)
-    return (
-      <div className="w-[400px] h-[600px] flex flex-col rounded-2xl shadow-lg">
-        <p>Có lỗi xảy ra vui lòng thử lại 😓</p>
-      </div>
-    );
+  if (!profile) return null;
 
   return (
     <div className="fixed bottom-8 right-8 bg-white" hidden={!isOpen}>
