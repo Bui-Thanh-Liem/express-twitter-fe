@@ -221,7 +221,9 @@ export default function ChatBox() {
                   <EmojiSelector onEmojiClick={handleEmojiClick} />
                 </WrapIcon>
               </span>
-              <ButtonMain type="submit">Gửi</ButtonMain>
+              <ButtonMain type="submit">
+                Gửi
+              </ButtonMain>
             </div>
           </form>
         </CardContent>
