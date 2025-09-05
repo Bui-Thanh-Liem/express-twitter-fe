@@ -85,8 +85,6 @@ export function ProfilePage() {
     handleResponse(res);
   }
 
-  console.log("profile:::", profile);
-
   return (
     <div>
       {/* Header */}

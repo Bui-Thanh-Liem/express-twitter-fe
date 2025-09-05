@@ -13,13 +13,13 @@ export const useCreateTweet = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (productData: CreateTweetDto) =>
+    mutationFn: (payload: CreateTweetDto) =>
       apiCall<ResCreateTweet>("/tweets", {
         method: "POST",
-        body: JSON.stringify(productData),
+        body: JSON.stringify(payload),
       }),
     onSuccess: () => {
-      // Invalidate danh sách products
+      // Invalidate danh sách tweets
       queryClient.invalidateQueries({ queryKey: ["tweets"] });
     },
   });

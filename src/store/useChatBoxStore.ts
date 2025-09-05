@@ -1,27 +1,30 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 
 interface ChatBoxStore {
   isOpen: boolean;
   open: () => void;
   close: () => void;
-  profile: IUser | undefined;
-  setProfile: (val: IUser | undefined) => void;
+  conversation: IConversation | undefined;
+  setConversation: (val: IConversation | undefined) => void;
 }
 
 export const useChatBoxStore = create<ChatBoxStore>()(
   persist(
     (set) => ({
-      profile: undefined,
+      conversation: undefined,
       isOpen: false,
       open: () => set({ isOpen: true }),
       close: () => set({ isOpen: false }),
-      setProfile: (val) => set({ profile: val }),
+      setConversation: (val) => set({ conversation: val }),
     }),
     {
       name: "checkbox-storage", // tên key trong localStorage
-      partialize: (state) => ({ isOpen: state.isOpen, profile: state.profile }), // chỉ lưu user, không lưu hàm
+      partialize: (state) => ({
+        isOpen: state.isOpen,
+        profile: state.conversation,
+      }), // chỉ lưu conversation, không lưu hàm
     }
   )
 );

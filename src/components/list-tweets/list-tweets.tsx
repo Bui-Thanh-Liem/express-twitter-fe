@@ -155,8 +155,6 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
     return <NotFoundTweet />;
   }
 
-  console.log("ListTweets::");
-
   return (
     <div className="max-w-2xl mx-auto">
       {/* Loading state cho lần load đầu tiên */}
