@@ -1,10 +1,11 @@
 import { X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useLocation } from "react-router-dom";
 import { EmojiSelector } from "~/components/emoji-picker";
 import { UpdateMeForm } from "~/components/forms/UpdateMeForm";
 import { MessageIcon } from "~/components/icons/messages";
-import { AvatarMain } from "~/components/ui/avatar";
+import { AvatarMain, GroupAvatarMain } from "~/components/ui/avatar";
 import { ButtonMain } from "~/components/ui/button";
 import {
   Card,
@@ -20,17 +21,20 @@ import { WrapIcon } from "~/components/wrapIcon";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useCreateConversation } from "~/hooks/useFetchConversations";
 import { useFollowUser } from "~/hooks/useFetchFollow";
+import { useGetMultiMessages } from "~/hooks/useFetchMessages";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
 import { EConversationType } from "~/shared/enums/type.enum";
+import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useChatSocket } from "~/socket/hooks/useChatSocket";
+import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useChatBoxStore } from "~/store/useChatBoxStore";
+import { useUserStore } from "~/store/useUserStore";
 
-type Message = {
-  id: number;
-  sender: "me" | "other";
-  text: string;
-};
+interface IProfileActiveProps {
+  isOwnProfile: boolean;
+  profile: IUser;
+}
 
 // Edit profile
 export function ProfileEdit({ currentUser }: { currentUser: IUser }) {
@@ -63,10 +67,47 @@ export function ProfileEdit({ currentUser }: { currentUser: IUser }) {
 //
 export default function ChatBox() {
   //
-  const { close, isOpen, conversation } = useChatBoxStore();
+  const { leaveConversation, joinConversation } = useConversationSocket();
+  const { pathname } = useLocation();
+  const { close, conversation } = useChatBoxStore();
+  const { user } = useUserStore();
+
+  //
+  useEffect(() => {
+    if (conversation?._id) {
+      console.log("joinConversation:::", conversation?._id);
+      joinConversation([conversation?._id]);
+    }
+
+    return () => {
+      if (conversation?._id) {
+        console.log("leaveConversation:::", conversation?._id);
+        leaveConversation([conversation?._id]);
+      }
+    };
+  }, [conversation?._id]);
+
+  //
+  const [messages, setMessages] = useState<IMessage[]>([]);
   const { sendMessage } = useChatSocket((newDataMessage) => {
-    console.log("newDataMessage::", newDataMessage);
+    console.log("new message socket");
+    setMessages((prev) => {
+      return [...prev, newDataMessage];
+    });
   });
+
+  //
+  const { data } = useGetMultiMessages(conversation?._id, {
+    page: "1",
+    limit: "100",
+  });
+
+  //
+  useEffect(() => {
+    const _messages = data?.data?.items || [];
+    console.log("co set lai messages khong ");
+    setMessages(_messages);
+  }, [data?.data?.items]);
 
   //
   const { register, reset, handleSubmit, setValue, watch } = useForm<{
@@ -74,34 +115,6 @@ export default function ChatBox() {
   }>({
     defaultValues: { text: "" },
   });
-
-  //
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 1, sender: "other", text: "Xin chào 👋" },
-    { id: 2, sender: "me", text: "Chào bạn, mình có thể giúp gì?" },
-    { id: 3, sender: "other", text: "Xin chào 👋" },
-    {
-      id: 4,
-      sender: "me",
-      text: "Chào bạn, mình có thể giúp gì? bạn không hiểu tiếng Việt à ?",
-    },
-    {
-      id: 5,
-      sender: "me",
-      text: "Chào bạn, mình có thể giúp gì? bạn không hiểu tiếng Việt à ? bạn không hiểu tiếng Việt à ?",
-    },
-    { id: 6, sender: "other", text: "Xin chào 👋" },
-    {
-      id: 7,
-      sender: "me",
-      text: "Chào bạn, mình có thể giúp gì? bạn không hiểu tiếng Việt à ?",
-    },
-    {
-      id: 8,
-      sender: "me",
-      text: "Chào bạn, mình có thể giúp gì? bạn không hiểu tiếng Việt à ?",
-    },
-  ]);
 
   //
   const { textareaRef, autoResize } = useTextareaAutoResize();
@@ -140,27 +153,36 @@ export default function ChatBox() {
   const onSubmit = useCallback(
     (data: { text: string }) => {
       sendMessage({
-        createdAt: new Date(),
-        text: data.text,
-        roomId: conversation?._id,
+        content: data.text,
+        sender: user?._id,
+        conversation: conversation?._id,
       });
 
       reset();
     },
-    [conversation?._id, reset, sendMessage]
+    [conversation?._id, reset, sendMessage, user?._id]
   );
 
-  if (!conversation) return null;
+  //
+  function closeChatBox() {
+    close();
+  }
+
+  if (!conversation || pathname === "/messages") return null;
 
   return (
-    <div className="fixed bottom-8 right-8 bg-white" hidden={!isOpen}>
+    <div className="fixed bottom-8 right-8 bg-white z-50">
       <Card className="w-[400px] h-[580px] gap-2 rounded-2xl shadow-lg">
         <CardHeader>
           <div className="flex gap-x-4 items-center">
-            <AvatarMain
-              src={conversation.avatar as string}
-              alt={conversation.name as string}
-            />
+            {typeof conversation.avatar === "string" ? (
+              <AvatarMain
+                src={conversation.avatar}
+                alt={conversation.name || ""}
+              />
+            ) : (
+              <GroupAvatarMain srcs={conversation.avatar as string[]} />
+            )}
             <div>
               <CardTitle>{conversation?.name}</CardTitle>
               <CardDescription className="text-xs">
@@ -169,7 +191,7 @@ export default function ChatBox() {
             </div>
           </div>
           <CardAction>
-            <WrapIcon onClick={close}>
+            <WrapIcon onClick={closeChatBox}>
               <X className="h-4 w-4" />
             </WrapIcon>
           </CardAction>
@@ -179,12 +201,12 @@ export default function ChatBox() {
             <div className="flex flex-col gap-3">
               {messages.map((msg) => (
                 <div
-                  key={msg.id}
+                  key={msg._id}
                   className={`flex items-start gap-2 ${
                     msg.sender === "me" ? "justify-end" : "justify-start"
                   }`}
                 >
-                  {msg.sender === "other" && (
+                  {msg.sender !== user?._id && (
                     <AvatarMain
                       className="w-8 h-8"
                       src={conversation.avatar as string}
@@ -193,12 +215,12 @@ export default function ChatBox() {
                   )}
                   <div
                     className={`px-3 py-2 rounded-2xl max-w-[70%] text-sm ${
-                      msg.sender === "me"
-                        ? "bg-blue-500 text-white"
+                      msg.sender === user?._id
+                        ? "bg-blue-500 text-white ml-auto"
                         : "bg-gray-200 text-gray-800"
                     }`}
                   >
-                    {msg.text}
+                    {msg.content}
                   </div>
                 </div>
               ))}
@@ -245,22 +267,12 @@ export default function ChatBox() {
   );
 }
 
-interface IProfileActiveProps {
-  isOwnProfile: boolean;
-  profile: IUser;
-}
-
 export function ProfileAction({ profile, isOwnProfile }: IProfileActiveProps) {
   const { mutate } = useFollowUser();
   const { open, setConversation } = useChatBoxStore();
   const apiCreateConversation = useCreateConversation();
 
   async function handleOpenCheckBox() {
-    console.log("payload create conversation ::", {
-      type: EConversationType.Private,
-      participants: [profile?._id],
-    });
-
     const res = await apiCreateConversation.mutateAsync({
       type: EConversationType.Private,
       participants: [profile?._id],
@@ -283,12 +295,12 @@ export function ProfileAction({ profile, isOwnProfile }: IProfileActiveProps) {
           {
             <ButtonMain
               size="sm"
-              onClick={() =>
+              onClick={() => {
                 mutate({
                   user_id: profile._id,
                   username: profile.username || "",
-                })
-              }
+                });
+              }}
             >
               {!profile?.isFollow ? "Theo dõi" : "Bỏ theo dõi"}
             </ButtonMain>

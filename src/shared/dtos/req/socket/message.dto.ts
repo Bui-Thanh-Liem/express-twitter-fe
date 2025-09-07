@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-export const messageDtoSchema = z.object({
-  roomId: z.string().min(1, "roomId is required"),
-  text: z.string().min(1, "text cannot be empty"),
-  createdAt: z.date(),
+export const sendMessageDtoSchema = z.object({
+  conversation: z.string().min(1, "roomId is required"),
+  sender: z.string().min(1, "roomId is required"),
+  content: z.string().min(1, "text cannot be empty"),
 });
 
-export type messageDto = z.infer<typeof messageDtoSchema>;
+export type sendMessageDto = z.infer<typeof sendMessageDtoSchema>;

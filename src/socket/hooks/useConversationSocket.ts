@@ -1,10 +1,8 @@
 import { useEffect } from "react";
 import { CONSTANT_EVENT_NAMES } from "~/shared/constants";
-import type { sendMessageDto } from "~/shared/dtos/req/socket/message.dto";
-import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import { socket } from "~/socket/socket";
 
-export const useChatSocket = (onNewMessage: (data: IMessage) => void) => {
+export const useConversationSocket = () => {
   //
   useEffect(() => {
     socket.on("connect_error", (err) => {
@@ -22,21 +20,22 @@ export const useChatSocket = (onNewMessage: (data: IMessage) => void) => {
   }, []);
 
   //
-  useEffect(() => {
-    socket.on(CONSTANT_EVENT_NAMES.NEW_MESSAGE, onNewMessage);
-    return () => {
-      socket.off(CONSTANT_EVENT_NAMES.NEW_MESSAGE, onNewMessage);
-    };
-  }, [onNewMessage]);
-
-  //
-  const sendMessage = (data: sendMessageDto) => {
+  const joinConversation = (ids: string[]) => {
     if (!socket.connected) {
-      console.warn("⚠️ Socket chưa connect, không thể sendMessage");
+      console.warn("⚠️ Socket chưa connect, không thể join room");
       return;
     }
-    socket.emit(CONSTANT_EVENT_NAMES.SEND_MESSAGE, data);
+    socket.emit(CONSTANT_EVENT_NAMES.JOIN_ROOM, ids);
   };
 
-  return { sendMessage };
+  //
+  const leaveConversation = (ids: string[]) => {
+    if (!socket.connected) {
+      console.warn("⚠️ Socket chưa connect, không thể join room");
+      return;
+    }
+    socket.emit(CONSTANT_EVENT_NAMES.LEAVE_ROOM, ids);
+  };
+
+  return { leaveConversation, joinConversation };
 };

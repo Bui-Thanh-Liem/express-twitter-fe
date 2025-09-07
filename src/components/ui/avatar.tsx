@@ -2,6 +2,12 @@ import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import * as React from "react";
 import { cn } from "~/lib/utils";
 
+type GroupAvatarMainProps = {
+  srcs: string[];
+  max?: number; // số avatar hiển thị tối đa
+  className?: string;
+};
+
 function Avatar({
   className,
   ...props
@@ -64,4 +70,29 @@ function AvatarMain({
   );
 }
 
-export { Avatar, AvatarFallback, AvatarImage, AvatarMain };
+function GroupAvatarMain({ srcs, max = 3, className }: GroupAvatarMainProps) {
+  const visibleUsers = srcs.slice(0, max);
+  const extraCount = srcs.length - max;
+
+  return (
+    <div className={cn("flex -space-x-2", className)}>
+      {visibleUsers.map((src) => (
+        <AvatarMain
+          key={src}
+          src={src}
+          alt={src}
+          className="w-8 h-8 border-2 border-white"
+        />
+      ))}
+
+      {extraCount > 0 && (
+        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-xs font-medium border-2 border-white">
+          +{extraCount}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export { Avatar, AvatarFallback, AvatarImage, AvatarMain, GroupAvatarMain };
+

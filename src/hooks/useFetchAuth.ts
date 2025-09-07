@@ -1,6 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import type { LoginUserDto, RegisterUserDto, UpdateMeDto } from "~/shared/dtos/req/auth.dto";
+import type {
+  LoginUserDto,
+  RegisterUserDto,
+  UpdateMeDto,
+} from "~/shared/dtos/req/auth.dto";
 import type { ResLoginUser } from "~/shared/dtos/res/auth.dto";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
@@ -132,7 +136,7 @@ export const useUpdateMe = () => {
       }),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["users", variables.username],
+        queryKey: ["user", variables.username],
       });
 
       if (_data.statusCode === 200 && _data?.data) {

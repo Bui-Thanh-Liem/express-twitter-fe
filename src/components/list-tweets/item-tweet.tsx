@@ -1,19 +1,18 @@
 import { BarChart3, MessageCircle, Share } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { useGetDetailTweet } from "~/hooks/useFetchTweet";
+import { ProfileAction } from "~/pages/profile/ProfileAction";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import type { IMedia } from "~/shared/interfaces/common/media.interface";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import { useUserStore } from "~/store/useUserStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
 import { HLSPlayer } from "../hls/HLSPlayer";
-import { MessageIcon } from "../icons/messages";
 import { VerifyIcon } from "../icons/verify";
 import { AvatarMain } from "../ui/avatar";
-import { ButtonMain } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { WrapIcon } from "../wrapIcon";
 import { ActionBookmarkTweet } from "./action-bookmark-tweet";
 import { ActionCommentTweet } from "./action-comment-tweet";
 import { ActionLikeTweet } from "./action-like-tweet";
@@ -69,12 +68,20 @@ function ProfileHover({
 }) {
   const { user_id } = tweet;
   const author = user_id as IUser;
+  console.log("author::", author);
+
+  const { user } = useUserStore();
 
   const [isOpen, setIsOpen] = useState(false);
 
   function onOpen() {
     setIsOpen(true);
   }
+
+  const isOwnProfile = useMemo(
+    () => user?._id === author?._id,
+    [user?._id, author?._id]
+  );
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -96,11 +103,8 @@ function ProfileHover({
             alt={author?.name}
             className="mr-3 w-16 h-16"
           />
-          <div className="flex items-center gap-2">
-            <WrapIcon className="border">
-              <MessageIcon size={18} />
-            </WrapIcon>
-            <ButtonMain size="sm">Follow</ButtonMain>
+          <div className="-mt-20">
+            <ProfileAction profile={author} isOwnProfile={isOwnProfile} />
           </div>
         </div>
         <div className="mt-1.5">

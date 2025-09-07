@@ -1,42 +1,32 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { CreateConversationDto } from "~/shared/dtos/req/conversation.dto";
+import { useQuery } from "@tanstack/react-query";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
-import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
+import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import type { ResMultiType } from "~/shared/types/response.type";
 import { buildQueryString } from "~/utils/buildQueryString";
 import { apiCall } from "~/utils/callApi.util";
 
-// ➕ POST
-export const useCreateConversation = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (payload: CreateConversationDto) =>
-      apiCall<IConversation>("/conversations", {
-        method: "POST",
-        body: JSON.stringify(payload),
-      }),
-    onSuccess: () => {
-      // Invalidate danh sách conversations
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
-    },
-  });
-};
-
 // 📄 GET
-export const useGetMultiConversations = (queries?: IQuery<IConversation>) => {
+export const useGetMultiMessages = (
+  conversation_id: string,
+  queries?: IQuery<IMessage>
+) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["conversations", normalizedQueries],
+    queryKey: ["messages", conversation_id, normalizedQueries],
     queryFn: () => {
+      console.log("co lien tu goi api hay khong");
+
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
-      const url = `/conversations/${queryString ? `?${queryString}` : ""}`;
-      return apiCall<ResMultiType<IConversation>>(url);
+      const url = `/messages/${conversation_id}/${
+        queryString ? `?${queryString}` : ""
+      }`;
+      return apiCall<ResMultiType<IMessage>>(url);
     },
 
     // Các options bổ sung
+    enabled: !!conversation_id, // Chỉ chạy query khi có conversation_id
     staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
     refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
     refetchOnMount: false, // ✅ Tắt refetch khi mount

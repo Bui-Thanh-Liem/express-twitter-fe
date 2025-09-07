@@ -9,8 +9,10 @@ import { HomeLayout } from "./layouts/home-layout/HomeLayout";
 import RootLayout from "./layouts/root-layout/RootLayout";
 import { ExplorePage } from "./pages/explore/Explore";
 import { HomePage } from "./pages/home/HomePage";
-import MessagesPage from "./pages/messages/Messages";
-import { ProfilePage } from "./pages/profile/Profile";
+import { MessagePage } from "./pages/messages/MessagePage";
+import { ProfilePage } from "./pages/profile/ProfilePage";
+import { useEffect } from "react";
+import { socket } from "./socket/socket";
 
 // Router config
 const router = createBrowserRouter([
@@ -38,7 +40,7 @@ const router = createBrowserRouter([
         children: [
           { path: "home", element: <HomePage /> },
           { path: "explore", element: <ExplorePage /> },
-          { path: "messages", element: <MessagesPage /> },
+          { path: "messages", element: <MessagePage /> },
           { path: ":username", element: <ProfilePage /> },
         ],
       },
@@ -61,6 +63,15 @@ const queryClient = new QueryClient({
 });
 
 export function App() {
+  // Một kết nối duy nhất cho toàn ứng dụng
+  useEffect(() => {
+    socket.connect();
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />

@@ -53,7 +53,7 @@ export function ProfilePage() {
     return (
       <div className="flex flex-col items-center justify-center h-96">
         <h2 className="text-xl font-bold text-red-600 mb-2">
-          Không thể tải profile
+          Không thể tải hồ sơ
         </h2>
         <p className="text-gray-500 mb-4">
           {error?.message || "Đã xảy ra lỗi khi tải dữ liệu"}
@@ -80,6 +80,7 @@ export function ProfilePage() {
     );
   }
 
+  // 
   async function resendVerifyEmail() {
     const res = await apiResendVerifyEmail.mutateAsync();
     handleResponse(res);

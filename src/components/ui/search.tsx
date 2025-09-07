@@ -40,7 +40,7 @@ export function SearchMain({
       {/* Input */}
       <Input
         type="text"
-        placeholder="Search"
+        placeholder="Tìm kiếm"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={cn("rounded-full", sizeStyles[size])}
