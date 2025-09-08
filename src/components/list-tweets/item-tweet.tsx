@@ -68,7 +68,6 @@ function ProfileHover({
 }) {
   const { user_id } = tweet;
   const author = user_id as IUser;
-  console.log("author::", author);
 
   const { user } = useUserStore();
 

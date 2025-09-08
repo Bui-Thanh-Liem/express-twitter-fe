@@ -6,6 +6,7 @@ export const CreateConversationDtoSchema = z
   .object({
     type: z.nativeEnum(EConversationType),
     name: z.string().trim().max(10).optional(),
+    avatar: z.string().trim().max(10).optional(),
     participants: z
       .array(z.string().trim().regex(CONSTANT_REGEX.ID_MONGO), {
         message: 'Invalid MongoDB ObjectId'

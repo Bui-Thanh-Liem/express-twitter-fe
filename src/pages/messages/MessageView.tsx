@@ -157,7 +157,7 @@ export function MessageView({
                 <div
                   className={`px-3 py-2 rounded-2xl max-w-[70%] text-sm ${
                     msg.sender === user?._id
-                      ? "bg-blue-500 text-white ml-auto"
+                      ? "bg-blue-400 text-white ml-auto"
                       : "bg-gray-200 text-gray-800"
                   }`}
                 >

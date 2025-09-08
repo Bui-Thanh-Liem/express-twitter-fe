@@ -10,7 +10,7 @@ import { RegisterAccountForm } from "~/components/forms/RegisterAccountForm";
 import { Divider } from "~/components/ui/divider";
 import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Logo } from "../components/logo";
+import { Logo } from "../../components/logo";
 import { ResetPasswordForm } from "~/components/forms/ResetPasswordForm";
 import { useUserStore } from "~/store/useUserStore";
 import { useGetMe } from "~/hooks/useFetchAuth";

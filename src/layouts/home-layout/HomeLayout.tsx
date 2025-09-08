@@ -1,9 +1,9 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { cn } from "~/lib/utils";
-import ChatBox from "~/pages/profile/ProfileAction";
 import { useChatBoxStore } from "~/store/useChatBoxStore";
 import { SidebarLeft } from "./SidebarLeft";
 import { SidebarRight } from "./SidebarRight";
+import ChatBox from "~/pages/messages/ChatBox";
 
 export function HomeLayout() {
   const { isOpen } = useChatBoxStore();
