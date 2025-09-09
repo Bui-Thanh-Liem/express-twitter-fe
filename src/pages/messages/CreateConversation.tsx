@@ -4,7 +4,11 @@ import { CreateConversationForm } from "~/components/forms/CreateConversationFor
 import { DialogMain } from "~/components/ui/dialog";
 import { WrapIcon } from "~/components/wrapIcon";
 
-export function CreateConversation() {
+export function CreateConversation({
+  initialUserIds,
+}: {
+  initialUserIds: string[];
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -22,7 +26,10 @@ export function CreateConversation() {
         textDesc="Một nhóm yêu cầu 3 thành viên trở lên."
         width="xl"
       >
-        <CreateConversationForm setOpenForm={setIsOpen} initialUsers={[]} />
+        <CreateConversationForm
+          setOpenForm={setIsOpen}
+          initialUserIds={initialUserIds}
+        />
       </DialogMain>
     </>
   );

@@ -24,6 +24,7 @@ import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useChatBoxStore } from "~/store/useChatBoxStore";
 import { useUserStore } from "~/store/useUserStore";
 import { CreateConversation } from "./CreateConversation";
+import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 
 export default function ChatBox() {
   //
@@ -151,7 +152,11 @@ export default function ChatBox() {
             </div>
           </div>
           <CardAction className="flex items-center gap-2">
-            <CreateConversation />
+            <CreateConversation
+              initialUserIds={(conversation.participants as IUser[]).map(
+                (user) => user._id
+              )}
+            />
             <WrapIcon onClick={closeChatBox}>
               <X className="h-[18px] w-[18px]" />
             </WrapIcon>
