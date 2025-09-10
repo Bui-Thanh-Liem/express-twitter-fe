@@ -23,13 +23,19 @@ import { InputMain } from "../ui/input";
 import { Label } from "../ui/label";
 import { WrapIcon } from "../wrapIcon";
 
-function UserSelected({ user }: { user: IUser }) {
+function UserSelected({
+  user,
+  onCancel,
+}: {
+  user: IUser;
+  onCancel: () => void;
+}) {
   return (
     <div className="rounded-2xl p-1 border border-blue-100 bg-blue-50 flex items-center gap-3">
       <AvatarMain src={user.avatar} alt={user.name} className="w-6 h-6" />
       <p className="text-xs max-w-28 line-clamp-1">{user.name}</p>
 
-      <div className="ml-auto p-1 cursor-pointer">
+      <div className="ml-auto p-1 cursor-pointer" onClick={onCancel}>
         <CloseIcon color="red" size={16} />
       </div>
     </div>
@@ -38,10 +44,12 @@ function UserSelected({ user }: { user: IUser }) {
 
 function UserFollower({
   user,
+  isCheck,
   onCheck,
 }: {
   user: IUser;
-  onCheck: (user: IUser) => void;
+  isCheck: boolean;
+  onCheck: () => void;
 }) {
   return (
     <Label
@@ -50,9 +58,10 @@ function UserFollower({
     >
       <Checkbox
         id={user._id}
+        checked={isCheck}
         className="rounded-full data-[state=checked]:border-0 data-[state=checked]:bg-blue-400 data-[state=checked]:text-primary-foreground"
-        onCheckedChange={(checked) => {
-          if (checked) onCheck(user);
+        onCheckedChange={() => {
+          onCheck();
         }}
       />
       <AvatarMain src={user.avatar} alt={user.name} className="w-10 h-10" />
@@ -68,8 +77,6 @@ export function CreateConversationForm({
   initialUserIds: string[];
   setOpenForm: (open: boolean) => void;
 }) {
-  console.log("CreateConversationForm");
-
   const [avatarPreview, setAvatarPreview] = useState<string>("");
   // const [searchVal, setSearchVal] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -91,8 +98,11 @@ export function CreateConversationForm({
       const initSelected = followers.filter((user) =>
         initialUserIds.includes(user._id)
       );
+
       setUserSelected((prev) => [...prev, ...initSelected]);
     }
+
+    return () => setUserSelected([]);
   }, [followers, initialUserIds]);
 
   //
@@ -101,6 +111,7 @@ export function CreateConversationForm({
     reset,
     control,
     register,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<CreateConversationDto>({
@@ -122,6 +133,28 @@ export function CreateConversationForm({
       setAvatarPreview(avatarUrl);
     }
   };
+
+  //
+  function handleToggleUserFollower(val: IUser) {
+    setUserSelected((prev) => {
+      const exists = prev.some((u) => u._id === val._id);
+      let res = [...prev];
+
+      if (exists) {
+        // Nếu đã có thì filter bỏ đi
+        res = prev.filter((u) => u._id !== val._id);
+      } else {
+        // Nếu chưa có thì thêm vào
+        res = [...prev, val];
+      }
+
+      setValue(
+        "participants",
+        res.map((user) => user._id)
+      );
+      return res;
+    });
+  }
 
   //
   const onSubmit = async (data: CreateConversationDto) => {
@@ -189,8 +222,13 @@ export function CreateConversationForm({
           placeholder="Nhóm Developer"
         />
 
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center justify-center">
           <Divider className="w-80" text="Những người dùng đã theo dõi bạn" />
+          <p className="text-xs text-red-400">
+            {errors && errors?.participants
+              ? errors.participants?.message
+              : null}
+          </p>
         </div>
 
         <div className="grid grid-cols-12">
@@ -204,16 +242,21 @@ export function CreateConversationForm({
             <div className="space-y-2 max-h-96 overflow-auto">
               {followers?.map((user) => (
                 <UserFollower
-                  key={user._id}
+                  isCheck={userSelected.some((_) => _._id === user._id)}
                   user={user}
-                  onCheck={(val) => setUserSelected((prev) => [...prev, val])}
+                  key={user._id}
+                  onCheck={() => handleToggleUserFollower(user)}
                 />
               ))}
             </div>
           </div>
           <div className="col-span-5 px-2 space-y-2 max-h-96 overflow-auto">
             {userSelected?.map((user) => (
-              <UserSelected user={user} key={user._id} />
+              <UserSelected
+                user={user}
+                key={user._id}
+                onCancel={() => handleToggleUserFollower(user)}
+              />
             ))}
           </div>
         </div>
