@@ -14,6 +14,7 @@ import {
 import { EConversationType } from "~/shared/enums/type.enum";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { handleResponse } from "~/utils/handleResponse";
+import { toastSimple } from "~/utils/toastSimple.util";
 import { CloseIcon } from "../icons/close";
 import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
@@ -78,7 +79,6 @@ export function CreateConversationForm({
   setOpenForm: (open: boolean) => void;
 }) {
   const [avatarPreview, setAvatarPreview] = useState<string>("");
-  // const [searchVal, setSearchVal] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [userSelected, setUserSelected] = useState<IUser[]>([]);
 
@@ -86,7 +86,7 @@ export function CreateConversationForm({
   const apiCreateConversation = useCreateConversation();
   const apiUploadMedia = useUploadWithValidation();
 
-  const { data, isLoading, error } = useGetFollowed({
+  const { data } = useGetFollowed({
     page: "1",
     limit: "100",
   });
@@ -94,10 +94,14 @@ export function CreateConversationForm({
 
   //
   useEffect(() => {
-    if (initialUserIds.length) {
+    if (initialUserIds?.length) {
       const initSelected = followers.filter((user) =>
         initialUserIds.includes(user._id)
       );
+
+      if (!initSelected?.length) {
+        toastSimple("Người dùng này không theo dõi bạn", "warning");
+      }
 
       setUserSelected((prev) => [...prev, ...initSelected]);
     }
@@ -233,12 +237,6 @@ export function CreateConversationForm({
 
         <div className="grid grid-cols-12">
           <div className="col-span-7 border-r pr-4 min-h-48">
-            {/* <SearchMain
-              size="sm"
-              value={searchVal}
-              onChange={setSearchVal}
-              onClear={() => setSearchVal("")}
-            /> */}
             <div className="space-y-2 max-h-96 overflow-auto">
               {followers?.map((user) => (
                 <UserFollower

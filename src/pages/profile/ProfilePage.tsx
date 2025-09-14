@@ -80,7 +80,7 @@ export function ProfilePage() {
     );
   }
 
-  // 
+  //
   async function resendVerifyEmail() {
     const res = await apiResendVerifyEmail.mutateAsync();
     handleResponse(res);

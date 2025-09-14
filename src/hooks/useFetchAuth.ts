@@ -139,6 +139,9 @@ export const useUpdateMe = () => {
         queryKey: ["user", variables.username],
       });
 
+      console.log("_data.statusCode::", _data.statusCode);
+      console.log("_data:::", _data.data);
+
       if (_data.statusCode === 200 && _data?.data) {
         setUser({
           ...user,

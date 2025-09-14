@@ -27,6 +27,7 @@ import {
   UpdateMeDtoSchema,
   type UpdateMeDto,
 } from "~/shared/dtos/req/auth.dto";
+import { toastSimple } from "~/utils/toastSimple.util";
 
 interface UpdateUserFormProps {
   setOpenForm: (open: boolean) => void;
@@ -127,12 +128,15 @@ export function UpdateMeForm({
         data.day_of_birth = data.day_of_birth?.toISOString() as unknown as Date;
       }
 
+      console.log("data :::", data);
+
       const res = await apiUpdateMe.mutateAsync(data);
       handleResponse(res, successForm);
       if (res.data?.username !== usernameRef.current) {
         navigate(`/${res.data?.username}`, { replace: true });
       }
     } catch (error) {
+      toastSimple((error as { message: string })?.message, "error");
       console.error("Update failed:", error);
     }
   };

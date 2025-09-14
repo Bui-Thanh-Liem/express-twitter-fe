@@ -95,4 +95,3 @@ function GroupAvatarMain({ srcs, max = 3, className }: GroupAvatarMainProps) {
 }
 
 export { Avatar, AvatarFallback, AvatarImage, AvatarMain, GroupAvatarMain };
-
