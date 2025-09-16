@@ -7,7 +7,7 @@ import { AuthPage } from "./pages/auth/AuthPage";
 import { VerifyEmail } from "./pages/auth/VerifyEmail";
 import { HomeLayout } from "./layouts/home-layout/HomeLayout";
 import RootLayout from "./layouts/root-layout/RootLayout";
-import { ExplorePage } from "./pages/explore/Explore";
+import { ExplorePage } from "./pages/explore/ExplorePage";
 import { HomePage } from "./pages/home/HomePage";
 import { MessagePage } from "./pages/messages/MessagePage";
 import { ProfilePage } from "./pages/profile/ProfilePage";
