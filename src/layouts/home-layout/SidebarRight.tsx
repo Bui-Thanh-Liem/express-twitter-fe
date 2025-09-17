@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TodayNewsCard } from "~/components/today-news/today-news-card";
 import { SearchMain } from "~/components/ui/search";
-import { WhatHappenCard } from "~/components/what-heppen/what-happen-card";
+import { WhatHappenCard } from "~/components/what-happen/what-happen-card";
 import { WhoToFollowCard } from "~/components/who-to-follow/who-to-follow-card";
 
 export function SidebarRight() {
@@ -24,7 +24,7 @@ export function SidebarRight() {
           )}
         </div>
 
-        <div className="space-y-4 max-h-[86vh] overflow-y-auto pr-2">
+        <div className="space-y-4 max-h-[88vh] overflow-y-auto pr-2">
           <TodayNewsCard />
           <WhatHappenCard />
           <WhoToFollowCard />

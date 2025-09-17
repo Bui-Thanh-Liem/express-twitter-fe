@@ -74,7 +74,9 @@ export function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      {/*  */}
       <RouterProvider router={router} />
+
       {/* Dev tools chỉ hiện trong development */}
       {process.env.NODE_ENV === "development" && (
         <ReactQueryDevtools initialIsOpen={false} />

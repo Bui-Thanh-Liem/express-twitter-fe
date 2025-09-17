@@ -28,7 +28,7 @@ export function ExplorePage() {
         />
       </div>
 
-      <div className="max-h-screen overflow-y-auto mt-1">
+      <div className="overflow-y-auto mt-1 h-[calc(100vh-80px)]">
         <Tabs defaultValue="for-you" className="mb-12">
           <div className="bg-white p-2 pt-5 px-4 sticky top-0 z-50">
             <TabsList className="w-full">

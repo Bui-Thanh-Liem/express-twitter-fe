@@ -8,7 +8,6 @@ export function WhoToFollows() {
   const [page, setPage] = useState(1);
   const [users, setUsers] = useState<IUser[]>([]);
 
-  //
   const { data, isLoading } = useGetTopFollowedUsers({
     page: page.toString(),
     limit: "10",
@@ -22,20 +21,50 @@ export function WhoToFollows() {
     }
   }, [data]);
 
-  //
   function onSeeMoreWhoToFollows() {
     setPage((prev) => prev + 1);
   }
 
-  //
+  // Scroll to top khi có hash #who-to-follow
+  useEffect(() => {
+    if (window.location.hash === "#who-to-follow") {
+      const el = document.getElementById("who-to-follow");
+
+      if (el) {
+        setTimeout(() => {
+          console.log("Tiến hành scroll");
+
+          // Debug: Kiểm tra lại offsetTop sau timeout
+          console.log("Element offsetTop after timeout:", el.offsetTop);
+
+          //
+          el.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+            inline: "nearest",
+          });
+        }, 200);
+      } else {
+        console.log("Element not found!");
+      }
+    }
+  }, []);
+
   return (
     <>
+      <a
+        id="who-to-follow"
+        className="block"
+        style={{
+          scrollMarginTop: "40px",
+        }}
+      ></a>
       <p className="text-xl font-bold mt-3 py-2 sticky top-16 z-40 bg-gray-50">
         Ai để theo dõi
       </p>
       <div>
         {users.map((item) => (
-          <WhoToFollowItem key={item._id} item={item} />
+          <WhoToFollowItem key={item._id} user={item} />
         ))}
       </div>
       {isLoading ? (

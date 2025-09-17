@@ -1,34 +1,20 @@
 import { BarChart3, MessageCircle, Share } from "lucide-react";
-import { useMemo, useState, type ReactNode } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useGetDetailTweet } from "~/hooks/useFetchTweet";
-import { ProfileAction } from "~/pages/profile/ProfileAction";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import type { IMedia } from "~/shared/interfaces/common/media.interface";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
-import { useUserStore } from "~/store/useUserStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
 import { HLSPlayer } from "../hls/HLSPlayer";
 import { VerifyIcon } from "../icons/verify";
+import { ShortInfoProfile } from "../ShortInfoProfile";
 import { AvatarMain } from "../ui/avatar";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { ActionBookmarkTweet } from "./action-bookmark-tweet";
 import { ActionCommentTweet } from "./action-comment-tweet";
 import { ActionLikeTweet } from "./action-like-tweet";
 import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
-
-//
-function NameItemUser({ user }: { user: IUser }) {
-  return (
-    <Link to={`/${user.username}`} className="flex items-center gap-2">
-      <h3 className="text-lg font-semibold hover:underline hover:cursor-pointer">
-        {user.name}
-      </h3>
-      <VerifyIcon active={!!user.verify} size={20} />
-    </Link>
-  );
-}
 
 // Component cho Media (Image hoặc Video)
 export const MediaContent = ({ url, type }: IMedia) => {
@@ -57,70 +43,6 @@ export const MediaContent = ({ url, type }: IMedia) => {
     </>
   );
 };
-
-//
-function ProfileHover({
-  tweet,
-  children,
-}: {
-  tweet: ITweet;
-  children: ReactNode;
-}) {
-  const { user_id } = tweet;
-  const author = user_id as IUser;
-
-  const { user } = useUserStore();
-
-  const [isOpen, setIsOpen] = useState(false);
-
-  function onOpen() {
-    setIsOpen(true);
-  }
-
-  const isOwnProfile = useMemo(
-    () => user?._id === author?._id,
-    [user?._id, author?._id]
-  );
-
-  return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger
-        className="outline-0 border-0"
-        asChild
-        onMouseEnter={onOpen}
-      >
-        {children}
-      </PopoverTrigger>
-      <PopoverContent
-        className="w-72 p-4 bg-white border rounded-2xl shadow-lg"
-        onMouseEnter={onOpen}
-        onMouseLeave={() => setIsOpen(false)}
-      >
-        <div className="flex items-center justify-between">
-          <AvatarMain
-            src={author?.avatar}
-            alt={author?.name}
-            className="mr-3 w-16 h-16"
-          />
-          <div className="-mt-20">
-            <ProfileAction profile={author} isOwnProfile={isOwnProfile} />
-          </div>
-        </div>
-        <div className="mt-1.5">
-          <NameItemUser user={author} />
-          <p className="text-sm text-gray-500">{author?.username}</p>
-        </div>
-        <div className="text-sm mt-1.5">
-          {author?.bio?.split("\\n").map((p) => (
-            <p className="leading-relaxed" key={p}>
-              {p}
-            </p>
-          ))}
-        </div>
-      </PopoverContent>
-    </Popover>
-  );
-}
 
 export const TweetItem = ({
   tweet,
@@ -155,7 +77,7 @@ export const TweetItem = ({
         <div className="flex items-center mb-3">
           <AvatarMain src={author.avatar} alt={author.name} className="mr-3" />
           <div>
-            <ProfileHover tweet={tweet}>
+            <ShortInfoProfile profile={tweet.user_id as IUser}>
               <Link
                 to={`/${author.username}`}
                 className="flex items-center gap-2"
@@ -165,7 +87,7 @@ export const TweetItem = ({
                 </h3>
                 <VerifyIcon active={!!author.verify} size={20} />
               </Link>
-            </ProfileHover>
+            </ShortInfoProfile>
             <p className="text-sm text-gray-500">
               {author.username} •{" "}
               {formatTimeAgo(created_at as unknown as string)}
@@ -213,7 +135,7 @@ export const TweetItem = ({
                   className="mr-3"
                 />
                 <div>
-                  <ProfileHover tweet={quoteTweet}>
+                  <ShortInfoProfile profile={quoteTweet.user_id}>
                     <Link
                       to={`/${quoteTweet.user_id?.username}`}
                       className="flex items-center gap-2"
@@ -226,7 +148,7 @@ export const TweetItem = ({
                         size={20}
                       />
                     </Link>
-                  </ProfileHover>
+                  </ShortInfoProfile>
                   <p className="text-sm text-gray-500">
                     {quoteTweet.user_id?.username} •{" "}
                     {formatTimeAgo(quoteTweet.created_at as unknown as string)}

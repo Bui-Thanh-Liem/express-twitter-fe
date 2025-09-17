@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useGetTopFollowedUsers } from "~/hooks/useFetchUser";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { WhoToFollowItem } from "./who-to-follow-item";
+import { Link } from "react-router-dom";
 
 export function WhoToFollowCard() {
   const { data } = useGetTopFollowedUsers({
@@ -21,13 +22,15 @@ export function WhoToFollowCard() {
       </CardHeader>
       <CardContent className="px-0">
         {whoToFollows.map((item) => (
-          <WhoToFollowItem key={item._id} item={item} />
+          <WhoToFollowItem key={item._id} user={item} />
         ))}
         <div className="hover:bg-gray-100 px-4 py-3">
           <div>
-            <p className="inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer">
-              Xem thêm
-            </p>
+            <Link to="/explore/#who-to-follow">
+              <p className="inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer">
+                Xem thêm
+              </p>
+            </Link>
           </div>
         </div>
       </CardContent>

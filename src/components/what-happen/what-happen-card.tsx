@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { WhatHappenItem } from "./what-happen-item";
+import { Link } from "react-router-dom";
 
 export interface IWhatHappen {
   id: number;
@@ -43,9 +44,11 @@ export function WhatHappenCard() {
         ))}
         <div className="hover:bg-gray-100 px-4 py-3">
           <div>
-            <p className="inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer">
-              Xem thêm
-            </p>
+            <Link to="/explore/#what-happen">
+              <p className="inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer">
+                Xem thêm
+              </p>
+            </Link>
           </div>
         </div>
       </CardContent>
