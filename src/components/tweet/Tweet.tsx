@@ -38,7 +38,7 @@ export function Tweet({
   onSuccess,
   tweetType = ETweetType.Tweet,
   contentBtn = "Đăng Bài",
-  placeholder = "Có chuyện gì thế ?",
+  placeholder = "Có chuyện gì thế ? #dev",
 }: {
   tweet?: ITweet;
   placeholder?: string;
@@ -156,15 +156,18 @@ export function Tweet({
         }
 
         //
+        const hashtags = data.content.match(/#(\w+)/g)?.map((tag) => tag.substring(1));
+        const cleared = data.content.replace(/#\w+/g, "").replace(/\s+/g, " ").trim();
         const tweetData: CreateTweetDto = {
           ...data,
-          audience: audience,
           ...(tweet?._id && { parent_id: tweet?._id }), // Nếu có giá trị thì không phải tweet chính
+          audience,
+          hashtags,
           type: tweetType,
+          content: cleared,
           media: mediaUrl ? { url: mediaUrl, type: mediaType! } : undefined,
         };
 
-        console.log("Creating tweet with data:", tweetData);
         const resCreateTweet = await apiCreateTweet.mutateAsync(tweetData);
 
         handleResponse(resCreateTweet, successForm);

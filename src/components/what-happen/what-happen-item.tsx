@@ -6,16 +6,19 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { WrapIcon } from "../wrapIcon";
-import type { IWhatHappen } from "./what-happen-card";
+import type { ISearchSuggest } from "~/shared/interfaces/schemas/searchSuggest.interface";
+import type { IHashtag } from "~/shared/interfaces/schemas/hashtag.interface";
 
-export function WhatHappenItem({ item }: { item: IWhatHappen }) {
+export function WhatHappenItem({ item }: { item: ISearchSuggest }) {
   return (
-    <div key={item.id} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
+    <div key={item._id} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
       <div className="flex justify-between items-center">
         <div>
-          <p className="text-xs text-muted-foreground">{item.desc}</p>
+          <p className="text-xs text-muted-foreground">
+            {(item.hashtag as IHashtag)?.name}
+          </p>
           <p className="text-sm leading-snug font-semibold line-clamp-1">
-            {item.title}
+            {item.text}
           </p>
         </div>
         <DropdownMenu>

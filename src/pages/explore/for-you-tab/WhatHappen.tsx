@@ -1,8 +1,13 @@
 import { useEffect } from "react";
-import { initial_happens } from "~/components/what-happen/what-happen-card";
 import { WhatHappenItem } from "~/components/what-happen/what-happen-item";
+import { useGetTrending } from "~/hooks/useFetchSearchSuggest";
 
 export function WhatHappen() {
+  const { data } = useGetTrending({
+    page: "1",
+    limit: "20",
+  });
+
   // Scroll to top khi có hash #what-happen
   useEffect(() => {
     if (window.location.hash === "#what-happen") {
@@ -41,8 +46,8 @@ export function WhatHappen() {
         Chuyện gì xảy ra
       </p>
       <div>
-        {initial_happens.map((item) => (
-          <WhatHappenItem key={item.id} item={item} />
+        {data?.data?.items?.map((item) => (
+          <WhatHappenItem key={item._id} item={item} />
         ))}
       </div>
     </>
