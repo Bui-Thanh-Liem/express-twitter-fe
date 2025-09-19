@@ -9,6 +9,24 @@ import { WrapIcon } from "../wrapIcon";
 import type { ISearchSuggest } from "~/shared/interfaces/schemas/searchSuggest.interface";
 import type { IHashtag } from "~/shared/interfaces/schemas/hashtag.interface";
 
+export function WhatHappenItemSkeleton() {
+  return (
+    <div className="px-4 py-2 animate-pulse">
+      <div className="flex justify-between items-center">
+        <div className="space-y-1">
+          {/* Hashtag giả */}
+          <div className="h-3 w-16 bg-gray-200 rounded" />
+          {/* Text giả */}
+          <div className="h-4 w-40 bg-gray-200 rounded" />
+        </div>
+
+        {/* Icon giả */}
+        <div className="h-5 w-5 bg-gray-200 rounded-full" />
+      </div>
+    </div>
+  );
+}
+
 export function WhatHappenItem({ item }: { item: ISearchSuggest }) {
   return (
     <div key={item._id} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">

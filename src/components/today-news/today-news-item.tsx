@@ -1,6 +1,30 @@
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import type { ITodayNews } from "./today-news-card";
 
+export function TodayNewsItemSkeleton() {
+  return (
+    <div className="px-4 py-2 cursor-pointer">
+      <div className="flex-1 animate-pulse">
+        {/* title */}
+        <div className="h-4 w-3/4 bg-gray-200 rounded mb-2"></div>
+
+        {/* avatars + info */}
+        <div className="flex items-center gap-2 mt-1">
+          {/* avatars */}
+          <div className="flex -space-x-2">
+            <div className="w-6 h-6 rounded-full bg-gray-200"></div>
+            <div className="w-6 h-6 rounded-full bg-gray-200"></div>
+            <div className="w-6 h-6 rounded-full bg-gray-200"></div>
+          </div>
+
+          {/* text */}
+          <div className="h-3 w-32 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function TodayNewsItem({ item }: { item: ITodayNews }) {
   return (
     <div key={item.id} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DotIcon } from "~/components/icons/dot";
 import { AvatarMain, GroupAvatarMain } from "~/components/ui/avatar";
 import { WrapIcon } from "~/components/wrapIcon";
@@ -87,15 +87,11 @@ export function ConversationList({
   const [idActive, setIdActive] = useState("");
   const [page, setPage] = useState(1);
   const [allConversations, setAllConversations] = useState<IConversation[]>([]);
-  const [hasMore, setHasMore] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const observerRef = useRef<HTMLDivElement>(null);
-  const observerInstanceRef = useRef<IntersectionObserver | null>(null);
-
+  const total_page_ref = useRef(0);
   const { data, isLoading, error } = useGetMultiConversations({
     page: page.toString(),
-    limit: "20",
+    limit: "10",
   });
 
   // Xử lý join/leave room socket
@@ -117,78 +113,25 @@ export function ConversationList({
     };
   }, [allConversations, conversation?._id]);
 
-  // Khi data thay đổi thì update danh sách
+  // Mỗi lần fetch xong thì append thêm vào state
   useEffect(() => {
-    const newConversations = data?.data?.items as IConversation[];
-
-    if (newConversations?.length) {
-      if (page === 1) {
-        setAllConversations(newConversations);
-      } else {
-        setAllConversations((prev) => {
-          const existingIds = new Set(prev.map((c) => c._id));
-          const filtered = newConversations.filter(
-            (c) => !existingIds.has(c._id)
-          );
-          return [...prev, ...filtered];
-        });
-      }
-
-      if (newConversations.length < 20) {
-        setHasMore(false);
-      }
-
-      setIsLoadingMore(false);
+    const items = data?.data?.items || [];
+    const total_page = data?.data?.total_page;
+    total_page_ref.current = total_page || 0;
+    if (items) {
+      setAllConversations((prev) => [...prev, ...items]);
     }
-  }, [data, page]);
+  }, [data]);
+
+  //
+  function onSeeMore() {
+    setPage((prev) => prev + 1);
+  }
 
   function handleClickConversation(conversation: IConversation) {
     onclick(conversation);
     setIdActive(conversation?._id);
   }
-
-  // Observer callback
-  const handleObserver = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      const [entry] = entries;
-      if (entry.isIntersecting && hasMore && !isLoading && !isLoadingMore) {
-        setIsLoadingMore(true);
-        setPage((prev) => prev + 1);
-      }
-    },
-    [hasMore, isLoading, isLoadingMore]
-  );
-
-  // Setup observer
-  useEffect(() => {
-    const element = observerRef.current;
-    if (!element) return;
-
-    if (observerInstanceRef.current) {
-      observerInstanceRef.current.disconnect();
-    }
-
-    observerInstanceRef.current = new IntersectionObserver(handleObserver, {
-      threshold: 0.1,
-      rootMargin: "100px",
-    });
-
-    observerInstanceRef.current.observe(element);
-
-    return () => {
-      if (observerInstanceRef.current) {
-        observerInstanceRef.current.disconnect();
-      }
-    };
-  }, [handleObserver]);
-
-  // Reset khi mở profile khác (nếu cần)
-  useEffect(() => {
-    setPage(1);
-    setHasMore(true);
-    setIsLoadingMore(false);
-    // setAllConversations([]); // nếu muốn clear
-  }, []);
 
   if (!isLoading && allConversations.length === 0 && page === 1) {
     return (
@@ -222,21 +165,25 @@ export function ConversationList({
       )}
 
       {/* Loading khi load thêm */}
-      {isLoadingMore && (
+      {isLoading ? (
         <div className="p-3">
           {Array.from({ length: 2 }).map((_, i) => (
             <ConversationItemSkeleton key={`more-${i}`} />
           ))}
         </div>
-      )}
-
-      {/* Trigger infinite scroll */}
-      <div ref={observerRef} className="h-10 w-full" />
-
-      {/* End indicator */}
-      {!hasMore && allConversations.length > 0 && (
-        <div className="text-center p-6 pt-0 text-gray-500">
-          🎉 Bạn đã xem hết tất cả cuộc trò chuyện!
+      ) : (
+        <div className="px-4 py-3">
+          <p
+            className={cn(
+              "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer",
+              total_page_ref.current <= page
+                ? "text-gray-300 pointer-events-none cursor-default"
+                : ""
+            )}
+            onClick={onSeeMore}
+          >
+            Xem thêm
+          </p>
         </div>
       )}
 

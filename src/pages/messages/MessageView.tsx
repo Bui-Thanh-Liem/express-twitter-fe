@@ -13,6 +13,8 @@ import type { IConversation } from "~/shared/interfaces/schemas/conversation.int
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import { useChatSocket } from "~/socket/hooks/useChatSocket";
 import { useUserStore } from "~/store/useUserStore";
+import { CreateConversation } from "./CreateConversation";
+import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 
 export function MessageView({
   conversation,
@@ -127,14 +129,23 @@ export function MessageView({
           </div>
         </div>
 
-        <WrapIcon
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
-        >
-          <DotIcon size={16} />
-        </WrapIcon>
+        <div>
+          <CreateConversation
+            initialUserIds={(conversation.participants as IUser[]).map(
+              (user) => user._id
+            )}
+          />
+
+          <WrapIcon
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            className="ml-4"
+          >
+            <DotIcon size={18} />
+          </WrapIcon>
+        </div>
       </div>
 
       <div className="flex-1 flex flex-col p-3">

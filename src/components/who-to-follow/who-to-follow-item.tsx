@@ -7,6 +7,29 @@ import { ShortInfoProfile } from "../ShortInfoProfile";
 import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
 
+export function WhoToFollowItemSkeleton() {
+  return (
+    <div className="px-4 py-3 animate-pulse">
+      <div className="flex justify-between items-center">
+        <div className="flex gap-2">
+          {/* Avatar giả */}
+          <div className="h-10 w-10 rounded-full bg-gray-200" />
+
+          <div className="space-y-1">
+            {/* Tên user */}
+            <div className="h-4 w-28 bg-gray-200 rounded" />
+            {/* Username */}
+            <div className="h-3 w-20 bg-gray-200 rounded" />
+          </div>
+        </div>
+
+        {/* Nút Follow giả */}
+        <div className="h-7 w-20 rounded-full bg-gray-200" />
+      </div>
+    </div>
+  );
+}
+
 export function WhoToFollowItem({ user }: { user: Partial<IUser> }) {
   const [followed, setFollowed] = useState(false);
 
