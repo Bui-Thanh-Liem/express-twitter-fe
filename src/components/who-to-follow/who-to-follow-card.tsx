@@ -22,6 +22,9 @@ export function WhoToFollowCard() {
     setOpen(window.location.hash !== "#who-to-follow");
   }, [location.hash]);
 
+  if (!whoToFollows?.length) return null;
+
+  //
   return (
     <Card
       className={cn(

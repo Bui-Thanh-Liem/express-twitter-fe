@@ -3,19 +3,10 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { WrapIcon } from "../wrapIcon";
 import { TodayNewsItem } from "./today-news-item";
+import type { IResTodayNews } from "~/shared/dtos/res/explore.dto";
 
-export interface ITodayNews {
-  id: number;
-  title: string;
-  time: string;
-  category: string;
-  posts: string;
-  avatars: string[];
-}
-
-//
 // eslint-disable-next-line react-refresh/only-export-components
-export const initial_news: ITodayNews[] = [
+export const initial_news: IResTodayNews[] = [
   {
     id: 1,
     title: "Bessent Urges Fed for Rate Reduction in September",

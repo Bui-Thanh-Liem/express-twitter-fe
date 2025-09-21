@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useGetTrending } from "~/hooks/useFetchSearchSuggest";
+import { useGetTrending } from "~/hooks/useFetchExplore";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { WhatHappenItem, WhatHappenItemSkeleton } from "./what-happen-item";
 import { useEffect, useMemo, useState } from "react";
@@ -15,14 +15,14 @@ export function WhatHappenCard() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
-  const searchSuggests = useMemo(
-    () => data?.data?.items || [],
-    [data?.data?.items]
-  );
+  const trending = useMemo(() => data?.data?.items || [], [data?.data?.items]);
 
   useEffect(() => {
     setOpen(window.location.hash !== "#what-happen");
   }, [location.hash]);
+
+  //
+  if (!trending?.length) return null;
 
   //
   return (
@@ -40,7 +40,7 @@ export function WhatHappenCard() {
           ? Array.from({ length: 4 }).map((_, i) => (
               <WhatHappenItemSkeleton key={`more-${i}`} />
             ))
-          : searchSuggests?.map((item) => (
+          : trending?.map((item) => (
               <WhatHappenItem key={item._id} item={item} />
             ))}
         <div className="hover:bg-gray-100 px-4 py-3">

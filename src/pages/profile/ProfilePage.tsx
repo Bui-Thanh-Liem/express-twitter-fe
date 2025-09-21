@@ -34,7 +34,7 @@ export function ProfilePage() {
   const profile = data?.data;
 
   //
-  const [isOpenVerify, setOpenVerify] = useState(Boolean(!profile?.verify));
+  const [isOpenVerify, setOpenVerify] = useState(false);
 
   // Check if current user is viewing their own profile
   const isOwnProfile = useMemo(
@@ -42,6 +42,11 @@ export function ProfilePage() {
     [user?._id, profile?._id]
   );
 
+  useEffect(() => {
+    setOpenVerify(Boolean(!profile?.verify));
+  }, [profile?.verify]);
+
+  //
   useEffect(() => {
     if (username) {
       refetch(); // Gọi lại API khi username thay đổi
@@ -85,6 +90,8 @@ export function ProfilePage() {
     const res = await apiResendVerifyEmail.mutateAsync();
     handleResponse(res);
   }
+
+  console.log("isOpenVerify::", isOpenVerify);
 
   return (
     <div>

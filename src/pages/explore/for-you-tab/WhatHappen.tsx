@@ -4,14 +4,14 @@ import {
   WhatHappenItem,
   WhatHappenItemSkeleton,
 } from "~/components/what-happen/what-happen-item";
-import { useGetTrending } from "~/hooks/useFetchSearchSuggest";
+import { useGetTrending } from "~/hooks/useFetchExplore";
 import { cn } from "~/lib/utils";
-import type { ISearchSuggest } from "~/shared/interfaces/schemas/searchSuggest.interface";
+import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";
 
 export function WhatHappen() {
   const location = useLocation();
   const [page, setPage] = useState(1);
-  const [searSuggests, setSearSuggests] = useState<ISearchSuggest[]>([]);
+  const [trending, setTrending] = useState<ITrending[]>([]);
 
   const total_page_ref = useRef(0);
   const { data, isLoading } = useGetTrending({
@@ -25,7 +25,7 @@ export function WhatHappen() {
     const total_page = data?.data?.total_page;
     total_page_ref.current = total_page || 0;
     if (items) {
-      setSearSuggests((prev) => [...prev, ...items]);
+      setTrending((prev) => [...prev, ...items]);
     }
   }, [data]);
 
@@ -62,9 +62,12 @@ export function WhatHappen() {
   useEffect(() => {
     return () => {
       setPage(1);
-      setSearSuggests([]);
+      setTrending([]);
     };
   }, []);
+
+  //
+  if (!trending?.length) return null;
 
   //
   return (
@@ -75,12 +78,12 @@ export function WhatHappen() {
         style={{
           scrollMarginTop: "40px",
         }}
-      ></a>
+      />
       <p className="text-xl font-bold mt-4 py-2 bg-gray-50 sticky top-16 z-30">
         Chuyện gì đang xảy ra
       </p>
       <div>
-        {searSuggests?.map((item) => (
+        {trending?.map((item) => (
           <WhatHappenItem key={item._id} item={item} />
         ))}
       </div>

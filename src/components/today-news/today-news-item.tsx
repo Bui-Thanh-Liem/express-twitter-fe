@@ -1,5 +1,5 @@
+import type { IResTodayNews } from "~/shared/dtos/res/explore.dto";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import type { ITodayNews } from "./today-news-card";
 
 export function TodayNewsItemSkeleton() {
   return (
@@ -25,7 +25,7 @@ export function TodayNewsItemSkeleton() {
   );
 }
 
-export function TodayNewsItem({ item }: { item: ITodayNews }) {
+export function TodayNewsItem({ item }: { item: IResTodayNews }) {
   return (
     <div key={item.id} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
       <div className="flex-1">

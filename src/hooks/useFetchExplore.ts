@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
-import type { ISearchSuggest } from "~/shared/interfaces/schemas/searchSuggest.interface";
+import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";
 import type { ResMultiType } from "~/shared/types/response.type";
 import { buildQueryString } from "~/utils/buildQueryString";
 import { apiCall } from "~/utils/callApi.util";
 
 // 📄 GET
-export const useGetTrending = (queries?: IQuery<ISearchSuggest>) => {
+export const useGetTrending = (queries?: IQuery<ITrending>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
@@ -14,8 +14,8 @@ export const useGetTrending = (queries?: IQuery<ISearchSuggest>) => {
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
-      const url = `/search/trending/${queryString ? `?${queryString}` : ""}`;
-      return apiCall<ResMultiType<ISearchSuggest>>(url);
+      const url = `/explore/trending/${queryString ? `?${queryString}` : ""}`;
+      return apiCall<ResMultiType<ITrending>>(url);
     },
 
     // Các options bổ sung

@@ -60,6 +60,10 @@ export function WhoToFollows() {
     };
   }, []);
 
+  //
+  if (!users?.length) return null;
+
+  //
   return (
     <>
       <a

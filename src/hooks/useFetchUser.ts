@@ -6,6 +6,8 @@ import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import type { ResMultiType } from "~/shared/types/response.type";
 import { buildQueryString } from "~/utils/buildQueryString";
 import { apiCall } from "~/utils/callApi.util";
+import { useGetMe } from "./useFetchAuth";
+import { useUserStore } from "~/store/useUserStore";
 
 // 🚪 GET - Get User By username
 export const useGetOneByUsername = (username: string, enabled = true) => {
@@ -19,6 +21,8 @@ export const useGetOneByUsername = (username: string, enabled = true) => {
 // 🔐 POST - Verify email
 export const useVerifyEmail = () => {
   const navigate = useNavigate();
+  const getMe = useGetMe();
+  const { setUser } = useUserStore();
 
   return useMutation({
     mutationFn: (credentials: verifyEmailDto) =>
@@ -29,6 +33,13 @@ export const useVerifyEmail = () => {
     onSuccess: (res) => {
       if (res.statusCode === 200) {
         console.log("useVerifyEmail - res :::", res);
+
+        (async () => {
+          const resGetMe = await getMe.mutateAsync();
+          if (resGetMe.statusCode === 200 && resGetMe?.data) {
+            setUser(resGetMe.data);
+          }
+        })();
 
         //
         navigate("/home");

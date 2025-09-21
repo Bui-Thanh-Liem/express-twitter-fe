@@ -53,6 +53,20 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
     limit: "10", // Giảm limit để load nhanh hơn
   });
 
+  // Reset khi feedType thay đổi
+  useEffect(() => {
+    setPage(1);
+    setAllTweets([]);
+    setHasMore(true);
+    setIsLoadingMore(false);
+
+    // Scroll lên đầu trang khi thay đổi feedType
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [feedType]);
+
   // Effect để xử lý khi có data mới
   useEffect(() => {
     if (data?.data?.items) {
@@ -121,20 +135,6 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
       }
     };
   }, [handleObserver]);
-
-  // Reset khi feedType thay đổi
-  useEffect(() => {
-    setPage(1);
-    // setAllTweets([]);
-    setHasMore(true);
-    setIsLoadingMore(false);
-
-    // Scroll lên đầu trang khi thay đổi feedType
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }, [feedType]);
 
   // Verify
   if (!user?.verify) {

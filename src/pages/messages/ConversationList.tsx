@@ -124,6 +124,14 @@ export function ConversationList({
   }, [data]);
 
   //
+  useEffect(() => {
+    return () => {
+      setPage(1);
+      setAllConversations([]);
+    };
+  }, []);
+
+  //
   function onSeeMore() {
     setPage((prev) => prev + 1);
   }
