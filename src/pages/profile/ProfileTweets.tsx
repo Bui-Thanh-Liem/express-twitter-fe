@@ -27,7 +27,7 @@ export function ProfileTweets({
   const observerInstanceRef = useRef<IntersectionObserver | null>(null);
 
   const { data, isLoading, error } = useGetProfileTweets(tweetType, {
-    limit: "20",
+    limit: "10",
     ishl: ishl,
     profile_id,
     page: page.toString(),
@@ -39,9 +39,7 @@ export function ProfileTweets({
       const newTweets = data.data.items as ITweet[];
       if (page === 1) {
         // Nếu là trang đầu tiên, replace toàn bộ
-        setAllTweets(() => {
-          return newTweets;
-        });
+        setAllTweets(newTweets);
       } else {
         // Nếu là trang tiếp theo, append vào cuối
         setAllTweets((prev) => {
@@ -55,7 +53,7 @@ export function ProfileTweets({
       }
 
       // Kiểm tra xem còn data để load không
-      if (newTweets.length < 20) {
+      if (newTweets.length < 10) {
         // Nếu số tweets trả về ít hơn limit
         setHasMore(false);
       }
@@ -86,8 +84,8 @@ export function ProfileTweets({
 
     // Create new observer
     observerInstanceRef.current = new IntersectionObserver(handleObserver, {
-      threshold: 0.1, // Trigger when 10% of element is visible
-      rootMargin: "100px", // Start loading 100px before element comes into view
+      threshold: 0, // Trigger when 0% of element is visible
+      rootMargin: "0px", // Start loading 0px before element comes into view
     });
 
     observerInstanceRef.current.observe(element);
@@ -103,7 +101,7 @@ export function ProfileTweets({
   // Reset khi profile_id hoặc tweetType thay đổi
   useEffect(() => {
     setPage(1);
-    // setAllTweets([]);
+    setAllTweets([]);
     setHasMore(true);
     setIsLoadingMore(false);
 
@@ -114,16 +112,8 @@ export function ProfileTweets({
     });
   }, [profile_id, tweetType]);
 
-  // Empty state - chưa có data nhưng không phải total = 0
-  if (!isLoading && allTweets.length === 0 && page === 1) {
-    return <NotFoundTweet />;
-  }
-
   return (
     <div>
-      {/* Loading state cho lần load đầu tiên */}
-      {isLoading && page === 1 && <SkeletonTweet />}
-
       {/* Tweets list */}
       {allTweets.length > 0 && (
         <div className="space-y-6">
@@ -156,16 +146,15 @@ export function ProfileTweets({
       {/* Loading more indicator */}
       {isLoadingMore && (
         <div className="py-4">
-          <SkeletonTweet count={2} />
+          <SkeletonTweet count={1} />
         </div>
       )}
 
+      {/* Empty state - chưa có data nhưng không phải total = 0 */}
+      {!isLoading && allTweets.length === 0 && page === 1 && <NotFoundTweet />}
+
       {/* Observer element - invisible trigger cho infinite scroll */}
-      <div
-        ref={observerRef}
-        className="h-10 w-full"
-        // style={{ visibility: "hidden" }}
-      />
+      <div ref={observerRef} className="h-10 w-full" />
 
       {/* End of content indicator */}
       {!hasMore && allTweets.length > 0 && (

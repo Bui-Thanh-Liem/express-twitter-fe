@@ -50,7 +50,7 @@ export function ShortInfoProfile({
         {children}
       </PopoverTrigger>
       <PopoverContent
-        className="w-72 p-4 bg-white border rounded-2xl shadow-lg"
+        className="w-72 p-4 bg-white border rounded-2xl shadow-lg overflow-hidden"
         onMouseEnter={onOpen}
         onMouseLeave={() => setIsOpen(false)}
       >

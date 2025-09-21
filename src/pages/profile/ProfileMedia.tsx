@@ -63,8 +63,6 @@ export function ProfileMedia({ profile_id }: { profile_id: string }) {
     }
   }, [data, page, profile_id]);
 
-  console.log("allMedia:", allMedia);
-
   // Callback khi element cuối cùng xuất hiện trên viewport
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleObserver = (entries: IntersectionObserverEntry[]) => {
@@ -87,8 +85,8 @@ export function ProfileMedia({ profile_id }: { profile_id: string }) {
 
     // Create new observer
     observerInstanceRef.current = new IntersectionObserver(handleObserver, {
-      threshold: 0.1, // Trigger when 10% of element is visible
-      rootMargin: "100px", // Start loading 100px before element comes into view
+      threshold: 0, // Trigger when 0% of element is visible
+      rootMargin: "0px", // Start loading 0px before element comes into view
     });
 
     observerInstanceRef.current.observe(element);
@@ -104,7 +102,7 @@ export function ProfileMedia({ profile_id }: { profile_id: string }) {
   // Reset khi profile_id thay đổi
   useEffect(() => {
     setPage(1);
-    // setAllMedia([]);
+    setAllMedia([]);
     setHasMore(true);
     setIsLoadingMore(false);
 
@@ -114,23 +112,6 @@ export function ProfileMedia({ profile_id }: { profile_id: string }) {
       behavior: "smooth",
     });
   }, [profile_id]);
-
-  // Loading skeleton cho grid layout
-  const MediaSkeleton = () => (
-    <div className="grid grid-cols-3 gap-4">
-      {Array.from({ length: 9 }).map((_, index) => (
-        <div
-          key={index}
-          className="aspect-square bg-gray-200 animate-pulse rounded-lg"
-        />
-      ))}
-    </div>
-  );
-
-  // Loading state cho lần load đầu tiên
-  if (isLoading && page === 1) {
-    return <MediaSkeleton />;
-  }
 
   // Error state
   if (error) {
@@ -148,18 +129,6 @@ export function ProfileMedia({ profile_id }: { profile_id: string }) {
         >
           Thử lại
         </button>
-      </div>
-    );
-  }
-
-  // Empty state - chưa có data nhưng không phải total = 0
-  if (!isLoading && allMedia.length === 0 && page === 1) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-gray-500 text-lg mb-2">📷 Chưa có media nào</p>
-        <p className="text-gray-400">
-          Hãy đăng ảnh hoặc video để chúng xuất hiện ở đây!
-        </p>
       </div>
     );
   }
@@ -194,12 +163,18 @@ export function ProfileMedia({ profile_id }: { profile_id: string }) {
         </div>
       )}
 
+      {/* Empty state - chưa có data nhưng không phải total = 0 */}
+      {!isLoading && allMedia.length === 0 && page === 1 && (
+        <div className="text-center py-8">
+          <p className="text-gray-500 text-lg mb-2">📷 Chưa có media nào</p>
+          <p className="text-gray-400">
+            Hãy đăng ảnh hoặc video để chúng xuất hiện ở đây!
+          </p>
+        </div>
+      )}
+
       {/* Observer element - invisible trigger cho infinite scroll */}
-      <div
-        ref={observerRef}
-        className="h-10 w-full"
-        // style={{ visibility: "hidden" }}
-      />
+      <div ref={observerRef} className="h-10 w-full" />
 
       {/* End of content indicator */}
       {!hasMore && allMedia.length > 0 && (

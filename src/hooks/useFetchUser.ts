@@ -4,10 +4,9 @@ import type { verifyEmailDto } from "~/shared/dtos/req/user.dto";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import type { ResMultiType } from "~/shared/types/response.type";
+import { useUserStore } from "~/store/useUserStore";
 import { buildQueryString } from "~/utils/buildQueryString";
 import { apiCall } from "~/utils/callApi.util";
-import { useGetMe } from "./useFetchAuth";
-import { useUserStore } from "~/store/useUserStore";
 
 // 🚪 GET - Get User By username
 export const useGetOneByUsername = (username: string, enabled = true) => {
@@ -21,7 +20,6 @@ export const useGetOneByUsername = (username: string, enabled = true) => {
 // 🔐 POST - Verify email
 export const useVerifyEmail = () => {
   const navigate = useNavigate();
-  const getMe = useGetMe();
   const { setUser } = useUserStore();
 
   return useMutation({
@@ -31,15 +29,10 @@ export const useVerifyEmail = () => {
         body: JSON.stringify(credentials),
       }),
     onSuccess: (res) => {
-      if (res.statusCode === 200) {
+      if (res.statusCode === 200 && res.data) {
         console.log("useVerifyEmail - res :::", res);
 
-        (async () => {
-          const resGetMe = await getMe.mutateAsync();
-          if (resGetMe.statusCode === 200 && resGetMe?.data) {
-            setUser(resGetMe.data);
-          }
-        })();
+        setUser(res.data);
 
         //
         navigate("/home");
@@ -95,7 +88,7 @@ export const useGetTopFollowedUsers = (queries?: IQuery<IUser>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["users/top-followed", "followed", normalizedQueries],
+    queryKey: ["users", "top-followed", normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";

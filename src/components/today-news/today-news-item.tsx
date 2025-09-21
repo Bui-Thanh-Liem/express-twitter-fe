@@ -1,5 +1,8 @@
 import type { IResTodayNews } from "~/shared/dtos/res/explore.dto";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { formatTimeAgo } from "~/utils/formatTimeAgo";
+import { MediaContent } from "../list-tweets/item-tweet";
+import { cn } from "~/lib/utils";
 
 export function TodayNewsItemSkeleton() {
   return (
@@ -25,15 +28,29 @@ export function TodayNewsItemSkeleton() {
   );
 }
 
-export function TodayNewsItem({ item }: { item: IResTodayNews }) {
+export function TodayNewsItem({
+  item,
+  isMedia = false,
+}: {
+  item: IResTodayNews;
+  isMedia?: boolean;
+}) {
   return (
-    <div key={item.id} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
+    <div
+      key={item.id}
+      className="hover:bg-gray-100 px-4 py-2 cursor-pointer flex justify-between gap-3"
+    >
       <div className="flex-1">
-        <p className="text-sm leading-snug font-semibold line-clamp-1">
+        <p
+          className={cn(
+            "text-sm leading-snug font-semibold",
+            !isMedia ? "line-clamp-1" : "line-clamp-3"
+          )}
+        >
           {item.title}
         </p>
         <div className="flex items-center gap-2 mt-1">
-          <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
+          <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2">
             {item.avatars?.map((avatar) => (
               <Avatar key={avatar} className="w-6 h-6">
                 <AvatarImage src={avatar} alt={item.title} />
@@ -42,10 +59,16 @@ export function TodayNewsItem({ item }: { item: IResTodayNews }) {
             ))}
           </div>
           <p className="text-xs text-muted-foreground">
-            {item.time} · {item.category} · {item.posts}
+            {formatTimeAgo(item.time as unknown as string)} · {item.category} ·{" "}
+            {item.posts} bài đăng
           </p>
         </div>
       </div>
+      {isMedia && (
+        <div className="w-32 h-20">
+          <MediaContent type={item.media.type} url={item.media.url} />
+        </div>
+      )}
     </div>
   );
 }

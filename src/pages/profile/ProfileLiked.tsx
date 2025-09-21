@@ -74,8 +74,8 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
 
     // Create new observer
     observerInstanceRef.current = new IntersectionObserver(handleObserver, {
-      threshold: 0.1, // Trigger when 10% of element is visible
-      rootMargin: "100px", // Start loading 100px before element comes into view
+      threshold: 0, // Trigger when 0% of element is visible
+      rootMargin: "0px", // Start loading 0px before element comes into view
     });
 
     observerInstanceRef.current.observe(element);
@@ -91,7 +91,7 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
   // Reset khi profile_id thay đổi
   useEffect(() => {
     setPage(1);
-    // setAllTweets([]);
+    setAllTweets([]);
     setHasMore(true);
     setIsLoadingMore(false);
 
@@ -101,11 +101,6 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
       behavior: "smooth",
     });
   }, [profile_id]);
-
-  // Loading state cho lần load đầu tiên
-  if (isLoading && page === 1) {
-    return <SkeletonTweet />;
-  }
 
   // Error state
   if (error) {
@@ -123,20 +118,6 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
         >
           Thử lại
         </button>
-      </div>
-    );
-  }
-
-  // Empty state - chưa có data nhưng không phải total = 0
-  if (!isLoading && allTweets.length === 0 && page === 1) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-gray-500 text-lg mb-2">
-          ❤️ Chưa có tweet nào được thích
-        </p>
-        <p className="text-gray-400">
-          Hãy thích một số tweet để chúng xuất hiện ở đây!
-        </p>
       </div>
     );
   }
@@ -167,12 +148,20 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
         </div>
       )}
 
+      {/* Empty state - chưa có data nhưng không phải total = 0 */}
+      {!isLoading && allTweets.length === 0 && page === 1 && (
+        <div className="text-center py-8">
+          <p className="text-gray-500 text-lg mb-2">
+            ❤️ Chưa có tweet nào được thích
+          </p>
+          <p className="text-gray-400">
+            Hãy thích một số tweet để chúng xuất hiện ở đây!
+          </p>
+        </div>
+      )}
+
       {/* Observer element - invisible trigger cho infinite scroll */}
-      <div
-        ref={observerRef}
-        className="h-10 w-full"
-        // style={{ visibility: "hidden" }}
-      />
+      <div ref={observerRef} className="h-10 w-full" />
 
       {/* End of content indicator */}
       {!hasMore && allTweets.length > 0 && (

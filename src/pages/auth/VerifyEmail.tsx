@@ -18,7 +18,7 @@ export function VerifyEmail() {
         handleResponse(res);
       })();
     }
-  }, [token]);
+  }, []);
 
   return (
     <div className="flex h-screen items-center justify-center">

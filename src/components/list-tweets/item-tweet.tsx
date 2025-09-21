@@ -21,7 +21,7 @@ export const MediaContent = ({ url, type }: IMedia) => {
   if (!url) return null;
   return (
     <>
-      <div className="w-full aspect-video rounded-lg shadow overflow-hidden mb-6 bg-black">
+      <div className="w-full h-full aspect-video rounded-lg shadow overflow-hidden mb-6 bg-black">
         {type === EMediaType.Video ? (
           <HLSPlayer src={url} />
         ) : type === EMediaType.Image ? (

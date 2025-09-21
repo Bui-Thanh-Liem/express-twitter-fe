@@ -5,10 +5,9 @@ import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import { useUserStore } from "~/store/useUserStore";
 import { ErrorProcess } from "../error-process";
 import { TweetItem } from "./item-tweet";
-import { NotFoundTweet } from "./not-found-tweet";
 
 // Loading skeleton component
-export const SkeletonTweet = ({ count = 3 }: { count?: number }) => {
+export const SkeletonTweet = ({ count = 1 }: { count?: number }) => {
   return (
     <div className="animate-pulse px-4 py-2">
       {Array.from({ length: count }, (_, index) => (
@@ -53,20 +52,6 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
     limit: "10", // Giảm limit để load nhanh hơn
   });
 
-  // Reset khi feedType thay đổi
-  useEffect(() => {
-    setPage(1);
-    setAllTweets([]);
-    setHasMore(true);
-    setIsLoadingMore(false);
-
-    // Scroll lên đầu trang khi thay đổi feedType
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }, [feedType]);
-
   // Effect để xử lý khi có data mới
   useEffect(() => {
     if (data?.data?.items) {
@@ -101,6 +86,7 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
       const [entry] = entries;
+      console.log("Observer triggered, isIntersecting:", entry.isIntersecting);
       if (entry.isIntersecting && hasMore && !isLoading && !isLoadingMore) {
         console.log("Loading more tweets...");
         setIsLoadingMore(true);
@@ -113,7 +99,10 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
   // Setup Intersection Observer
   useEffect(() => {
     const element = observerRef.current;
-    if (!element) return;
+    if (!element) {
+      console.error("observerRef is null, check if element is rendered");
+      return;
+    }
 
     // Cleanup previous observer
     if (observerInstanceRef.current) {
@@ -122,8 +111,8 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
 
     // Create new observer
     observerInstanceRef.current = new IntersectionObserver(handleObserver, {
-      threshold: 0.1, // Trigger when 10% of element is visible
-      rootMargin: "100px", // Start loading 100px before element comes into view
+      threshold: 0, // Trigger when 0% of element is visible
+      rootMargin: "0px", // Start loading 0px before element comes into view
     });
 
     observerInstanceRef.current.observe(element);
@@ -135,6 +124,20 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
       }
     };
   }, [handleObserver]);
+
+  // Reset khi feedType thay đổi
+  useEffect(() => {
+    setPage(1);
+    setAllTweets([]);
+    setHasMore(true);
+    setIsLoadingMore(false);
+
+    // Scroll lên đầu trang khi thay đổi feedType
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [feedType]);
 
   // Verify
   if (!user?.verify) {
@@ -148,11 +151,6 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
         </p>
       </div>
     );
-  }
-
-  // Empty state - chưa có data nhưng không phải total = 0
-  if (!isLoading && allTweets.length === 0 && page === 1) {
-    return <NotFoundTweet />;
   }
 
   return (
@@ -207,11 +205,7 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
       )}
 
       {/* Observer element - invisible trigger cho infinite scroll */}
-      <div
-        ref={observerRef}
-        className="h-10 w-full bg-red-300"
-        style={{ visibility: "hidden" }}
-      />
+      <div ref={observerRef} className="h-10 w-full" />
 
       {/* End of content indicator */}
       {!hasMore && allTweets.length > 0 && (
