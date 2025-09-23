@@ -53,6 +53,7 @@ export function Tweet({
 
   // Hashtag
   const [openHashtag, setOpenHashtag] = useState(false);
+  const [valueSearchHashtag, setValueSearchHashtag] = useState("");
 
   const { textareaRef, autoResize } = useTextareaAutoResize();
   const [audience, setAudience] = useState<ETweetAudience>(
@@ -120,8 +121,8 @@ export function Tweet({
 
       // Nếu từ hiện tại bắt đầu bằng #
       if (currentWord.startsWith("#") && currentWord.length > 1) {
-        console.log("On form hashtag");
         setOpenHashtag(true);
+        setValueSearchHashtag(currentWord);
       }
     },
     [autoResize, setValue, contentValue]
@@ -248,7 +249,12 @@ export function Tweet({
               />
 
               {/* Hashtag Suggest */}
-              <HashtagSuggest open={openHashtag} setOpen={setOpenHashtag}>
+              <HashtagSuggest
+                open={openHashtag}
+                setOpen={setOpenHashtag}
+                oncSelect={() => {}}
+                valueSearch={valueSearchHashtag}
+              >
                 <div />
               </HashtagSuggest>
 

@@ -1,6 +1,9 @@
-import type { ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useGetTrending } from "~/hooks/useFetchExplore";
 import { cn } from "~/lib/utils";
+import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import type { IHashtag } from "~/shared/interfaces/schemas/hashtag.interface";
 
 export function HashtagSuggest({
   open,
@@ -17,6 +20,27 @@ export function HashtagSuggest({
   valueSearch: string;
   oncSelect: (hashtag: string) => void;
 }) {
+  const [trending, setTrending] = useState<ITrending[]>([]);
+
+  const { data, isLoading, refetch } = useGetTrending({
+    page: "1",
+    limit: "20",
+    q: valueSearch,
+  });
+
+  const _trending = useMemo(() => data?.data?.items || [], [data?.data?.items]);
+
+  useEffect(() => {
+    setTrending(_trending);
+  }, [_trending]);
+
+  useEffect(() => {
+    refetch();
+  }, [refetch, valueSearch]);
+
+  console.log("valueSearch::", valueSearch);
+  console.log("_trending::", _trending);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild className={cn(className)}>
@@ -27,16 +51,17 @@ export function HashtagSuggest({
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <ul className="flex flex-col gap-2">
-          {Array.from({ length: 10 }, (_, i) => (
+          {trending?.map((t) => (
             <li
-              key={i}
+              key={t._id}
               className="cursor-pointer hover:bg-gray-100 p-2 rounded"
               onClick={() => {
-                oncSelect(`#hashtag_${i}`);
+                const hn = (t.hashtag as IHashtag)?.name;
+                oncSelect(hn);
                 setOpen(false); // đóng khi chọn
               }}
             >
-              #hashtag_{i}
+              {(t.hashtag as IHashtag)?.name}
             </li>
           ))}
         </ul>
