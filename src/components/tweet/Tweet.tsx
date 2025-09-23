@@ -53,6 +53,7 @@ export function Tweet({
 
   // Hashtag
   const [openHashtag, setOpenHashtag] = useState(false);
+  const [searchHashtag, setSearchHashtag] = useState("");
 
   const { textareaRef, autoResize } = useTextareaAutoResize();
   const [audience, setAudience] = useState<ETweetAudience>(
@@ -120,8 +121,11 @@ export function Tweet({
 
       // Nếu từ hiện tại bắt đầu bằng #
       if (currentWord.startsWith("#") && currentWord.length > 1) {
-        console.log("On form hashtag");
+        console.log("On form hashtag - currentWord :::", currentWord);
+        setSearchHashtag(currentWord);
         setOpenHashtag(true);
+      } else {
+        setOpenHashtag(false);
       }
     },
     [autoResize, setValue, contentValue]
@@ -143,6 +147,13 @@ export function Tweet({
     setUploadProgress(0);
     if (onSuccess) onSuccess(); // Sử dụng cho bên ngoài component cha (VD: đống modal)
   }, [removeMedia, reset, setUploadProgress, setUploadedMediaUrl, onSuccess]);
+
+  // Select hashtag
+  function handleSelectHashtag(name: string) {
+    const newValue = contentValue.replace(searchHashtag, `#${name}`);
+    setValue("content", newValue);
+    setSearchHashtag("");
+  }
 
   // Thực hiện gọi api
   const onSubmit = useCallback(
@@ -177,21 +188,23 @@ export function Tweet({
           }
         }
 
+        // Lọc lấy hashtag
+        const hashtags = data.content.match(/#[\w.]+/g) || [];
+
         //
-        const hashtags = data.content
-          .match(/#(\w+)/g)
-          ?.map((tag) => tag.substring(1));
-        const cleared = data.content
-          .replace(/#\w+/g, "")
-          .replace(/\s+/g, " ")
-          .trim();
+        // const cleared = data.content
+        //   .replace(/#\w+/g, "")
+        //   .replace(/\s+/g, " ")
+        //   .trim();
+
+        //
         const tweetData: CreateTweetDto = {
           ...data,
           ...(tweet?._id && { parent_id: tweet?._id }), // Nếu có giá trị thì không phải tweet chính
           audience,
           hashtags,
           type: tweetType,
-          content: cleared,
+          content: data.content,
           media: mediaUrl ? { url: mediaUrl, type: mediaType! } : undefined,
         };
 
@@ -248,7 +261,12 @@ export function Tweet({
               />
 
               {/* Hashtag Suggest */}
-              <HashtagSuggest open={openHashtag} setOpen={setOpenHashtag}>
+              <HashtagSuggest
+                open={openHashtag}
+                setOpen={setOpenHashtag}
+                valueSearch={searchHashtag}
+                oncSelect={handleSelectHashtag}
+              >
                 <div />
               </HashtagSuggest>
 
