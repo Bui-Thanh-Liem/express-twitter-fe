@@ -7,8 +7,8 @@ import { apiCall } from "~/utils/callApi.util";
 
 // 📄 GET
 export const useGetMultiHashtags = (
-  queries?: IQuery<IHashtag>,
-  enabled = true
+  enabled = true,
+  queries?: IQuery<IHashtag>
 ) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 

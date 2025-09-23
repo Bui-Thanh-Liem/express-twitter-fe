@@ -17,6 +17,30 @@ export const useGetOneByUsername = (username: string, enabled = true) => {
   });
 };
 
+// 🚪 GET - Get Users By username
+export const useGetMultiForMentions = (username: string, enabled = true) => {
+  return useQuery({
+    queryKey: ["mentions", username],
+    queryFn: () => {
+      // Tạo query string từ queries object
+      const url = `/users/mentions/${username}`;
+      return apiCall<Pick<IUser, "_id" | "name" | "username">[]>(url);
+    },
+
+    // Các options bổ sung
+    enabled,
+    staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
+    refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
+    refetchOnMount: false, // ✅ Tắt refetch khi mount
+
+    // 🔥 THÊM CẤU HÌNH NÀY:
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    // Quan trọng: Đảm bảo không conflict với optimistic update
+    networkMode: "online",
+  });
+};
+
 // 🔐 POST - Verify email
 export const useVerifyEmail = () => {
   const navigate = useNavigate();

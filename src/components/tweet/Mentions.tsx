@@ -1,10 +1,10 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { useGetMultiHashtags } from "~/hooks/useFetchHashtag";
+import { useGetMultiForMentions } from "~/hooks/useFetchUser";
 import { cn } from "~/lib/utils";
-import type { IHashtag } from "~/shared/interfaces/schemas/hashtag.interface";
+import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
-export function HashtagSuggest({
+export function Mentions({
   open,
   setOpen,
   children,
@@ -17,19 +17,21 @@ export function HashtagSuggest({
   className?: string;
   children: ReactNode;
   valueSearch: string;
-  oncSelect: (hashtag: string) => void;
+  oncSelect: (user: Pick<IUser, "_id" | "name" | "username">) => void;
 }) {
   //
   const [debouncedValue, setDebouncedValue] = useState(valueSearch);
-  const [hashtags, setHashtags] = useState<IHashtag[]>([]);
+  const [mentions, setMentions] = useState<
+    Pick<IUser, "_id" | "name" | "username">[]
+  >([]);
 
   //
-  const { data, isLoading, refetch } = useGetMultiHashtags(!!debouncedValue, {
-    page: "1",
-    limit: "20",
-    q: debouncedValue.replace("#", ""),
-  });
+  const { data, isLoading, refetch } = useGetMultiForMentions(
+    debouncedValue,
+    !!debouncedValue
+  );
 
+  //
   useEffect(() => {
     const delay = setTimeout(() => {
       refetch();
@@ -39,8 +41,8 @@ export function HashtagSuggest({
 
   //
   useEffect(() => {
-    const items = data?.data?.items || [];
-    setHashtags(items);
+    const items = data?.data || [];
+    setMentions(items);
   }, [data]);
 
   //
@@ -49,6 +51,7 @@ export function HashtagSuggest({
     return () => clearTimeout(delay);
   }, [valueSearch]);
 
+  //
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild className={cn(className)}>
@@ -68,19 +71,19 @@ export function HashtagSuggest({
           </ul>
         ) : (
           <ul className="flex flex-col gap-2">
-            {hashtags.map((h) => (
+            {mentions.map((u) => (
               <li
-                key={h._id}
+                key={u._id}
                 className="cursor-pointer hover:bg-gray-100 p-2 rounded"
                 onClick={() => {
-                  oncSelect(h.name);
+                  oncSelect(u);
                   setOpen(false);
                 }}
               >
-                #{h.name}
+                {u.username}
               </li>
             ))}
-            {!hashtags.length && (
+            {!mentions.length && (
               <li className="text-gray-500 text-base p-2">Không có kết quả</li>
             )}
           </ul>

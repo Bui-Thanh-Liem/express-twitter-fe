@@ -91,8 +91,6 @@ export function ProfilePage() {
     handleResponse(res);
   }
 
-  console.log("isOpenVerify::", isOpenVerify);
-
   return (
     <div>
       {/* Header */}

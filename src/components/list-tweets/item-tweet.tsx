@@ -15,6 +15,7 @@ import { ActionBookmarkTweet } from "./action-bookmark-tweet";
 import { ActionCommentTweet } from "./action-comment-tweet";
 import { ActionLikeTweet } from "./action-like-tweet";
 import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
+import { Content } from "./Content";
 
 // Component cho Media (Image hoặc Video)
 export const MediaContent = ({ url, type }: IMedia) => {
@@ -56,7 +57,7 @@ export const TweetItem = ({
     media,
     content,
     user_id,
-    hashtags,
+    mentions,
     user_view,
     parent_id,
     created_at,
@@ -98,21 +99,9 @@ export const TweetItem = ({
         <div className="ml-14">
           {/* Nội dung tweet */}
           {content && tweet.type !== ETweetType.Retweet && (
-            <p className="text-gray-800 mb-3 leading-relaxed">{content}</p>
-          )}
-
-          {/* Hashtags */}
-          {!!hashtags?.length && tweet.type !== ETweetType.Retweet && (
-            <div className="flex items-center gap-x-1.5 flex-wrap text-sm">
-              {hashtags.map((hashtag) => (
-                <span
-                  className="text-blue-400 font-semibold hover:underline hover:cursor-pointer mb-2 inline-block"
-                  key={hashtag._id}
-                >
-                  #{hashtag.name}
-                </span>
-              ))}
-            </div>
+            <p className="text-gray-800 mb-3 leading-relaxed">
+              <Content content={content} mentions={mentions} />
+            </p>
           )}
 
           {/* Media content */}
@@ -157,24 +146,13 @@ export const TweetItem = ({
               </div>
 
               {/* Nội dung tweet */}
-              {content && (
+              {quoteTweet?.content && (
                 <p className="text-gray-800 mb-3 leading-relaxed">
-                  {quoteTweet?.content}
+                  <Content
+                    content={quoteTweet?.content}
+                    mentions={quoteTweet?.mentions}
+                  />
                 </p>
-              )}
-
-              {/* Hashtags */}
-              {!!quoteTweet.hashtags?.length && (
-                <div className="flex items-center gap-x-1.5 flex-wrap text-sm">
-                  {quoteTweet?.hashtags?.map((hashtag) => (
-                    <span
-                      className="text-blue-400 font-semibold hover:underline hover:cursor-pointer mb-2 inline-block"
-                      key={hashtag._id}
-                    >
-                      #{hashtag.name}
-                    </span>
-                  ))}
-                </div>
               )}
 
               {/* Media content */}

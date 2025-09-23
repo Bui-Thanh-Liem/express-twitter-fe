@@ -51,8 +51,8 @@ export function TodayNewsItem({
         </p>
         <div className="flex items-center gap-2 mt-1">
           <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2">
-            {item.avatars?.map((avatar) => (
-              <Avatar key={avatar} className="w-6 h-6">
+            {item.avatars?.map((avatar, i) => (
+              <Avatar key={`${avatar}-${i}`} className="w-6 h-6">
                 <AvatarImage src={avatar} alt={item.title} />
                 <AvatarFallback>{item.category}</AvatarFallback>
               </Avatar>
@@ -66,7 +66,7 @@ export function TodayNewsItem({
       </div>
       {isMedia && (
         <div className="w-32 h-20">
-          <MediaContent type={item.media.type} url={item.media.url} />
+          <MediaContent type={item.media?.type} url={item.media?.url} />
         </div>
       )}
     </div>

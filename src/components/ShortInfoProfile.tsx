@@ -1,5 +1,6 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { cn } from "~/lib/utils";
 import { ProfileAction } from "~/pages/profile/ProfileAction";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
@@ -23,16 +24,22 @@ function NameItemUser({ user }: { user: IUser }) {
 export function ShortInfoProfile({
   profile,
   children,
+  isInfor = false,
+  className,
 }: {
   profile: IUser;
   children: ReactNode;
+  isInfor?: boolean;
+  className?: string;
 }) {
   const { user } = useUserStore();
 
   const [isOpen, setIsOpen] = useState(false);
 
   function onOpen() {
-    setIsOpen(true);
+    setTimeout(() => {
+      setIsOpen(true);
+    }, 300);
   }
 
   const isOwnProfile = useMemo(
@@ -43,7 +50,7 @@ export function ShortInfoProfile({
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger
-        className="outline-0 border-0"
+        className={cn("outline-0 border-0", className)}
         asChild
         onMouseEnter={onOpen}
       >
@@ -60,9 +67,11 @@ export function ShortInfoProfile({
             alt={profile?.name}
             className="mr-3 w-16 h-16"
           />
-          <div className="-mt-20">
-            <ProfileAction profile={profile} isOwnProfile={isOwnProfile} />
-          </div>
+          {!isInfor && (
+            <div className="-mt-20">
+              <ProfileAction profile={profile} isOwnProfile={isOwnProfile} />
+            </div>
+          )}
         </div>
         <div className="mt-1.5">
           <NameItemUser user={profile} />

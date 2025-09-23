@@ -19,6 +19,7 @@ import {
 import { ETweetAudience } from "~/shared/enums/common.enum";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
+import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { toastSimple } from "~/utils/toastSimple.util";
@@ -26,6 +27,7 @@ import { TweetItem } from "../list-tweets/item-tweet";
 import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
 import { HashtagSuggest } from "./HashtagSuggest";
+import { Mentions } from "./Mentions";
 
 // Constants
 const DEFAULT_VALUES: CreateTweetDto = {
@@ -55,6 +57,11 @@ export function Tweet({
   const [openHashtag, setOpenHashtag] = useState(false);
   const [searchHashtag, setSearchHashtag] = useState("");
 
+  // Mentions
+  const [mentionIds, setMentionIds] = useState<string[]>([]);
+  const [openMentions, setOpenMentions] = useState(false);
+  const [searchMentions, setSearchMentions] = useState("");
+
   const { textareaRef, autoResize } = useTextareaAutoResize();
   const [audience, setAudience] = useState<ETweetAudience>(
     ETweetAudience.Everyone
@@ -75,6 +82,7 @@ export function Tweet({
 
   const [isUploading, setIsUploading] = useState(false);
 
+  //
   const {
     register,
     reset,
@@ -119,12 +127,16 @@ export function Tweet({
       // Lấy từ cuối cùng
       const currentWord = words[words.length - 1];
 
-      // Nếu từ hiện tại bắt đầu bằng #
+      // Nếu từ hiện tại bắt đầu bằng #/@
       if (currentWord.startsWith("#") && currentWord.length > 1) {
         console.log("On form hashtag - currentWord :::", currentWord);
         setSearchHashtag(currentWord);
         setOpenHashtag(true);
+      } else if (currentWord.startsWith("@") && currentWord.length > 1) {
+        setSearchMentions(currentWord);
+        setOpenMentions(true);
       } else {
+        setOpenMentions(false);
         setOpenHashtag(false);
       }
     },
@@ -150,9 +162,56 @@ export function Tweet({
 
   // Select hashtag
   function handleSelectHashtag(name: string) {
+    if (!textareaRef.current) return;
+
+    const textarea = textareaRef.current;
+    const cursorPos = textarea.selectionStart ?? 0;
+
+    // Thay thế từ hashtag hiện tại bằng hashtag được chọn
     const newValue = contentValue.replace(searchHashtag, `#${name}`);
     setValue("content", newValue);
+
+    // Focus lại textarea
+    requestAnimationFrame(() => {
+      textarea.focus();
+
+      // Tính lại vị trí con trỏ sau khi thay hashtag
+      const newCursorPos = cursorPos - searchHashtag.length + `#${name}`.length;
+
+      textarea.setSelectionRange(newCursorPos, newCursorPos);
+    });
+
     setSearchHashtag("");
+    setOpenHashtag(false);
+  }
+
+  // Select hashtag
+  function handleSelectMentions(
+    user: Pick<IUser, "_id" | "name" | "username">
+  ) {
+    if (!textareaRef.current) return;
+
+    const textarea = textareaRef.current;
+    const cursorPos = textarea.selectionStart ?? 0;
+
+    // Thay thế từ hashtag hiện tại bằng hashtag được chọn
+    const newValue = contentValue.replace(searchMentions, user.username!);
+    setValue("content", newValue);
+
+    // Focus lại textarea
+    requestAnimationFrame(() => {
+      textarea.focus();
+
+      // Tính lại vị trí con trỏ sau khi thay hashtag
+      const newCursorPos =
+        cursorPos - searchMentions.length + user.username!.length;
+
+      textarea.setSelectionRange(newCursorPos, newCursorPos);
+    });
+
+    setSearchMentions("");
+    setOpenMentions(false);
+    setMentionIds((prev) => [...prev, user._id]);
   }
 
   // Thực hiện gọi api
@@ -192,12 +251,6 @@ export function Tweet({
         const hashtags = data.content.match(/#[\w.]+/g) || [];
 
         //
-        // const cleared = data.content
-        //   .replace(/#\w+/g, "")
-        //   .replace(/\s+/g, " ")
-        //   .trim();
-
-        //
         const tweetData: CreateTweetDto = {
           ...data,
           ...(tweet?._id && { parent_id: tweet?._id }), // Nếu có giá trị thì không phải tweet chính
@@ -206,6 +259,7 @@ export function Tweet({
           type: tweetType,
           content: data.content,
           media: mediaUrl ? { url: mediaUrl, type: mediaType! } : undefined,
+          mentions: mentionIds,
         };
 
         const resCreateTweet = await apiCreateTweet.mutateAsync(tweetData);
@@ -224,10 +278,11 @@ export function Tweet({
     [
       uploadedMediaUrl,
       selectedFile,
-      audience,
       tweet?._id,
+      audience,
       tweetType,
       mediaType,
+      mentionIds,
       apiCreateTweet,
       successForm,
       setUploadProgress,
@@ -269,6 +324,16 @@ export function Tweet({
               >
                 <div />
               </HashtagSuggest>
+
+              {/* Mentions */}
+              <Mentions
+                open={openMentions}
+                setOpen={setOpenMentions}
+                valueSearch={searchMentions}
+                oncSelect={handleSelectMentions}
+              >
+                <div />
+              </Mentions>
 
               {/* Media preview */}
               {previewUrl && (
