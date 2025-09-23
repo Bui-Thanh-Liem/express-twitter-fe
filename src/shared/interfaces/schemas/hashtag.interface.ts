@@ -1,5 +1,6 @@
-import { IBase } from './base.interface'
+import { IBase } from "./base.interface";
 
 export interface IHashtag extends IBase {
-  name: string
+  name: string;
+  slug: string;
 }

@@ -102,7 +102,7 @@ export function ProfileMedia({ profile_id }: { profile_id: string }) {
   // Reset khi profile_id thay đổi
   useEffect(() => {
     setPage(1);
-    setAllMedia([]);
+    // setAllMedia([]);
     setHasMore(true);
     setIsLoadingMore(false);
 
