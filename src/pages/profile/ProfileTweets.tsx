@@ -101,7 +101,7 @@ export function ProfileTweets({
   // Reset khi profile_id hoặc tweetType thay đổi
   useEffect(() => {
     setPage(1);
-    setAllTweets([]);
+    // setAllTweets([]);
     setHasMore(true);
     setIsLoadingMore(false);
 
