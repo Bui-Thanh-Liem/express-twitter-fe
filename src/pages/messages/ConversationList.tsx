@@ -83,7 +83,14 @@ export function ConversationList({
   onclick: (conversation: IConversation) => void;
 }) {
   const { conversation } = useChatBoxStore();
-  const { joinConversation, leaveConversation } = useConversationSocket();
+  const { joinConversation, leaveConversation } = useConversationSocket(
+    (newConversation) => {
+      console.log("Nhận từ server (socket) newConversation:::", newConversation);
+    },
+    (unreadCount) => {
+      console.log("Nhận từ server (socket) unreadCount:::", unreadCount);
+    }
+  );
   const [idActive, setIdActive] = useState("");
   const [page, setPage] = useState(1);
   const [allConversations, setAllConversations] = useState<IConversation[]>([]);

@@ -28,7 +28,14 @@ import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 
 export default function ChatBox() {
   //
-  const { leaveConversation, joinConversation } = useConversationSocket();
+  const { leaveConversation, joinConversation } = useConversationSocket(
+    (newConversation) => {
+      console.log("Nhận từ server (socket) newConversation:::", newConversation);
+    },
+    (unreadCount) => {
+      console.log("Nhận từ server (socket) unreadCount:::", unreadCount);
+    }
+  );
   const { pathname } = useLocation();
   const { close, conversation } = useChatBoxStore();
   const { user } = useUserStore();

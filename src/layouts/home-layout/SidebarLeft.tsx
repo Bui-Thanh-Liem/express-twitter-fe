@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { TypographyP } from "~/components/elements/p";
 import { BookmarkIcon } from "~/components/icons/bookmark";
@@ -23,6 +23,8 @@ import { cn } from "~/lib/utils";
 import { useUserStore } from "~/store/useUserStore";
 import { Logo } from "../../components/logo";
 import { WrapIcon } from "../../components/wrapIcon";
+import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
+import { Badge } from "~/components/ui/badge";
 
 type NavItem = {
   name: string;
@@ -34,6 +36,18 @@ export function SidebarLeft() {
   const { pathname } = useLocation();
   const { user } = useUserStore();
   const logout = useLogout();
+
+  //
+  const [unreadCountNoti, setUnreadCountNoti] = useState(0);
+
+  //
+  useConversationSocket(
+    () => {},
+    (unreadCount: number) => {
+      setUnreadCountNoti(unreadCount);
+      console.log("Nhận từ server (socket) unreadCount:::", unreadCount);
+    }
+  );
 
   const navs: NavItem[] = [
     {
@@ -102,7 +116,14 @@ export function SidebarLeft() {
                     ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       React.cloneElement(x.icon, { active: isActive } as any)
                     : x.icon}
-
+                  {unreadCountNoti && (
+                    <Badge
+                      variant="destructive"
+                      className="absolute -top-1 -right-1 rounded-full px-1.5 py-0 text-[10px] leading-none"
+                    >
+                      {unreadCountNoti}
+                    </Badge>
+                  )}
                   <span className="line-clamp-1">{x.name}</span>
                 </TypographyP>
               </Link>
