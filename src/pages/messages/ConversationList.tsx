@@ -7,7 +7,6 @@ import { cn } from "~/lib/utils";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
-import { useChatBoxStore } from "~/store/useChatBoxStore";
 import { useUserStore } from "~/store/useUserStore";
 
 function ConversationItemSkeleton() {
@@ -82,10 +81,12 @@ export function ConversationList({
 }: {
   onclick: (conversation: IConversation) => void;
 }) {
-  const { conversation } = useChatBoxStore();
   const { joinConversation, leaveConversation } = useConversationSocket(
     (newConversation) => {
-      console.log("Nhận từ server (socket) newConversation:::", newConversation);
+      console.log(
+        "Nhận từ server (socket) newConversation:::",
+        newConversation
+      );
     },
     (unreadCount) => {
       console.log("Nhận từ server (socket) unreadCount:::", unreadCount);
@@ -118,7 +119,7 @@ export function ConversationList({
         leaveConversation(conversationIds);
       }
     };
-  }, [allConversations, conversation?._id]);
+  }, [allConversations, joinConversation, leaveConversation]);
 
   // Mỗi lần fetch xong thì append thêm vào state
   useEffect(() => {

@@ -1,55 +1,45 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback } from "react";
+import { useDebounce } from "~/hooks/useDebounce";
 import { useGetMultiForMentions } from "~/hooks/useFetchUser";
 import { cn } from "~/lib/utils";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+
+interface MentionsProps {
+  open: boolean;
+  setOpen: (val: boolean) => void;
+  className?: string;
+  children: React.ReactNode;
+  valueSearch: string;
+  onSelect: (user: Pick<IUser, "_id" | "name" | "username">) => void;
+}
 
 export function Mentions({
   open,
   setOpen,
   children,
   className,
-  oncSelect,
+  onSelect,
   valueSearch,
-}: {
-  open: boolean;
-  setOpen: (val: boolean) => void;
-  className?: string;
-  children: ReactNode;
-  valueSearch: string;
-  oncSelect: (user: Pick<IUser, "_id" | "name" | "username">) => void;
-}) {
+}: MentionsProps) {
   //
-  const [debouncedValue, setDebouncedValue] = useState(valueSearch);
-  const [mentions, setMentions] = useState<
-    Pick<IUser, "_id" | "name" | "username">[]
-  >([]);
+  const debouncedValue = useDebounce(valueSearch, 400);
 
   //
-  const { data, isLoading, refetch } = useGetMultiForMentions(
+  const { data, isLoading } = useGetMultiForMentions(
     debouncedValue,
-    !!debouncedValue
+    !!debouncedValue && debouncedValue.length > 0
   );
+  const mentions = data?.data || [];
 
-  //
-  useEffect(() => {
-    const delay = setTimeout(() => {
-      refetch();
-    }, 300);
-    return () => clearTimeout(delay);
-  }, [refetch, valueSearch]);
-
-  //
-  useEffect(() => {
-    const items = data?.data || [];
-    setMentions(items);
-  }, [data]);
-
-  //
-  useEffect(() => {
-    const delay = setTimeout(() => setDebouncedValue(valueSearch), 300);
-    return () => clearTimeout(delay);
-  }, [valueSearch]);
+  // Memoize onSelect để tránh re-render không cần thiết
+  const handleSelect = useCallback(
+    (user: Pick<IUser, "_id" | "name" | "username">) => {
+      onSelect(user);
+      setOpen(false);
+    },
+    [onSelect, setOpen]
+  );
 
   //
   return (
@@ -75,10 +65,7 @@ export function Mentions({
               <li
                 key={u._id}
                 className="cursor-pointer hover:bg-gray-100 p-2 rounded"
-                onClick={() => {
-                  oncSelect(u);
-                  setOpen(false);
-                }}
+                onClick={() => handleSelect(u)}
               >
                 {u.username}
               </li>

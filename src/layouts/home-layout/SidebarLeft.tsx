@@ -20,11 +20,10 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { useLogout } from "~/hooks/useFetchAuth";
 import { cn } from "~/lib/utils";
+import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useUserStore } from "~/store/useUserStore";
 import { Logo } from "../../components/logo";
 import { WrapIcon } from "../../components/wrapIcon";
-import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
-import { Badge } from "~/components/ui/badge";
 
 type NavItem = {
   name: string;
@@ -116,14 +115,6 @@ export function SidebarLeft() {
                     ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       React.cloneElement(x.icon, { active: isActive } as any)
                     : x.icon}
-                  {unreadCountNoti && (
-                    <Badge
-                      variant="destructive"
-                      className="absolute -top-1 -right-1 rounded-full px-1.5 py-0 text-[10px] leading-none"
-                    >
-                      {unreadCountNoti}
-                    </Badge>
-                  )}
                   <span className="line-clamp-1">{x.name}</span>
                 </TypographyP>
               </Link>

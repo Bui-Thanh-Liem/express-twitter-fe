@@ -1,4 +1,5 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, type ReactNode } from "react";
+import { useDebounce } from "~/hooks/useDebounce";
 import { useGetMultiHashtags } from "~/hooks/useFetchHashtag";
 import { cn } from "~/lib/utils";
 import type { IHashtag } from "~/shared/interfaces/schemas/hashtag.interface";
@@ -20,34 +21,24 @@ export function HashtagSuggest({
   oncSelect: (hashtag: string) => void;
 }) {
   //
-  const [debouncedValue, setDebouncedValue] = useState(valueSearch);
-  const [hashtags, setHashtags] = useState<IHashtag[]>([]);
+  const debouncedValue = useDebounce(valueSearch, 400);
 
   //
-  const { data, isLoading, refetch } = useGetMultiHashtags(!!debouncedValue, {
+  const { data, isLoading } = useGetMultiHashtags(!!debouncedValue, {
     page: "1",
     limit: "20",
     q: debouncedValue.replace("#", ""),
   });
+  const hashtags = data?.data?.items || [];
 
-  useEffect(() => {
-    const delay = setTimeout(() => {
-      refetch();
-    }, 300);
-    return () => clearTimeout(delay);
-  }, [refetch, valueSearch]);
-
-  //
-  useEffect(() => {
-    const items = data?.data?.items || [];
-    setHashtags(items);
-  }, [data]);
-
-  //
-  useEffect(() => {
-    const delay = setTimeout(() => setDebouncedValue(valueSearch), 300);
-    return () => clearTimeout(delay);
-  }, [valueSearch]);
+  // Memoize onSelect để tránh re-render không cần thiết
+  const handleSelect = useCallback(
+    (hashtag: IHashtag) => {
+      oncSelect(hashtag.name);
+      setOpen(false);
+    },
+    [oncSelect, setOpen]
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -72,10 +63,7 @@ export function HashtagSuggest({
               <li
                 key={h._id}
                 className="cursor-pointer hover:bg-gray-100 p-2 rounded"
-                onClick={() => {
-                  oncSelect(h.name);
-                  setOpen(false);
-                }}
+                onClick={() => handleSelect(h)}
               >
                 #{h.name}
               </li>

@@ -330,7 +330,7 @@ export function Tweet({
                 open={openMentions}
                 setOpen={setOpenMentions}
                 valueSearch={searchMentions}
-                oncSelect={handleSelectMentions}
+                onSelect={handleSelectMentions}
               >
                 <div />
               </Mentions>

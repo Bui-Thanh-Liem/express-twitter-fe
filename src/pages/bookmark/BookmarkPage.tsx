@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon } from "~/components/icons/arrow-left";
 import { TweetItem } from "~/components/list-tweets/item-tweet";
 import { SkeletonTweet } from "~/components/list-tweets/list-tweets";
 import { SearchMain } from "~/components/ui/search";
 import { WrapIcon } from "~/components/wrapIcon";
+import { useDebounce } from "~/hooks/useDebounce";
 import { useGetTweetBookmarked } from "~/hooks/useFetchTweet";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import { useUserStore } from "~/store/useUserStore";
@@ -20,6 +21,7 @@ export function BookmarkPage() {
 
   // Search
   const [searchVal, setSearchVal] = useState("");
+  const debouncedSearchVal = useDebounce(searchVal, 400);
 
   // Ref để theo dõi element cuối cùng
   const observerRef = useRef<HTMLDivElement>(null);
@@ -27,7 +29,7 @@ export function BookmarkPage() {
 
   const { data, isLoading, error } = useGetTweetBookmarked({
     limit: "10",
-    q: searchVal,
+    q: debouncedSearchVal,
     user_id: user?._id,
     page: page.toString(),
   });
@@ -64,15 +66,22 @@ export function BookmarkPage() {
   }, [data, page]);
 
   // Callback khi element cuối cùng xuất hiện trên viewport
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleObserver = (entries: IntersectionObserverEntry[]) => {
-    const [entry] = entries;
-    if (entry.isIntersecting && hasMore && !isLoading && !isLoadingMore) {
-      setIsLoadingMore(true);
-      setPage((prev) => prev + 1);
-    }
-  };
-
+  const handleObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const [entry] = entries;
+      if (
+        entry.isIntersecting &&
+        hasMore &&
+        !isLoading &&
+        !isLoadingMore &&
+        allTweets.length > 0
+      ) {
+        setIsLoadingMore(true);
+        setPage((prev) => prev + 1);
+      }
+    },
+    [hasMore, isLoading, isLoadingMore]
+  );
   // Setup Intersection Observer
   useEffect(() => {
     const element = observerRef.current;
@@ -118,20 +127,25 @@ export function BookmarkPage() {
     setPage(1);
     setHasMore(true);
     setIsLoadingMore(false);
-  }, [searchVal]);
+  }, [debouncedSearchVal]);
+
+  console.log("allTweets", allTweets);
+  console.log("page", page);
+  console.log("searchVal", searchVal);
 
   return (
     <div>
       {/* Header */}
       <div className="px-3 flex justify-between items-center border border-gray-100">
         <div className="flex h-12 items-center gap-6 ">
-          <WrapIcon onClick={() => navigate(-1)}>
+          <WrapIcon onClick={() => navigate(-1)} aria-label="Quay lại">
             <ArrowLeftIcon />
           </WrapIcon>
           <p className="font-semibold text-[20px]">Bookmarks</p>
         </div>
       </div>
 
+      {/* Search */}
       <div className="p-4">
         <SearchMain
           size="lg"
@@ -142,15 +156,15 @@ export function BookmarkPage() {
       </div>
 
       <div className="max-h-[calc(100vh-(48px))] overflow-y-auto">
+        {/* Loading state cho lần load đầu tiên */}
+        {isLoading && page === 1 && <SkeletonTweet />}
+
         {/* Tweets list */}
         {allTweets.length > 0 && (
           <div className="space-y-6">
             {allTweets.map((tweet, index: number) => (
               <span key={tweet._id}>
-                <TweetItem
-                  key={tweet._id || `${tweet._id}-${index}`}
-                  tweet={tweet}
-                />
+                <TweetItem tweet={tweet} />
                 {index < allTweets.length - 1 && (
                   <hr className="border-gray-200" />
                 )}
@@ -167,7 +181,7 @@ export function BookmarkPage() {
         )}
 
         {/* Empty state - chưa có data nhưng không phải total = 0 */}
-        {!isLoading && allTweets.length === 0 && page === 1 && (
+        {!isLoading && allTweets.length === 0 && page === 1 && !searchVal && (
           <div className="text-center py-8">
             <p className="text-gray-500 text-lg mb-2">
               ❤️ Chưa có tweet nào được thích
@@ -175,6 +189,15 @@ export function BookmarkPage() {
             <p className="text-gray-400">
               Hãy thích một số tweet để chúng xuất hiện ở đây!
             </p>
+          </div>
+        )}
+
+        {!isLoading && allTweets.length === 0 && page === 1 && searchVal && (
+          <div className="text-center py-8">
+            <p className="text-gray-500 text-lg mb-2">
+              Không tìm thấy tweet nào khớp với "{searchVal}"
+            </p>
+            <p className="text-gray-400">Hãy thử từ khóa khác!</p>
           </div>
         )}
 
@@ -201,7 +224,6 @@ export function BookmarkPage() {
                 setPage(1);
                 setAllTweets([]);
                 setHasMore(true);
-                window.location.reload();
               }}
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
             >

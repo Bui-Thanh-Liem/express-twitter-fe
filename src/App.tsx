@@ -3,17 +3,15 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RedirectIfAuthenticated } from "./components/redirectIf-authenticated";
 import { RedirectIfNotAuthenticated } from "./components/redirectIf-not-authenticated";
-import { AuthPage } from "./pages/auth/AuthPage";
-import { VerifyEmail } from "./pages/auth/VerifyEmail";
 import { HomeLayout } from "./layouts/home-layout/HomeLayout";
 import RootLayout from "./layouts/root-layout/RootLayout";
+import { AuthPage } from "./pages/auth/AuthPage";
+import { VerifyEmail } from "./pages/auth/VerifyEmail";
+import { BookmarkPage } from "./pages/bookmark/BookmarkPage";
 import { ExplorePage } from "./pages/explore/ExplorePage";
 import { HomePage } from "./pages/home/HomePage";
 import { MessagePage } from "./pages/messages/MessagePage";
 import { ProfilePage } from "./pages/profile/ProfilePage";
-import { useEffect } from "react";
-import { socket } from "./socket/socket";
-import { BookmarkPage } from "./pages/bookmark/BookmarkPage";
 
 // Router config
 const router = createBrowserRouter([
@@ -65,15 +63,6 @@ const queryClient = new QueryClient({
 });
 
 export function App() {
-  // Một kết nối duy nhất cho toàn ứng dụng
-  useEffect(() => {
-    socket.connect();
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       {/*  */}

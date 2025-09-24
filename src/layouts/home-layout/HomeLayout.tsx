@@ -4,11 +4,24 @@ import { useChatBoxStore } from "~/store/useChatBoxStore";
 import { SidebarLeft } from "./SidebarLeft";
 import { SidebarRight } from "./SidebarRight";
 import ChatBox from "~/pages/messages/ChatBox";
+import { useEffect } from "react";
+import { socket } from "~/socket/socket";
 
 export function HomeLayout() {
   const { isOpen } = useChatBoxStore();
   const { pathname } = useLocation();
   const isMessage = pathname === "/messages";
+
+  // Một kết nối duy nhất cho toàn ứng dụng
+  useEffect(() => {
+    socket.connect();
+    console.log("mounted HomeLayout");
+
+    return () => {
+      socket.disconnect();
+      console.log("unmounted HomeLayout");
+    };
+  }, []);
 
   return (
     <div className="w-full">

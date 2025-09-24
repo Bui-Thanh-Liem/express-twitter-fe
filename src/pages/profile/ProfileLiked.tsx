@@ -104,15 +104,15 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
 
   return (
     <div>
+      {/* Loading state cho lần load đầu tiên */}
+      {isLoading && page === 1 && <SkeletonTweet />}
+
       {/* Tweets list */}
       {allTweets.length > 0 && (
         <div className="space-y-6">
           {allTweets.map((tweet, index: number) => (
             <span key={tweet._id}>
-              <TweetItem
-                key={tweet._id || `${tweet._id}-${index}`}
-                tweet={tweet}
-              />
+              <TweetItem tweet={tweet} />
               {index < allTweets.length - 1 && (
                 <hr className="border-gray-200" />
               )}
