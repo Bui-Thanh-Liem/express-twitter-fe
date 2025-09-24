@@ -15,7 +15,7 @@ import { ActionBookmarkTweet } from "./action-bookmark-tweet";
 import { ActionCommentTweet } from "./action-comment-tweet";
 import { ActionLikeTweet } from "./action-like-tweet";
 import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
-import { Content } from "./Content";
+import { Content } from "./content";
 
 // Component cho Media (Image hoặc Video)
 export const MediaContent = ({ url, type }: IMedia) => {

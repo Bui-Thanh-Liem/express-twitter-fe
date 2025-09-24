@@ -13,6 +13,7 @@ import { MessagePage } from "./pages/messages/MessagePage";
 import { ProfilePage } from "./pages/profile/ProfilePage";
 import { useEffect } from "react";
 import { socket } from "./socket/socket";
+import { BookmarkPage } from "./pages/bookmark/BookmarkPage";
 
 // Router config
 const router = createBrowserRouter([
@@ -39,6 +40,7 @@ const router = createBrowserRouter([
         ),
         children: [
           { path: "home", element: <HomePage /> },
+          { path: "bookmarks", element: <BookmarkPage /> },
           { path: "explore", element: <ExplorePage /> },
           { path: "messages", element: <MessagePage /> },
           { path: ":username", element: <ProfilePage /> },

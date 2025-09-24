@@ -71,7 +71,6 @@ export const useGetProfileTweets = (
   tweet_type: ETweetType,
   queries?: IQuery<ITweet> & {
     ishl?: "0" | "1";
-    profile_id: string;
   }
 ) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
@@ -110,11 +109,11 @@ export const useGetProfileMedia = (
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["tweets/profile/media", normalizedQueries],
+    queryKey: ["tweets/profile-media", normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
-      const url = `/tweets/profile/media/${
+      const url = `/tweets/profile-media/${
         queryString ? `?${queryString}` : ""
       }`;
 
@@ -134,20 +133,43 @@ export const useGetProfileMedia = (
   });
 };
 
-// 📄 GET - Lấy tweet của người khác trong profile
-export const useGetProfileTweetLiked = (
-  queries?: IQuery<ITweet> & { profile_id: string }
-) => {
+// 📄 GET - Lấy tweet đã like
+export const useGetTweetLiked = (queries?: IQuery<ITweet>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["tweets/profile/liked", normalizedQueries],
+    queryKey: ["tweets/liked", normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
-      const url = `/tweets/profile/liked/${
-        queryString ? `?${queryString}` : ""
-      }`;
+      const url = `/tweets/liked/${queryString ? `?${queryString}` : ""}`;
+
+      return apiCall<ResMultiType<ITweet>>(url);
+    },
+
+    // Các options bổ sung
+    staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
+    refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
+    refetchOnMount: false, // ✅ Tắt refetch khi mount
+
+    // 🔥 THÊM CẤU HÌNH NÀY:
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    // Quan trọng: Đảm bảo không conflict với optimistic update
+    networkMode: "online",
+  });
+};
+
+// 📄 GET - Lấy tweet đã like
+export const useGetTweetBookmarked = (queries?: IQuery<ITweet>) => {
+  const normalizedQueries = queries ? JSON.stringify(queries) : "";
+
+  return useQuery({
+    queryKey: ["tweets/bookmarked", normalizedQueries],
+    queryFn: () => {
+      // Tạo query string từ queries object
+      const queryString = queries ? buildQueryString(queries) : "";
+      const url = `/tweets/bookmarked/${queryString ? `?${queryString}` : ""}`;
 
       return apiCall<ResMultiType<ITweet>>(url);
     },

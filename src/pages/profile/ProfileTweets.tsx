@@ -29,7 +29,7 @@ export function ProfileTweets({
   const { data, isLoading, error } = useGetProfileTweets(tweetType, {
     limit: "10",
     ishl: ishl,
-    profile_id,
+    user_id: profile_id,
     page: page.toString(),
   });
 

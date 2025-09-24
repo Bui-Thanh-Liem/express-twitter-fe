@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { TweetItem } from "~/components/list-tweets/item-tweet";
 import { SkeletonTweet } from "~/components/list-tweets/list-tweets";
-import { useGetProfileTweetLiked } from "~/hooks/useFetchTweet";
+import { useGetTweetLiked } from "~/hooks/useFetchTweet";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 
 export function ProfileLiked({ profile_id }: { profile_id: string }) {
@@ -15,10 +15,10 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
   const observerRef = useRef<HTMLDivElement>(null);
   const observerInstanceRef = useRef<IntersectionObserver | null>(null);
 
-  const { data, isLoading, error } = useGetProfileTweetLiked({
+  const { data, isLoading, error } = useGetTweetLiked({
     limit: "10",
+    user_id: profile_id,
     page: page.toString(),
-    profile_id,
   });
 
   // Effect để xử lý khi có data mới
@@ -102,26 +102,6 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
     });
   }, [profile_id]);
 
-  // Error state
-  if (error) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-red-500 mb-4">❌ Có lỗi xảy ra khi tải dữ liệu</p>
-        <button
-          onClick={() => {
-            setPage(1);
-            setAllTweets([]);
-            setHasMore(true);
-            window.location.reload();
-          }}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-        >
-          Thử lại
-        </button>
-      </div>
-    );
-  }
-
   return (
     <div>
       {/* Tweets list */}
@@ -169,6 +149,24 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
           <p className="text-gray-500">
             🎉 Bạn đã xem hết tất cả tweet đã thích!
           </p>
+        </div>
+      )}
+
+      {/* Error */}
+      {error && (
+        <div className="text-center py-8">
+          <p className="text-red-500 mb-4">❌ Có lỗi xảy ra khi tải dữ liệu</p>
+          <button
+            onClick={() => {
+              setPage(1);
+              setAllTweets([]);
+              setHasMore(true);
+              window.location.reload();
+            }}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          >
+            Thử lại
+          </button>
         </div>
       )}
     </div>

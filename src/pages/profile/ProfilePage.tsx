@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftIcon } from "~/components/icons/arrow-left";
 import { CloseIcon } from "~/components/icons/close";
-import { SearchIcon } from "~/components/icons/search";
 import { VerifyIcon } from "~/components/icons/verify";
 import { LoadingProcess } from "~/components/loading-process";
 import { AvatarMain } from "~/components/ui/avatar";
@@ -102,9 +101,9 @@ export function ProfilePage() {
           <p className="font-semibold text-[20px]">{profile?.name}</p>
         </div>
 
-        <WrapIcon>
+        {/* <WrapIcon>
           <SearchIcon />
-        </WrapIcon>
+        </WrapIcon> */}
       </div>
 
       <div className="max-h-screen overflow-y-auto">

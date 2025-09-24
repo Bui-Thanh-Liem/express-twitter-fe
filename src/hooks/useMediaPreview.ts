@@ -1,5 +1,6 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { EMediaType } from "~/shared/enums/type.enum";
+import { toastSimple } from "~/utils/toastSimple.util";
 
 // Custom hook for media preview and upload
 export const useMediaPreview = () => {
@@ -54,8 +55,9 @@ export const useMediaPreview = () => {
           !validImageTypes.includes(file.type) &&
           !validVideoTypes.includes(file.type)
         ) {
-          alert(
-            "Chỉ hỗ trợ file ảnh (JPEG, PNG, GIF, WebP) và video (MP4, WebM, MOV, AVI)"
+          toastSimple(
+            "Chỉ hỗ trợ file ảnh (JPEG, PNG, GIF, WebP) và video (MP4, WebM, MOV, AVI)",
+            "warning"
           );
           return;
         }
@@ -67,12 +69,13 @@ export const useMediaPreview = () => {
 
         if (file.size > maxSize) {
           const sizeLimitText = type === EMediaType.Video ? "100MB" : "5MB";
-          alert(
+          toastSimple(
             `File ${
               type === EMediaType.Video ? "video" : "ảnh"
             } không được vượt quá ${sizeLimitText}\nFile hiện tại: ${formatFileSize(
               file.size
-            )}`
+            )}`,
+            "warning"
           );
           return;
         }
