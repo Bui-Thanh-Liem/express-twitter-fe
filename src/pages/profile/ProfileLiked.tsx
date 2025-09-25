@@ -56,7 +56,13 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleObserver = (entries: IntersectionObserverEntry[]) => {
     const [entry] = entries;
-    if (entry.isIntersecting && hasMore && !isLoading && !isLoadingMore) {
+    if (
+      entry.isIntersecting &&
+      hasMore &&
+      !isLoading &&
+      !isLoadingMore &&
+      allTweets.length > 0
+    ) {
       setIsLoadingMore(true);
       setPage((prev) => prev + 1);
     }
@@ -91,7 +97,7 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
   // Reset khi profile_id thay đổi
   useEffect(() => {
     setPage(1);
-    // setAllTweets([]);
+    setAllTweets([]);
     setHasMore(true);
     setIsLoadingMore(false);
 
@@ -132,10 +138,10 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
       {!isLoading && allTweets.length === 0 && page === 1 && (
         <div className="text-center py-8">
           <p className="text-gray-500 text-lg mb-2">
-            ❤️ Chưa có tweet nào được thích
+            ❤️ Chưa có bài viết nào được thích
           </p>
           <p className="text-gray-400">
-            Hãy thích một số tweet để chúng xuất hiện ở đây!
+            Hãy thích một số bài viết để chúng xuất hiện ở đây!
           </p>
         </div>
       )}
@@ -147,7 +153,7 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
       {!hasMore && allTweets.length > 0 && (
         <div className="text-center py-8">
           <p className="text-gray-500">
-            🎉 Bạn đã xem hết tất cả tweet đã thích!
+            🎉 Bạn đã xem hết tất cả bài viết đã thích!
           </p>
         </div>
       )}

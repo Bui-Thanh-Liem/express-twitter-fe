@@ -24,7 +24,7 @@ export function TodayNewsCard() {
   }, [location]);
 
   //
-  if (!news?.length) return null;
+  // if (!news?.length) return null;
 
   return (
     <Card
@@ -45,6 +45,12 @@ export function TodayNewsCard() {
               <TodayNewsItemSkeleton key={`more-${i}`} />
             ))
           : news.map((item) => <TodayNewsItem key={item.id} item={item} />)}
+
+        {!news.length && (
+          <div className="flex justify-center items-center h-20">
+            <p className="text-gray-400">Chưa có gì nổi bật hôm nay</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

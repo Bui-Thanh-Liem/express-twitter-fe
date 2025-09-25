@@ -87,13 +87,19 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
     (entries: IntersectionObserverEntry[]) => {
       const [entry] = entries;
       console.log("Observer triggered, isIntersecting:", entry.isIntersecting);
-      if (entry.isIntersecting && hasMore && !isLoading && !isLoadingMore) {
+      if (
+        entry.isIntersecting &&
+        hasMore &&
+        !isLoading &&
+        !isLoadingMore &&
+        allTweets.length > 0
+      ) {
         console.log("Loading more tweets...");
         setIsLoadingMore(true);
         setPage((prev) => prev + 1);
       }
     },
-    [hasMore, isLoading, isLoadingMore]
+    [allTweets?.length, hasMore, isLoading, isLoadingMore]
   );
 
   // Setup Intersection Observer

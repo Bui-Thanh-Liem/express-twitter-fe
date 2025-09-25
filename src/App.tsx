@@ -12,6 +12,7 @@ import { ExplorePage } from "./pages/explore/ExplorePage";
 import { HomePage } from "./pages/home/HomePage";
 import { MessagePage } from "./pages/messages/MessagePage";
 import { ProfilePage } from "./pages/profile/ProfilePage";
+import { NotificationPage } from "./pages/notification/Notification";
 
 // Router config
 const router = createBrowserRouter([
@@ -40,6 +41,7 @@ const router = createBrowserRouter([
           { path: "home", element: <HomePage /> },
           { path: "bookmarks", element: <BookmarkPage /> },
           { path: "explore", element: <ExplorePage /> },
+          { path: "notifications", element: <NotificationPage /> },
           { path: "messages", element: <MessagePage /> },
           { path: ":username", element: <ProfilePage /> },
         ],

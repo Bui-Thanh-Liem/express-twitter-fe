@@ -66,7 +66,13 @@ export function ProfileTweets({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleObserver = (entries: IntersectionObserverEntry[]) => {
     const [entry] = entries;
-    if (entry.isIntersecting && hasMore && !isLoading && !isLoadingMore) {
+    if (
+      entry.isIntersecting &&
+      hasMore &&
+      !isLoading &&
+      !isLoadingMore &&
+      allTweets.length > 0
+    ) {
       setIsLoadingMore(true);
       setPage((prev) => prev + 1);
     }
@@ -101,7 +107,7 @@ export function ProfileTweets({
   // Reset khi profile_id hoặc tweetType thay đổi
   useEffect(() => {
     setPage(1);
-    // setAllTweets([]);
+    setAllTweets([]);
     setHasMore(true);
     setIsLoadingMore(false);
 
@@ -159,7 +165,7 @@ export function ProfileTweets({
       {/* End of content indicator */}
       {!hasMore && allTweets.length > 0 && (
         <div className="text-center py-8">
-          <p className="text-gray-500">🎉 Bạn đã xem hết tất cả tweet!</p>
+          <p className="text-gray-500">🎉 Bạn đã xem hết tất cả bài viết!</p>
         </div>
       )}
     </div>

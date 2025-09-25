@@ -129,7 +129,6 @@ export function Tweet({
 
       // Nếu từ hiện tại bắt đầu bằng #/@
       if (currentWord.startsWith("#") && currentWord.length > 1) {
-        console.log("On form hashtag - currentWord :::", currentWord);
         setSearchHashtag(currentWord);
         setOpenHashtag(true);
       } else if (currentWord.startsWith("@") && currentWord.length > 1) {
@@ -157,6 +156,7 @@ export function Tweet({
     removeMedia(); // Clear media after successful submission
     setUploadedMediaUrl("");
     setUploadProgress(0);
+    setMentionIds([]);
     if (onSuccess) onSuccess(); // Sử dụng cho bên ngoài component cha (VD: đống modal)
   }, [removeMedia, reset, setUploadProgress, setUploadedMediaUrl, onSuccess]);
 
@@ -295,192 +295,189 @@ export function Tweet({
   const isContentEmpty = !contentValue?.trim();
   const isFormDisabled = isContentEmpty || isSubmitting || isUploading;
 
+  //
   return (
-    <>
-      <div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex gap-4">
-            <AvatarMain src={user?.avatar} alt={user?.name} />
-            <div className="flex-1 mt-2">
-              <textarea
-                {...register("content")}
-                ref={textareaRef}
-                autoComplete="off"
-                value={contentValue}
-                autoCorrect="off"
-                spellCheck="false"
-                className="border-0 outline-0 w-full text-lg placeholder:text-gray-500 bg-transparent resize-none"
-                placeholder={placeholder}
-                onInput={handleTextareaInput}
-                rows={1}
-              />
+    <div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex gap-4">
+          <AvatarMain src={user?.avatar} alt={user?.name} />
+          <div className="flex-1 mt-2">
+            <textarea
+              {...register("content")}
+              ref={textareaRef}
+              autoComplete="off"
+              value={contentValue}
+              autoCorrect="off"
+              spellCheck="false"
+              className="border-0 outline-0 w-full text-lg placeholder:text-gray-500 bg-transparent resize-none"
+              placeholder={placeholder}
+              onInput={handleTextareaInput}
+              rows={1}
+            />
 
-              {/* Hashtag Suggest */}
-              <HashtagSuggest
-                open={openHashtag}
-                setOpen={setOpenHashtag}
-                valueSearch={searchHashtag}
-                oncSelect={handleSelectHashtag}
-              >
-                <div />
-              </HashtagSuggest>
+            {/* Hashtag Suggest */}
+            <HashtagSuggest
+              open={openHashtag}
+              setOpen={setOpenHashtag}
+              valueSearch={searchHashtag}
+              oncSelect={handleSelectHashtag}
+            >
+              <div />
+            </HashtagSuggest>
 
-              {/* Mentions */}
-              <Mentions
-                open={openMentions}
-                setOpen={setOpenMentions}
-                valueSearch={searchMentions}
-                onSelect={handleSelectMentions}
-              >
-                <div />
-              </Mentions>
+            {/* Mentions */}
+            <Mentions
+              open={openMentions}
+              setOpen={setOpenMentions}
+              valueSearch={searchMentions}
+              onSelect={handleSelectMentions}
+            >
+              <div />
+            </Mentions>
 
-              {/* Media preview */}
-              {previewUrl && (
-                <div
-                  key={tweetType}
-                  className="relative mt-3 rounded-xl overflow-hidden border border-gray-200 inline-block max-w-full"
-                >
-                  {mediaType === EMediaType.Image ? (
-                    <img
-                      src={previewUrl}
-                      alt="Preview"
-                      className="max-w-full max-h-80 object-cover"
-                    />
-                  ) : mediaType === EMediaType.Video ? (
-                    <video
-                      src={previewUrl}
-                      controls
-                      className="max-w-full max-h-80"
-                      preload="metadata"
-                    >
-                      Trình duyệt của bạn không hỗ trợ video.
-                    </video>
-                  ) : null}
-
-                  <WrapIcon
-                    onClick={removeMedia}
-                    className="absolute top-2 right-2 bg-gray-500 hover:bg-gray-400 transition-opacity z-10"
-                  >
-                    <CloseIcon />
-                  </WrapIcon>
-
-                  {isUploading && (
-                    <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
-                      <div className="text-white text-sm bg-black bg-opacity-70 px-3 py-2 rounded-2xl flex flex-col items-center gap-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          Đang đăng{" "}
-                          {mediaType === EMediaType.Video ? "video" : "ảnh"}...
-                        </div>
-                        {mediaType === EMediaType.Video &&
-                          uploadProgress > 0 && (
-                            <div className="w-32">
-                              <div className="bg-gray-700 rounded-full h-2">
-                                <div
-                                  className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                                  style={{ width: `${uploadProgress}%` }}
-                                ></div>
-                              </div>
-                              <div className="text-xs mt-1 text-center">
-                                {uploadProgress}%
-                              </div>
-                            </div>
-                          )}
-                      </div>
-                    </div>
-                  )}
-
-                  {uploadedMediaUrl && !isUploading && (
-                    <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
-                      ✓ Đã upload{" "}
-                      {mediaType === EMediaType.Video ? "video" : "ảnh"}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* File info */}
-              {(mediaType === EMediaType.Video ||
-                mediaType === EMediaType.Image) && (
-                <div className="bg-[#EAFAFF] bg-opacity-60 text-black font-semibold text-xs p-2 rounded">
-                  {mediaType === EMediaType.Video ? "🎬" : "🖼️"}{" "}
-                  {selectedFile?.name} (
-                  {formatFileSize(selectedFile?.size || 0)})
-                </div>
-              )}
-
-              {/*  */}
-              {(tweetType === ETweetType.Tweet ||
-                tweetType === ETweetType.QuoteTweet) && (
-                <TweetAudience onChangeAudience={setAudience} />
-              )}
-
-              {/*  */}
-              {tweetType === ETweetType.QuoteTweet && tweet && (
-                <div className="w-ful mt-1 rounded-3xl border overflow-hidden">
-                  <TweetItem isAction={false} tweet={tweet} />
-                </div>
-              )}
-              <div className="w-full border-b border-gray-200 mt-3" />
-
+            {/* Media preview */}
+            {previewUrl && (
               <div
-                className={cn(
-                  "flex justify-between items-center -ml-2 my-2 bg-white",
-                  tweetType === ETweetType.QuoteTweet ? "" : ""
-                )}
+                key={tweetType}
+                className="relative mt-3 rounded-xl overflow-hidden border border-gray-200 inline-block max-w-full"
               >
-                <div className="flex items-center gap-1">
-                  <WrapIcon className="hover:bg-blue-100/60">
-                    <label
-                      htmlFor={`image-upload-${tweetType}`}
-                      className="cursor-pointer"
-                      title="Thêm ảnh hoặc video"
-                    >
-                      <ImageIcon />
-                      <input
-                        id={`image-upload-${tweetType}`}
-                        className="hidden"
-                        type="file"
-                        accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/mov,video/avi,video/quicktime"
-                        onChange={handleFileSelect}
-                        disabled={isUploading}
-                      />
-                    </label>
-                  </WrapIcon>
-
-                  <WrapIcon className="hover:bg-blue-100/60">
-                    <EmojiSelector onEmojiClick={handleEmojiClick} />
-                  </WrapIcon>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  {/* Character count indicator */}
-                  <span
-                    className={`text-sm ${
-                      contentValue?.length > 280
-                        ? "text-red-500"
-                        : "text-gray-500"
-                    }`}
+                {mediaType === EMediaType.Image ? (
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    className="max-w-full max-h-80 object-cover"
+                  />
+                ) : mediaType === EMediaType.Video ? (
+                  <video
+                    src={previewUrl}
+                    controls
+                    className="max-w-full max-h-80"
+                    preload="metadata"
                   >
-                    {contentValue?.length}/280
-                  </span>
+                    Trình duyệt của bạn không hỗ trợ video.
+                  </video>
+                ) : null}
 
-                  <ButtonMain type="submit" disabled={isFormDisabled}>
-                    {isUploading
-                      ? `${contentBtn} ${
-                          mediaType === EMediaType.Video ? "video" : "ảnh"
-                        }...`
-                      : isSubmitting
-                      ? "Đang đăng..."
-                      : contentBtn}
-                  </ButtonMain>
-                </div>
+                <WrapIcon
+                  onClick={removeMedia}
+                  className="absolute top-2 right-2 bg-gray-500 hover:bg-gray-400 transition-opacity z-10"
+                >
+                  <CloseIcon />
+                </WrapIcon>
+
+                {isUploading && (
+                  <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
+                    <div className="text-white text-sm bg-black bg-opacity-70 px-3 py-2 rounded-2xl flex flex-col items-center gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Đang đăng{" "}
+                        {mediaType === EMediaType.Video ? "video" : "ảnh"}...
+                      </div>
+                      {mediaType === EMediaType.Video && uploadProgress > 0 && (
+                        <div className="w-32">
+                          <div className="bg-gray-700 rounded-full h-2">
+                            <div
+                              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${uploadProgress}%` }}
+                            ></div>
+                          </div>
+                          <div className="text-xs mt-1 text-center">
+                            {uploadProgress}%
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {uploadedMediaUrl && !isUploading && (
+                  <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+                    ✓ Đã upload{" "}
+                    {mediaType === EMediaType.Video ? "video" : "ảnh"}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* File info */}
+            {(mediaType === EMediaType.Video ||
+              mediaType === EMediaType.Image) && (
+              <div className="bg-[#EAFAFF] bg-opacity-60 text-black font-semibold text-xs p-2 rounded">
+                {mediaType === EMediaType.Video ? "🎬" : "🖼️"}{" "}
+                {selectedFile?.name} ({formatFileSize(selectedFile?.size || 0)})
+              </div>
+            )}
+
+            {/*  */}
+            {(tweetType === ETweetType.Tweet ||
+              tweetType === ETweetType.QuoteTweet) && (
+              <TweetAudience onChangeAudience={setAudience} />
+            )}
+
+            {/*  */}
+            {tweetType === ETweetType.QuoteTweet && tweet && (
+              <div className="w-ful mt-1 rounded-3xl border overflow-hidden">
+                <TweetItem isAction={false} tweet={tweet} />
+              </div>
+            )}
+            <div className="w-full border-b border-gray-200 mt-3" />
+
+            <div
+              className={cn(
+                "flex justify-between items-center -ml-2 my-2 bg-white",
+                tweetType === ETweetType.QuoteTweet ? "" : ""
+              )}
+            >
+              <div className="flex items-center gap-1">
+                <WrapIcon className="hover:bg-blue-100/60">
+                  <label
+                    htmlFor={`image-upload-${tweetType}`}
+                    className="cursor-pointer"
+                    title="Thêm ảnh hoặc video"
+                  >
+                    <ImageIcon />
+                    <input
+                      id={`image-upload-${tweetType}`}
+                      className="hidden"
+                      type="file"
+                      accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/mov,video/avi,video/quicktime"
+                      onChange={handleFileSelect}
+                      disabled={isUploading}
+                    />
+                  </label>
+                </WrapIcon>
+
+                <WrapIcon className="hover:bg-blue-100/60">
+                  <EmojiSelector onEmojiClick={handleEmojiClick} />
+                </WrapIcon>
+              </div>
+
+              <div className="flex items-center gap-3">
+                {/* Character count indicator */}
+                <span
+                  className={`text-sm ${
+                    contentValue?.length > 280
+                      ? "text-red-500"
+                      : "text-gray-500"
+                  }`}
+                >
+                  {contentValue?.length}/280
+                </span>
+
+                <ButtonMain type="submit" disabled={isFormDisabled}>
+                  {isUploading
+                    ? `${contentBtn} ${
+                        mediaType === EMediaType.Video ? "video" : "ảnh"
+                      }...`
+                    : isSubmitting
+                    ? "Đang đăng..."
+                    : contentBtn}
+                </ButtonMain>
               </div>
             </div>
           </div>
-        </form>
-      </div>
-    </>
+        </div>
+      </form>
+    </div>
   );
 }

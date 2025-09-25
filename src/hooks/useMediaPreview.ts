@@ -1,4 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
+import {
+  MAX_SIZE_IMAGE_UPLOAD,
+  MAX_SIZE_VIDEO_UPLOAD,
+} from "~/shared/constants";
 import { EMediaType } from "~/shared/enums/type.enum";
 import { toastSimple } from "~/utils/toastSimple.util";
 
@@ -63,12 +67,13 @@ export const useMediaPreview = () => {
         }
 
         // Validate file size (different limits for image and video)
-        const maxImageSize = 5 * 1024 * 1024; // 5MB for images
-        const maxVideoSize = 100 * 1024 * 1024; // 100MB for videos
-        const maxSize = type === EMediaType.Video ? maxVideoSize : maxImageSize;
+        const maxSize =
+          type === EMediaType.Video
+            ? MAX_SIZE_VIDEO_UPLOAD
+            : MAX_SIZE_IMAGE_UPLOAD;
 
         if (file.size > maxSize) {
-          const sizeLimitText = type === EMediaType.Video ? "100MB" : "5MB";
+          const sizeLimitText = type === EMediaType.Video ? "50MB" : "5MB";
           toastSimple(
             `File ${
               type === EMediaType.Video ? "video" : "ảnh"

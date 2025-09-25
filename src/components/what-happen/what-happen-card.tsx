@@ -22,9 +22,6 @@ export function WhatHappenCard() {
   }, [location.hash]);
 
   //
-  if (!trending?.length) return null;
-
-  //
   return (
     <Card
       className={cn(
@@ -36,6 +33,7 @@ export function WhatHappenCard() {
         <CardTitle className="text-xl">Chuyện gì đang xảy ra</CardTitle>
       </CardHeader>
       <CardContent className="px-0">
+        {/*  */}
         {isLoading
           ? Array.from({ length: 4 }).map((_, i) => (
               <WhatHappenItemSkeleton key={`more-${i}`} />
@@ -43,15 +41,24 @@ export function WhatHappenCard() {
           : trending?.map((item) => (
               <WhatHappenItem key={item._id} item={item} />
             ))}
-        <div className="hover:bg-gray-100 px-4 py-3">
-          <div>
+
+        {/*  */}
+        {trending.length > 0 && (
+          <div className="hover:bg-gray-100 px-4 py-3">
             <Link to="/explore#what-happen">
               <p className="inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer">
                 Xem thêm
               </p>
             </Link>
           </div>
-        </div>
+        )}
+
+        {/*  */}
+        {!trending.length && (
+          <div className="flex justify-center items-center h-20">
+            <p className="text-gray-400">Chưa có gì nổi bật</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

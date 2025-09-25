@@ -67,7 +67,13 @@ export function ProfileMedia({ profile_id }: { profile_id: string }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleObserver = (entries: IntersectionObserverEntry[]) => {
     const [entry] = entries;
-    if (entry.isIntersecting && hasMore && !isLoading && !isLoadingMore) {
+    if (
+      entry.isIntersecting &&
+      hasMore &&
+      !isLoading &&
+      !isLoadingMore &&
+      allMedia.length > 0
+    ) {
       setIsLoadingMore(true);
       setPage((prev) => prev + 1);
     }
@@ -102,7 +108,7 @@ export function ProfileMedia({ profile_id }: { profile_id: string }) {
   // Reset khi profile_id thay đổi
   useEffect(() => {
     setPage(1);
-    // setAllMedia([]);
+    setAllMedia([]);
     setHasMore(true);
     setIsLoadingMore(false);
 

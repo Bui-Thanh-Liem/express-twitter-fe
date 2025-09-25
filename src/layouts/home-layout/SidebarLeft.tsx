@@ -20,15 +20,16 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { useLogout } from "~/hooks/useFetchAuth";
 import { cn } from "~/lib/utils";
-import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useUserStore } from "~/store/useUserStore";
 import { Logo } from "../../components/logo";
 import { WrapIcon } from "../../components/wrapIcon";
+import { useNotificationSocket } from "~/socket/hooks/useNotificationSocket";
 
 type NavItem = {
   name: string;
   icon: ReactNode;
   path: string;
+  countNoti?: number;
 };
 
 export function SidebarLeft() {
@@ -39,12 +40,11 @@ export function SidebarLeft() {
   //
   const [unreadCountNoti, setUnreadCountNoti] = useState(0);
 
-  //
-  useConversationSocket(
+  useNotificationSocket(
     () => {},
-    (unreadCount: number) => {
-      setUnreadCountNoti(unreadCount);
-      console.log("Nhận từ server (socket) unreadCount:::", unreadCount);
+    (unread) => {
+      console.log("unread:::", unread);
+      setUnreadCountNoti(unread);
     }
   );
 
@@ -68,6 +68,7 @@ export function SidebarLeft() {
       name: "Thông báo",
       icon: <NotificationIcon />,
       path: "/notifications",
+      countNoti: unreadCountNoti,
     },
     {
       name: "Tin nhắn",
@@ -102,7 +103,7 @@ export function SidebarLeft() {
         {navs.map((x) => {
           const isActive = pathname === x.path;
           return (
-            <li key={x.name} className="cursor-pointer group">
+            <li key={x.name} className="cursor-pointer group relative">
               <Link to={x.path}>
                 <TypographyP
                   className={cn(
@@ -116,6 +117,9 @@ export function SidebarLeft() {
                       React.cloneElement(x.icon, { active: isActive } as any)
                     : x.icon}
                   <span className="line-clamp-1">{x.name}</span>
+                  {!!x?.countNoti && (
+                    <div className="absolute top-3 left-2 w-2 h-2 bg-sky-400 rounded-full" />
+                  )}
                 </TypographyP>
               </Link>
             </li>

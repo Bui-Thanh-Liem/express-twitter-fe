@@ -15,12 +15,12 @@ import { EarthIcon } from "../icons/earth";
 const replyOptions = [
   {
     id: ETweetAudience.Everyone,
-    title: "Everyone",
+    title: "Mọi người",
     icon: <EarthIcon color="#fff" />,
   },
   {
     id: ETweetAudience.Followers,
-    title: "Accounts you follow",
+    title: "Tài khoản theo dõi bạn",
     icon: <AccountFollowIcon color="#fff" />,
   },
   // {
@@ -74,12 +74,9 @@ export function TweetAudience({
       >
         {/* Header */}
         <div className="px-4 py-3 border-b border-gray-100">
-          <h3 className="font-semibold text-gray-900">Who can reply?</h3>
-          <p className="text-sm text-gray-500 mt-1">
-            Choose who can reply to this post.
-          </p>
+          <h3 className="font-semibold text-gray-900">Ai có thể trả lời ?</h3>
           <p className="text-sm text-gray-500">
-            Anyone mentioned can always reply.
+            Bất kỳ ai hoặc những người theo dõi bạn đều có thể trả lời.
           </p>
         </div>
 

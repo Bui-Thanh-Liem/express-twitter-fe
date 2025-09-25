@@ -182,11 +182,11 @@ export function ProfilePage() {
           <div className="flex items-center space-x-4 text-sm mb-4">
             <div className="hover:underline cursor-pointer">
               <span className="font-semibold">{profile?.following_count}</span>
-              <span className="text-gray-500"> Following</span>
+              <span className="text-gray-500"> đang theo dõi</span>
             </div>
             <div className="hover:underline cursor-pointer">
               <span className="font-semibold">{profile?.follower_count}</span>
-              <span className="text-gray-500"> Followers</span>
+              <span className="text-gray-500"> người theo dõi</span>
             </div>
           </div>
 

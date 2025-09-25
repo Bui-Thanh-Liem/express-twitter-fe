@@ -1,14 +1,17 @@
+import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { cn } from "~/lib/utils";
+import ChatBox from "~/pages/messages/ChatBox";
+import { CONSTANT_EVENT_NAMES } from "~/shared/constants";
+import { socket } from "~/socket/socket";
 import { useChatBoxStore } from "~/store/useChatBoxStore";
+import { useUserStore } from "~/store/useUserStore";
 import { SidebarLeft } from "./SidebarLeft";
 import { SidebarRight } from "./SidebarRight";
-import ChatBox from "~/pages/messages/ChatBox";
-import { useEffect } from "react";
-import { socket } from "~/socket/socket";
 
 export function HomeLayout() {
   const { isOpen } = useChatBoxStore();
+  const { user } = useUserStore();
   const { pathname } = useLocation();
   const isMessage = pathname === "/messages";
 
@@ -16,6 +19,9 @@ export function HomeLayout() {
   useEffect(() => {
     socket.connect();
     console.log("mounted HomeLayout");
+
+    socket.emit(CONSTANT_EVENT_NAMES.JOIN_CONVERSATION, user?._id);
+    console.log("Join the room to receive notifications");
 
     return () => {
       socket.disconnect();

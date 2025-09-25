@@ -67,9 +67,6 @@ export function WhatHappen() {
   }, []);
 
   //
-  if (!trending?.length) return null;
-
-  //
   return (
     <>
       <a
@@ -82,28 +79,38 @@ export function WhatHappen() {
       <p className="text-xl font-bold mt-4 py-2 bg-gray-50 sticky top-16 z-30">
         Chuyện gì đang xảy ra
       </p>
+
+      {/*  */}
       <div>
         {trending?.map((item) => (
           <WhatHappenItem key={item._id} item={item} />
         ))}
       </div>
-      {isLoading ? (
-        Array.from({ length: 2 }).map((_, i) => (
-          <WhatHappenItemSkeleton key={`more-${i}`} />
-        ))
-      ) : (
-        <div className="px-4 py-3">
-          <p
-            className={cn(
-              "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer",
-              total_page_ref.current <= page
-                ? "text-gray-300 pointer-events-none cursor-default"
-                : ""
-            )}
-            onClick={onSeeMore}
-          >
-            Xem thêm
-          </p>
+
+      {/*  */}
+      {isLoading
+        ? Array.from({ length: 2 }).map((_, i) => (
+            <WhatHappenItemSkeleton key={`more-${i}`} />
+          ))
+        : !!trending.length && (
+            <div className="px-4 py-3">
+              <p
+                className={cn(
+                  "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer",
+                  total_page_ref.current <= page
+                    ? "text-gray-300 pointer-events-none cursor-default"
+                    : ""
+                )}
+                onClick={onSeeMore}
+              >
+                Xem thêm
+              </p>
+            </div>
+          )}
+
+      {!trending.length && (
+        <div className="flex justify-center items-center h-20">
+          <p className="text-gray-400">Chưa có gì nổi bật hôm nay</p>
         </div>
       )}
     </>

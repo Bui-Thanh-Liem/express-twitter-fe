@@ -38,31 +38,39 @@ export function TodayNews() {
   }, []);
 
   //
-  if (!news?.length) return null;
-
   return (
     <>
       <p className="text-xl font-bold py-2 bg-gray-50 sticky top-16 z-20">
         Tin tức hôm nay
       </p>
       <div>
+        {/*  */}
         {news.map((item) => (
           <TodayNewsItem key={item.id} item={item} isMedia />
         ))}
-        {isLoading ? (
-          Array.from({ length: 2 }).map((_, i) => (
-            <TodayNewsItemSkeleton key={`more-${i}`} />
-          ))
-        ) : (
-          <div className="px-4 py-3">
-            <p
-              className={
-                "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer"
-              }
-              onClick={onSeeMore}
-            >
-              Xem thêm
-            </p>
+
+        {/*  */}
+        {isLoading
+          ? Array.from({ length: 2 }).map((_, i) => (
+              <TodayNewsItemSkeleton key={`more-${i}`} />
+            ))
+          : !!news.length && (
+              <div className="px-4 py-3">
+                <p
+                  className={
+                    "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer"
+                  }
+                  onClick={onSeeMore}
+                >
+                  Xem thêm
+                </p>
+              </div>
+            )}
+
+        {/*  */}
+        {!news.length && (
+          <div className="flex justify-center items-center h-20">
+            <p className="text-gray-400">Chưa có gì nổi bật hôm nay</p>
           </div>
         )}
       </div>

@@ -22,8 +22,6 @@ export function WhoToFollowCard() {
     setOpen(window.location.hash !== "#who-to-follow");
   }, [location.hash]);
 
-  if (!whoToFollows?.length) return null;
-
   //
   return (
     <Card
@@ -36,6 +34,7 @@ export function WhoToFollowCard() {
         <CardTitle className="text-xl">Ai để theo dõi</CardTitle>
       </CardHeader>
       <CardContent className="px-0">
+        {/*  */}
         {isLoading
           ? Array.from({ length: 2 }).map((_, i) => (
               <WhoToFollowItemSkeleton key={`more-${i}`} />
@@ -44,15 +43,25 @@ export function WhoToFollowCard() {
               <WhoToFollowItem key={item._id} user={item} />
             ))}
 
-        <div className="hover:bg-gray-100 px-4 py-3">
-          <div>
-            <Link to="/explore#who-to-follow">
-              <p className="inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer">
-                Xem thêm
-              </p>
-            </Link>
+        {/*  */}
+        {whoToFollows.length > 0 && (
+          <div className="hover:bg-gray-100 px-4 py-3">
+            <div>
+              <Link to="/explore#who-to-follow">
+                <p className="inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer">
+                  Xem thêm
+                </p>
+              </Link>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/*  */}
+        {!whoToFollows.length && (
+          <div className="flex justify-center items-center h-20">
+            <p className="text-gray-400">Chưa có người dùng nổi bật</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

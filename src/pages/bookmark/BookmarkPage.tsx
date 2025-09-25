@@ -184,10 +184,10 @@ export function BookmarkPage() {
         {!isLoading && allTweets.length === 0 && page === 1 && !searchVal && (
           <div className="text-center py-8">
             <p className="text-gray-500 text-lg mb-2">
-              ❤️ Chưa có tweet nào được thích
+              📑 Chưa có bài viết nào được đánh dấu
             </p>
             <p className="text-gray-400">
-              Hãy thích một số tweet để chúng xuất hiện ở đây!
+              Hãy đánh dấu một số bài viết để chúng xuất hiện ở đây!
             </p>
           </div>
         )}

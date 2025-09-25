@@ -33,20 +33,22 @@ export const useNotificationSocket = (
 
   // Lắng nghe số lượng thông báo chưa đọc
   useEffect(() => {
-    socket.on(CONSTANT_EVENT_NAMES.UNREAD_NOTIFICATION, onUnreadCount);
+    socket.on(CONSTANT_EVENT_NAMES.UNREAD_COUNT_NOTIFICATION, onUnreadCount);
     return () => {
-      socket.off(CONSTANT_EVENT_NAMES.UNREAD_NOTIFICATION, onUnreadCount);
+      socket.off(CONSTANT_EVENT_NAMES.UNREAD_COUNT_NOTIFICATION, onUnreadCount);
     };
   }, [onUnreadCount]);
 
-  // Tham gia vào phòng của mình (user_id)
-  const joinConversationSelf = (id: string[]) => {
+  //
+  const readNoti = (id: string) => {
     if (!socket.connected) {
-      console.warn("⚠️ Socket chưa connect, không thể join room self");
+      console.warn("⚠️ Socket chưa connect, không thể readNoti");
       return;
     }
-    socket.emit(CONSTANT_EVENT_NAMES.JOIN_CONVERSATION, id);
+    console.log("useNotificationSocket - readNoti:::");
+
+    socket.emit(CONSTANT_EVENT_NAMES.READ_NOTIFICATION, id);
   };
 
-  return { joinConversationSelf };
+  return { readNoti };
 };
