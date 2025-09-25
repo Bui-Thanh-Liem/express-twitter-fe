@@ -97,7 +97,7 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
   // Reset khi profile_id thay đổi
   useEffect(() => {
     setPage(1);
-    setAllTweets([]);
+    // setAllTweets([]);
     setHasMore(true);
     setIsLoadingMore(false);
 

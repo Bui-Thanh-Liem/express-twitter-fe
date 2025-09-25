@@ -26,6 +26,7 @@ import { toastSimple } from "~/utils/toastSimple.util";
 import { TweetItem } from "../list-tweets/item-tweet";
 import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
+import { CircularProgress } from "../ui/circular-progress";
 import { HashtagSuggest } from "./HashtagSuggest";
 import { Mentions } from "./Mentions";
 
@@ -35,6 +36,9 @@ const DEFAULT_VALUES: CreateTweetDto = {
   audience: ETweetAudience.Everyone,
   type: ETweetType.Tweet,
 };
+
+//
+const MAX_LENGTH_TWEET = 280;
 
 export function Tweet({
   tweet,
@@ -185,7 +189,7 @@ export function Tweet({
     setOpenHashtag(false);
   }
 
-  // Select hashtag
+  // Select mentions
   function handleSelectMentions(
     user: Pick<IUser, "_id" | "name" | "username">
   ) {
@@ -311,6 +315,7 @@ export function Tweet({
               spellCheck="false"
               className="border-0 outline-0 w-full text-lg placeholder:text-gray-500 bg-transparent resize-none"
               placeholder={placeholder}
+              maxLength={MAX_LENGTH_TWEET}
               onInput={handleTextareaInput}
               rows={1}
             />
@@ -454,15 +459,13 @@ export function Tweet({
 
               <div className="flex items-center gap-3">
                 {/* Character count indicator */}
-                <span
-                  className={`text-sm ${
-                    contentValue?.length > 280
-                      ? "text-red-500"
-                      : "text-gray-500"
-                  }`}
-                >
-                  {contentValue?.length}/280
-                </span>
+
+                <CircularProgress
+                  value={contentValue?.length || 0}
+                  max={MAX_LENGTH_TWEET}
+                  size={18}
+                  strokeWidth={2}
+                />
 
                 <ButtonMain type="submit" disabled={isFormDisabled}>
                   {isUploading

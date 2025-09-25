@@ -8,11 +8,9 @@ import { WrapIcon } from "~/components/wrapIcon";
 import { useDebounce } from "~/hooks/useDebounce";
 import { useGetTweetBookmarked } from "~/hooks/useFetchTweet";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
-import { useUserStore } from "~/store/useUserStore";
 
 export function BookmarkPage() {
   // State để quản lý pagination và data
-  const { user } = useUserStore();
   const [page, setPage] = useState(1);
   const [allTweets, setAllTweets] = useState<ITweet[]>([]);
   const [hasMore, setHasMore] = useState(true);
@@ -30,7 +28,6 @@ export function BookmarkPage() {
   const { data, isLoading, error } = useGetTweetBookmarked({
     limit: "10",
     q: debouncedSearchVal,
-    user_id: user?._id,
     page: page.toString(),
   });
 
@@ -120,7 +117,7 @@ export function BookmarkPage() {
       top: 0,
       behavior: "smooth",
     });
-  }, [user?._id]);
+  }, []);
 
   //
   useEffect(() => {

@@ -10,10 +10,15 @@ interface IMediaItem {
     url: string;
     type: EMediaType;
   };
-  // Thêm các field khác nếu cần
 }
 
-export function ProfileMedia({ profile_id }: { profile_id: string }) {
+export function ProfileMedia({
+  profile_id,
+  isOwnProfile,
+}: {
+  profile_id: string;
+  isOwnProfile: boolean;
+}) {
   // State để quản lý pagination và data
   const [page, setPage] = useState(1);
   const [allMedia, setAllMedia] = useState<IMediaItem[]>([]);
@@ -108,7 +113,7 @@ export function ProfileMedia({ profile_id }: { profile_id: string }) {
   // Reset khi profile_id thay đổi
   useEffect(() => {
     setPage(1);
-    setAllMedia([]);
+    // setAllMedia([]);
     setHasMore(true);
     setIsLoadingMore(false);
 
@@ -174,7 +179,9 @@ export function ProfileMedia({ profile_id }: { profile_id: string }) {
         <div className="text-center py-8">
           <p className="text-gray-500 text-lg mb-2">📷 Chưa có media nào</p>
           <p className="text-gray-400">
-            Hãy đăng ảnh hoặc video để chúng xuất hiện ở đây!
+            {isOwnProfile
+              ? "Hãy đăng ảnh hoặc video để chúng xuất hiện ở đây!"
+              : "Người dùng chưa đăng bài viết."}
           </p>
         </div>
       )}

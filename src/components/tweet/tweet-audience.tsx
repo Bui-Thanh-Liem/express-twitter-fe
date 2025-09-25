@@ -11,7 +11,7 @@ import { AccountFollowIcon } from "../icons/account-follow";
 import { CheckIcon } from "../icons/check";
 import { EarthIcon } from "../icons/earth";
 
-// Mock components for demo
+//
 const replyOptions = [
   {
     id: ETweetAudience.Everyone,
@@ -23,11 +23,6 @@ const replyOptions = [
     title: "Tài khoản theo dõi bạn",
     icon: <AccountFollowIcon color="#fff" />,
   },
-  // {
-  //   id: "verified",
-  //   title: "Verified accounts",
-  //   icon: <AccountVerifyIcon color="#fff" />,
-  // },
   // {
   //   id: "mentioned",
   //   title: "Only accounts you mention",
@@ -62,7 +57,7 @@ export function TweetAudience({
               color: "rgb(29, 155, 240)",
             } as { color: string })}
           <TypographyP className="font-semibold text-sm">
-            {selectedOptionData?.title} can reply
+            {selectedOptionData?.title} có thể trả lời
           </TypographyP>
         </button>
       </DropdownMenuTrigger>
@@ -76,7 +71,10 @@ export function TweetAudience({
         <div className="px-4 py-3 border-b border-gray-100">
           <h3 className="font-semibold text-gray-900">Ai có thể trả lời ?</h3>
           <p className="text-sm text-gray-500">
-            Bất kỳ ai hoặc những người theo dõi bạn đều có thể trả lời.
+            Bất kỳ ai hoặc những người theo dõi bạn.
+          </p>
+          <p className="text-sm text-gray-500">
+            Có thể trả lời bài viết của bạn.
           </p>
         </div>
 

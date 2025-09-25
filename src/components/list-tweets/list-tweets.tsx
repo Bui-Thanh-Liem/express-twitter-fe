@@ -134,7 +134,7 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
   // Reset khi feedType thay đổi
   useEffect(() => {
     setPage(1);
-    setAllTweets([]);
+    // setAllTweets([]);
     setHasMore(true);
     setIsLoadingMore(false);
 

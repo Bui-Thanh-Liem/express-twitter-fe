@@ -58,7 +58,7 @@ export function WhoToFollowCard() {
 
         {/*  */}
         {!whoToFollows.length && (
-          <div className="flex justify-center items-center h-20">
+          <div className="pb-4 pl-4">
             <p className="text-gray-400">Chưa có người dùng nổi bật</p>
           </div>
         )}

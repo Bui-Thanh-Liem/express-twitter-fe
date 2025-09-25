@@ -236,9 +236,11 @@ export function ProfilePage() {
               <TabsTrigger className="cursor-pointer" value="media">
                 Hình ảnh/video
               </TabsTrigger>
-              <TabsTrigger className="cursor-pointer" value="likes">
-                Đã thích
-              </TabsTrigger>
+              {isOwnProfile && (
+                <TabsTrigger className="cursor-pointer" value="likes">
+                  Đã thích
+                </TabsTrigger>
+              )}
             </TabsList>
           </div>
 
@@ -250,6 +252,7 @@ export function ProfilePage() {
             >
               <div className="space-y-4">
                 <ProfileTweets
+                  isOwnProfile={isOwnProfile}
                   tweetType={ETweetType.Tweet}
                   profile_id={profile?._id}
                 />
@@ -261,6 +264,7 @@ export function ProfilePage() {
             >
               <div className="space-y-4">
                 <ProfileTweets
+                  isOwnProfile={isOwnProfile}
                   tweetType={ETweetType.Retweet}
                   profile_id={profile?._id}
                 />
@@ -270,6 +274,7 @@ export function ProfilePage() {
               <div className="space-y-4">
                 <ProfileTweets
                   ishl={"1"}
+                  isOwnProfile={isOwnProfile}
                   tweetType={ETweetType.Tweet}
                   profile_id={profile?._id}
                 />
@@ -278,14 +283,20 @@ export function ProfilePage() {
 
             <TabsContent value="media" className="px-0 py-4">
               <div className="space-y-4">
-                <ProfileMedia profile_id={profile?._id} />
+                <ProfileMedia
+                  profile_id={profile?._id}
+                  isOwnProfile={isOwnProfile}
+                />
               </div>
             </TabsContent>
-            <TabsContent value="likes" className="px-0 py-4">
-              <div className="space-y-4">
-                <ProfileLiked profile_id={profile?._id} />
-              </div>
-            </TabsContent>
+
+            {isOwnProfile && (
+              <TabsContent value="likes" className="px-0 py-4">
+                <div className="space-y-4">
+                  <ProfileLiked profile_id={profile?._id} />
+                </div>
+              </TabsContent>
+            )}
           </div>
         </Tabs>
       </div>

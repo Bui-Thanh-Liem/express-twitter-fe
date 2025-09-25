@@ -47,7 +47,7 @@ export function TodayNewsCard() {
           : news.map((item) => <TodayNewsItem key={item.id} item={item} />)}
 
         {!news.length && (
-          <div className="flex justify-center items-center h-20">
+          <div className="pb-4 pl-4">
             <p className="text-gray-400">Chưa có gì nổi bật hôm nay</p>
           </div>
         )}

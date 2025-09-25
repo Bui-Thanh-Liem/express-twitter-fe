@@ -29,7 +29,7 @@ export function ActionCommentTweet({
         <AvatarMain
           src={author.avatar}
           alt={author.name}
-          className="mr-3 mt-1"
+          className="mr-3 mt-1 z-20"
         />
         <div>
           <Link to={`/${author.username}`} className="flex items-center gap-2">
@@ -39,8 +39,7 @@ export function ActionCommentTweet({
             <VerifyIcon active={!!author.verify} size={20} />
           </Link>
           <p className="text-sm text-gray-500">
-            {author.username} •{" "}
-            {formatTimeAgo(created_at as unknown as string)}
+            {author.username} • {formatTimeAgo(created_at as unknown as string)}
           </p>
 
           {/* Nội dung tweet */}
@@ -48,7 +47,7 @@ export function ActionCommentTweet({
             <p className="text-gray-800 my-3 leading-relaxed">{content}</p>
           )}
         </div>
-        <div className="w-0.5 h-20 bg-gray-300 absolute bottom-0 left-5" />
+        <div className="w-0.5 h-20 bg-gray-300 absolute bottom-0 left-5 z-10" />
       </div>
 
       <Tweet

@@ -11,10 +11,12 @@ export function ProfileTweets({
   ishl = "0",
   tweetType,
   profile_id,
+  isOwnProfile,
 }: {
   ishl?: "1" | "0";
   tweetType: ETweetType;
   profile_id: string;
+  isOwnProfile: boolean;
 }) {
   // State để quản lý pagination và data
   const [page, setPage] = useState(1);
@@ -107,7 +109,7 @@ export function ProfileTweets({
   // Reset khi profile_id hoặc tweetType thay đổi
   useEffect(() => {
     setPage(1);
-    setAllTweets([]);
+    // setAllTweets([]);
     setHasMore(true);
     setIsLoadingMore(false);
 
@@ -157,7 +159,9 @@ export function ProfileTweets({
       )}
 
       {/* Empty state - chưa có data nhưng không phải total = 0 */}
-      {!isLoading && allTweets.length === 0 && page === 1 && <NotFoundTweet />}
+      {!isLoading && allTweets.length === 0 && page === 1 && (
+        <NotFoundTweet isOwn={isOwnProfile} />
+      )}
 
       {/* Observer element - invisible trigger cho infinite scroll */}
       <div ref={observerRef} className="h-10 w-full" />

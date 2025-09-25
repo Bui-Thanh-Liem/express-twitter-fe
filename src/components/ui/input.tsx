@@ -11,6 +11,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { getNestedError } from "~/utils/getNestedError";
 import { Label } from "./label";
+import { CircularProgress } from "./circular-progress";
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
@@ -107,10 +108,13 @@ function InputMain<T extends object>({
           </button>
         )}
         {isMaxLength && (
-          <div className="absolute right-0 -bottom-6">
-            <p className="text-right text-sm text-muted-foreground">
-              {value.length}/{maxCountLength}
-            </p>
+          <div className="absolute right-2 top-1/2 -translate-y-1/2">
+            <CircularProgress
+              value={value.length || 0}
+              max={maxCountLength}
+              size={18}
+              strokeWidth={2}
+            />
           </div>
         )}
       </div>
