@@ -120,7 +120,6 @@ export function TabContent({ type }: { type: ENotificationType }) {
   // Socket
   const { readNoti } = useNotificationSocket(
     (newNoti) => {
-      console.log("newNoti:::", newNoti);
       if (newNoti && newNoti.type === type) {
         setNotis((prev) => [newNoti, ...prev]);
       }

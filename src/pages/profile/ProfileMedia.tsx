@@ -31,7 +31,7 @@ export function ProfileMedia({
 
   const { data, isLoading, error } = useGetProfileMedia({
     limit: "20",
-    profile_id,
+    user_id: profile_id,
     page: page.toString(),
   });
 

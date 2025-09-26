@@ -4,9 +4,9 @@ import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
 import { VerifyIcon } from "../icons/verify";
+import { Tweet } from "../tweet/Tweet";
 import { AvatarMain } from "../ui/avatar";
 import { DialogMain } from "../ui/dialog";
-import { Tweet } from "../tweet/tweet";
 
 export function ActionCommentTweet({
   tweet,

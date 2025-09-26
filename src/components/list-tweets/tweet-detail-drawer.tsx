@@ -1,0 +1,200 @@
+"use client";
+
+import { BarChart3, Heart, MessageCircle, Repeat2, Share } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { Link } from "react-router-dom";
+import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
+import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
+import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import { formatTimeAgo } from "~/utils/formatTimeAgo";
+import { VerifyIcon } from "../icons/verify";
+import { ShortInfoProfile } from "../ShortInfoProfile";
+import { AvatarMain } from "../ui/avatar";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerTitle,
+  DrawerTrigger,
+} from "../ui/drawer";
+import { ActionBookmarkTweet } from "./action-bookmark-tweet";
+import { ActionCommentTweet } from "./action-comment-tweet";
+import { ActionLikeTweet } from "./action-like-tweet";
+import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
+import { Content } from "./content";
+import { MediaContent } from "./item-tweet";
+import { useGetTweetChildren } from "~/hooks/useFetchTweet";
+
+export function TweetDetailDrawer({
+  tweet,
+  children,
+}: {
+  tweet?: ITweet;
+  children: ReactNode;
+}) {
+  //
+  const [open, setOpen] = useState(false);
+  const [isOpenComment, setOpenComment] = useState(false);
+
+  // Gọi api comments
+  const { data } = useGetTweetChildren({
+    tweet_id: tweet?._id,
+    tweet_type: ETweetType.Comment,
+    queries: {
+      page: "1",
+      limit: "20",
+    },
+  });
+
+  console.log("TweetDetailDrawer - comment::", data);
+
+  // Không có tweet thì chỉ xem không xem chi tiết được
+  if (!tweet) {
+    return <div>{children}</div>;
+  }
+
+  //
+  const {
+    content,
+    user_id,
+    media,
+    created_at,
+    mentions,
+    comments_count,
+    user_view,
+    guest_view,
+    likes_count,
+    retweets_count,
+    quotes_count,
+  } = tweet;
+  const author = user_id as IUser;
+
+  //
+  return (
+    <>
+      <Drawer direction="right" open={open}>
+        <DrawerTrigger onClick={() => setOpen(true)}>{children}</DrawerTrigger>
+
+        <DrawerOverlay className="bg-black/90" />
+
+        {/* Các phần tử nằm trên overlay, ngoài DrawerOverlay */}
+        {open && (
+          <div
+            className="fixed top-0 left-0 w-3/4 z-[1500] h-screen p-4 pl-28"
+            onClick={() => setOpen(false)}
+          >
+            {/* Content tweet */}
+            <div className="h-full">
+              <div className="h-[95%]">
+                <MediaContent
+                  url={media?.url || ""}
+                  type={media?.type || EMediaType.Image}
+                />
+              </div>
+
+              {/*  */}
+              <div className="flex justify-center gap-28">
+                <div className="text-white flex items-center gap-3">
+                  <MessageCircle size={24} />
+                  <span className="text-sm">{comments_count || 0}</span>
+                </div>
+                <div className="text-white flex items-center gap-3">
+                  <Repeat2 size={24} />
+                  <span className="text-sm">
+                    {" "}
+                    {(retweets_count || 0) + (quotes_count || 0)}
+                  </span>
+                </div>
+                <div className="text-white flex items-center gap-3">
+                  <Heart size={24} />
+                  <span className="text-sm">{likes_count || 0}</span>
+                </div>
+                <div className="text-white flex items-center gap-3">
+                  <BarChart3 size={24} />
+                  <span className="text-sm">{user_view + guest_view}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <DrawerContent>
+          {/*  */}
+          <DrawerHeader>
+            <DrawerTitle className="flex items-center space-x-2">
+              <div className="flex items-center mb-3">
+                <AvatarMain
+                  src={author.avatar}
+                  alt={author.name}
+                  className="mr-3"
+                />
+                <div>
+                  <ShortInfoProfile profile={tweet.user_id as IUser}>
+                    <Link
+                      to={`/${author.username}`}
+                      className="flex items-center gap-2"
+                    >
+                      <h3 className="text-lg font-semibold hover:underline hover:cursor-pointer">
+                        {author.name}
+                      </h3>
+                      <VerifyIcon active={!!author.verify} size={20} />
+                    </Link>
+                  </ShortInfoProfile>
+                  <p className="text-sm text-gray-500">
+                    {author.username} •{" "}
+                    {formatTimeAgo(created_at as unknown as string)}
+                  </p>
+                </div>
+              </div>
+            </DrawerTitle>
+            <DrawerDescription className="text-gray-700 text-base">
+              <Content content={content} mentions={mentions} />
+            </DrawerDescription>
+          </DrawerHeader>
+
+          {/*  */}
+          <div className="p-4">
+            <div className="flex items-center justify-between text-gray-500 border-y border-gray-100 py-3">
+              {/* Comments */}
+              <button
+                className="flex items-center space-x-2 hover:text-blue-500 transition-colors group cursor-pointer"
+                onClick={() => setOpenComment(!isOpenComment)}
+              >
+                <div className="p-2 rounded-full group-hover:bg-blue-50 transition-colors">
+                  <MessageCircle size={18} />
+                </div>
+                <span className="text-sm">{comments_count || 0}</span>
+              </button>
+
+              {/* Retweet and Quote */}
+              <ActionRetweetQuoteTweet tweet={tweet} />
+
+              {/* Likes */}
+              <ActionLikeTweet tweet={tweet} />
+
+              {/* Bookmark and Shared */}
+              <div className="flex items-center space-x-1">
+                <ActionBookmarkTweet tweet={tweet} />
+                <button className="p-2 rounded-full text-gray-500 hover:text-blue-500 hover:bg-blue-50 transition-colors cursor-pointer">
+                  <Share size={18} />
+                </button>
+              </div>
+            </div>
+
+            {/* COMMENTS */}
+            <div></div>
+          </div>
+        </DrawerContent>
+      </Drawer>
+
+      {/* Comment */}
+      <ActionCommentTweet
+        tweet={tweet}
+        isOpen={isOpenComment}
+        setOpen={setOpenComment}
+      />
+    </>
+  );
+}

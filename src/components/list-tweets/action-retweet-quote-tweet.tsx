@@ -7,7 +7,7 @@ import type { IHashtag } from "~/shared/interfaces/schemas/hashtag.interface";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { handleResponse } from "~/utils/handleResponse";
-import { Tweet } from "../tweet/tweet";
+import { Tweet } from "../tweet/Tweet";
 import { DialogMain } from "../ui/dialog";
 import {
   DropdownMenu,
@@ -20,6 +20,7 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
   const { retweets_count, quotes_count, isRetweet, isQuote } = tweet;
   const apiCreateTweet = useCreateTweet();
   const [isOpenQuote, setIsOpenQuote] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   //
   async function onRetweet() {
@@ -42,12 +43,13 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
   //
   function onQuote() {
     setIsOpenQuote(true);
+    setIsDropdownOpen(false);
   }
 
   return (
     <>
       <div>
-        <DropdownMenu>
+        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
           <DropdownMenuTrigger asChild>
             <button
               className={`outline-0 flex items-center space-x-2 transition-colors group cursor-pointer ${
@@ -80,7 +82,9 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
               onClick={onQuote}
             >
               <SquarePen strokeWidth={2} className="w-6 h-6" color="#000" />
-              {isQuote ? "Xóa Đăng lại thêm trích dẫn" : "Đăng lại thêm trích dẫn"}
+              {isQuote
+                ? "Xóa Đăng lại thêm trích dẫn"
+                : "Đăng lại thêm trích dẫn"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

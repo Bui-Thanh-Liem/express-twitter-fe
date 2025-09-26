@@ -36,7 +36,7 @@ export function TodayNewsCard() {
       <CardHeader className="flex flex-row items-center justify-between px-4 mb-0">
         <CardTitle className="text-xl">Tin tức hôm nay</CardTitle>
         <WrapIcon>
-          <X className="h-4 w-4" onClick={() => setOpen(true)} />
+          <X className="h-4 w-4" onClick={() => setOpen(false)} />
         </WrapIcon>
       </CardHeader>
       <CardContent className="px-0">

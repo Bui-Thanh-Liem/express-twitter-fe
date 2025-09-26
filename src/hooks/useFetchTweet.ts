@@ -34,7 +34,7 @@ export const useGetDetailTweet = (id: string | number, enabled = true) => {
   });
 };
 
-// 📄 GET - Lấy tweet mới nhất theo type feed: all - everyone - following
+// 📄 GET - Lấy tweets mới nhất theo type feed: all - everyone - following
 export const useGetNewFeeds = (
   feed_type: EFeedType,
   queries?: IQuery<ITweet>
@@ -66,7 +66,7 @@ export const useGetNewFeeds = (
   });
 };
 
-// 📄 GET - Lấy tweet của chính mình trong profile
+// 📄 GET - Lấy tweets của chính mình trong profile
 export const useGetProfileTweets = (
   tweet_type: ETweetType,
   queries?: IQuery<ITweet> & {
@@ -100,12 +100,45 @@ export const useGetProfileTweets = (
   });
 };
 
+// 📄 GET - Lấy tweets con của một tweet
+export const useGetTweetChildren = ({
+  tweet_id,
+  tweet_type,
+  queries,
+}: {
+  tweet_id: string;
+  tweet_type: ETweetType;
+  queries?: IQuery<ITweet>;
+}) => {
+  const normalizedQueries = queries ? JSON.stringify(queries) : "";
+
+  return useQuery({
+    queryKey: ["tweets/children", tweet_type, normalizedQueries],
+    queryFn: () => {
+      // Tạo query string từ queries object
+      const queryString = queries ? buildQueryString(queries) : "";
+      const url = `/tweets/${tweet_id}/${tweet_type}/children${
+        queryString ? `?${queryString}` : ""
+      }`;
+      return apiCall<ResMultiType<ITweet>>(url);
+    },
+
+    // Các options bổ sung
+    enabled: !!tweet_type, // Chỉ chạy query khi có tweet_type
+    staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
+    refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
+    refetchOnMount: false, // ✅ Tắt refetch khi mount
+
+    // 🔥 THÊM CẤU HÌNH NÀY:
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    // Quan trọng: Đảm bảo không conflict với optimistic update
+    networkMode: "online",
+  });
+};
+
 // 📄 GET - Lấy media của chính mình trong profile
-export const useGetProfileMedia = (
-  queries?: IQuery<ITweet> & {
-    profile_id: string;
-  }
-) => {
+export const useGetProfileMedia = (queries?: IQuery<ITweet>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({

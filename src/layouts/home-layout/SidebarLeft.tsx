@@ -92,6 +92,8 @@ export function SidebarLeft() {
     await logout.mutateAsync();
   }
 
+  console.log("unreadCountNoti::", unreadCountNoti);
+
   return (
     <div className="relative h-full pt-1">
       <h2 className="text-lg font-semibold mb-4">
@@ -118,7 +120,7 @@ export function SidebarLeft() {
                     : x.icon}
                   <span className="line-clamp-1">{x.name}</span>
                   {!!x?.countNoti && (
-                    <div className="absolute top-3 left-2 w-2 h-2 bg-sky-400 rounded-full" />
+                    <span className="absolute top-3 left-2 w-2 h-2 bg-sky-400 rounded-full" />
                   )}
                 </TypographyP>
               </Link>

@@ -16,13 +16,18 @@ import { ActionCommentTweet } from "./action-comment-tweet";
 import { ActionLikeTweet } from "./action-like-tweet";
 import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
 import { Content } from "./content";
+import { TweetDetailDrawer } from "./tweet-detail-drawer";
 
 // Component cho Media (Image hoặc Video)
-export const MediaContent = ({ url, type }: IMedia) => {
+export const MediaContent = ({
+  url,
+  type,
+  tweet,
+}: IMedia & { tweet?: ITweet }) => {
   if (!url) return null;
   return (
-    <>
-      <div className="w-full h-full aspect-video rounded-lg shadow overflow-hidden mb-6 bg-black">
+    <TweetDetailDrawer tweet={tweet ? tweet : undefined}>
+      <div className="w-full h-full aspect-video rounded-lg overflow-hidden mb-6 cursor-pointer">
         {type === EMediaType.Video ? (
           <HLSPlayer src={url} />
         ) : type === EMediaType.Image ? (
@@ -41,7 +46,7 @@ export const MediaContent = ({ url, type }: IMedia) => {
           </div>
         )}
       </div>
-    </>
+    </TweetDetailDrawer>
   );
 };
 
@@ -72,7 +77,6 @@ export const TweetItem = ({
 
   return (
     <>
-      {/*  */}
       <div key={_id} className="px-4 py-2 hover:bg-gray-50">
         {/* Header với thông tin người dùng */}
         <div className="flex items-center mb-3">
@@ -105,8 +109,10 @@ export const TweetItem = ({
           )}
 
           {/* Media content */}
+
           {tweet.type !== ETweetType.Retweet && (
             <MediaContent
+              tweet={tweet}
               url={media?.url || ""}
               type={media?.type || EMediaType.Image}
             />
@@ -157,6 +163,7 @@ export const TweetItem = ({
 
               {/* Media content */}
               <MediaContent
+                tweet={quoteTweet}
                 url={quoteTweet.media?.url || ""}
                 type={quoteTweet.media?.type || EMediaType.Image}
               />

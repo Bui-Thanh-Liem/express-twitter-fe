@@ -172,7 +172,7 @@ export function DialogMain({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          "rounded-2xl px-0 pt-0 pb-0 shadow-xl max-h-[90vh] flex flex-col", // px-0 để scroll không đè padding
+          "rounded-2xl px-0 pt-0 pb-0 shadow-xl max-h-[90vh] flex flex-col z-[1999]", // px-0 để scroll không đè padding
           widthClasses[width]
         )}
       >
