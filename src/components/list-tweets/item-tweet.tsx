@@ -1,5 +1,4 @@
-import { BarChart3, MessageCircle, Share } from "lucide-react";
-import { useState } from "react";
+import { BarChart3, Share } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useGetDetailTweet } from "~/hooks/useFetchTweet";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
@@ -34,7 +33,7 @@ export const MediaContent = ({
           <img
             src={url}
             alt={url}
-            className="w-full h-full object-contain"
+            className="w-full h-full object-cover"
             loading="lazy"
             onError={(e) => {
               e.currentTarget.src = "/placeholder-image.png"; // Fallback image
@@ -67,13 +66,11 @@ export const TweetItem = ({
     parent_id,
     created_at,
     guest_view,
-    comments_count,
   } = tweet;
 
   const author = user_id as IUser;
   const { data } = useGetDetailTweet(parent_id);
   const quoteTweet = data?.data ? data?.data : ({} as ITweet);
-  const [isOpenComment, setOpenComment] = useState(false);
 
   return (
     <>
@@ -173,16 +170,8 @@ export const TweetItem = ({
           {/* Engagement Bar */}
           {isAction && (
             <div className="flex items-center justify-between text-gray-500 border-t border-gray-100 pt-3">
-              {/* Comments */}
-              <button
-                className="flex items-center space-x-2 hover:text-blue-500 transition-colors group cursor-pointer"
-                onClick={() => setOpenComment(!isOpenComment)}
-              >
-                <div className="p-2 rounded-full group-hover:bg-blue-50 transition-colors">
-                  <MessageCircle size={18} />
-                </div>
-                <span className="text-sm">{comments_count || 0}</span>
-              </button>
+              {/* Comment */}
+              <ActionCommentTweet tweet={tweet} />
 
               {/* Retweet and Quote */}
               <ActionRetweetQuoteTweet tweet={tweet} />
@@ -209,13 +198,6 @@ export const TweetItem = ({
           )}
         </div>
       </div>
-
-      {/* Comment */}
-      <ActionCommentTweet
-        tweet={tweet}
-        isOpen={isOpenComment}
-        setOpen={setOpenComment}
-      />
     </>
   );
 };

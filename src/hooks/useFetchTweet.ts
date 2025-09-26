@@ -113,7 +113,7 @@ export const useGetTweetChildren = ({
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["tweets/children", tweet_type, normalizedQueries],
+    queryKey: ["tweets/children", tweet_id, normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";

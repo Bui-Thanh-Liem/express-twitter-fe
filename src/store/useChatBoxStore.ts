@@ -20,7 +20,7 @@ export const useChatBoxStore = create<ChatBoxStore>()(
       setConversation: (val) => set({ conversation: val }),
     }),
     {
-      name: "checkbox-storage", // tên key trong localStorage
+      name: "chatBox-storage", // tên key trong localStorage
       partialize: (state) => ({
         isOpen: state.isOpen,
         profile: state.conversation,

@@ -23,9 +23,6 @@ export function TodayNewsCard() {
     setOpen(location.pathname !== "/trending-today");
   }, [location]);
 
-  //
-  // if (!news?.length) return null;
-
   return (
     <Card
       className={cn(

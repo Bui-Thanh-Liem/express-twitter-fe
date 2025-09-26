@@ -21,7 +21,7 @@ export function EmojiSelector({
           <EmojiIcon />
         </span>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="p-0 border-0">
+      <DropdownMenuContent className="p-0 border-0 z-[2000]">
         <EmojiPicker
           onEmojiClick={(emojiData) => onEmojiClick(emojiData.emoji)}
         />

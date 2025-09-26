@@ -46,6 +46,8 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
     setIsDropdownOpen(false);
   }
 
+  //
+  const count = (retweets_count || 0) + (quotes_count || 0);
   return (
     <>
       <div>
@@ -59,9 +61,7 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
               <div className="p-2 rounded-full group-hover:bg-green-50 transition-colors">
                 <Repeat2 size={18} />
               </div>
-              <span className="text-sm">
-                {(retweets_count || 0) + (quotes_count || 0)}
-              </span>
+              <span className="text-sm">{count}</span>
             </button>
           </DropdownMenuTrigger>
 

@@ -15,7 +15,7 @@ export function ActionLikeTweet({ tweet }: { tweet: ITweet }) {
       <div className="p-2 rounded-full group-hover:bg-red-50 transition-colors">
         <Heart size={18} fill={tweet.isLike ? "currentColor" : "none"} />
       </div>
-      <span className="text-sm">{tweet.likes_count}</span>
+      <span className="text-sm">{tweet.likes_count || 0}</span>
     </button>
   );
 }

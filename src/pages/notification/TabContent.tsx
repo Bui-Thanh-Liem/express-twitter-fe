@@ -98,7 +98,7 @@ function NotiItem({ noti, onClick }: Props) {
         </div> */}
       </div>
 
-      <WrapIcon className="p-[2px] absolute top-1.5 right-1.5">
+      <WrapIcon className="p-[2px] absolute top-1.5 right-1.5 bg-slate-50">
         <CloseIcon size={16} color="#e2877d" />
       </WrapIcon>
     </button>
