@@ -19,6 +19,16 @@ export const useCreateTweet = () => {
   });
 };
 
+// ❌ DELETE - Xóa tweet mới
+export const useDeleteTweet = () => {
+  return useMutation({
+    mutationFn: (tweet_id: string) =>
+      apiCall<boolean>(`/tweets/${tweet_id}`, {
+        method: "DELETE",
+      }),
+  });
+};
+
 // 📄 GET - Lấy tweets mới nhất theo type feed: all - everyone - following
 export const useGetNewFeeds = (
   feed_type: EFeedType,
@@ -121,6 +131,7 @@ export const useGetTweetChildren = ({
     },
 
     // Lên getNewFeeds đọc giải thích
+    enabled: !!tweet_id,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: true,

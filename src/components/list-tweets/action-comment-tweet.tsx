@@ -1,5 +1,5 @@
 import { Eye, MessageCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ETweetType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
@@ -27,8 +27,14 @@ export function ActionCommentTweet({ tweet }: { tweet: ITweet }) {
   const author = user_id as IUser;
 
   //
+  const [countComment, setCountComment] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  //
+  useEffect(() => {
+    setCountComment(comments_count || 0);
+  }, [comments_count]);
 
   //
   function onComment() {
@@ -44,6 +50,12 @@ export function ActionCommentTweet({ tweet }: { tweet: ITweet }) {
   }
 
   //
+  function onSuccessComment() {
+    setIsOpen(false);
+    setCountComment((prev) => prev + 1);
+  }
+
+  //
   return (
     <>
       <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
@@ -52,7 +64,7 @@ export function ActionCommentTweet({ tweet }: { tweet: ITweet }) {
             <div className="p-2 rounded-full group-hover:bg-blue-50 transition-colors">
               <MessageCircle size={18} />
             </div>
-            <span className="text-sm">{comments_count || 0}</span>
+            <span className="text-sm">{countComment}</span>
           </button>
         </DropdownMenuTrigger>
 
@@ -117,7 +129,7 @@ export function ActionCommentTweet({ tweet }: { tweet: ITweet }) {
           contentBtn="Bình luận"
           tweetType={ETweetType.Comment}
           placeholder="Đăng bình luận của bạn"
-          onSuccess={() => setIsOpen(false)}
+          onSuccess={onSuccessComment}
         />
       </DialogMain>
     </>

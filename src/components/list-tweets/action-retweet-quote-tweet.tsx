@@ -1,6 +1,6 @@
 import { Repeat2, SquarePen } from "lucide-react";
-import { useState } from "react";
-import { useCreateTweet } from "~/hooks/useFetchTweet";
+import { useEffect, useState } from "react";
+import { useCreateTweet, useDeleteTweet } from "~/hooks/useFetchTweet";
 import type { CreateTweetDto } from "~/shared/dtos/req/tweet.dto";
 import { ETweetType } from "~/shared/enums/type.enum";
 import type { IHashtag } from "~/shared/interfaces/schemas/hashtag.interface";
@@ -17,13 +17,36 @@ import {
 } from "../ui/dropdown-menu";
 
 export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
-  const { retweets_count, quotes_count, isRetweet, isQuote } = tweet;
+  const { retweets_count, quotes_count, retweet, quote } = tweet;
   const apiCreateTweet = useCreateTweet();
+  const apiDeleteTweet = useDeleteTweet();
+
+  //
+  const [countRQTweet, setCountTQTweet] = useState(0);
+  const [isRTweet, setIsRTweet] = useState(false);
+  const [isQTweet, setIsQTweet] = useState(false);
   const [isOpenQuote, setIsOpenQuote] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   //
+  useEffect(() => {
+    setIsRTweet(!!retweet);
+    setIsQTweet(!!quote);
+    setCountTQTweet(Number(retweets_count) + Number(quotes_count));
+  }, [retweets_count, quotes_count, retweet, quote]);
+
+  //
   async function onRetweet() {
+    // Nếu đã reTweet rồi thì gỡ (xóa)
+    if (isRTweet && retweet) {
+      const resDeleted = await apiDeleteTweet.mutateAsync(retweet);
+      handleResponse(resDeleted, () => {
+        setIsRTweet(!isRTweet);
+        setCountTQTweet((prev) => prev - 1);
+      });
+      return;
+    }
+
     const hashtags = tweet?.hashtags as unknown as IHashtag[];
     const mentions = tweet?.mentions as unknown as IUser[];
 
@@ -37,30 +60,49 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
       mentions: mentions?.map((mention) => mention._id),
     };
     const resCreateTweet = await apiCreateTweet.mutateAsync(tweetData);
-    handleResponse(resCreateTweet);
+    handleResponse(resCreateTweet, () => {
+      setIsRTweet(!isRTweet);
+      setCountTQTweet((prev) => prev + 1);
+    });
   }
 
   //
-  function onQuote() {
+  async function onQuote() {
+    // Nếu đã quoteTweet rồi thì gỡ (xóa)
+    if (isQTweet && quote) {
+      const resDeleted = await apiDeleteTweet.mutateAsync(quote);
+      handleResponse(resDeleted, () => {
+        setIsRTweet(!isRTweet);
+        setCountTQTweet((prev) => prev - 1);
+      });
+      return;
+    }
+
     setIsOpenQuote(true);
     setIsDropdownOpen(false);
   }
 
   //
-  const count = (retweets_count || 0) + (quotes_count || 0);
+  function onSuccessQuoteTweet() {
+    setIsOpenQuote(false);
+    setIsQTweet(!isQTweet);
+    setCountTQTweet((prev) => prev + 1);
+  }
+
+  //
   return (
     <>
       <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
         <DropdownMenuTrigger asChild>
           <button
             className={`outline-0 flex items-center space-x-2 transition-colors group cursor-pointer ${
-              isRetweet || isQuote ? "text-green-500" : "hover:text-green-500"
+              isRTweet || isQTweet ? "text-green-500" : "hover:text-green-500"
             }`}
           >
             <div className="p-2 rounded-full group-hover:bg-green-50 transition-colors">
               <Repeat2 size={18} />
             </div>
-            <span className="text-sm">{count}</span>
+            <span className="text-sm">{countRQTweet}</span>
           </button>
         </DropdownMenuTrigger>
 
@@ -74,14 +116,14 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
             onClick={onRetweet}
           >
             <Repeat2 strokeWidth={2} className="w-6 h-6" color="#000" />
-            {isRetweet ? "Xóa bài đăng lại" : "Đăng lại"}
+            {isRTweet ? "Xóa bài đăng lại" : "Đăng lại"}
           </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer h-10 px-3 font-semibold"
             onClick={onQuote}
           >
             <SquarePen strokeWidth={2} className="w-6 h-6" color="#000" />
-            {isQuote
+            {isQTweet
               ? "Xóa Đăng lại thêm trích dẫn"
               : "Đăng lại thêm trích dẫn"}
           </DropdownMenuItem>
@@ -101,7 +143,7 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
           contentBtn="Đăng"
           tweetType={ETweetType.QuoteTweet}
           placeholder="Đăng bình luận của bạn"
-          onSuccess={() => setIsOpenQuote(false)}
+          onSuccess={onSuccessQuoteTweet}
         />
       </DialogMain>
     </>
