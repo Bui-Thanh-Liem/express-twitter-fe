@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { TypographyP } from "~/components/elements/p";
 import { BookmarkIcon } from "~/components/icons/bookmark";
-import { CommunityIcon } from "~/components/icons/communities";
+// import { CommunityIcon } from "~/components/icons/communities";
 import { DotIcon } from "~/components/icons/dot";
 import { ExploreIcon } from "~/components/icons/explore";
 import { HomeIcon } from "~/components/icons/home";
@@ -20,10 +20,10 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { useLogout } from "~/hooks/useFetchAuth";
 import { cn } from "~/lib/utils";
+import { useNotificationSocket } from "~/socket/hooks/useNotificationSocket";
 import { useUserStore } from "~/store/useUserStore";
 import { Logo } from "../../components/logo";
 import { WrapIcon } from "../../components/wrapIcon";
-import { useNotificationSocket } from "~/socket/hooks/useNotificationSocket";
 
 type NavItem = {
   name: string;
@@ -75,11 +75,11 @@ export function SidebarLeft() {
       icon: <MessageIcon />,
       path: "/messages",
     },
-    {
-      name: "Cộng đồng",
-      icon: <CommunityIcon />,
-      path: "/communities",
-    },
+    // {
+    //   name: "Cộng đồng",
+    //   icon: <CommunityIcon />,
+    //   path: "/communities",
+    // },
     {
       name: "Hồ sơ",
       icon: <ProfileIcon />,
@@ -91,8 +91,6 @@ export function SidebarLeft() {
   async function onLogout() {
     await logout.mutateAsync();
   }
-
-  console.log("unreadCountNoti::", unreadCountNoti);
 
   return (
     <div className="relative h-full pt-1">

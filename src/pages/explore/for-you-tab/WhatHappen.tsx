@@ -108,7 +108,7 @@ export function WhatHappen() {
             </div>
           )}
 
-      {!trending.length && (
+      {!trending.length && !isLoading && (
         <div className="flex justify-center items-center h-20">
           <p className="text-gray-400">Chưa có gì nổi bật</p>
         </div>

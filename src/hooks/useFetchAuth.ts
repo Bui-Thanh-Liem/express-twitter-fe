@@ -20,7 +20,6 @@ export const useRegister = () => {
   return useMutation({
     mutationFn: (credentials: RegisterUserDto) =>
       apiCall<ResLoginUser>("/auth/register", {
-        // tại vì khi đăng nhập thành công thì cho vào luôn
         method: "POST",
         body: JSON.stringify(credentials),
       }),
@@ -29,7 +28,9 @@ export const useRegister = () => {
         // Lưu token
         localStorage.setItem("access_token", data.data?.access_token || "");
         localStorage.setItem("refresh_token", data.data?.refresh_token || "");
+
         // Invalidate user data để refetch
+        queryClient.invalidateQueries({ queryKey: ["users"] });
         queryClient.invalidateQueries({ queryKey: ["user"] });
 
         // Nếu đăng nhập thành công thì gọi api getMe lưu vào Store global
@@ -49,7 +50,6 @@ export const useRegister = () => {
 
 // 🔐 POST - Login
 export const useLogin = () => {
-  const queryClient = useQueryClient();
   const getMe = useGetMe();
   const { setUser } = useUserStore();
   const navigate = useNavigate();
@@ -65,8 +65,6 @@ export const useLogin = () => {
         // Lưu token
         localStorage.setItem("access_token", data.data?.access_token || "");
         localStorage.setItem("refresh_token", data.data?.refresh_token || "");
-        // Invalidate user data để refetch
-        queryClient.invalidateQueries({ queryKey: ["user"] });
 
         // Nếu đăng nhập thành công thì gọi api getMe lưu vào Store global
         (async () => {
@@ -135,13 +133,12 @@ export const useUpdateMe = () => {
         body: JSON.stringify(credentials),
       }),
     onSuccess: (_data, variables) => {
+      //
       queryClient.invalidateQueries({
         queryKey: ["user", variables.username],
       });
 
-      console.log("_data.statusCode::", _data.statusCode);
-      console.log("_data:::", _data.data);
-
+      //
       if (_data.statusCode === 200 && _data?.data) {
         setUser({
           ...user,

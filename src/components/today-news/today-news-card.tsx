@@ -43,7 +43,7 @@ export function TodayNewsCard() {
             ))
           : news.map((item) => <TodayNewsItem key={item.id} item={item} />)}
 
-        {!news.length && (
+        {!news.length && !isLoading && (
           <div className="pb-4 pl-4">
             <p className="text-gray-400">Chưa có gì nổi bật hôm nay</p>
           </div>

@@ -54,7 +54,7 @@ export function WhatHappenCard() {
         )}
 
         {/*  */}
-        {!trending.length && (
+        {!trending.length && !isLoading && (
           <div className="pb-4 pl-4">
             <p className="text-gray-400">Chưa có gì nổi bật</p>
           </div>

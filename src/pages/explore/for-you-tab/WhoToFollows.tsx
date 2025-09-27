@@ -103,7 +103,7 @@ export function WhoToFollows() {
           )}
 
       {/*  */}
-      {!users.length && (
+      {!users.length && !isLoading && (
         <div className="flex justify-center items-center h-20">
           <p className="text-gray-400">Chưa có người dùng nổi bật</p>
         </div>

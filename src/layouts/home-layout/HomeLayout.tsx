@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
+import { TweetDetailDrawer } from "~/components/list-tweets/tweet-detail-drawer";
 import { cn } from "~/lib/utils";
 import ChatBox from "~/pages/messages/ChatBox";
 import { CONSTANT_EVENT_NAMES } from "~/shared/constants";
@@ -53,6 +54,7 @@ export function HomeLayout() {
       </div>
 
       {isOpen && <ChatBox />}
+      <TweetDetailDrawer />
     </div>
   );
 }

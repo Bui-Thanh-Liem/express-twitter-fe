@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { TweetItem } from "~/components/list-tweets/item-tweet";
-import { SkeletonTweet } from "~/components/list-tweets/list-tweets";
+import { SkeletonTweet, TweetItem } from "~/components/list-tweets/item-tweet";
 import { useGetTweetLiked } from "~/hooks/useFetchTweet";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 

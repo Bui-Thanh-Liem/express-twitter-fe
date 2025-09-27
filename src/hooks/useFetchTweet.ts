@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type { CreateTweetDto } from "~/shared/dtos/req/tweet.dto";
 import type { ResCreateTweet } from "~/shared/dtos/res/tweet.dto";
 import type { EFeedType, ETweetType } from "~/shared/enums/type.enum";
@@ -10,27 +10,12 @@ import { apiCall } from "~/utils/callApi.util";
 
 // ➕ POST - Tạo tweet mới
 export const useCreateTweet = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: (payload: CreateTweetDto) =>
       apiCall<ResCreateTweet>("/tweets", {
         method: "POST",
         body: JSON.stringify(payload),
       }),
-    onSuccess: () => {
-      // Invalidate danh sách tweets
-      queryClient.invalidateQueries({ queryKey: ["tweets"] });
-    },
-  });
-};
-
-// 📄 GET - Lấy chi tiết 1 tweet
-export const useGetDetailTweet = (id: string | number, enabled = true) => {
-  return useQuery({
-    queryKey: ["tweet", id],
-    queryFn: () => apiCall<ITweet>(`/tweets/${id}`),
-    enabled: enabled && !!id,
   });
 };
 
@@ -42,7 +27,7 @@ export const useGetNewFeeds = (
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["tweets/feeds", feed_type, normalizedQueries],
+    queryKey: ["tweets", "feeds", feed_type, normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
@@ -53,16 +38,25 @@ export const useGetNewFeeds = (
     },
 
     // Các options bổ sung
-    enabled: !!feed_type, // Chỉ chạy query khi có feed_type
-    staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
-    refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
-    refetchOnMount: false, // ✅ Tắt refetch khi mount
+    staleTime: 5 * 60 * 1000, // Trong 5p thì không gọi lại API
+    gcTime: 10 * 60 * 1000, // Trong cache 10 phút không component nào dùng thì xoá
 
-    // 🔥 THÊM CẤU HÌNH NÀY:
-    refetchOnReconnect: false,
+    refetchOnWindowFocus: true, // khi người dùng quay lại tab/browser, React Query có nên tự động refetch không.
+    refetchOnMount: "always", // khi component mount lại, React Query có nên refetch không.
+
+    //
+    refetchOnReconnect: false, // có tự động refetch lại query khi kết nối mạng trở lại hay không.
     refetchInterval: false,
-    // Quan trọng: Đảm bảo không conflict với optimistic update
-    networkMode: "online",
+    networkMode: "online", // chỉ fetch khi có mạng
+  });
+};
+
+// 📄 GET - Lấy chi tiết 1 tweet
+export const useGetDetailTweet = (id: string | number, enabled = true) => {
+  return useQuery({
+    queryKey: ["tweet", id],
+    queryFn: () => apiCall<ITweet>(`/tweets/${id}`),
+    enabled: enabled && !!id,
   });
 };
 
@@ -76,7 +70,13 @@ export const useGetProfileTweets = (
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["tweets/profile", tweet_type, normalizedQueries],
+    queryKey: [
+      "tweets",
+      "profile",
+      queries?.user_id,
+      tweet_type,
+      normalizedQueries,
+    ],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
@@ -86,16 +86,13 @@ export const useGetProfileTweets = (
       return apiCall<ResMultiType<ITweet>>(url);
     },
 
-    // Các options bổ sung
-    // enabled: !!tweet_type, // Chỉ chạy query khi có tweet_type
-    staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
-    refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
-    refetchOnMount: false, // ✅ Tắt refetch khi mount
-
-    // 🔥 THÊM CẤU HÌNH NÀY:
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
     refetchOnReconnect: false,
     refetchInterval: false,
-    // Quan trọng: Đảm bảo không conflict với optimistic update
     networkMode: "online",
   });
 };
@@ -113,7 +110,7 @@ export const useGetTweetChildren = ({
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["tweets/children", tweet_id, normalizedQueries],
+    queryKey: ["tweets", "children", tweet_id, tweet_type, normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
@@ -123,16 +120,13 @@ export const useGetTweetChildren = ({
       return apiCall<ResMultiType<ITweet>>(url);
     },
 
-    // Các options bổ sung
-    enabled: !!tweet_type, // Chỉ chạy query khi có tweet_type
-    staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
-    refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
-    refetchOnMount: false, // ✅ Tắt refetch khi mount
-
-    // 🔥 THÊM CẤU HÌNH NÀY:
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
     refetchOnReconnect: false,
     refetchInterval: false,
-    // Quan trọng: Đảm bảo không conflict với optimistic update
     networkMode: "online",
   });
 };
@@ -142,7 +136,7 @@ export const useGetProfileMedia = (queries?: IQuery<ITweet>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["tweets/profile-media", normalizedQueries],
+    queryKey: ["tweets", "profile-media", normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
@@ -153,15 +147,13 @@ export const useGetProfileMedia = (queries?: IQuery<ITweet>) => {
       return apiCall<ResMultiType<Pick<ITweet, "_id" | "media">>>(url);
     },
 
-    // Các options bổ sung
-    staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
-    refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
-    refetchOnMount: false, // ✅ Tắt refetch khi mount
-
-    // 🔥 THÊM CẤU HÌNH NÀY:
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
     refetchOnReconnect: false,
     refetchInterval: false,
-    // Quan trọng: Đảm bảo không conflict với optimistic update
     networkMode: "online",
   });
 };
@@ -171,7 +163,7 @@ export const useGetTweetLiked = (queries?: IQuery<ITweet>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["tweets/liked", normalizedQueries],
+    queryKey: ["tweets", "liked", queries?.user_id, normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
@@ -180,25 +172,23 @@ export const useGetTweetLiked = (queries?: IQuery<ITweet>) => {
       return apiCall<ResMultiType<ITweet>>(url);
     },
 
-    // Các options bổ sung
-    staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
-    refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
-    refetchOnMount: false, // ✅ Tắt refetch khi mount
-
-    // 🔥 THÊM CẤU HÌNH NÀY:
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
     refetchOnReconnect: false,
     refetchInterval: false,
-    // Quan trọng: Đảm bảo không conflict với optimistic update
     networkMode: "online",
   });
 };
 
-// 📄 GET - Lấy tweet đã like
+// 📄 GET - Lấy tweet đã Bookmarked
 export const useGetTweetBookmarked = (queries?: IQuery<ITweet>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["tweets/bookmarked", normalizedQueries],
+    queryKey: ["tweets", "bookmarked", queries?.user_id, normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
@@ -207,15 +197,13 @@ export const useGetTweetBookmarked = (queries?: IQuery<ITweet>) => {
       return apiCall<ResMultiType<ITweet>>(url);
     },
 
-    // Các options bổ sung
-    staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
-    refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
-    refetchOnMount: false, // ✅ Tắt refetch khi mount
-
-    // 🔥 THÊM CẤU HÌNH NÀY:
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
     refetchOnReconnect: false,
     refetchInterval: false,
-    // Quan trọng: Đảm bảo không conflict với optimistic update
     networkMode: "online",
   });
 };

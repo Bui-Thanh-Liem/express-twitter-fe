@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ErrorProcess } from "~/components/error-process";
-import { TweetItem } from "~/components/list-tweets/item-tweet";
-import { SkeletonTweet } from "~/components/list-tweets/list-tweets";
+import { SkeletonTweet, TweetItem } from "~/components/list-tweets/item-tweet";
 import { NotFoundTweet } from "~/components/list-tweets/not-found-tweet";
 import { useGetProfileTweets } from "~/hooks/useFetchTweet";
 import { ETweetType } from "~/shared/enums/type.enum";
@@ -154,7 +153,7 @@ export function ProfileTweets({
       {/* Loading more indicator */}
       {isLoadingMore && (
         <div className="py-4">
-          <SkeletonTweet count={1} />
+          <SkeletonTweet />
         </div>
       )}
 

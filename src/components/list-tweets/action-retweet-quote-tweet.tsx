@@ -50,45 +50,43 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
   const count = (retweets_count || 0) + (quotes_count || 0);
   return (
     <>
-      <div>
-        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
-          <DropdownMenuTrigger asChild>
-            <button
-              className={`outline-0 flex items-center space-x-2 transition-colors group cursor-pointer ${
-                isRetweet || isQuote ? "text-green-500" : "hover:text-green-500"
-              }`}
-            >
-              <div className="p-2 rounded-full group-hover:bg-green-50 transition-colors">
-                <Repeat2 size={18} />
-              </div>
-              <span className="text-sm">{count}</span>
-            </button>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent
-            side="bottom"
-            align="center"
-            className="rounded-2xl w-60 px-0 py-2"
+      <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+        <DropdownMenuTrigger asChild>
+          <button
+            className={`outline-0 flex items-center space-x-2 transition-colors group cursor-pointer ${
+              isRetweet || isQuote ? "text-green-500" : "hover:text-green-500"
+            }`}
           >
-            <DropdownMenuItem
-              className="cursor-pointer h-10 px-3 font-semibold"
-              onClick={onRetweet}
-            >
-              <Repeat2 strokeWidth={2} className="w-6 h-6" color="#000" />
-              {isRetweet ? "Xóa bài đăng lại" : "Đăng lại"}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="cursor-pointer h-10 px-3 font-semibold"
-              onClick={onQuote}
-            >
-              <SquarePen strokeWidth={2} className="w-6 h-6" color="#000" />
-              {isQuote
-                ? "Xóa Đăng lại thêm trích dẫn"
-                : "Đăng lại thêm trích dẫn"}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+            <div className="p-2 rounded-full group-hover:bg-green-50 transition-colors">
+              <Repeat2 size={18} />
+            </div>
+            <span className="text-sm">{count}</span>
+          </button>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent
+          side="bottom"
+          align="center"
+          className="rounded-2xl w-60 px-0 py-2"
+        >
+          <DropdownMenuItem
+            className="cursor-pointer h-10 px-3 font-semibold"
+            onClick={onRetweet}
+          >
+            <Repeat2 strokeWidth={2} className="w-6 h-6" color="#000" />
+            {isRetweet ? "Xóa bài đăng lại" : "Đăng lại"}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer h-10 px-3 font-semibold"
+            onClick={onQuote}
+          >
+            <SquarePen strokeWidth={2} className="w-6 h-6" color="#000" />
+            {isQuote
+              ? "Xóa Đăng lại thêm trích dẫn"
+              : "Đăng lại thêm trích dẫn"}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       {/* Quote */}
       <DialogMain

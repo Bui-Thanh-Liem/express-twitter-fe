@@ -57,7 +57,7 @@ export function WhoToFollowCard() {
         )}
 
         {/*  */}
-        {!whoToFollows.length && (
+        {!whoToFollows.length && !isLoading && (
           <div className="pb-4 pl-4">
             <p className="text-gray-400">Chưa có người dùng nổi bật</p>
           </div>

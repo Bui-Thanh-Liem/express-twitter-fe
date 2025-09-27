@@ -11,8 +11,8 @@ import { BookmarkPage } from "./pages/bookmark/BookmarkPage";
 import { ExplorePage } from "./pages/explore/ExplorePage";
 import { HomePage } from "./pages/home/HomePage";
 import { MessagePage } from "./pages/messages/MessagePage";
-import { ProfilePage } from "./pages/profile/ProfilePage";
 import { NotificationPage } from "./pages/notification/Notification";
+import { ProfilePage } from "./pages/profile/ProfilePage";
 
 // Router config
 const router = createBrowserRouter([

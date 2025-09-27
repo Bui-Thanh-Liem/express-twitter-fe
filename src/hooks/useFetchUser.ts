@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import type { verifyEmailDto } from "~/shared/dtos/req/user.dto";
+import type { EUserVerifyStatus } from "~/shared/enums/status.enum";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import type { ResMultiType } from "~/shared/types/response.type";
@@ -20,23 +21,22 @@ export const useGetOneByUsername = (username: string, enabled = true) => {
 // 🚪 GET - Get Users By username
 export const useGetMultiForMentions = (username: string, enabled = true) => {
   return useQuery({
-    queryKey: ["mentions", username],
+    queryKey: ["users", "mentions", username],
     queryFn: () => {
       // Tạo query string từ queries object
       const url = `/users/mentions/${username}`;
       return apiCall<Pick<IUser, "_id" | "name" | "username">[]>(url);
     },
 
-    // Các options bổ sung
+    //
     enabled,
-    staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
-    refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
-    refetchOnMount: false, // ✅ Tắt refetch khi mount
-
-    // 🔥 THÊM CẤU HÌNH NÀY:
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
     refetchOnReconnect: false,
     refetchInterval: false,
-    // Quan trọng: Đảm bảo không conflict với optimistic update
     networkMode: "online",
   });
 };
@@ -44,21 +44,17 @@ export const useGetMultiForMentions = (username: string, enabled = true) => {
 // 🔐 POST - Verify email
 export const useVerifyEmail = () => {
   const navigate = useNavigate();
-  const { setUser } = useUserStore();
+  const { setUser, user } = useUserStore();
 
   return useMutation({
     mutationFn: (credentials: verifyEmailDto) =>
-      apiCall<IUser>("/users/verify-email", {
+      apiCall<EUserVerifyStatus>("/users/verify-email", {
         method: "POST",
         body: JSON.stringify(credentials),
       }),
     onSuccess: (res) => {
       if (res.statusCode === 200 && res.data) {
-        console.log("useVerifyEmail - res :::", res);
-
-        setUser(res.data);
-
-        //
+        setUser({ ...user, verify: res.data } as IUser);
         navigate("/home");
       }
     },
@@ -85,7 +81,7 @@ export const useGetFollowed = (queries?: IQuery<IUser>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["users/followed", "followed", normalizedQueries],
+    queryKey: ["users", "followed", normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
@@ -93,26 +89,23 @@ export const useGetFollowed = (queries?: IQuery<IUser>) => {
       return apiCall<ResMultiType<IUser>>(url);
     },
 
-    // Các options bổ sung
-    enabled: !!normalizedQueries,
-    staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
-    refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
-    refetchOnMount: false, // ✅ Tắt refetch khi mount
-
-    // 🔥 THÊM CẤU HÌNH NÀY:
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
     refetchOnReconnect: false,
     refetchInterval: false,
-    // Quan trọng: Đảm bảo không conflict với optimistic update
     networkMode: "online",
   });
 };
 
-// 📄 GET - Lấy user followed
+// 📄 GET - Lấy user mà mình chưa theo dõi và có nhiều người theo dõi
 export const useGetTopFollowedUsers = (queries?: IQuery<IUser>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["users", "top-followed", normalizedQueries],
+    queryKey: ["top-followed", normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
@@ -120,16 +113,13 @@ export const useGetTopFollowedUsers = (queries?: IQuery<IUser>) => {
       return apiCall<ResMultiType<IUser>>(url);
     },
 
-    // Các options bổ sung
-    enabled: !!normalizedQueries,
-    staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
-    refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
-    refetchOnMount: false, // ✅ Tắt refetch khi mount
-
-    // 🔥 THÊM CẤU HÌNH NÀY:
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
     refetchOnReconnect: false,
     refetchInterval: false,
-    // Quan trọng: Đảm bảo không conflict với optimistic update
     networkMode: "online",
   });
 };
