@@ -6,6 +6,7 @@ import { useGetMultiConversations } from "~/hooks/useFetchConversations";
 import { cn } from "~/lib/utils";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
+import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useUserStore } from "~/store/useUserStore";
 
@@ -24,13 +25,14 @@ function ConversationItemSkeleton() {
 function ConversationItem({
   onclick,
   isActive,
+  currentUser,
   conversation,
 }: {
   isActive: boolean;
   onclick: () => void;
+  currentUser: IUser | null;
   conversation: IConversation;
 }) {
-  const { user } = useUserStore();
   if (!conversation) return null;
   const { avatar, lastMessage, name } = conversation;
 
@@ -38,21 +40,29 @@ function ConversationItem({
   let messageLastContent = "Chưa có tin nhắn";
   if (lastMessage) {
     const _lastMessage = lastMessage as IMessage;
-    const isOwner = user?._id === _lastMessage.sender;
+    const isOwner = currentUser?._id === _lastMessage.sender;
     messageLastContent = `${isOwner ? "Bạn: " : ""}${_lastMessage.content}`;
   }
 
+  //
+  let isUnread = false;
+  if (conversation.readStatus?.includes(currentUser?._id)) {
+    isUnread = true;
+  }
+
+  //
   return (
     <div
       className={cn(
-        "p-3 flex items-center justify-between hover:bg-gray-50 cursor-pointer",
+        "relative p-3 flex items-center justify-between hover:bg-gray-50 cursor-pointer",
         isActive && "bg-blue-50"
       )}
       onClick={onclick}
     >
-      <div className="flex items-center gap-3">
+      <div className="relative flex items-center gap-3">
+        <span className="absolute bottom-0 left-8 z-10 w-3 h-3 bg-green-400 rounded-full border border-white" />
         {typeof avatar === "string" ? (
-          <AvatarMain src={avatar} alt={name || ""} />
+          <AvatarMain src={avatar} alt={name || ""} className="w-12 h-12" />
         ) : (
           <GroupAvatarMain srcs={avatar as string[]} />
         )}
@@ -72,6 +82,10 @@ function ConversationItem({
       >
         <DotIcon size={16} />
       </WrapIcon>
+
+      {isUnread && (
+        <span className="absolute top-2 left-2 w-2 h-2 bg-sky-400 rounded-full" />
+      )}
     </div>
   );
 }
@@ -81,19 +95,12 @@ export function ConversationList({
 }: {
   onclick: (conversation: IConversation) => void;
 }) {
-  const { joinConversation, leaveConversation } = useConversationSocket(
-    (newConversation) => {
-      console.log(
-        "Nhận từ server (socket) newConversation:::",
-        newConversation
-      );
-    },
-    (unreadCount) => {
-      console.log("Nhận từ server (socket) unreadCount:::", unreadCount);
-    }
-  );
-  const [idActive, setIdActive] = useState("");
+  //
+  const { user } = useUserStore();
+
+  //
   const [page, setPage] = useState(1);
+  const [idActive, setIdActive] = useState("");
   const [allConversations, setAllConversations] = useState<IConversation[]>([]);
 
   const total_page_ref = useRef(0);
@@ -101,6 +108,27 @@ export function ConversationList({
     page: page.toString(),
     limit: "10",
   });
+
+  //
+  const { joinConversation, leaveConversation } = useConversationSocket(
+    (newConversation) => {
+      setAllConversations((prev) => {
+        const index = prev.findIndex(
+          (item) => item._id === newConversation._id
+        );
+
+        if (!index) {
+          return [newConversation, ...prev];
+        }
+
+        const res = prev.splice(index, 1, newConversation);
+        return res;
+      });
+    },
+    (unreadCount) => {
+      console.log("Nhận từ server (socket) unreadCount:::", unreadCount);
+    }
+  );
 
   // Xử lý join/leave room socket
   useEffect(() => {
@@ -144,11 +172,13 @@ export function ConversationList({
     setPage((prev) => prev + 1);
   }
 
+  //
   function handleClickConversation(conversation: IConversation) {
     onclick(conversation);
     setIdActive(conversation?._id);
   }
 
+  //
   if (!isLoading && allConversations.length === 0 && page === 1) {
     return (
       <p className="p-4 text-center text-gray-500">Không có cuộc trò chuyện</p>
@@ -171,10 +201,11 @@ export function ConversationList({
         <div>
           {allConversations.map((conversation) => (
             <ConversationItem
-              conversation={conversation}
+              currentUser={user}
               key={conversation._id}
-              onclick={() => handleClickConversation(conversation)}
+              conversation={conversation}
               isActive={idActive === conversation._id}
+              onclick={() => handleClickConversation(conversation)}
             />
           ))}
         </div>

@@ -13,6 +13,8 @@ export interface ITweet extends IBase {
   hashtags: ObjectId[];
   mentions: ObjectId[]; // nhắc đến
   media: IMedia | null;
+
+  //
   guest_view: number;
   user_view: number;
 
@@ -22,9 +24,11 @@ export interface ITweet extends IBase {
   shares_count?: number;
   retweets_count?: number;
   quotes_count?: number;
+
   isLike?: boolean;
   isBookmark?: boolean;
   retweet?: string; // id retWeet của tôi
   quote?: string; // // id quoteTweet của tôi
+
   total_views?: number;
 }

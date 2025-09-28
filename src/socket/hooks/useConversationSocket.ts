@@ -42,20 +42,29 @@ export const useConversationSocket = (
   //
   const joinConversation = (ids: string[]) => {
     if (!socket.connected) {
-      console.warn("⚠️ Socket chưa connect, không thể join room");
+      console.warn("⚠️ Socket chưa connect, không thể join conversation");
       return;
     }
     socket.emit(CONSTANT_EVENT_NAMES.JOIN_CONVERSATION, ids);
   };
 
   //
+  const readConversation = (conversation_id: string) => {
+    if (!socket.connected) {
+      console.warn("⚠️ Socket chưa connect, không thể read conversation");
+      return;
+    }
+    socket.emit(CONSTANT_EVENT_NAMES.READ_CONVERSATION, conversation_id);
+  };
+
+  //
   const leaveConversation = (ids: string[]) => {
     if (!socket.connected) {
-      console.warn("⚠️ Socket chưa connect, không thể join room");
+      console.warn("⚠️ Socket chưa connect, không thể join conversation");
       return;
     }
     socket.emit(CONSTANT_EVENT_NAMES.LEAVE_CONVERSATION, ids);
   };
 
-  return { leaveConversation, joinConversation };
+  return { leaveConversation, joinConversation, readConversation };
 };

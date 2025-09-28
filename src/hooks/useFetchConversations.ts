@@ -36,15 +36,13 @@ export const useGetMultiConversations = (queries?: IQuery<IConversation>) => {
       return apiCall<ResMultiType<IConversation>>(url);
     },
 
-    // Các options bổ sung
-    staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
-    refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
-    refetchOnMount: false, // ✅ Tắt refetch khi mount
-
-    // 🔥 THÊM CẤU HÌNH NÀY:
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
     refetchOnReconnect: false,
     refetchInterval: false,
-    // Quan trọng: Đảm bảo không conflict với optimistic update
     networkMode: "online",
   });
 };

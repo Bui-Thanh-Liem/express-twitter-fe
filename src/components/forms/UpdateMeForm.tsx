@@ -236,6 +236,8 @@ export function UpdateMeForm({
               errors={errors}
               control={control}
               register={register}
+              isMaxLength
+              maxCountLength={16}
             />
 
             <InputMain

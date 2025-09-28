@@ -172,33 +172,35 @@ export function TabContent({ type }: { type: ENotificationType }) {
       ))}
 
       {/*  */}
-      {isLoading
-        ? Array.from({ length: 2 }).map((_, i) => (
-            <SkeletonNotiItem key={`more-${i}`} />
-          ))
-        : page < total_page_ref.current && (
-            <div className="px-4 py-3">
-              <p
-                className={cn(
-                  "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer",
-                  total_page_ref.current <= page
-                    ? "text-gray-300 pointer-events-none cursor-default"
-                    : ""
-                )}
-                onClick={onSeeMore}
-              >
-                Xem thêm
-              </p>
-            </div>
-          )}
+      {isLoading &&
+        Array.from({ length: 2 }).map((_, i) => (
+          <SkeletonNotiItem key={`more-${i}`} />
+        ))}
 
       {/*  */}
-      {!notis.length && (
+      {!notis.length && !isLoading && (
         <div className="flex justify-center flex-col items-center">
           <p className="text-xl mb-1">Chưa có gì ở đây</p>
           <p className="text-gray-400 w-96 text-justify">
             Từ lượt thích đến lượt đăng lại và nhiều hơn thế nữa, đây chính là
             nơi diễn ra mọi hoạt động.
+          </p>
+        </div>
+      )}
+
+      {/*  */}
+      {!!notis.length && (
+        <div className="px-4 py-3">
+          <p
+            className={cn(
+              "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer",
+              total_page_ref.current <= page
+                ? "text-gray-300 pointer-events-none cursor-default"
+                : ""
+            )}
+            onClick={onSeeMore}
+          >
+            Xem thêm
           </p>
         </div>
       )}

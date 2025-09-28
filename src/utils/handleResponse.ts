@@ -3,7 +3,7 @@ import type { OkResponse } from "~/shared/classes/response.class";
 
 export function handleResponse(
   res: OkResponse<object | boolean>,
-  ...callbacks: (() => void)[]
+  ...callbacks: ((val?: unknown) => void)[]
 ) {
   const { statusCode, message } = res;
 

@@ -24,7 +24,7 @@ export function SidebarRight() {
           )}
         </div>
 
-        <div className="space-y-4 max-h-[88vh] overflow-y-auto pr-2">
+        <div className="space-y-4 max-h-[88vh] overflow-y-auto">
           <TodayNewsCard />
           <WhatHappenCard />
           <WhoToFollowCard />

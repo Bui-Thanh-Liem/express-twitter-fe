@@ -22,12 +22,12 @@ export function NotificationPage() {
 
       {/*  */}
       <div className="overflow-y-auto mt-1 h-[calc(100vh-80px)]">
-        <Tabs defaultValue={ENotificationType.COMMON} className="mb-12">
+        <Tabs defaultValue={ENotificationType.ALL} className="mb-12">
           <div className="bg-white p-2 pt-5 px-4 sticky top-0 z-50">
             <TabsList className="w-full">
               <TabsTrigger
                 className="cursor-pointer"
-                value={ENotificationType.COMMON}
+                value={ENotificationType.ALL}
               >
                 Tất cả
               </TabsTrigger>
@@ -43,15 +43,21 @@ export function NotificationPage() {
               >
                 Nhắc đến
               </TabsTrigger>
+              <TabsTrigger
+                className="cursor-pointer"
+                value={ENotificationType.OTHER}
+              >
+                Khác
+              </TabsTrigger>
             </TabsList>
           </div>
 
           {/* Tab Content */}
           <div className="p-4 pt-0">
-            <TabsContent value={ENotificationType.COMMON} className="px-0 py-4">
+            <TabsContent value={ENotificationType.ALL} className="px-0 py-4">
               <TabContent
-                type={ENotificationType.COMMON}
-                key={ENotificationType.COMMON}
+                type={ENotificationType.ALL}
+                key={ENotificationType.ALL}
               />
             </TabsContent>
             <TabsContent value={ENotificationType.VERIFY} className="px-0 py-4">
@@ -67,6 +73,12 @@ export function NotificationPage() {
               <TabContent
                 type={ENotificationType.MENTION}
                 key={ENotificationType.MENTION}
+              />
+            </TabsContent>
+            <TabsContent value={ENotificationType.OTHER} className="px-0 py-4">
+              <TabContent
+                type={ENotificationType.OTHER}
+                key={ENotificationType.OTHER}
               />
             </TabsContent>
           </div>

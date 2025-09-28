@@ -41,6 +41,7 @@ export function ProfilePage() {
     [user?._id, profile?._id]
   );
 
+  //
   useEffect(() => {
     setOpenVerify(Boolean(!profile?.verify));
   }, [profile?.verify]);
@@ -106,7 +107,7 @@ export function ProfilePage() {
         </WrapIcon> */}
       </div>
 
-      <div className="max-h-screen overflow-y-auto">
+      <div className="max-h-screen overflow-y-auto scrollbar-hide">
         {/* Photo cover */}
         <div className="relative w-full">
           <div className="w-full h-52">
@@ -245,7 +246,7 @@ export function ProfilePage() {
           </div>
 
           {/* Tab Content */}
-          <div className="p-4 pt-0">
+          <div className="pt-0">
             <TabsContent
               value={ETweetType.Tweet.toString()}
               className="px-0 py-4"
@@ -258,6 +259,7 @@ export function ProfilePage() {
                 />
               </div>
             </TabsContent>
+
             <TabsContent
               value={ETweetType.Retweet.toString()}
               className="px-0 py-4"
@@ -270,6 +272,7 @@ export function ProfilePage() {
                 />
               </div>
             </TabsContent>
+
             <TabsContent value="highlights" className="px-0 py-4">
               <div className="space-y-4">
                 <ProfileTweets

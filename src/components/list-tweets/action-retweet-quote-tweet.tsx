@@ -15,6 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import type { ResCreateTweet } from "~/shared/dtos/res/tweet.dto";
 
 export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
   const { retweets_count, quotes_count, retweet, quote } = tweet;
@@ -23,25 +24,25 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
 
   //
   const [countRQTweet, setCountTQTweet] = useState(0);
-  const [isRTweet, setIsRTweet] = useState(false);
-  const [isQTweet, setIsQTweet] = useState(false);
+  const [_retweet, setRetweet] = useState<string | undefined>("");
+  const [_quoteTweet, setQuoteTweet] = useState<string | undefined>("");
   const [isOpenQuote, setIsOpenQuote] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   //
   useEffect(() => {
-    setIsRTweet(!!retweet);
-    setIsQTweet(!!quote);
+    setRetweet(retweet);
+    setQuoteTweet(quote);
     setCountTQTweet(Number(retweets_count) + Number(quotes_count));
   }, [retweets_count, quotes_count, retweet, quote]);
 
   //
   async function onRetweet() {
     // Nếu đã reTweet rồi thì gỡ (xóa)
-    if (isRTweet && retweet) {
-      const resDeleted = await apiDeleteTweet.mutateAsync(retweet);
+    if (_retweet) {
+      const resDeleted = await apiDeleteTweet.mutateAsync(_retweet);
       handleResponse(resDeleted, () => {
-        setIsRTweet(!isRTweet);
+        setRetweet(undefined);
         setCountTQTweet((prev) => prev - 1);
       });
       return;
@@ -60,8 +61,9 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
       mentions: mentions?.map((mention) => mention._id),
     };
     const resCreateTweet = await apiCreateTweet.mutateAsync(tweetData);
+
     handleResponse(resCreateTweet, () => {
-      setIsRTweet(!isRTweet);
+      setRetweet(resCreateTweet.data?.insertedId);
       setCountTQTweet((prev) => prev + 1);
     });
   }
@@ -69,10 +71,10 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
   //
   async function onQuote() {
     // Nếu đã quoteTweet rồi thì gỡ (xóa)
-    if (isQTweet && quote) {
-      const resDeleted = await apiDeleteTweet.mutateAsync(quote);
+    if (_quoteTweet) {
+      const resDeleted = await apiDeleteTweet.mutateAsync(_quoteTweet);
       handleResponse(resDeleted, () => {
-        setIsRTweet(!isRTweet);
+        setQuoteTweet(undefined);
         setCountTQTweet((prev) => prev - 1);
       });
       return;
@@ -83,9 +85,9 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
   }
 
   //
-  function onSuccessQuoteTweet() {
+  function onSuccessQuoteTweet(res?: ResCreateTweet) {
     setIsOpenQuote(false);
-    setIsQTweet(!isQTweet);
+    setQuoteTweet(res?.insertedId);
     setCountTQTweet((prev) => prev + 1);
   }
 
@@ -96,7 +98,9 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
         <DropdownMenuTrigger asChild>
           <button
             className={`outline-0 flex items-center space-x-2 transition-colors group cursor-pointer ${
-              isRTweet || isQTweet ? "text-green-500" : "hover:text-green-500"
+              _retweet || _quoteTweet
+                ? "text-green-500"
+                : "hover:text-green-500"
             }`}
           >
             <div className="p-2 rounded-full group-hover:bg-green-50 transition-colors">
@@ -116,14 +120,14 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
             onClick={onRetweet}
           >
             <Repeat2 strokeWidth={2} className="w-6 h-6" color="#000" />
-            {isRTweet ? "Xóa bài đăng lại" : "Đăng lại"}
+            {_retweet ? "Xóa bài đăng lại" : "Đăng lại"}
           </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer h-10 px-3 font-semibold"
             onClick={onQuote}
           >
             <SquarePen strokeWidth={2} className="w-6 h-6" color="#000" />
-            {isQTweet
+            {_quoteTweet
               ? "Xóa Đăng lại thêm trích dẫn"
               : "Đăng lại thêm trích dẫn"}
           </DropdownMenuItem>

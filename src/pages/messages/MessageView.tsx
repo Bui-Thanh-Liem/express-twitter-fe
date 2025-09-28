@@ -15,7 +15,9 @@ import { useChatSocket } from "~/socket/hooks/useChatSocket";
 import { useUserStore } from "~/store/useUserStore";
 import { CreateConversation } from "./CreateConversation";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import { CircularProgress } from "~/components/ui/circular-progress";
 
+const MAX_LENGTH_TEXT = 160;
 export function MessageView({
   conversation,
 }: {
@@ -182,9 +184,13 @@ export function MessageView({
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="relative flex gap-2 pt-4 border-t">
-            <p className="absolute top-1 -left-2.5 w-5 h-5 flex items-center justify-center rounded-full bg-blue-400 text-[10px] text-white">
-              {60 - (isNaN(contentValue?.length) ? 0 : contentValue?.length)}
-            </p>
+            <div className="absolute top-1 -left-2.5 ">
+              <CircularProgress
+                value={isNaN(contentValue?.length) ? 0 : contentValue?.length}
+                max={MAX_LENGTH_TEXT}
+                size={20}
+              />
+            </div>
             <textarea
               {...register("text")}
               ref={textareaRef}
@@ -196,7 +202,7 @@ export function MessageView({
               placeholder="Nhập văn bản"
               onInput={handleTextareaInput}
               rows={3}
-              maxLength={60}
+              maxLength={MAX_LENGTH_TEXT}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault(); // chặn xuống dòng mặc định

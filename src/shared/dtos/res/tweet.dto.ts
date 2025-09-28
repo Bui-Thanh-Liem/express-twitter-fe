@@ -1,3 +1,6 @@
-import { ITweet } from '~/shared/interfaces/schemas/tweet.interface'
+import { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 
-export type ResCreateTweet = ITweet
+export type ResCreateTweet = {
+  acknowledged: boolean;
+  insertedId: string;
+};

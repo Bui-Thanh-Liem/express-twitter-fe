@@ -20,6 +20,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { useLogout } from "~/hooks/useFetchAuth";
 import { cn } from "~/lib/utils";
+import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useNotificationSocket } from "~/socket/hooks/useNotificationSocket";
 import { useUserStore } from "~/store/useUserStore";
 import { Logo } from "../../components/logo";
@@ -39,12 +40,23 @@ export function SidebarLeft() {
 
   //
   const [unreadCountNoti, setUnreadCountNoti] = useState(0);
+  const [unreadCountConv, setUnreadCountConv] = useState(0);
 
+  //
   useNotificationSocket(
     () => {},
     (unread) => {
-      console.log("unread:::", unread);
+      console.log("unread noti:::", unread);
       setUnreadCountNoti(unread);
+    }
+  );
+
+  //
+  useConversationSocket(
+    () => {},
+    (unread) => {
+      console.log("unread noti:::", unread);
+      setUnreadCountConv(unread);
     }
   );
 
@@ -74,6 +86,7 @@ export function SidebarLeft() {
       name: "Tin nhắn",
       icon: <MessageIcon />,
       path: "/messages",
+      countNoti: unreadCountConv,
     },
     // {
     //   name: "Cộng đồng",

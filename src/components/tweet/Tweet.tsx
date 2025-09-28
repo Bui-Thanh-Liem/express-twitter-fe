@@ -16,6 +16,7 @@ import {
   CreateTweetDtoSchema,
   type CreateTweetDto,
 } from "~/shared/dtos/req/tweet.dto";
+import type { ResCreateTweet } from "~/shared/dtos/res/tweet.dto";
 import { ETweetAudience } from "~/shared/enums/common.enum";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
@@ -50,7 +51,7 @@ export function Tweet({
   tweet?: ITweet;
   placeholder?: string;
   contentBtn?: string;
-  onSuccess?: () => void;
+  onSuccess?: (res?: ResCreateTweet) => void;
   tweetType?: ETweetType;
 }) {
   const { user } = useUserStore();
@@ -155,14 +156,17 @@ export function Tweet({
   );
 
   // Thực hiện khi gọi api thành cong từ onSubmit
-  const successForm = useCallback(() => {
-    reset(DEFAULT_VALUES);
-    removeMedia(); // Clear media after successful submission
-    setUploadedMediaUrl("");
-    setUploadProgress(0);
-    setMentionIds([]);
-    if (onSuccess) onSuccess(); // Sử dụng cho bên ngoài component cha (VD: đống modal)
-  }, [removeMedia, reset, setUploadProgress, setUploadedMediaUrl, onSuccess]);
+  const successForm = useCallback(
+    (res: ResCreateTweet) => {
+      reset(DEFAULT_VALUES);
+      removeMedia(); // Clear media after successful submission
+      setUploadedMediaUrl("");
+      setUploadProgress(0);
+      setMentionIds([]);
+      if (onSuccess) onSuccess(res); // Sử dụng cho bên ngoài component cha (VD: đống modal)
+    },
+    [removeMedia, reset, setUploadProgress, setUploadedMediaUrl, onSuccess]
+  );
 
   // Select hashtag
   function handleSelectHashtag(name: string) {
@@ -268,7 +272,9 @@ export function Tweet({
 
         const resCreateTweet = await apiCreateTweet.mutateAsync(tweetData);
 
-        handleResponse(resCreateTweet, successForm);
+        handleResponse(resCreateTweet, () => {
+          successForm(resCreateTweet.data!);
+        });
       } catch (error) {
         console.error("Error submitting tweet:", error);
         const errorMessage =
