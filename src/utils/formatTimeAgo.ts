@@ -16,9 +16,9 @@ export const formatTimeAgo = (dateString: string) => {
     if (diffInHours < 1) {
       const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
       if (diffInMinutes < 1) return "Vừa xong";
-      return `${diffInMinutes}p`;
+      return `${diffInMinutes} phút`;
     }
-    return `${diffInHours}h`;
+    return `${diffInHours} giờ`;
   } else {
     // Qua ngày - hiện ngày
     if (diffInDays === 1) {

@@ -52,7 +52,6 @@ export function TweetDetailDrawer() {
     },
   });
   const tweetComments = data?.data?.items;
-  console.log("tweetComments::", tweetComments);
 
   // Không có tweet thì chỉ xem không xem chi tiết được
   if (!tweet) {

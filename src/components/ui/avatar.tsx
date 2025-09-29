@@ -71,6 +71,7 @@ function AvatarMain({
 }
 
 function GroupAvatarMain({ srcs, max = 3, className }: GroupAvatarMainProps) {
+  console.log("srcs:::", srcs);
   const visibleUsers = srcs.slice(0, max);
   const extraCount = srcs.length - max;
 
@@ -95,3 +96,4 @@ function GroupAvatarMain({ srcs, max = 3, className }: GroupAvatarMainProps) {
 }
 
 export { Avatar, AvatarFallback, AvatarImage, AvatarMain, GroupAvatarMain };
+

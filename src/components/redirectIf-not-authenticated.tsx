@@ -9,7 +9,6 @@ export function RedirectIfNotAuthenticated({
 }) {
   const user = useUserStore((state) => state.user);
 
-  console.log("RedirectIfNotAuthenticated - user :::", user);
   if (!user) {
     return <Navigate to="/" replace />;
   }

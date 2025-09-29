@@ -46,7 +46,6 @@ export function SidebarLeft() {
   useNotificationSocket(
     () => {},
     (unread) => {
-      console.log("unread noti:::", unread);
       setUnreadCountNoti(unread);
     }
   );
@@ -55,7 +54,7 @@ export function SidebarLeft() {
   useConversationSocket(
     () => {},
     (unread) => {
-      console.log("unread noti:::", unread);
+      console.log("server - client - conv unread :::", unread);
       setUnreadCountConv(unread);
     },
     () => {}

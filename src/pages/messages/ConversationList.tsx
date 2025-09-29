@@ -12,6 +12,7 @@ import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useUserStore } from "~/store/useUserStore";
+import { formatTimeAgo } from "~/utils/formatTimeAgo";
 
 function ConversationItemSkeleton() {
   return (
@@ -39,7 +40,6 @@ function ConversationItem({
   if (!conversation) return null;
   const { avatar, lastMessage, name } = conversation;
 
-  //
   let messageLastContent = "Chưa có tin nhắn";
   if (lastMessage) {
     const _lastMessage = lastMessage as IMessage;
@@ -47,17 +47,12 @@ function ConversationItem({
     messageLastContent = `${isOwner ? "Bạn: " : ""}${_lastMessage.content}`;
   }
 
-  //
-  let isUnread = false;
-  if (conversation.readStatus?.includes(currentUser?._id)) {
-    isUnread = true;
-  }
+  const isUnread = conversation.readStatus?.includes(currentUser?._id || "");
 
-  //
   return (
     <div
       className={cn(
-        "relative p-3 flex items-center justify-between hover:bg-gray-50 cursor-pointer",
+        "relative p-3 flex items-center justify-between hover:bg-gray-50 cursor-pointer group",
         isActive && "bg-blue-50"
       )}
       onClick={onclick}
@@ -77,7 +72,11 @@ function ConversationItem({
         </div>
       </div>
 
+      <span className="text-gray-400 text-sm group-hover:hidden">
+        {formatTimeAgo(lastMessage.created_at as unknown as string)}
+      </span>
       <WrapIcon
+        className="hidden group-hover:block"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -98,92 +97,70 @@ export function ConversationList({
 }: {
   onclick: (conversation: IConversation) => void;
 }) {
-  //
   const { user } = useUserStore();
 
-  //
   const [page, setPage] = useState(1);
   const [idActive, setIdActive] = useState("");
   const [allConversations, setAllConversations] = useState<IConversation[]>([]);
-
   const total_page_ref = useRef(0);
+
   const { data, isLoading, error } = useGetMultiConversations({
     page: page.toString(),
     limit: "10",
   });
 
-  //
   const apiReadConversation = useReadConversation();
 
-  //
   const { joinConversation, leaveConversation } = useConversationSocket(
-    (newConversation) => {
-      setAllConversations((prev) => {
-        const index = prev.findIndex(
-          (item) => item._id === newConversation._id
-        );
-
-        if (!index) {
-          return [newConversation, ...prev];
-        }
-
-        const res = prev.splice(index, 1, newConversation);
-        return res;
-      });
-    },
-    (unreadCount) => {
-      console.log("Nhận từ server (socket) unreadCount:::", unreadCount);
-    },
-    (changedConversation) => {
-      console.log(
-        "Nhận từ server (socket) changed conversation:::",
-        changedConversation
+    (_new) => {
+      // cập nhật khi có new conversation
+      setAllConversations((prev) =>
+        prev.map((c) =>
+          c._id.toString() === _new._id.toString() ? { ...c, ..._new } : c
+        )
       );
-      setAllConversations((prev) => {
-        const index = prev.findIndex(
-          (item) => item._id === changedConversation._id
-        );
-
-        if (!index) {
-          return [changedConversation, ...prev];
-        }
-
-        const res = prev.splice(index, 1, changedConversation);
-        return res;
-      });
+    },
+    () => {},
+    (changed) => {
+      console.log("changed:::", changed);
+      setAllConversations((prev) =>
+        prev.map((c) =>
+          c._id.toString() === changed._id.toString() ? { ...c, ...changed } : c
+        )
+      );
     }
   );
 
-  // Xử lý join/leave room socket
+  // Join/leave socket rooms
   useEffect(() => {
     const conversationIds = allConversations?.map((item) => item._id);
-
-    // Join room khi vào trang tin nhắn
     if (conversationIds.length > 0) {
-      console.log("joinConversation::", conversationIds);
       joinConversation(conversationIds);
     }
-
-    // Leave room khi rời khỏi trang
     return () => {
       if (conversationIds.length > 0) {
-        console.log("leaveConversation::", conversationIds);
         leaveConversation(conversationIds);
       }
     };
   }, [allConversations, joinConversation, leaveConversation]);
 
-  // Mỗi lần fetch xong thì append thêm vào state
+  // Mỗi lần fetch API xong thì merge vào state (loại bỏ duplicate)
   useEffect(() => {
     const items = data?.data?.items || [];
     const total_page = data?.data?.total_page;
     total_page_ref.current = total_page || 0;
-    if (items) {
-      setAllConversations((prev) => [...prev, ...items]);
+
+    if (items && items.length > 0) {
+      setAllConversations((prev) => {
+        const existIds = new Set(prev.map((c) => c._id.toString()));
+        const newItems = items.filter(
+          (item) => !existIds.has(item._id.toString())
+        );
+        return [...prev, ...newItems];
+      });
     }
   }, [data]);
 
-  //
   useEffect(() => {
     return () => {
       setPage(1);
@@ -191,12 +168,10 @@ export function ConversationList({
     };
   }, []);
 
-  //
   function onSeeMore() {
     setPage((prev) => prev + 1);
   }
 
-  //
   async function handleClickConversation(conversation: IConversation) {
     onclick(conversation);
     setIdActive(conversation?._id);
@@ -205,7 +180,6 @@ export function ConversationList({
     });
   }
 
-  //
   if (!isLoading && allConversations.length === 0 && page === 1) {
     return (
       <p className="p-4 text-center text-gray-500">Không có cuộc trò chuyện</p>
@@ -229,7 +203,7 @@ export function ConversationList({
           {allConversations.map((conversation) => (
             <ConversationItem
               currentUser={user}
-              key={conversation._id}
+              key={conversation._id.toString()}
               conversation={conversation}
               isActive={idActive === conversation._id}
               onclick={() => handleClickConversation(conversation)}

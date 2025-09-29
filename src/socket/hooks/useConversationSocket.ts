@@ -45,9 +45,9 @@ export const useConversationSocket = (
 
   // Lắng nghe số lượng cuộc trò chuyện chưa đọc
   useEffect(() => {
-    socket.on(CONSTANT_EVENT_NAMES.UNREAD_CONVERSATION, onUnreadCount);
+    socket.on(CONSTANT_EVENT_NAMES.UNREAD_COUNT_CONVERSATION, onUnreadCount);
     return () => {
-      socket.off(CONSTANT_EVENT_NAMES.UNREAD_CONVERSATION, onUnreadCount);
+      socket.off(CONSTANT_EVENT_NAMES.UNREAD_COUNT_CONVERSATION, onUnreadCount);
     };
   }, [onUnreadCount]);
 
