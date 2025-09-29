@@ -2,7 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { DotIcon } from "~/components/icons/dot";
 import { AvatarMain, GroupAvatarMain } from "~/components/ui/avatar";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useGetMultiConversations } from "~/hooks/useFetchConversations";
+import {
+  useGetMultiConversations,
+  useReadConversation,
+} from "~/hooks/useFetchConversations";
 import { cn } from "~/lib/utils";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
@@ -110,6 +113,9 @@ export function ConversationList({
   });
 
   //
+  const apiReadConversation = useReadConversation();
+
+  //
   const { joinConversation, leaveConversation } = useConversationSocket(
     (newConversation) => {
       setAllConversations((prev) => {
@@ -127,6 +133,24 @@ export function ConversationList({
     },
     (unreadCount) => {
       console.log("Nhận từ server (socket) unreadCount:::", unreadCount);
+    },
+    (changedConversation) => {
+      console.log(
+        "Nhận từ server (socket) changed conversation:::",
+        changedConversation
+      );
+      setAllConversations((prev) => {
+        const index = prev.findIndex(
+          (item) => item._id === changedConversation._id
+        );
+
+        if (!index) {
+          return [changedConversation, ...prev];
+        }
+
+        const res = prev.splice(index, 1, changedConversation);
+        return res;
+      });
     }
   );
 
@@ -173,9 +197,12 @@ export function ConversationList({
   }
 
   //
-  function handleClickConversation(conversation: IConversation) {
+  async function handleClickConversation(conversation: IConversation) {
     onclick(conversation);
     setIdActive(conversation?._id);
+    await apiReadConversation.mutateAsync({
+      conversation_id: conversation?._id,
+    });
   }
 
   //

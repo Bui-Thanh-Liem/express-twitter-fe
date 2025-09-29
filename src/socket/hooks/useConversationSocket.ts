@@ -5,7 +5,8 @@ import { socket } from "~/socket/socket";
 
 export const useConversationSocket = (
   onNewConversation: (data: IConversation) => void,
-  onUnreadCount: (count: number) => void
+  onUnreadCount: (count: number) => void,
+  onChangeConversation: (conversation: IConversation) => void
 ) => {
   //
   useEffect(() => {
@@ -31,6 +32,17 @@ export const useConversationSocket = (
     };
   }, [onNewConversation]);
 
+  // Lắng nghe cuộc trò chuyện thay đổi (có tin nhắn mới/ đọc tin nhắn)
+  useEffect(() => {
+    socket.on(CONSTANT_EVENT_NAMES.CHANGE_CONVERSATION, onChangeConversation);
+    return () => {
+      socket.off(
+        CONSTANT_EVENT_NAMES.CHANGE_CONVERSATION,
+        onChangeConversation
+      );
+    };
+  }, [onChangeConversation]);
+
   // Lắng nghe số lượng cuộc trò chuyện chưa đọc
   useEffect(() => {
     socket.on(CONSTANT_EVENT_NAMES.UNREAD_CONVERSATION, onUnreadCount);
@@ -49,15 +61,6 @@ export const useConversationSocket = (
   };
 
   //
-  const readConversation = (conversation_id: string) => {
-    if (!socket.connected) {
-      console.warn("⚠️ Socket chưa connect, không thể read conversation");
-      return;
-    }
-    socket.emit(CONSTANT_EVENT_NAMES.READ_CONVERSATION, conversation_id);
-  };
-
-  //
   const leaveConversation = (ids: string[]) => {
     if (!socket.connected) {
       console.warn("⚠️ Socket chưa connect, không thể join conversation");
@@ -66,5 +69,5 @@ export const useConversationSocket = (
     socket.emit(CONSTANT_EVENT_NAMES.LEAVE_CONVERSATION, ids);
   };
 
-  return { leaveConversation, joinConversation, readConversation };
+  return { leaveConversation, joinConversation };
 };

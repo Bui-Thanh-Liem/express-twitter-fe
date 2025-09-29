@@ -57,7 +57,8 @@ export function SidebarLeft() {
     (unread) => {
       console.log("unread noti:::", unread);
       setUnreadCountConv(unread);
-    }
+    },
+    () => {}
   );
 
   const navs: NavItem[] = [

@@ -34,7 +34,8 @@ export default function ChatBox() {
     },
     (unreadCount) => {
       console.log("Nhận từ server (socket) unreadCount:::", unreadCount);
-    }
+    },
+    () => {},
   );
   const { pathname } = useLocation();
   const { close, conversation } = useChatBoxStore();

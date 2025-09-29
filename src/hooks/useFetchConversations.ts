@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { CreateConversationDto } from "~/shared/dtos/req/conversation.dto";
+import type {
+  CreateConversationDto,
+  ReadConversationDto,
+} from "~/shared/dtos/req/conversation.dto";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { ResMultiType } from "~/shared/types/response.type";
@@ -15,6 +18,22 @@ export const useCreateConversation = () => {
       apiCall<IConversation>("/conversations", {
         method: "POST",
         body: JSON.stringify(payload),
+      }),
+    onSuccess: () => {
+      // Invalidate danh sách conversations
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+    },
+  });
+};
+
+// ➕ POST
+export const useReadConversation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: ReadConversationDto) =>
+      apiCall<IConversation>(`/conversations/read/${payload.conversation_id}`, {
+        method: "PATCH",
       }),
     onSuccess: () => {
       // Invalidate danh sách conversations
