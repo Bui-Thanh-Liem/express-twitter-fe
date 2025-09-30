@@ -8,6 +8,8 @@ export const apiCall = async <T>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options: any = {}
 ): Promise<OkResponse<T>> => {
+  console.log("Đang gọi api::");
+
   const access_token = localStorage.getItem("access_token");
 
   // Tạo headers object
@@ -32,6 +34,7 @@ export const apiCall = async <T>(
 
   // Initial API call
   let response = await fetch(`${apiUrl}${endpoint}`, config);
+  console.log("Đang gọi api::", `${apiUrl}${endpoint}`);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let result = (await response.json()) as OkResponse<any>;
 

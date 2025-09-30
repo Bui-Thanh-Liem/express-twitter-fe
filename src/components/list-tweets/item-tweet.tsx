@@ -49,7 +49,7 @@ export const MediaContent = ({
         <img
           src={url}
           alt={url}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
           loading="lazy"
           onError={(e) => {
             e.currentTarget.src = "/placeholder-image.png"; // Fallback image

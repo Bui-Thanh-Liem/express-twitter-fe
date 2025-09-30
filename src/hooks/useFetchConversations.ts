@@ -29,17 +29,12 @@ export const useCreateConversation = () => {
 
 // ➕ PATCH
 export const useReadConversation = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: (payload: ReadConversationDto) =>
       apiCall<IConversation>(`/conversations/read/${payload.conversation_id}`, {
         method: "PATCH",
       }),
-    onSuccess: () => {
-      // Invalidate danh sách conversations
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
-    },
+    onSuccess: () => {},
   });
 };
 
@@ -54,9 +49,7 @@ export const useDeleteConversation = () => {
       }),
     onSuccess: () => {
       // Invalidate danh sách conversations
-      queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === "conversations",
-      });
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
     },
   });
 };

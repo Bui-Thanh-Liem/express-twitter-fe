@@ -1,32 +1,32 @@
-// Utility function để format thời gian
 export const formatTimeAgo = (dateString: string) => {
   if (!dateString) return "Vừa xong";
 
   const now = new Date();
   const createdDate = new Date(dateString);
-  const diffInMs = now.getTime() - createdDate.getTime();
-  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-  // Kiểm tra xem có cùng ngày không
-  const isSameDay = now.toDateString() === createdDate.toDateString();
+  const diffInMinutes = Math.floor(
+    (now.getTime() - createdDate.getTime()) / (1000 * 60)
+  );
+  const diffInHours = Math.floor(diffInMinutes / 60);
 
-  if (isSameDay) {
-    // Trong ngày - hiện giờ
-    if (diffInHours < 1) {
-      const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-      if (diffInMinutes < 1) return "Vừa xong";
-      return `${diffInMinutes} phút`;
-    }
+  // Calendar day difference (không phụ thuộc đủ 24h hay chưa)
+  const diffInDays = Math.floor(
+    (new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() -
+      new Date(
+        createdDate.getFullYear(),
+        createdDate.getMonth(),
+        createdDate.getDate()
+      ).getTime()) /
+      (1000 * 60 * 60 * 24)
+  );
+
+  if (diffInDays === 0) {
+    if (diffInMinutes < 1) return "Vừa xong";
+    if (diffInMinutes < 60) return `${diffInMinutes} phút`;
     return `${diffInHours} giờ`;
-  } else {
-    // Qua ngày - hiện ngày
-    if (diffInDays === 1) {
-      return "Hôm qua";
-    } else if (diffInDays < 7) {
-      return `${diffInDays} ngày`;
-    } else {
-      return createdDate.toLocaleDateString("vi-VN");
-    }
   }
+
+  if (diffInDays === 1) return "Hôm qua";
+  if (diffInDays < 7) return `${diffInDays} ngày`;
+  return createdDate.toLocaleDateString("vi-VN");
 };

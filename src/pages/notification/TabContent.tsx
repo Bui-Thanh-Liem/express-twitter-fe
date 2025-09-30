@@ -54,8 +54,8 @@ function NotiItem({ noti, onClick }: Props) {
   return (
     <button
       onClick={handlerClick}
-      className={`w-full text-left flex items-start gap-3 p-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-sky-300 relative ${
-        read ? "bg-slate-50 hover:bg-slate-100" : "bg-sky-100"
+      className={`w-full text-left flex items-start gap-3 p-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-sky-300 relative cursor-pointer ${
+        read ? "bg-slate-50 hover:bg-slate-100" : "bg-sky-50"
       }`}
     >
       {/*  */}
@@ -98,7 +98,13 @@ function NotiItem({ noti, onClick }: Props) {
         </div> */}
       </div>
 
-      <WrapIcon className="p-[2px] absolute top-1.5 right-1.5 bg-slate-50">
+      <WrapIcon
+        className="p-[3px] absolute top-1.5 right-1.5 bg-slate-50"
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+        }}
+      >
         <CloseIcon size={16} color="#e2877d" />
       </WrapIcon>
     </button>
@@ -144,7 +150,7 @@ export function TabContent({ type }: { type: ENotificationType }) {
   //
   useEffect(() => {
     setPage(1);
-    setNotis([]);
+    // setNotis([]);
     refetch();
   }, [refetch, type]);
 
@@ -159,7 +165,7 @@ export function TabContent({ type }: { type: ENotificationType }) {
 
   //
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {isLoading &&
         page === 1 &&
         Array.from({ length: 2 }).map((_, i) => (

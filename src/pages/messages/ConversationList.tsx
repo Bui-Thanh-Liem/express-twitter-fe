@@ -1,6 +1,5 @@
-import { Pin } from "lucide-react";
+import { Pin, Trash } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { CloseIcon } from "~/components/icons/close";
 import { DotIcon } from "~/components/icons/dot";
 import { AvatarMain, GroupAvatarMain } from "~/components/ui/avatar";
 import {
@@ -39,6 +38,7 @@ function ConversationItemSkeleton() {
 function ConversationItem({
   onclick,
   isActive,
+  onDeleted,
   currentUser,
   conversation,
 }: {
@@ -46,6 +46,7 @@ function ConversationItem({
   onclick: () => void;
   currentUser: IUser | null;
   conversation: IConversation;
+  onDeleted?: (id: string) => void;
 }) {
   //
   const apiDelConversation = useDeleteConversation();
@@ -73,6 +74,7 @@ function ConversationItem({
     e.stopPropagation();
     const res = await apiDelConversation.mutateAsync({ conversation_id: _id });
     handleResponse(res);
+    if (onDeleted) onDeleted(_id);
   }
 
   //
@@ -130,18 +132,18 @@ function ConversationItem({
               className="rounded-2xl px-0"
             >
               <DropdownMenuItem
-                className="cursor-pointer px-3 font-semibold"
+                className="cursor-pointer px-3 font-semibold space-x-1"
                 onClick={onPin}
               >
-                <Pin strokeWidth={2} className="w-6 h-6" color="#000" />
-                <p className="ml-2">{true ? "Ghim" : "Gỡ"}</p>
+                <Pin strokeWidth={2} className="w-3 h-3" />
+                <p className="text-sm">{true ? "Ghim" : "Gỡ"}</p>
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="cursor-pointer h-10 px-3 font-semibold"
+                className="cursor-pointer px-3 font-semibold space-x-1"
                 onClick={onDelete}
               >
-                <CloseIcon size={24} color="#000" />
-                <p className="ml-2">Xoá</p>
+                <Trash className="w-3 h-3" color="var(--color-red-400)" />
+                <p className="text-red-400 text-sm">Xoá</p>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -151,6 +153,13 @@ function ConversationItem({
       {isUnread && (
         <span className="absolute top-2 left-2 w-2 h-2 bg-sky-400 rounded-full" />
       )}
+      {true && (
+        <Pin
+          strokeWidth={2}
+          className="absolute top-1 right-1 w-3 h-3 rotate-45"
+          color="#333"
+        />
+      )}
     </div>
   );
 }
@@ -158,7 +167,7 @@ function ConversationItem({
 export function ConversationList({
   onclick,
 }: {
-  onclick: (conversation: IConversation) => void;
+  onclick: (conversation: IConversation | null) => void;
 }) {
   const { user } = useUserStore();
 
@@ -177,6 +186,7 @@ export function ConversationList({
   const { joinConversation, leaveConversation } = useConversationSocket(
     (_new) => {
       // cập nhật khi có new conversation
+      console.log("_new:::", _new);
       setAllConversations((prev) =>
         prev.map((c) =>
           c._id.toString() === _new._id.toString() ? { ...c, ..._new } : c
@@ -186,11 +196,23 @@ export function ConversationList({
     () => {},
     (changed) => {
       console.log("changed:::", changed);
-      setAllConversations((prev) =>
-        prev.map((c) =>
-          c._id.toString() === changed._id.toString() ? { ...c, ...changed } : c
-        )
-      );
+      setAllConversations((prev) => {
+        const exists = prev.some(
+          (c) => c._id.toString() === changed._id.toString()
+        );
+
+        if (exists) {
+          // Cập nhật conversation cũ
+          return prev.map((c) =>
+            c._id.toString() === changed._id.toString()
+              ? { ...c, ...changed }
+              : c
+          );
+        } else {
+          // Thêm mới lên đầu
+          return [changed, ...prev];
+        }
+      });
     }
   );
 
@@ -224,6 +246,7 @@ export function ConversationList({
     }
   }, [data]);
 
+  //
   useEffect(() => {
     return () => {
       setPage(1);
@@ -231,26 +254,42 @@ export function ConversationList({
     };
   }, []);
 
+  //
   function onSeeMore() {
     setPage((prev) => prev + 1);
   }
 
+  //
   async function handleClickConversation(conversation: IConversation) {
     onclick(conversation);
     setIdActive(conversation?._id);
-    await apiReadConversation.mutateAsync({
-      conversation_id: conversation?._id,
-    });
+
+    // không gọi api đọc khi đọc rồi
+    const isUnread = conversation.readStatus?.includes(user?._id || "");
+    if (isUnread) {
+      await apiReadConversation.mutateAsync({
+        conversation_id: conversation?._id,
+      });
+    }
   }
 
-  if (!isLoading && allConversations.length === 0 && page === 1) {
-    return (
-      <p className="p-4 text-center text-gray-500">Không có cuộc trò chuyện</p>
-    );
+  //
+  function onDeletedConv(id: string) {
+    setAllConversations((prev) => prev.filter((x) => x._id !== id));
+    setIdActive("");
+    onclick(null);
   }
 
+  //
   return (
     <div>
+      {/*  */}
+      {!isLoading && allConversations.length === 0 && page === 1 && (
+        <p className="p-4 text-center text-gray-500">
+          Không có cuộc trò chuyện
+        </p>
+      )}
+
       {/* Loading lần đầu */}
       {isLoading && page === 1 && (
         <div>
@@ -266,8 +305,9 @@ export function ConversationList({
           {allConversations.map((conversation) => (
             <ConversationItem
               currentUser={user}
-              key={conversation._id.toString()}
+              onDeleted={onDeletedConv}
               conversation={conversation}
+              key={conversation._id.toString()}
               isActive={idActive === conversation._id}
               onclick={() => handleClickConversation(conversation)}
             />
@@ -283,19 +323,21 @@ export function ConversationList({
           ))}
         </div>
       ) : (
-        <div className="px-4 py-3">
-          <p
-            className={cn(
-              "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer",
-              total_page_ref.current <= page
-                ? "text-gray-300 pointer-events-none cursor-default"
-                : ""
-            )}
-            onClick={onSeeMore}
-          >
-            Xem thêm
-          </p>
-        </div>
+        !!allConversations.length && (
+          <div className="px-4 py-3">
+            <p
+              className={cn(
+                "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer",
+                total_page_ref.current <= page
+                  ? "text-gray-300 pointer-events-none cursor-default"
+                  : ""
+              )}
+              onClick={onSeeMore}
+            >
+              Xem thêm
+            </p>
+          </div>
+        )
       )}
 
       {/* Error state */}
