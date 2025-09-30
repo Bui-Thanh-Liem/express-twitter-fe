@@ -82,19 +82,19 @@ export const validateMediaFile = (file: File) => {
 
   if (allowedImgTypes.includes(file.type)) {
     if (file.size > MAX_SIZE_IMAGE_UPLOAD) {
-      throw new Error("File quá lớn. Tối đa 10MB.");
+      throw new Error("Dung lượng ảnh quá lớn. Tối đa 5MB.");
     }
     return true;
   }
 
   if (allowedVideoTypes.includes(file.type)) {
     if (file.size > MAX_SIZE_VIDEO_UPLOAD) {
-      throw new Error("File quá lớn. Tối đa 50MB.");
+      throw new Error("Dung lượng video quá lớn. Tối đa 10MB.");
     }
     return true;
   }
 
-  throw new Error("Định dạng file không được hỗ trợ.");
+  throw new Error("Định dạng không được hỗ trợ.");
 };
 
 // 🎯 Hook tiện ích để upload với validation

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
   CreateConversationDto,
+  DeleteConversationDto,
   ReadConversationDto,
 } from "~/shared/dtos/req/conversation.dto";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
@@ -26,7 +27,7 @@ export const useCreateConversation = () => {
   });
 };
 
-// ➕ POST
+// ➕ PATCH
 export const useReadConversation = () => {
   const queryClient = useQueryClient();
 
@@ -38,6 +39,24 @@ export const useReadConversation = () => {
     onSuccess: () => {
       // Invalidate danh sách conversations
       queryClient.invalidateQueries({ queryKey: ["conversations"] });
+    },
+  });
+};
+
+// ➕ DELETE
+export const useDeleteConversation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: DeleteConversationDto) =>
+      apiCall<IConversation>(`/conversations/${payload.conversation_id}`, {
+        method: "DELETE",
+      }),
+    onSuccess: () => {
+      // Invalidate danh sách conversations
+      queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === "conversations",
+      });
     },
   });
 };

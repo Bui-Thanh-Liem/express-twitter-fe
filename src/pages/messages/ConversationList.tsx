@@ -1,8 +1,17 @@
+import { Pin } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { CloseIcon } from "~/components/icons/close";
 import { DotIcon } from "~/components/icons/dot";
 import { AvatarMain, GroupAvatarMain } from "~/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { WrapIcon } from "~/components/wrapIcon";
 import {
+  useDeleteConversation,
   useGetMultiConversations,
   useReadConversation,
 } from "~/hooks/useFetchConversations";
@@ -13,6 +22,7 @@ import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useUserStore } from "~/store/useUserStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
+import { handleResponse } from "~/utils/handleResponse";
 
 function ConversationItemSkeleton() {
   return (
@@ -37,9 +47,13 @@ function ConversationItem({
   currentUser: IUser | null;
   conversation: IConversation;
 }) {
-  if (!conversation) return null;
-  const { avatar, lastMessage, name } = conversation;
+  //
+  const apiDelConversation = useDeleteConversation();
 
+  //
+  const { avatar, lastMessage, name, _id } = conversation;
+
+  //
   let messageLastContent = "Chưa có tin nhắn";
   if (lastMessage) {
     const _lastMessage = lastMessage as IMessage;
@@ -49,6 +63,19 @@ function ConversationItem({
 
   const isUnread = conversation.readStatus?.includes(currentUser?._id || "");
 
+  //
+  function onPin(e: React.MouseEvent<HTMLDivElement>) {
+    e.stopPropagation();
+  }
+
+  //
+  async function onDelete(e: React.MouseEvent<HTMLDivElement>) {
+    e.stopPropagation();
+    const res = await apiDelConversation.mutateAsync({ conversation_id: _id });
+    handleResponse(res);
+  }
+
+  //
   return (
     <div
       className={cn(
@@ -66,24 +93,60 @@ function ConversationItem({
         )}
         <div>
           <p className="font-medium">{name}</p>
-          <p className="text-sm text-gray-500 truncate max-w-[180px]">
+          <p className="text-sm text-gray-500 truncate max-w-[160px]">
             {messageLastContent}
           </p>
         </div>
       </div>
 
-      <span className="text-gray-400 text-sm group-hover:hidden">
-        {formatTimeAgo(lastMessage.created_at as unknown as string)}
-      </span>
-      <WrapIcon
-        className="hidden group-hover:block"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-      >
-        <DotIcon size={16} />
-      </WrapIcon>
+      {/* Right side: time + dropdown trigger (keeps trigger in DOM so Radix can measure) */}
+      <div className="relative">
+        <div className="relative w-16 h-6 flex items-center justify-end">
+          {/* time: fade out on hover */}
+          <span className="text-gray-400 text-sm transition-opacity duration-150 opacity-100 group-hover:opacity-0">
+            {lastMessage?.created_at &&
+              formatTimeAgo(lastMessage.created_at as unknown as string)}
+          </span>
+
+          {/* dropdown trigger: keep in DOM, hide visually until hover */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                onClick={(e) => e.stopPropagation()}
+                className="absolute inset-0 flex items-center justify-end rounded-full outline-0
+                     opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto
+                     transition-opacity duration-150"
+              >
+                <WrapIcon>
+                  <DotIcon size={16} />
+                </WrapIcon>
+              </button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+              align="start"
+              side="right"
+              sideOffset={6}
+              className="rounded-2xl px-0"
+            >
+              <DropdownMenuItem
+                className="cursor-pointer px-3 font-semibold"
+                onClick={onPin}
+              >
+                <Pin strokeWidth={2} className="w-6 h-6" color="#000" />
+                <p className="ml-2">{true ? "Ghim" : "Gỡ"}</p>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer h-10 px-3 font-semibold"
+                onClick={onDelete}
+              >
+                <CloseIcon size={24} color="#000" />
+                <p className="ml-2">Xoá</p>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
 
       {isUnread && (
         <span className="absolute top-2 left-2 w-2 h-2 bg-sky-400 rounded-full" />
