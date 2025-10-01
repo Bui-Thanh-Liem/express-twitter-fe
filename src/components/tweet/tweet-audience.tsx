@@ -10,6 +10,7 @@ import { TypographyP } from "../elements/p";
 import { AccountFollowIcon } from "../icons/account-follow";
 import { CheckIcon } from "../icons/check";
 import { EarthIcon } from "../icons/earth";
+import { MentionsIcon } from "../icons/mentions";
 
 //
 const replyOptions = [
@@ -20,14 +21,14 @@ const replyOptions = [
   },
   {
     id: ETweetAudience.Followers,
-    title: "Tài khoản theo dõi bạn",
+    title: "Chỉ những ai đang theo dõi bạn",
     icon: <AccountFollowIcon color="#fff" />,
   },
-  // {
-  //   id: "mentioned",
-  //   title: "Only accounts you mention",
-  //   icon: <MentionsIcon color="#fff" />,
-  // },
+  {
+    id: ETweetAudience.Mentions,
+    title: "Chỉ những ai bạn nhắc đến",
+    icon: <MentionsIcon color="#fff" />,
+  },
 ];
 
 export function TweetAudience({
@@ -57,7 +58,7 @@ export function TweetAudience({
               color: "rgb(29, 155, 240)",
             } as { color: string })}
           <TypographyP className="font-semibold text-sm">
-            {selectedOptionData?.title} có thể trả lời
+            {selectedOptionData?.title} có thể tương tác
           </TypographyP>
         </button>
       </DropdownMenuTrigger>
@@ -69,7 +70,7 @@ export function TweetAudience({
       >
         {/* Header */}
         <div className="px-4 py-3 border-b border-gray-100">
-          <h3 className="font-semibold text-gray-900">Ai có thể trả lời ?</h3>
+          <h3 className="font-semibold text-gray-900">Ai có thể tương tác ?</h3>
           <p className="text-sm text-gray-500">
             Bất kỳ ai hoặc những người theo dõi bạn.
           </p>

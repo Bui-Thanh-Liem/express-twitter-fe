@@ -13,6 +13,7 @@ import {
   useDeleteConversation,
   useGetMultiConversations,
   useReadConversation,
+  useTogglePinConversation,
 } from "~/hooks/useFetchConversations";
 import { cn } from "~/lib/utils";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
@@ -21,7 +22,6 @@ import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useUserStore } from "~/store/useUserStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
-import { handleResponse } from "~/utils/handleResponse";
 
 function ConversationItemSkeleton() {
   return (
@@ -41,15 +41,18 @@ function ConversationItem({
   onDeleted,
   currentUser,
   conversation,
+  onTogglePinned,
 }: {
   isActive: boolean;
   onclick: () => void;
   currentUser: IUser | null;
   conversation: IConversation;
   onDeleted?: (id: string) => void;
+  onTogglePinned?: (id: string) => void;
 }) {
   //
   const apiDelConversation = useDeleteConversation();
+  const apiTogglePinConversation = useTogglePinConversation();
 
   //
   const { avatar, lastMessage, name, _id } = conversation;
@@ -63,18 +66,24 @@ function ConversationItem({
   }
 
   const isUnread = conversation.readStatus?.includes(currentUser?._id || "");
+  const pinned = conversation.pinned.find(
+    (i) => i.user_id === currentUser?._id
+  );
 
   //
-  function onPin(e: React.MouseEvent<HTMLDivElement>) {
+  async function onTogglePin(e: React.MouseEvent<HTMLDivElement>) {
     e.stopPropagation();
+    const res = await apiTogglePinConversation.mutateAsync({
+      conversation_id: _id,
+    });
+    if (onTogglePinned && res.statusCode === 200) onTogglePinned(_id);
   }
 
   //
   async function onDelete(e: React.MouseEvent<HTMLDivElement>) {
     e.stopPropagation();
     const res = await apiDelConversation.mutateAsync({ conversation_id: _id });
-    handleResponse(res);
-    if (onDeleted) onDeleted(_id);
+    if (onDeleted && res.statusCode == 200) onDeleted(_id);
   }
 
   //
@@ -133,10 +142,10 @@ function ConversationItem({
             >
               <DropdownMenuItem
                 className="cursor-pointer px-3 font-semibold space-x-1"
-                onClick={onPin}
+                onClick={onTogglePin}
               >
-                <Pin strokeWidth={2} className="w-3 h-3" />
-                <p className="text-sm">{true ? "Ghim" : "Gỡ"}</p>
+                <Pin strokeWidth={2} className="w-3 h-3" color="#000" />
+                <p className="text-sm">{!pinned ? "Ghim" : "Gỡ"}</p>
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="cursor-pointer px-3 font-semibold space-x-1"
@@ -153,7 +162,7 @@ function ConversationItem({
       {isUnread && (
         <span className="absolute top-2 left-2 w-2 h-2 bg-sky-400 rounded-full" />
       )}
-      {true && (
+      {pinned && (
         <Pin
           strokeWidth={2}
           className="absolute top-1 right-1 w-3 h-3 rotate-45"
@@ -281,6 +290,34 @@ export function ConversationList({
   }
 
   //
+  function onPinnedConv(id: string) {
+    setAllConversations((prev) =>
+      prev.map((item) => {
+        if (item._id === id) {
+          const alreadyPinned = item.pinned?.some(
+            (p) => p.user_id === user?._id
+          );
+
+          let newPinned;
+          if (alreadyPinned) {
+            // unpin
+            newPinned = item.pinned.filter((p) => p.user_id !== user?._id);
+          } else {
+            // pin
+            newPinned = [
+              ...(item.pinned || []),
+              { user_id: user?._id, at: new Date() },
+            ];
+          }
+
+          return { ...item, pinned: newPinned };
+        }
+        return item;
+      })
+    );
+  }
+
+  //
   return (
     <div>
       {/*  */}
@@ -302,16 +339,19 @@ export function ConversationList({
       {/* List conversations */}
       {allConversations.length > 0 && (
         <div>
-          {allConversations.map((conversation) => (
-            <ConversationItem
-              currentUser={user}
-              onDeleted={onDeletedConv}
-              conversation={conversation}
-              key={conversation._id.toString()}
-              isActive={idActive === conversation._id}
-              onclick={() => handleClickConversation(conversation)}
-            />
-          ))}
+          {sortConversations(allConversations, user?._id).map(
+            (conversation) => (
+              <ConversationItem
+                currentUser={user}
+                onTogglePinned={onPinnedConv}
+                onDeleted={onDeletedConv}
+                conversation={conversation}
+                key={conversation._id.toString()}
+                isActive={idActive === conversation._id}
+                onclick={() => handleClickConversation(conversation)}
+              />
+            )
+          )}
         </div>
       )}
 
@@ -348,4 +388,29 @@ export function ConversationList({
       )}
     </div>
   );
+}
+
+function sortConversations(conversations: IConversation[], user_id: string) {
+  return conversations.sort((a, b) => {
+    const aPinned = a.pinned?.some((p) => p.user_id === user_id) ?? false;
+    const bPinned = b.pinned?.some((p) => p.user_id === user_id) ?? false;
+
+    if (aPinned && bPinned) {
+      // cả hai đều ghim, sort theo thời gian pin gần nhất
+      const aTime = a.pinned!.find((p) => p.user_id === user_id)!.at.getTime();
+      const bTime = b.pinned!.find((p) => p.user_id === user_id)!.at.getTime();
+      return bTime - aTime; // mới nhất lên trước
+    }
+
+    if (aPinned) return -1; // a ghim, b không ghim → a lên trên
+    if (bPinned) return 1; // b ghim, a không ghim → b lên trên
+
+    // cả hai không ghim, sort theo updatedAt (hoặc giữ nguyên)
+    console.log("b.updated_at", b.updated_at);
+    console.log("a.updated_at", a.updated_at);
+
+    return (
+      new Date(b.updated_at!).getTime() - new Date(a.updated_at!).getTime()
+    );
+  });
 }

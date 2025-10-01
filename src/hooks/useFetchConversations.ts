@@ -38,6 +38,20 @@ export const useReadConversation = () => {
   });
 };
 
+// ➕ PATCH
+export const useTogglePinConversation = () => {
+  return useMutation({
+    mutationFn: (payload: ReadConversationDto) =>
+      apiCall<IConversation>(
+        `/conversations/toggle-pin/${payload.conversation_id}`,
+        {
+          method: "PATCH",
+        }
+      ),
+    onSuccess: () => {},
+  });
+};
+
 // ➕ DELETE
 export const useDeleteConversation = () => {
   const queryClient = useQueryClient();
