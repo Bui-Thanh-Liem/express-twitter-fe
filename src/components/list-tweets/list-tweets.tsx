@@ -24,8 +24,6 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
     limit: "10", // Giảm limit để load nhanh hơn
   });
 
-  console.log("useGetNewFeeds:::", data);
-
   // Effect để xử lý khi có data mới
   useEffect(() => {
     if (data?.data?.items) {

@@ -65,6 +65,22 @@ const queryClient = new QueryClient({
 });
 
 export function App() {
+  // useEffect(() => {
+  //   const handleVisibility = () => {
+  //     if (document.hidden) {
+  //       socket.disconnect(); // user rời tab
+  //     } else {
+  //       socket.connect(); // user quay lại tab
+  //     }
+  //   };
+
+  //   document.addEventListener("visibilitychange", handleVisibility);
+
+  //   return () => {
+  //     document.removeEventListener("visibilitychange", handleVisibility);
+  //   };
+  // }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       {/*  */}

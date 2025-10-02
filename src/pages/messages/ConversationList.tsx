@@ -20,9 +20,11 @@ import type { IConversation } from "~/shared/interfaces/schemas/conversation.int
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
+import { useStatusSocket } from "~/socket/hooks/useStatusSocket";
 import { useUserStore } from "~/store/useUserStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
 
+//
 function ConversationItemSkeleton() {
   return (
     <div className="p-3 flex items-center gap-3 animate-pulse">
@@ -35,6 +37,7 @@ function ConversationItemSkeleton() {
   );
 }
 
+//
 function ConversationItem({
   onclick,
   isActive,
@@ -51,8 +54,15 @@ function ConversationItem({
   onTogglePinned?: (id: string) => void;
 }) {
   //
+  const [isOnl, setOnl] = useState(false);
   const apiDelConversation = useDeleteConversation();
   const apiTogglePinConversation = useTogglePinConversation();
+
+  //
+  useStatusSocket((val) => {
+    console.log("val::", val);
+    if (val._id === conversation._id) setOnl(val.hasOnline);
+  });
 
   //
   const { avatar, lastMessage, name, _id } = conversation;
@@ -96,7 +106,9 @@ function ConversationItem({
       onClick={onclick}
     >
       <div className="relative flex items-center gap-3">
-        <span className="absolute bottom-0 left-8 z-10 w-3 h-3 bg-green-400 rounded-full border border-white" />
+        {isOnl && (
+          <span className="absolute bottom-0 left-8 z-10 w-3 h-3 bg-green-400 rounded-full border border-white" />
+        )}
         {typeof avatar === "string" ? (
           <AvatarMain src={avatar} alt={name || ""} className="w-12 h-12" />
         ) : (
@@ -173,6 +185,7 @@ function ConversationItem({
   );
 }
 
+//
 export function ConversationList({
   onclick,
 }: {
@@ -190,8 +203,10 @@ export function ConversationList({
     limit: "10",
   });
 
+  // apis
   const apiReadConversation = useReadConversation();
 
+  //
   const { joinConversation, leaveConversation } = useConversationSocket(
     (_new) => {
       // cập nhật khi có new conversation
@@ -406,9 +421,6 @@ function sortConversations(conversations: IConversation[], user_id: string) {
     if (bPinned) return 1; // b ghim, a không ghim → b lên trên
 
     // cả hai không ghim, sort theo updatedAt (hoặc giữ nguyên)
-    console.log("b.updated_at", b.updated_at);
-    console.log("a.updated_at", a.updated_at);
-
     return (
       new Date(b.updated_at!).getTime() - new Date(a.updated_at!).getTime()
     );

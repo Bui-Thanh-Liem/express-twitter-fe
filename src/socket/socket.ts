@@ -24,5 +24,7 @@ export const connectSocket = () => {
 
 // helper ngắt kết nối
 export const disconnectSocket = () => {
-  if (socket.connected) socket.disconnect();
+  if (socket.connected) {
+    socket.disconnect();
+  }
 };
