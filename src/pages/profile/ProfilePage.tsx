@@ -95,9 +95,9 @@ export function ProfilePage() {
     <div>
       {/* Header */}
       <div className="px-3 flex justify-between items-center border border-gray-100">
-        <div className="flex h-12 items-center gap-6 ">
+        <div className="flex h-12 items-center gap-4">
           <WrapIcon onClick={() => navigate(-1)}>
-            <ArrowLeftIcon />
+            <ArrowLeftIcon color="#000" />
           </WrapIcon>
           <p className="font-semibold text-[20px]">{profile?.name}</p>
         </div>

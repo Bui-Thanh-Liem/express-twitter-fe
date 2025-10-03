@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type { ENotificationType } from "~/shared/enums/type.enum";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
 import type { INotification } from "~/shared/interfaces/schemas/notification.interface";
@@ -37,5 +37,15 @@ export const useGetMultiByType = ({
     refetchInterval: false,
     // Quan trọng: Đảm bảo không conflict với optimistic update
     networkMode: "online",
+  });
+};
+
+// ❌ DELETE - Xóa
+export const useDeleteNotification = () => {
+  return useMutation({
+    mutationFn: (noti_id: string) =>
+      apiCall<boolean>(`/notifications/${noti_id}`, {
+        method: "DELETE",
+      }),
   });
 };

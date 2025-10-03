@@ -2,18 +2,23 @@ import { useEffect, useRef, useState } from "react";
 import { CloseIcon } from "~/components/icons/close";
 import { AvatarMain } from "~/components/ui/avatar";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useGetMultiByType } from "~/hooks/useFetchNotifications";
+import {
+  useDeleteNotification,
+  useGetMultiByType,
+} from "~/hooks/useFetchNotifications";
 import { cn } from "~/lib/utils";
 import { ENotificationType } from "~/shared/enums/type.enum";
 import type { INotification } from "~/shared/interfaces/schemas/notification.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useNotificationSocket } from "~/socket/hooks/useNotificationSocket";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
+import { handleResponse } from "~/utils/handleResponse";
 
 //
 type Props = {
   noti: INotification;
   onClick?: (noti: INotification) => void;
+  onDelete?: (noti: INotification) => void;
 };
 
 // --- Skeleton ---
@@ -39,7 +44,7 @@ function SkeletonNotiItem() {
   );
 }
 
-function NotiItem({ noti, onClick }: Props) {
+function NotiItem({ noti, onClick, onDelete }: Props) {
   const [read, setRead] = useState(noti?.isRead);
   const sender =
     typeof noti.sender === "object" ? (noti.sender as IUser) : undefined;
@@ -103,6 +108,7 @@ function NotiItem({ noti, onClick }: Props) {
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
+          if (onDelete) onDelete(noti);
         }}
       >
         <CloseIcon size={16} color="#e2877d" />
@@ -122,11 +128,15 @@ export function TabContent({ type }: { type: ENotificationType }) {
     queries: { page: page.toString(), limit: "20" },
     type,
   });
+  const apiDeleteNoti = useDeleteNotification();
 
   // Socket
   const { readNoti } = useNotificationSocket(
     (newNoti) => {
-      if (newNoti && newNoti.type === type) {
+      if (
+        newNoti &&
+        (newNoti.type === type || type === ENotificationType.ALL)
+      ) {
         setNotis((prev) => [newNoti, ...prev]);
       }
     },
@@ -150,7 +160,7 @@ export function TabContent({ type }: { type: ENotificationType }) {
   //
   useEffect(() => {
     setPage(1);
-    // setNotis([]);
+    setNotis([]);
     refetch();
   }, [refetch, type]);
 
@@ -159,8 +169,16 @@ export function TabContent({ type }: { type: ENotificationType }) {
     setPage((prev) => prev + 1);
   }
 
-  function handlerReadNot(noti: INotification) {
+  //
+  function handlerReadNoti(noti: INotification) {
     if (!noti.isRead) readNoti(noti._id);
+  }
+
+  //
+  async function onDel(noti: INotification) {
+    const resDeleted = await apiDeleteNoti.mutateAsync(noti._id);
+    handleResponse(resDeleted);
+    setNotis((prev) => prev.filter((n) => n._id !== noti._id));
   }
 
   //
@@ -174,7 +192,12 @@ export function TabContent({ type }: { type: ENotificationType }) {
 
       {/*  */}
       {notis.map((item) => (
-        <NotiItem key={item._id} noti={item} onClick={handlerReadNot} />
+        <NotiItem
+          noti={item}
+          key={item._id}
+          onDelete={onDel}
+          onClick={handlerReadNoti}
+        />
       ))}
 
       {/*  */}

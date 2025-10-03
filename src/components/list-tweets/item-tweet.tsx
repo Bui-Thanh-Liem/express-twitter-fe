@@ -1,4 +1,4 @@
-import { BarChart3, Share } from "lucide-react";
+import { BarChart3, Flag, Share, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useGetDetailTweet } from "~/hooks/useFetchTweet";
 import { cn } from "~/lib/utils";
@@ -9,14 +9,23 @@ import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useDetailTweetStore } from "~/store/useDetailTweetStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
 import { HLSPlayer } from "../hls/HLSPlayer";
+import { DotIcon } from "../icons/dot";
 import { VerifyIcon } from "../icons/verify";
 import { ShortInfoProfile } from "../ShortInfoProfile";
 import { AvatarMain } from "../ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { WrapIcon } from "../wrapIcon";
 import { ActionBookmarkTweet } from "./action-bookmark-tweet";
 import { ActionCommentTweet } from "./action-comment-tweet";
 import { ActionLikeTweet } from "./action-like-tweet";
 import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
 import { Content } from "./content";
+import { useUserStore } from "~/store/useUserStore";
 
 // Component cho Media (Image hoặc Video)
 export const MediaContent = ({
@@ -64,6 +73,7 @@ export const MediaContent = ({
   );
 };
 
+//
 export const SkeletonTweet = ({ count = 1 }: { count?: number }) => {
   return (
     <div className="animate-pulse px-4 py-2">
@@ -91,6 +101,7 @@ export const SkeletonTweet = ({ count = 1 }: { count?: number }) => {
   );
 };
 
+//
 export const TweetItem = ({
   tweet,
   isAction = true,
@@ -119,7 +130,7 @@ export const TweetItem = ({
   const quoteTweet = data?.data ? data?.data : ({} as ITweet);
 
   return (
-    <div key={_id} className="px-4 py-2 hover:bg-gray-50">
+    <div key={_id} className="px-4 py-2 group hover:bg-gray-50">
       {/* Header với thông tin người dùng */}
       <div className="flex items-center mb-3">
         <AvatarMain src={author.avatar} alt={author.name} className="mr-3" />
@@ -138,6 +149,10 @@ export const TweetItem = ({
           <p className="text-sm text-gray-500">
             {author.username} • {formatTimeAgo(created_at as unknown as string)}
           </p>
+        </div>
+        {}{" "}
+        <div className="ml-auto">
+          <TweetAction tweet={tweet} />
         </div>
       </div>
 
@@ -245,3 +260,50 @@ export const TweetItem = ({
     </div>
   );
 };
+
+function TweetAction({ tweet }: { tweet: ITweet }) {
+  const { user } = useUserStore();
+  const author = tweet?.user_id as IUser;
+  console.log("author::", author);
+  console.log("user?._id::", user?._id);
+
+  return (
+    <div className="relative">
+      <div className="relative w-16 h-6 flex items-center justify-end">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              onClick={(e) => e.stopPropagation()}
+              className="absolute inset-0 flex items-center justify-end rounded-full outline-0
+                     opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto
+                     transition-opacity duration-150"
+            >
+              <WrapIcon>
+                <DotIcon size={16} />
+              </WrapIcon>
+            </button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent
+            align="start"
+            side="right"
+            sideOffset={6}
+            className="rounded-2xl px-0"
+          >
+            {user?._id === author?._id ? (
+              <DropdownMenuItem className="cursor-pointer px-3 font-semibold space-x-1">
+                <Trash className="w-3 h-3" color="var(--color-red-400)" />
+                <p className="text-red-400 text-sm">Gỡ bài viết</p>
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem className="cursor-pointer px-3 font-semibold space-x-1">
+                <Flag className="w-3 h-3" color="var(--color-red-400)" />
+                <p className="text-red-400 text-sm">Báo cáo</p>
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
+  );
+}
