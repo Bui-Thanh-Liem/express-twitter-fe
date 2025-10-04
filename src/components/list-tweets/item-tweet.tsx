@@ -1,13 +1,15 @@
-import { BarChart3, Flag, Share, Trash } from "lucide-react";
+import { BarChart3, Flag, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useGetDetailTweet } from "~/hooks/useFetchTweet";
+import { useDeleteTweet, useGetDetailTweet } from "~/hooks/useFetchTweet";
 import { cn } from "~/lib/utils";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import type { IMedia } from "~/shared/interfaces/common/media.interface";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useDetailTweetStore } from "~/store/useDetailTweetStore";
+import { useUserStore } from "~/store/useUserStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
+import { handleResponse } from "~/utils/handleResponse";
 import { HLSPlayer } from "../hls/HLSPlayer";
 import { DotIcon } from "../icons/dot";
 import { VerifyIcon } from "../icons/verify";
@@ -24,8 +26,8 @@ import { ActionBookmarkTweet } from "./action-bookmark-tweet";
 import { ActionCommentTweet } from "./action-comment-tweet";
 import { ActionLikeTweet } from "./action-like-tweet";
 import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
+import { ActionShared } from "./action-shared";
 import { Content } from "./content";
-import { useUserStore } from "~/store/useUserStore";
 
 // Component cho Media (Image hoặc Video)
 export const MediaContent = ({
@@ -105,9 +107,11 @@ export const SkeletonTweet = ({ count = 1 }: { count?: number }) => {
 export const TweetItem = ({
   tweet,
   isAction = true,
+  onSuccessDel,
 }: {
   tweet: ITweet;
   isAction?: boolean;
+  onSuccessDel: (id: string) => void;
 }) => {
   const {
     _id,
@@ -123,7 +127,7 @@ export const TweetItem = ({
 
   const author = user_id as IUser;
 
-  // Gọi api detail để lấy các tweet lồng nhau (retweet/quoteTweet)
+  // Gọi api detail để lấy các retweet/quoteTweet
   const { data } = useGetDetailTweet(parent_id);
 
   //
@@ -150,9 +154,8 @@ export const TweetItem = ({
             {author.username} • {formatTimeAgo(created_at as unknown as string)}
           </p>
         </div>
-        {}{" "}
         <div className="ml-auto">
-          <TweetAction tweet={tweet} />
+          <TweetAction tweet={tweet} onSuccessDel={onSuccessDel} />
         </div>
       </div>
 
@@ -248,11 +251,7 @@ export const TweetItem = ({
             {/* Bookmark and Shared */}
             <div className="flex items-center space-x-1">
               <ActionBookmarkTweet tweet={tweet} />
-
-              {/*  */}
-              <button className="p-2 rounded-full text-gray-500 hover:text-blue-500 hover:bg-blue-50 transition-colors cursor-pointer">
-                <Share size={18} />
-              </button>
+              <ActionShared tweet={tweet} />
             </div>
           </div>
         )}
@@ -261,11 +260,27 @@ export const TweetItem = ({
   );
 };
 
-function TweetAction({ tweet }: { tweet: ITweet }) {
+function TweetAction({
+  tweet,
+  onSuccessDel,
+}: {
+  tweet: ITweet;
+  onSuccessDel: (id: string) => void;
+}) {
   const { user } = useUserStore();
   const author = tweet?.user_id as IUser;
-  console.log("author::", author);
-  console.log("user?._id::", user?._id);
+  const apiDeleteTweet = useDeleteTweet();
+
+  // Gỡ bài viết (xoá)
+  async function onDel() {
+    const resDeleted = await apiDeleteTweet.mutateAsync(tweet._id);
+    handleResponse(resDeleted, () => {
+      onSuccessDel(tweet._id);
+    });
+  }
+
+  // Báo cáo bài viết
+  function onReport() {}
 
   return (
     <div className="relative">
@@ -291,12 +306,18 @@ function TweetAction({ tweet }: { tweet: ITweet }) {
             className="rounded-2xl px-0"
           >
             {user?._id === author?._id ? (
-              <DropdownMenuItem className="cursor-pointer px-3 font-semibold space-x-1">
+              <DropdownMenuItem
+                className="cursor-pointer px-3 font-semibold space-x-1"
+                onClick={onDel}
+              >
                 <Trash className="w-3 h-3" color="var(--color-red-400)" />
                 <p className="text-red-400 text-sm">Gỡ bài viết</p>
               </DropdownMenuItem>
             ) : (
-              <DropdownMenuItem className="cursor-pointer px-3 font-semibold space-x-1">
+              <DropdownMenuItem
+                className="cursor-pointer px-3 font-semibold space-x-1"
+                onClick={onReport}
+              >
                 <Flag className="w-3 h-3" color="var(--color-red-400)" />
                 <p className="text-red-400 text-sm">Báo cáo</p>
               </DropdownMenuItem>

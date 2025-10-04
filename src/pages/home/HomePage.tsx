@@ -3,7 +3,7 @@ import { TypographyP } from "~/components/elements/p";
 import { cn } from "~/lib/utils";
 import { EFeedType, ETweetType } from "~/shared/enums/type.enum";
 import { ListTweets } from "../../components/list-tweets/list-tweets";
-import { Tweet } from "../../components/tweet/tweet";
+import { Tweet } from "../../components/tweet/Tweet";
 
 export function HomePage() {
   // State để quản lý tab hiện tại

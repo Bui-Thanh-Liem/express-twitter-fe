@@ -13,6 +13,7 @@ import { HomePage } from "./pages/home/HomePage";
 import { MessagePage } from "./pages/messages/MessagePage";
 import { NotificationPage } from "./pages/notification/Notification";
 import { ProfilePage } from "./pages/profile/ProfilePage";
+import { TweetDetailPage } from "./pages/tweet-detail/TweetDetailPage";
 
 // Router config
 const router = createBrowserRouter([
@@ -43,6 +44,7 @@ const router = createBrowserRouter([
           { path: "explore", element: <ExplorePage /> },
           { path: "notifications", element: <NotificationPage /> },
           { path: "messages", element: <MessagePage /> },
+          { path: "tweet/:tweet_id", element: <TweetDetailPage /> },
           { path: ":username", element: <ProfilePage /> },
         ],
       },

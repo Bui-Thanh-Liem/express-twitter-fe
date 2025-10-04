@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 
 // URL backend socket server
-const SOCKET_URL = import.meta.env.VITE_API_URL || "http://localhost:9000";
+const SOCKET_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:9000";
 
 // Lấy token (ví dụ từ localStorage)
 const getToken = () => localStorage.getItem("access_token");

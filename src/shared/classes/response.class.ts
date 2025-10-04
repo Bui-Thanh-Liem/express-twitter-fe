@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 abstract class AResponse<T = any> {
   statusCode: number = 200
   message: string

@@ -101,10 +101,6 @@ export function ProfilePage() {
           </WrapIcon>
           <p className="font-semibold text-[20px]">{profile?.name}</p>
         </div>
-
-        {/* <WrapIcon>
-          <SearchIcon />
-        </WrapIcon> */}
       </div>
 
       <div className="max-h-screen overflow-y-auto scrollbar-hide">

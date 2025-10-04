@@ -36,7 +36,6 @@ export function ForgotPasswordForm({
 
   //
   const onSubmit = (data: ForgotPasswordDto) => {
-    logger.info("✅ Dữ liệu ForgotPasswordForm :", data);
     setOpenForm(false);
     onSuccess();
     reset();

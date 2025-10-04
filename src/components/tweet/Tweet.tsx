@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { EmojiSelector } from "~/components/emoji-picker";
 import { CloseIcon } from "~/components/icons/close";
 import { ImageIcon } from "~/components/icons/image";
-import { TweetAudience } from "~/components/tweet/tweet-audience";
+import { TweetAudience } from "~/components/tweet/TweetAudience";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useCreateTweet } from "~/hooks/useFetchTweet";
@@ -428,7 +428,11 @@ export function Tweet({
             {/*  */}
             {tweetType === ETweetType.QuoteTweet && tweet && (
               <div className="w-ful mt-1 rounded-3xl border overflow-hidden">
-                <TweetItem isAction={false} tweet={tweet} />
+                <TweetItem
+                  isAction={false}
+                  tweet={tweet}
+                  onSuccessDel={() => {}}
+                />
               </div>
             )}
             <div className="w-full border-b border-gray-200 mt-3" />

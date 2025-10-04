@@ -54,7 +54,6 @@ export function SidebarLeft() {
   useConversationSocket(
     () => {},
     (unread) => {
-      console.log("server - client - conv unread :::", unread);
       setUnreadCountConv(unread);
     },
     () => {}
@@ -131,7 +130,9 @@ export function SidebarLeft() {
                     : x.icon}
                   <span className="line-clamp-1">{x.name}</span>
                   {!!x?.countNoti && (
-                    <span className="absolute top-3 left-2 w-2 h-2 bg-sky-400 rounded-full" />
+                    <p className="absolute top-2 left-2 flex items-center justify-center w-4 h-4 bg-sky-400 text-white rounded-full text-[10px]">
+                      {x?.countNoti}
+                    </p>
                   )}
                 </TypographyP>
               </Link>

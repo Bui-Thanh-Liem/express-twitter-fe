@@ -1,7 +1,7 @@
 import type { OkResponse } from "~/shared/classes/response.class";
 import type { ResLoginUser } from "~/shared/dtos/res/auth.dto";
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_SERVER_URL;
 
 export const apiCall = async <T>(
   endpoint: string,

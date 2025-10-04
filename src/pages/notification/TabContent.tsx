@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { CloseIcon } from "~/components/icons/close";
 import { AvatarMain } from "~/components/ui/avatar";
 import { WrapIcon } from "~/components/wrapIcon";
@@ -7,8 +8,9 @@ import {
   useGetMultiByType,
 } from "~/hooks/useFetchNotifications";
 import { cn } from "~/lib/utils";
-import { ENotificationType } from "~/shared/enums/type.enum";
+import { ENotificationType, ETweetType } from "~/shared/enums/type.enum";
 import type { INotification } from "~/shared/interfaces/schemas/notification.interface";
+import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useNotificationSocket } from "~/socket/hooks/useNotificationSocket";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
@@ -44,7 +46,9 @@ function SkeletonNotiItem() {
   );
 }
 
+//
 function NotiItem({ noti, onClick, onDelete }: Props) {
+  const navigate = useNavigate();
   const [read, setRead] = useState(noti?.isRead);
   const sender =
     typeof noti.sender === "object" ? (noti.sender as IUser) : undefined;
@@ -53,6 +57,20 @@ function NotiItem({ noti, onClick, onDelete }: Props) {
   function handlerClick() {
     if (onClick) onClick(noti);
     setRead(true);
+
+    //
+    if (!noti?.refId) return;
+
+    //
+    if (noti.type === ENotificationType.MENTION) {
+      const _tweet = noti.refId as ITweet; // Mentions thì ref là tweet
+      if (_tweet.type === ETweetType.Comment) {
+        navigate(`/tweet/${_tweet.parent_id}`);
+        return;
+      }
+      navigate(`/tweet/${_tweet._id}`);
+      return;
+    }
   }
 
   //

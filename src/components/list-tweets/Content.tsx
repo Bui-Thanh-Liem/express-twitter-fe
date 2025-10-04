@@ -33,7 +33,6 @@ export function Content({
     }
 
     // check hashtag
-
     if (part.startsWith("#")) {
       //
       return (

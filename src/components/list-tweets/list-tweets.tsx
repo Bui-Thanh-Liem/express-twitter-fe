@@ -131,6 +131,11 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
     );
   }
 
+  // Thực hiện khi xoá bài viết thành công ở BE
+  function onSuccessDel(id: string) {
+    setAllTweets((prev) => prev.filter((tw) => tw._id !== id));
+  }
+
   return (
     <div className="max-w-2xl mx-auto">
       {/* Loading state cho lần load đầu tiên */}
@@ -164,8 +169,9 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
           {allTweets.map((tweet, index: number) => (
             <span key={tweet._id}>
               <TweetItem
-                key={tweet._id || `${tweet._id}-${index}`}
                 tweet={tweet}
+                key={tweet._id}
+                onSuccessDel={onSuccessDel}
               />
               {index < allTweets.length - 1 && (
                 <hr className="border-gray-200" />

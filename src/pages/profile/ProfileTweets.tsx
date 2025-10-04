@@ -119,6 +119,11 @@ export function ProfileTweets({
     });
   }, [profile_id, tweetType]);
 
+  // Thực hiện khi xoá thành công tweet
+  function onDel(id: string) {
+    setAllTweets((prev) => prev.filter((tw) => tw._id !== id));
+  }
+
   return (
     <div>
       {/* Tweets list */}
@@ -127,8 +132,9 @@ export function ProfileTweets({
           {allTweets.map((tweet, index: number) => (
             <span key={tweet._id}>
               <TweetItem
-                key={tweet._id || `${tweet._id}-${index}`}
                 tweet={tweet}
+                onSuccessDel={onDel}
+                key={tweet._id || `${tweet._id}-${index}`}
               />
               {index < allTweets.length - 1 && (
                 <hr className="border-gray-200" />

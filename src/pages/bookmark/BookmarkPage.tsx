@@ -125,9 +125,10 @@ export function BookmarkPage() {
     setIsLoadingMore(false);
   }, [debouncedSearchVal]);
 
-  console.log("allTweets", allTweets);
-  console.log("page", page);
-  console.log("searchVal", searchVal);
+  // Thực hiện khi xoá thành công tweet
+  function onDel(id: string) {
+    setAllTweets((prev) => prev.filter((tw) => tw._id !== id));
+  }
 
   return (
     <div>
@@ -160,7 +161,7 @@ export function BookmarkPage() {
           <div className="space-y-6">
             {allTweets.map((tweet, index: number) => (
               <span key={tweet._id}>
-                <TweetItem tweet={tweet} />
+                <TweetItem tweet={tweet} onSuccessDel={onDel} />
                 {index < allTweets.length - 1 && (
                   <hr className="border-gray-200" />
                 )}
