@@ -30,7 +30,7 @@ export function ProfileMedia({
   const observerInstanceRef = useRef<IntersectionObserver | null>(null);
 
   const { data, isLoading, error } = useGetProfileMedia({
-    limit: "20",
+    limit: "10",
     user_id: profile_id,
     page: page.toString(),
   });
@@ -59,7 +59,7 @@ export function ProfileMedia({
       }
 
       // Kiểm tra xem còn data để load không
-      if (newMedia.length < 20) {
+      if (newMedia.length < 10) {
         // Nếu số media trả về ít hơn limit
         setHasMore(false);
       }
@@ -145,12 +145,15 @@ export function ProfileMedia({
   }
 
   return (
-    <div>
+    <div className="px-4">
       {/* Media grid */}
       {allMedia.length > 0 && (
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-3 gap-x-6 gap-y-0">
           {allMedia.map((m, index) => (
-            <div key={m.media?.url || `media-${index}`} className="-mb-6">
+            <div
+              key={m.media?.url || `media-${index}`}
+              className="aspect-square"
+            >
               <MediaContent
                 type={m.media?.type || EMediaType.Image}
                 url={m.media?.url || ""}

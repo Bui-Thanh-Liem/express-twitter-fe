@@ -10,7 +10,7 @@ import { TypographyP } from "../elements/p";
 import { AccountFollowIcon } from "../icons/account-follow";
 import { CheckIcon } from "../icons/check";
 import { EarthIcon } from "../icons/earth";
-// import { MentionsIcon } from "../icons/mentions";
+import { MentionsIcon } from "../icons/mentions";
 
 //
 const replyOptions = [
@@ -20,15 +20,15 @@ const replyOptions = [
     icon: <EarthIcon color="#fff" />,
   },
   {
+    id: ETweetAudience.Mentions,
+    title: "Chỉ những ai bạn nhắc đến",
+    icon: <MentionsIcon color="#fff" />,
+  },
+  {
     id: ETweetAudience.Followers,
     title: "Chỉ những ai đang theo dõi bạn",
     icon: <AccountFollowIcon color="#fff" />,
   },
-  // {
-  //   id: ETweetAudience.Mentions,
-  //   title: "Chỉ những ai bạn nhắc đến",
-  //   icon: <MentionsIcon color="#fff" />,
-  // },
 ];
 
 export function TweetAudience({

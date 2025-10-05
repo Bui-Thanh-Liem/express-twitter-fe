@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
-  WhoToFollowItem,
-  WhoToFollowItemSkeleton,
+  UserToFollowItem,
+  UserToFollowItemSkeleton,
 } from "~/components/who-to-follow/who-to-follow-item";
 import { useGetTopFollowedUsers } from "~/hooks/useFetchUser";
 import { cn } from "~/lib/utils";
@@ -67,7 +67,7 @@ export function WhoToFollows() {
         id="who-to-follow"
         className="block"
         style={{
-          scrollMarginTop: "40px",
+          scrollMarginTop: "60px",
         }}
       ></a>
       <p className="text-xl font-bold mt-3 py-2 sticky top-16 z-40 bg-gray-50">
@@ -77,14 +77,14 @@ export function WhoToFollows() {
       {/*  */}
       <div>
         {users.map((item) => (
-          <WhoToFollowItem key={item._id} user={item} />
+          <UserToFollowItem key={item._id} user={item} />
         ))}
       </div>
 
       {/*  */}
       {isLoading
         ? Array.from({ length: 2 }).map((_, i) => (
-            <WhoToFollowItemSkeleton key={`more-${i}`} />
+            <UserToFollowItemSkeleton key={`more-${i}`} />
           ))
         : !!users.length && (
             <div className="px-4 py-3">

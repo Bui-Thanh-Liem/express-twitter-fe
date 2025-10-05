@@ -107,6 +107,11 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
     });
   }, [profile_id]);
 
+  // Thực hiện khi xoá thành công tweet
+  function onDel(id: string) {
+    setAllTweets((prev) => prev.filter((tw) => tw._id !== id));
+  }
+
   return (
     <div>
       {/* Loading state cho lần load đầu tiên */}
@@ -117,7 +122,7 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
         <div className="space-y-6">
           {allTweets.map((tweet, index: number) => (
             <span key={tweet._id}>
-              <TweetItem tweet={tweet} />
+              <TweetItem tweet={tweet} onSuccessDel={onDel} />
               {index < allTweets.length - 1 && (
                 <hr className="border-gray-200" />
               )}

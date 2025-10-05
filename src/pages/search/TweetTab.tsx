@@ -1,32 +1,27 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeftIcon } from "~/components/icons/arrow-left";
+import { useSearchParams } from "react-router-dom";
 import { SkeletonTweet, TweetItem } from "~/components/list-tweets/item-tweet";
-import { SearchMain } from "~/components/ui/search";
-import { WrapIcon } from "~/components/wrapIcon";
-import { useDebounce } from "~/hooks/useDebounce";
-import { useGetTweetBookmarked } from "~/hooks/useFetchTweet";
+import { TabsContent } from "~/components/ui/tabs";
+import { useSearchTweets } from "~/hooks/useFetchSearch";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 
-export function BookmarkPage() {
+export function TweetTab() {
+  const [searchParams] = useSearchParams();
+  const q = searchParams.get("q");
+
   // State để quản lý pagination và data
   const [page, setPage] = useState(1);
   const [allTweets, setAllTweets] = useState<ITweet[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const navigate = useNavigate();
-
-  // Search
-  const [searchVal, setSearchVal] = useState("");
-  const debouncedSearchVal = useDebounce(searchVal, 500);
 
   // Ref để theo dõi element cuối cùng
   const observerRef = useRef<HTMLDivElement>(null);
   const observerInstanceRef = useRef<IntersectionObserver | null>(null);
 
-  const { data, isLoading, error } = useGetTweetBookmarked({
+  const { data, isLoading, error } = useSearchTweets({
     limit: "10",
-    q: debouncedSearchVal,
+    q: q ?? "",
     page: page.toString(),
   });
 
@@ -123,7 +118,7 @@ export function BookmarkPage() {
     setPage(1);
     setHasMore(true);
     setIsLoadingMore(false);
-  }, [debouncedSearchVal]);
+  }, [q]);
 
   // Thực hiện khi xoá thành công tweet
   function onDel(id: string) {
@@ -131,28 +126,8 @@ export function BookmarkPage() {
   }
 
   return (
-    <div>
-      {/* Header */}
-      <div className="px-3 flex justify-between items-center border border-gray-100">
-        <div className="flex h-12 items-center gap-6 ">
-          <WrapIcon onClick={() => navigate(-1)} aria-label="Quay lại">
-            <ArrowLeftIcon />
-          </WrapIcon>
-          <p className="font-semibold text-[20px]">Bookmarks</p>
-        </div>
-      </div>
-
-      {/* Search */}
-      <div className="p-4">
-        <SearchMain
-          size="lg"
-          value={searchVal}
-          onClear={() => setSearchVal("")}
-          onChange={setSearchVal}
-        />
-      </div>
-
-      <div className="max-h-[calc(100vh-(140px))] overflow-y-auto">
+    <TabsContent value="tweet" className="px-0 pb-4">
+      <div className="max-h-[calc(100vh-(150px))] overflow-y-auto">
         {/* Loading state cho lần load đầu tiên */}
         {isLoading && page === 1 && <SkeletonTweet />}
 
@@ -178,28 +153,16 @@ export function BookmarkPage() {
         )}
 
         {/* Empty state - chưa có data nhưng không phải total = 0 */}
-        {!isLoading && allTweets.length === 0 && page === 1 && !searchVal && (
+        {!isLoading && allTweets.length === 0 && page === 1 && (
           <div className="text-center py-8">
             <p className="text-gray-500 text-lg mb-2">
-              📑 Chưa có bài viết nào được đánh dấu
+              Không có bài viết nào phù hợp với <strong>"{q}"</strong>
             </p>
-            <p className="text-gray-400">
-              Hãy đánh dấu một số bài viết để chúng xuất hiện ở đây!
-            </p>
-          </div>
-        )}
-
-        {!isLoading && allTweets.length === 0 && page === 1 && searchVal && (
-          <div className="text-center py-8">
-            <p className="text-gray-500 text-lg mb-2">
-              Không tìm thấy tweet nào khớp với "{searchVal}"
-            </p>
-            <p className="text-gray-400">Hãy thử từ khóa khác!</p>
           </div>
         )}
 
         {/* Observer element - invisible trigger cho infinite scroll */}
-        <div ref={observerRef} className="h-10 w-full" />
+        <div ref={observerRef} className="h-10 w-full bg-amber-200" />
 
         {/* End of content indicator */}
         {!hasMore && allTweets.length > 0 && (
@@ -229,6 +192,6 @@ export function BookmarkPage() {
           </div>
         )}
       </div>
-    </div>
+    </TabsContent>
   );
 }

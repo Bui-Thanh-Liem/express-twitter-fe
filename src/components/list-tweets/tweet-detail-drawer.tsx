@@ -1,7 +1,7 @@
 "use client";
 
 import { BarChart3, Heart, MessageCircle, Repeat2, Share } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useGetTweetChildren } from "~/hooks/useFetchTweet";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
@@ -35,28 +35,103 @@ export function TweetDetailDrawer() {
 
   //
   const [tweetComments, setTweetComments] = useState<ITweet[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { tweet, close, isOpen, prevTweet, setTweet, setPrevTweet } =
     useDetailTweetStore();
+
+  // Ref for infinite scroll
+  const observerRef = useRef<HTMLDivElement>(null);
+  const observerInstanceRef = useRef<IntersectionObserver | null>(null);
 
   //
   useEffect(() => {
     close();
   }, [close, pathname]);
 
-  // Gọi api comments
-  const { data, isLoading } = useGetTweetChildren({
+  // Gọi api comments (theo page)
+  const { data, isLoading: isLoadingCmm } = useGetTweetChildren({
     tweet_id: tweet?._id,
     tweet_type: ETweetType.Comment,
     queries: {
-      page: "1",
-      limit: "20",
+      page: page.toString(),
+      limit: "10",
     },
   });
-  useEffect(() => {
-    setTweetComments(data?.data?.items || []);
-  }, [data?.data?.items]);
 
-  // Không có tweet thì chỉ xem không xem chi tiết được
+  // Khi có data mới => append vào list
+  useEffect(() => {
+    if (data?.data?.items) {
+      const newComments = data.data.items as ITweet[];
+
+      if (page === 1) {
+        setTweetComments(newComments);
+      } else {
+        setTweetComments((prev) => {
+          const existIds = new Set(prev.map((tw) => tw._id));
+          const filtered = newComments.filter((tw) => !existIds.has(tw._id));
+          return [...prev, ...filtered];
+        });
+      }
+
+      if (newComments.length < 10) {
+        setHasMore(false);
+      }
+      setIsLoadingMore(false);
+    }
+  }, [data?.data?.items, page]);
+
+  // Observer callback
+  const handleObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const [entry] = entries;
+      if (
+        entry.isIntersecting &&
+        hasMore &&
+        !isLoadingCmm &&
+        !isLoadingMore &&
+        tweetComments.length > 0
+      ) {
+        setIsLoadingMore(true);
+        setPage((prev) => prev + 1);
+      }
+    },
+    [hasMore, isLoadingCmm, isLoadingMore, tweetComments.length]
+  );
+
+  // Setup observer
+  useEffect(() => {
+    const element = observerRef.current;
+    if (!element) return;
+
+    if (observerInstanceRef.current) {
+      observerInstanceRef.current.disconnect();
+    }
+
+    observerInstanceRef.current = new IntersectionObserver(handleObserver, {
+      threshold: 0,
+      rootMargin: "0px",
+    });
+
+    observerInstanceRef.current.observe(element);
+
+    return () => {
+      if (observerInstanceRef.current) {
+        observerInstanceRef.current.disconnect();
+      }
+    };
+  }, [handleObserver]);
+
+  // Reset khi đổi tweet
+  useEffect(() => {
+    setPage(1);
+    // setTweetComments([]);
+    setHasMore(true);
+    setIsLoadingMore(false);
+  }, [tweet?._id]);
+
+  //
   if (!tweet) {
     return <></>;
   }
@@ -98,7 +173,7 @@ export function TweetDetailDrawer() {
       {/* Các phần tử nằm trên overlay, ngoài DrawerOverlay */}
       {isOpen && (
         <div
-          className="fixed top-0 left-0 w-3/4 z-[1500] h-screen p-4 pl-28"
+          className="fixed top-0 left-0 w-3/4 z-[100] h-screen p-4 pl-28"
           onClick={() => close()}
         >
           {/* Content tweet */}
@@ -135,7 +210,6 @@ export function TweetDetailDrawer() {
               <div className="text-white flex items-center gap-3">
                 <Repeat2 size={24} />
                 <span className="text-sm">
-                  {" "}
                   {(retweets_count || 0) + (quotes_count || 0)}
                 </span>
               </div>
@@ -210,15 +284,40 @@ export function TweetDetailDrawer() {
           </div>
 
           {/* COMMENTS */}
-          {tweetComments?.length ? (
-            tweetComments.map((tw) => {
-              return <TweetItem tweet={tw} key={tw._id} onSuccessDel={onDel} />;
-            })
-          ) : isLoading ? (
-            <SkeletonTweet />
-          ) : (
-            <div className="flex h-24">
-              <p className="m-auto text-gray-400 text-sm">Chưa có bình luận</p>
+          <div>
+            {tweetComments?.length ? (
+              tweetComments.map((tw) => {
+                return (
+                  <TweetItem tweet={tw} key={tw._id} onSuccessDel={onDel} />
+                );
+              })
+            ) : isLoadingCmm ? (
+              <SkeletonTweet />
+            ) : (
+              <div className="flex h-24">
+                <p className="m-auto text-gray-400 text-sm">
+                  Chưa có bình luận
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Loading more */}
+          {isLoadingMore && (
+            <div className="py-4">
+              <SkeletonTweet />
+            </div>
+          )}
+
+          {/* Observer element */}
+          <div ref={observerRef} className="h-10 w-full" />
+
+          {/* End message */}
+          {!hasMore && tweetComments.length > 0 && (
+            <div className="text-center py-6 mb-6">
+              <p className="text-gray-500">
+                🎉 Bạn đã xem hết tất cả bình luận!
+              </p>
             </div>
           )}
         </div>

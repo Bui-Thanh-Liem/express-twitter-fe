@@ -6,6 +6,7 @@ import { WrapIcon } from "~/components/wrapIcon";
 import {
   useDeleteNotification,
   useGetMultiByType,
+  useReadNotification,
 } from "~/hooks/useFetchNotifications";
 import { cn } from "~/lib/utils";
 import { ENotificationType, ETweetType } from "~/shared/enums/type.enum";
@@ -48,6 +49,8 @@ function SkeletonNotiItem() {
 
 //
 function NotiItem({ noti, onClick, onDelete }: Props) {
+  console.log("noti:::", noti);
+
   const navigate = useNavigate();
   const [read, setRead] = useState(noti?.isRead);
   const sender =
@@ -62,13 +65,26 @@ function NotiItem({ noti, onClick, onDelete }: Props) {
     if (!noti?.refId) return;
 
     //
-    if (noti.type === ENotificationType.MENTION) {
-      const _tweet = noti.refId as ITweet; // Mentions thì ref là tweet
+    if (noti.type === ENotificationType.MENTION_LIKE) {
+      const _tweet = noti.tweetRef as ITweet; // Mentions thì ref là tweet
+
+      // Được nhắc đến trong comment
       if (_tweet.type === ETweetType.Comment) {
+        console.log("Được nhắc đến trong comment::");
         navigate(`/tweet/${_tweet.parent_id}`);
         return;
       }
+
+      // Được nhắc đến trong bài viết
+      console.log("nhắc đến trong bài viết::");
       navigate(`/tweet/${_tweet._id}`);
+      return;
+    }
+
+    //
+    if (noti.type === ENotificationType.FOLLOW) {
+      const _user = noti.userRef as IUser; // Follow thì ref là user
+      navigate(`/${_user.username}`);
       return;
     }
   }
@@ -147,9 +163,13 @@ export function TabContent({ type }: { type: ENotificationType }) {
     type,
   });
   const apiDeleteNoti = useDeleteNotification();
+  const apiReadNoti = useReadNotification();
+
+  console.log("TabContent - type:::", type);
+  console.log("data?.data:::", data?.data);
 
   // Socket
-  const { readNoti } = useNotificationSocket(
+  useNotificationSocket(
     (newNoti) => {
       if (
         newNoti &&
@@ -178,7 +198,7 @@ export function TabContent({ type }: { type: ENotificationType }) {
   //
   useEffect(() => {
     setPage(1);
-    setNotis([]);
+    // setNotis([]);
     refetch();
   }, [refetch, type]);
 
@@ -188,8 +208,10 @@ export function TabContent({ type }: { type: ENotificationType }) {
   }
 
   //
-  function handlerReadNoti(noti: INotification) {
-    if (!noti.isRead) readNoti(noti._id);
+  async function handlerReadNoti(noti: INotification) {
+    if (!noti.isRead) {
+      await apiReadNoti.mutateAsync(noti._id);
+    }
   }
 
   //
@@ -198,6 +220,11 @@ export function TabContent({ type }: { type: ENotificationType }) {
     handleResponse(resDeleted);
     setNotis((prev) => prev.filter((n) => n._id !== noti._id));
   }
+
+  useEffect(() => {
+    console.log("isLoading:::", isLoading);
+  }, [isLoading]);
+  console.log("isLoading:::", isLoading);
 
   //
   return (

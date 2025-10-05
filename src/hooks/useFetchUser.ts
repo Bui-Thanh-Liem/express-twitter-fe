@@ -25,7 +25,9 @@ export const useGetMultiForMentions = (username: string, enabled = true) => {
     queryFn: () => {
       // Tạo query string từ queries object
       const url = `/users/mentions/${username}`;
-      return apiCall<Pick<IUser, "_id" | "name" | "username">[]>(url);
+      return apiCall<
+        Pick<IUser, "_id" | "name" | "username" | "avatar" | "verify">[]
+      >(url);
     },
 
     //

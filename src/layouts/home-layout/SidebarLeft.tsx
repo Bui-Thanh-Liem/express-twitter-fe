@@ -10,8 +10,10 @@ import { HomeIcon } from "~/components/icons/home";
 import { MessageIcon } from "~/components/icons/messages";
 import { NotificationIcon } from "~/components/icons/notifications";
 import { ProfileIcon } from "~/components/icons/profile";
+import { Tweet } from "~/components/tweet/Tweet";
 import { AvatarMain } from "~/components/ui/avatar";
 import { ButtonMain } from "~/components/ui/button";
+import { DialogMain } from "~/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +22,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { useLogout } from "~/hooks/useFetchAuth";
 import { cn } from "~/lib/utils";
+import { ETweetType } from "~/shared/enums/type.enum";
 import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useNotificationSocket } from "~/socket/hooks/useNotificationSocket";
 import { useUserStore } from "~/store/useUserStore";
@@ -41,6 +44,7 @@ export function SidebarLeft() {
   //
   const [unreadCountNoti, setUnreadCountNoti] = useState(0);
   const [unreadCountConv, setUnreadCountConv] = useState(0);
+  const [isOpenPost, setIsOpenPost] = useState(false);
 
   //
   useNotificationSocket(
@@ -71,16 +75,17 @@ export function SidebarLeft() {
       path: "/explore",
     },
     {
-      name: "Dấu trang",
-      icon: <BookmarkIcon />,
-      path: "/bookmarks",
-    },
-    {
       name: "Thông báo",
       icon: <NotificationIcon />,
       path: "/notifications",
       countNoti: unreadCountNoti,
     },
+    {
+      name: "Dấu trang",
+      icon: <BookmarkIcon />,
+      path: "/bookmarks",
+    },
+
     {
       name: "Tin nhắn",
       icon: <MessageIcon />,
@@ -104,82 +109,102 @@ export function SidebarLeft() {
     await logout.mutateAsync();
   }
 
+  //
+  function onSuccessComment() {}
+
   return (
-    <div className="relative h-full pt-1">
-      <h2 className="text-lg font-semibold mb-4">
-        <WrapIcon>
-          <Logo size={30} />
-        </WrapIcon>
-      </h2>
-      <ul className="space-y-3 text-sm text-gray-700">
-        {navs.map((x) => {
-          const isActive = pathname === x.path;
-          return (
-            <li key={x.name} className="cursor-pointer group relative">
-              <Link to={x.path}>
-                <TypographyP
-                  className={cn(
-                    "text-[22px] p-3 group-hover:bg-gray-100 rounded-3xl flex items-center gap-3",
-                    isActive ? "font-semibold" : ""
-                  )}
-                >
-                  {React.isValidElement(x.icon) &&
-                  typeof x.icon.type === "function"
-                    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      React.cloneElement(x.icon, { active: isActive } as any)
-                    : x.icon}
-                  <span className="line-clamp-1">{x.name}</span>
-                  {!!x?.countNoti && (
-                    <p className="absolute top-2 left-2 flex items-center justify-center w-4 h-4 bg-sky-400 text-white rounded-full text-[10px]">
-                      {x?.countNoti}
-                    </p>
-                  )}
-                </TypographyP>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+    <>
+      <div className="relative h-full pt-1">
+        <h2 className="text-lg font-semibold mb-4">
+          <WrapIcon>
+            <Logo size={30} />
+          </WrapIcon>
+        </h2>
+        <ul className="space-y-3 text-sm text-gray-700">
+          {navs.map((x) => {
+            const isActive = pathname === x.path;
+            return (
+              <li key={x.name} className="cursor-pointer group relative">
+                <Link to={x.path}>
+                  <TypographyP
+                    className={cn(
+                      "text-[22px] p-3 group-hover:bg-gray-100 rounded-3xl flex items-center gap-3",
+                      isActive ? "font-semibold" : ""
+                    )}
+                  >
+                    {React.isValidElement(x.icon) &&
+                    typeof x.icon.type === "function"
+                      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        React.cloneElement(x.icon, { active: isActive } as any)
+                      : x.icon}
+                    <span className="line-clamp-1">{x.name}</span>
+                    {!!x?.countNoti && (
+                      <span className="absolute top-2 left-6 flex items-center justify-center w-4 h-4 bg-sky-400 text-white rounded-full text-[10px]">
+                        {x?.countNoti}
+                      </span>
+                    )}
+                  </TypographyP>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
 
-      <div className="absolute w-full bottom-28">
-        <ButtonMain size="lg" className="w-full bg-black hover:bg-[#333]">
-          Đăng Bài
-        </ButtonMain>
-      </div>
-
-      <div className="absolute w-full bottom-3 p-2 px-3 rounded-4xl hover:bg-gray-100 cursor-pointer flex items-center gap-3">
-        <AvatarMain src={user?.avatar} alt={user?.name} />
-        <div>
-          <span className="block font-bold">{user?.name}</span>
-          <span className="text-sm text-gray-400">{user?.username}</span>
+        <div className="absolute w-full bottom-28">
+          <ButtonMain
+            size="lg"
+            onClick={() => setIsOpenPost(true)}
+            className="w-full bg-black hover:bg-[#333]"
+          >
+            Đăng Bài
+          </ButtonMain>
         </div>
 
-        <div className="absolute right-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="outline-0 outline-transparent">
-                <WrapIcon>
-                  <DotIcon />
-                </WrapIcon>
-              </button>
-            </DropdownMenuTrigger>
+        <div className="absolute w-full bottom-3 p-2 px-3 rounded-4xl hover:bg-gray-100 cursor-pointer flex items-center gap-3">
+          <AvatarMain src={user?.avatar} alt={user?.name} />
+          <div>
+            <span className="block font-bold">{user?.name}</span>
+            <span className="text-sm text-gray-400">{user?.username}</span>
+          </div>
 
-            {/*  */}
-            <DropdownMenuContent
-              side="right"
-              align="end"
-              className="rounded-2xl w-60 px-0 py-2"
-            >
-              <DropdownMenuItem
-                className="cursor-pointer h-10 px-4 font-semibold"
-                onClick={onLogout}
+          <div className="absolute right-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="outline-0 outline-transparent">
+                  <WrapIcon>
+                    <DotIcon />
+                  </WrapIcon>
+                </button>
+              </DropdownMenuTrigger>
+
+              {/*  */}
+              <DropdownMenuContent
+                side="right"
+                align="end"
+                className="rounded-2xl w-60 px-0 py-2"
               >
-                <span className="text-red-500">Đăng xuất {user?.username}</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <DropdownMenuItem
+                  className="cursor-pointer h-10 px-4 font-semibold"
+                  onClick={onLogout}
+                >
+                  <span className="text-red-500">
+                    Đăng xuất {user?.username}
+                  </span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
-    </div>
+
+      <DialogMain isLogo={false} open={isOpenPost} onOpenChange={setIsOpenPost}>
+        <Tweet
+          contentBtn="Đăng bài"
+          tweetType={ETweetType.Tweet}
+          placeholder="Có chuyện gì thế ?"
+          onSuccess={onSuccessComment}
+        />
+      </DialogMain>
+    </>
   );
 }

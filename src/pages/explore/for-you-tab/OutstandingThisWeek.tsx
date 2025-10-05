@@ -4,19 +4,20 @@ import {
   TodayNewsItem,
   TodayNewsItemSkeleton,
 } from "~/components/today-news/today-news-item";
-import { useGetTodayNews } from "~/hooks/useFetchTrending";
+import { useGetOutstandingThisWeek } from "~/hooks/useFetchTrending";
 import { cn } from "~/lib/utils";
 import type { IResTodayNews } from "~/shared/dtos/res/explore.dto";
 import { toastSimple } from "~/utils/toastSimple.util";
 
-export function TodayNews() {
+export function OutstandingThisWeek() {
   const location = useLocation();
-  const [news, setNews] = useState<IResTodayNews[]>([]);
   const [limit, setLimit] = useState(4);
+
+  const [outstanding, setOutstanding] = useState<IResTodayNews[]>([]);
   const countWarning = useRef(0);
 
   //
-  const { data, isLoading } = useGetTodayNews(
+  const { data, isLoading } = useGetOutstandingThisWeek(
     {
       page: "1",
       limit: limit.toString(),
@@ -28,7 +29,7 @@ export function TodayNews() {
   useEffect(() => {
     const items = data?.data || [];
     if (items.length > 0) {
-      setNews((prev) => {
+      setOutstanding((prev) => {
         // Create a Set of existing IDs for quick lookup
         const existingIds = new Set(prev.map((item) => item.id));
         // Filter out items that already exist in the state
@@ -56,10 +57,10 @@ export function TodayNews() {
     setLimit((prev) => prev + 20);
   }
 
-  // Scroll to top khi có hash #news-today
+  // Scroll to top khi có hash #outstanding-this-week
   useEffect(() => {
-    if (window.location.hash === "#news-today") {
-      const el = document.getElementById("news-today");
+    if (window.location.hash === "#outstanding-this-week") {
+      const el = document.getElementById("outstanding-this-week");
 
       if (el) {
         setTimeout(() => {
@@ -85,7 +86,7 @@ export function TodayNews() {
   useEffect(() => {
     return () => {
       setLimit(4);
-      setNews([]);
+      setOutstanding([]);
     };
   }, []);
 
@@ -93,50 +94,49 @@ export function TodayNews() {
   return (
     <>
       <a
-        id="news-today"
+        id="outstanding-this-week"
         className="block"
         style={{
-          scrollMarginTop: "80px",
+          scrollMarginTop: "40px",
         }}
       />
-      <p className="text-xl font-bold py-2 bg-gray-50 sticky top-16 z-20">
-        Tin tức hôm nay
+      <p className="text-xl font-bold mt-4 py-2 bg-gray-50 sticky top-16 z-30">
+        Nổi bật trong tuần
       </p>
 
+      {/*  */}
       <div>
-        {/*  */}
-        {news.map((item) => (
+        {outstanding?.map((item) => (
           <TodayNewsItem key={item.id} item={item} isMedia />
         ))}
-
-        {/*  */}
-        {isLoading
-          ? Array.from({ length: 2 }).map((_, i) => (
-              <TodayNewsItemSkeleton key={`more-${i}`} />
-            ))
-          : !!news.length && (
-              <div className="px-4 py-3">
-                <p
-                  className={cn(
-                    "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer",
-                    countWarning.current >= 3
-                      ? "text-gray-300 pointer-events-none cursor-default"
-                      : ""
-                  )}
-                  onClick={onSeeMore}
-                >
-                  Xem thêm
-                </p>
-              </div>
-            )}
-
-        {/*  */}
-        {!news.length && !isLoading && (
-          <div className="flex justify-center items-center h-20">
-            <p className="text-gray-400">Chưa có gì nổi bật hôm nay</p>
-          </div>
-        )}
       </div>
+
+      {/*  */}
+      {isLoading
+        ? Array.from({ length: 2 }).map((_, i) => (
+            <TodayNewsItemSkeleton key={`more-${i}`} />
+          ))
+        : !!outstanding.length && (
+            <div className="px-4 py-3">
+              <p
+                className={cn(
+                  "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer",
+                  countWarning.current <= 3
+                    ? "text-gray-300 pointer-events-none cursor-default"
+                    : ""
+                )}
+                onClick={onSeeMore}
+              >
+                Xem thêm
+              </p>
+            </div>
+          )}
+
+      {!outstanding.length && !isLoading && (
+        <div className="flex justify-center items-center h-20">
+          <p className="text-gray-400">Chưa có sự kiện gì nổi bật</p>
+        </div>
+      )}
     </>
   );
 }

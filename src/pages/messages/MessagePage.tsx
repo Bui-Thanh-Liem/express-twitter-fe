@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon } from "~/components/icons/arrow-left";
-import { SearchMain } from "~/components/ui/search";
 import { WrapIcon } from "~/components/wrapIcon";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import { ConversationList } from "./ConversationList";
 import { MessageView } from "./MessageView";
+import { SearchMain } from "~/components/ui/search";
 
 export function MessagePage() {
   const navigate = useNavigate();

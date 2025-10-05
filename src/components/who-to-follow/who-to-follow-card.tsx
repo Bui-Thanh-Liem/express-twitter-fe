@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useGetTopFollowedUsers } from "~/hooks/useFetchUser";
 import { cn } from "~/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { WhoToFollowItem, WhoToFollowItemSkeleton } from "./who-to-follow-item";
+import {
+  UserToFollowItem,
+  UserToFollowItemSkeleton,
+} from "./who-to-follow-item";
+import { useGetTopFollowedUsers } from "~/hooks/useFetchUser";
 
 export function WhoToFollowCard() {
   const { data, isLoading } = useGetTopFollowedUsers({
@@ -37,10 +40,10 @@ export function WhoToFollowCard() {
         {/*  */}
         {isLoading
           ? Array.from({ length: 2 }).map((_, i) => (
-              <WhoToFollowItemSkeleton key={`more-${i}`} />
+              <UserToFollowItemSkeleton key={`more-${i}`} />
             ))
           : whoToFollows.map((item) => (
-              <WhoToFollowItem key={item._id} user={item} />
+              <UserToFollowItem key={item._id} user={item} />
             ))}
 
         {/*  */}

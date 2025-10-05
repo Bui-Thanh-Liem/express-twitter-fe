@@ -17,7 +17,7 @@ export const useGetMultiByType = ({
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["conversations", normalizedQueries],
+    queryKey: ["conversations", type, normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
@@ -46,6 +46,16 @@ export const useDeleteNotification = () => {
     mutationFn: (noti_id: string) =>
       apiCall<boolean>(`/notifications/${noti_id}`, {
         method: "DELETE",
+      }),
+  });
+};
+
+// 🦴 PATCH - Đọc
+export const useReadNotification = () => {
+  return useMutation({
+    mutationFn: (noti_id: string) =>
+      apiCall<boolean>(`/notifications/read/${noti_id}`, {
+        method: "PATCH",
       }),
   });
 };

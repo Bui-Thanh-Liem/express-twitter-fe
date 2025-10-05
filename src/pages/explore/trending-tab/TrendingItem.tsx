@@ -4,12 +4,12 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { WrapIcon } from "../wrapIcon";
-import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";
+} from "~/components/ui/dropdown-menu";
+import { WrapIcon } from "~/components/wrapIcon";
 import type { IHashtag } from "~/shared/interfaces/schemas/hashtag.interface";
+import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";
 
-export function WhatHappenItemSkeleton() {
+export function TrendingItemSkeleton() {
   return (
     <div className="px-4 py-2 animate-pulse">
       <div className="flex justify-between items-center">
@@ -21,24 +21,25 @@ export function WhatHappenItemSkeleton() {
         </div>
 
         {/* Icon giả */}
-        <div className="h-5 w-5 bg-gray-200 rounded-full" />
+        <div className="h-8 w-8 bg-gray-200 rounded-full" />
       </div>
     </div>
   );
 }
 
-export function WhatHappenItem({ item }: { item: ITrending }) {
+export function TrendingItem({ item, idx }: { item: ITrending; idx: number }) {
   return (
     <div key={item._id} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
       <div className="flex justify-between items-center">
         <div>
           <p className="text-xs text-muted-foreground">
-            {(item.hashtag as IHashtag)?.name}
+            {`${idx} `}. {(item.hashtag as IHashtag)?.name}
           </p>
           <p className="text-sm leading-snug font-semibold line-clamp-1">
-            {item.keyword}
+            {item.topic}
           </p>
         </div>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="outline-0 outline-transparent">

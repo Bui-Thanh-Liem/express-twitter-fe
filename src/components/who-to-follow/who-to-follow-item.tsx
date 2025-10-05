@@ -7,7 +7,7 @@ import { ShortInfoProfile } from "../ShortInfoProfile";
 import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
 
-export function WhoToFollowItemSkeleton() {
+export function UserToFollowItemSkeleton() {
   return (
     <div className="px-4 py-3 animate-pulse">
       <div className="flex justify-between items-center">
@@ -30,7 +30,7 @@ export function WhoToFollowItemSkeleton() {
   );
 }
 
-export function WhoToFollowItem({ user }: { user: Partial<IUser> }) {
+export function UserToFollowItem({ user }: { user: Partial<IUser> }) {
   const [followed, setFollowed] = useState(false);
 
   //
@@ -60,6 +60,7 @@ export function WhoToFollowItem({ user }: { user: Partial<IUser> }) {
               </Link>
             </ShortInfoProfile>
             <p className="text-xs text-muted-foreground">{user.username}</p>
+            {user.bio && <p>{user.bio}</p>}
           </div>
         </div>
         <ButtonMain

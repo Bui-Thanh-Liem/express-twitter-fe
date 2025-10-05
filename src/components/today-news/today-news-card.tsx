@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { useGetTodayNews } from "~/hooks/useFetchExplore";
+import { Link, useLocation } from "react-router-dom";
+import { useGetTodayNews } from "~/hooks/useFetchTrending";
 import { cn } from "~/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { WrapIcon } from "../wrapIcon";
@@ -20,7 +20,7 @@ export function TodayNewsCard() {
   const news = useMemo(() => data?.data?.slice(0, 3) || [], [data?.data]);
 
   useEffect(() => {
-    setOpen(location.pathname !== "/trending-today");
+    setOpen(window.location.hash !== "#news-today");
   }, [location]);
 
   return (
@@ -36,12 +36,26 @@ export function TodayNewsCard() {
           <X className="h-4 w-4" onClick={() => setOpen(false)} />
         </WrapIcon>
       </CardHeader>
+
       <CardContent className="px-0">
         {isLoading
           ? Array.from({ length: 3 }).map((_, i) => (
               <TodayNewsItemSkeleton key={`more-${i}`} />
             ))
           : news.map((item) => <TodayNewsItem key={item.id} item={item} />)}
+
+        {/*  */}
+        {news.length > 0 && (
+          <div className="hover:bg-gray-100 px-4 py-3">
+            <div>
+              <Link to="/explore#news-today">
+                <p className="inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer">
+                  Xem thêm
+                </p>
+              </Link>
+            </div>
+          </div>
+        )}
 
         {!news.length && !isLoading && (
           <div className="pb-4 pl-4">

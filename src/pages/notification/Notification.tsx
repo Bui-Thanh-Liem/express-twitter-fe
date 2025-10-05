@@ -39,15 +39,15 @@ export function NotificationPage() {
               </TabsTrigger>
               <TabsTrigger
                 className="cursor-pointer"
-                value={ENotificationType.MENTION}
+                value={ENotificationType.MENTION_LIKE}
               >
                 Nhắc đến
               </TabsTrigger>
               <TabsTrigger
                 className="cursor-pointer"
-                value={ENotificationType.OTHER}
+                value={ENotificationType.FOLLOW}
               >
-                Khác
+                Theo dõi
               </TabsTrigger>
             </TabsList>
           </div>
@@ -67,18 +67,18 @@ export function NotificationPage() {
               />
             </TabsContent>
             <TabsContent
-              value={ENotificationType.MENTION}
+              value={ENotificationType.MENTION_LIKE}
               className="px-0 py-4"
             >
               <TabContent
-                type={ENotificationType.MENTION}
-                key={ENotificationType.MENTION}
+                type={ENotificationType.MENTION_LIKE}
+                key={ENotificationType.MENTION_LIKE}
               />
             </TabsContent>
-            <TabsContent value={ENotificationType.OTHER} className="px-0 py-4">
+            <TabsContent value={ENotificationType.FOLLOW} className="px-0 py-4">
               <TabContent
-                type={ENotificationType.OTHER}
-                key={ENotificationType.OTHER}
+                type={ENotificationType.FOLLOW}
+                key={ENotificationType.FOLLOW}
               />
             </TabsContent>
           </div>

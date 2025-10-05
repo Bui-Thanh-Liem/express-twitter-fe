@@ -11,11 +11,11 @@ export const useGetTrending = (queries?: IQuery<ITrending>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["explore", "trending", normalizedQueries],
+    queryKey: ["trending", "trending", normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
-      const url = `/explore/trending/${queryString ? `?${queryString}` : ""}`;
+      const url = `/trending/${queryString ? `?${queryString}` : ""}`;
       return apiCall<ResMultiType<ITrending>>(url);
     },
 
@@ -33,19 +33,57 @@ export const useGetTrending = (queries?: IQuery<ITrending>) => {
 };
 
 // 📄 GET
-export const useGetTodayNews = (queries?: IQuery<ITrending>) => {
+export const useGetTodayNews = (
+  queries?: IQuery<ITrending>,
+  enabled = true
+) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["explore", "today-news", normalizedQueries],
+    queryKey: ["trending", "today-news", normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
-      const url = `/explore/today-news/${queryString ? `?${queryString}` : ""}`;
+      const url = `/trending/today-news/${
+        queryString ? `?${queryString}` : ""
+      }`;
       return apiCall<IResTodayNews[]>(url);
     },
 
     // Các options bổ sung
+    enabled,
+    staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
+    refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
+    refetchOnMount: false, // ✅ Tắt refetch khi mount
+
+    // 🔥 THÊM CẤU HÌNH NÀY:
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    // Quan trọng: Đảm bảo không conflict với optimistic update
+    networkMode: "online",
+  });
+};
+
+// 📄 GET
+export const useGetOutstandingThisWeek = (
+  queries?: IQuery<ITrending>,
+  enabled = true
+) => {
+  const normalizedQueries = queries ? JSON.stringify(queries) : "";
+
+  return useQuery({
+    queryKey: ["trending", "outstanding-this-week", normalizedQueries],
+    queryFn: () => {
+      // Tạo query string từ queries object
+      const queryString = queries ? buildQueryString(queries) : "";
+      const url = `/trending/outstanding-this-week/${
+        queryString ? `?${queryString}` : ""
+      }`;
+      return apiCall<IResTodayNews[]>(url);
+    },
+
+    // Các options bổ sung
+    enabled,
     staleTime: 10000, // ✅ QUAN TRỌNG: Tăng lên 10 giây để tránh refetch ngay lập tức
     refetchOnWindowFocus: false, // ✅ Tắt refetch khi focus để tránh ghi đè optimistic update
     refetchOnMount: false, // ✅ Tắt refetch khi mount

@@ -4,6 +4,8 @@ import { useGetMultiForMentions } from "~/hooks/useFetchUser";
 import { cn } from "~/lib/utils";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { AvatarMain } from "../ui/avatar";
+import { VerifyIcon } from "../icons/verify";
 
 interface MentionsProps {
   open: boolean;
@@ -13,6 +15,24 @@ interface MentionsProps {
   valueSearch: string;
   onSelect: (user: Pick<IUser, "_id" | "name" | "username">) => void;
 }
+
+const UserSkeleton = () => {
+  return (
+    <li className="cursor-default p-2 rounded flex items-center gap-3 animate-pulse">
+      {/* Avatar */}
+      <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+
+      {/* Texts */}
+      <div className="flex flex-col gap-2 w-full">
+        <div className="flex items-center gap-2">
+          <div className="h-4 w-32 bg-gray-300 rounded"></div>
+          <div className="h-4 w-4 bg-gray-300 rounded-full"></div>
+        </div>
+        <div className="h-3 w-20 bg-gray-200 rounded"></div>
+      </div>
+    </li>
+  );
+};
 
 export function Mentions({
   open,
@@ -48,26 +68,31 @@ export function Mentions({
         {children}
       </PopoverTrigger>
       <PopoverContent
-        className="p-4 bg-white border rounded-2xl shadow-lg max-h-72 overflow-y-auto z-[4000]"
+        className="bg-white border rounded-2xl shadow-lg max-h-72 overflow-y-auto z-[4000]"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         {isLoading ? (
           <ul className="flex flex-col gap-2">
             {Array.from({ length: 5 }).map((_, idx) => (
-              <li key={idx} className="p-2">
-                <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
-              </li>
+              <UserSkeleton key={idx} />
             ))}
           </ul>
         ) : (
-          <ul className="flex flex-col gap-2">
+          <ul className="flex flex-col">
             {mentions.map((u) => (
               <li
                 key={u._id}
-                className="cursor-pointer hover:bg-gray-100 p-2 rounded"
+                className="cursor-pointer hover:bg-gray-100 p-2 rounded flex items-center gap-1"
                 onClick={() => handleSelect(u)}
               >
-                {u.username}
+                <AvatarMain src={u.avatar} alt={u.name} className="mr-3" />
+                <div>
+                  <span className="flex items-center gap-2">
+                    <h3 className="text-md font-semibold">{u.name}</h3>
+                    <VerifyIcon active={!!u.verify} size={20} />
+                  </span>
+                  <p className="text-[14px] text-gray-400">{u.username}</p>
+                </div>
               </li>
             ))}
             {!mentions.length && (

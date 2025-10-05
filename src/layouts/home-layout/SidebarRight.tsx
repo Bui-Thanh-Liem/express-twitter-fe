@@ -1,34 +1,30 @@
-import { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { OutstandingThisWeekCard } from "~/components/outstanding-this-week/outstanding-this-week-card";
 import { TodayNewsCard } from "~/components/today-news/today-news-card";
-import { SearchMain } from "~/components/ui/search";
-import { WhatHappenCard } from "~/components/what-happen/what-happen-card";
+import { SearchAdvanced } from "~/components/search-advanced";
 import { WhoToFollowCard } from "~/components/who-to-follow/who-to-follow-card";
 
 export function SidebarRight() {
   const { pathname } = useLocation();
-  const [searchVal, setSearchVal] = useState("");
-  const isHiddenSearch = pathname === "/explore";
+
+  const isHiddenSearch = pathname === "/explore" || pathname === "/search";
 
   return (
-    <div>
-      <div className="px-4">
-        <div className="mb-4 mt-2">
-          {!isHiddenSearch && (
-            <SearchMain
-              size="lg"
-              value={searchVal}
-              onClear={() => setSearchVal("")}
-              onChange={setSearchVal}
-            />
-          )}
-        </div>
+    <div className="px-4">
+      <div className="mb-4 mt-2">
+        {!isHiddenSearch && (
+          <SearchAdvanced
+            size="lg"
+            className="w-[300px]"
+            placeholder="bui_thanh_liem, #developer"
+          />
+        )}
+      </div>
 
-        <div className="space-y-4 max-h-[88vh] overflow-y-auto">
-          <TodayNewsCard />
-          <WhatHappenCard />
-          <WhoToFollowCard />
-        </div>
+      <div className="space-y-4 max-h-[88vh] overflow-y-auto">
+        <TodayNewsCard />
+        <OutstandingThisWeekCard />
+        <WhoToFollowCard />
       </div>
     </div>
   );

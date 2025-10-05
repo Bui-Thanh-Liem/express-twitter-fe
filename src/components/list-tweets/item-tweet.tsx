@@ -34,7 +34,7 @@ export const MediaContent = ({
   url,
   type,
   tweet,
-}: IMedia & { tweet: ITweet | undefined }) => {
+}: IMedia & { tweet?: ITweet }) => {
   //
   const { open, setTweet } = useDetailTweetStore();
 

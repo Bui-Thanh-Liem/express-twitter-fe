@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UpdateMeForm } from "~/components/forms/UpdateMeForm";
 import { MessageIcon } from "~/components/icons/messages";
 import { ButtonMain } from "~/components/ui/button";
@@ -45,10 +45,20 @@ export function ProfileEdit({ currentUser }: { currentUser: IUser }) {
 
 //
 export function ProfileAction({ profile, isOwnProfile }: IProfileActiveProps) {
-  const { mutate } = useFollowUser();
+  //
   const { open, setConversation } = useChatBoxStore();
+  const [isFollow, setIsFollow] = useState(false);
+
+  //
+  const { mutate } = useFollowUser();
   const apiCreateConversation = useCreateConversation();
 
+  //
+  useEffect(() => {
+    setIsFollow(!!profile?.isFollow);
+  }, [profile?.isFollow]);
+
+  //
   async function handleOpenCheckBox() {
     const res = await apiCreateConversation.mutateAsync({
       type: EConversationType.Private,
@@ -58,6 +68,15 @@ export function ProfileAction({ profile, isOwnProfile }: IProfileActiveProps) {
       setConversation(res?.data);
       open();
     }
+  }
+
+  //
+  function handleFollow() {
+    mutate({
+      user_id: profile._id,
+      username: profile.username || "",
+    });
+    setIsFollow(!isFollow);
   }
 
   return (
@@ -70,16 +89,8 @@ export function ProfileAction({ profile, isOwnProfile }: IProfileActiveProps) {
             <MessageIcon size={18} />
           </WrapIcon>
           {
-            <ButtonMain
-              size="sm"
-              onClick={() => {
-                mutate({
-                  user_id: profile._id,
-                  username: profile.username || "",
-                });
-              }}
-            >
-              {!profile?.isFollow ? "Theo dõi" : "Bỏ theo dõi"}
+            <ButtonMain size="sm" onClick={handleFollow}>
+              {!isFollow ? "Theo dõi" : "Bỏ theo dõi"}
             </ButtonMain>
           }
         </div>

@@ -38,17 +38,4 @@ export const useNotificationSocket = (
       socket.off(CONSTANT_EVENT_NAMES.UNREAD_COUNT_NOTIFICATION, onUnreadCount);
     };
   }, [onUnreadCount]);
-
-  //
-  const readNoti = (id: string) => {
-    if (!socket.connected) {
-      console.warn("⚠️ Socket chưa connect, không thể readNoti");
-      return;
-    }
-    console.log("useNotificationSocket - readNoti:::");
-
-    socket.emit(CONSTANT_EVENT_NAMES.READ_NOTIFICATION, id);
-  };
-
-  return { readNoti };
 };

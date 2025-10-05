@@ -1,6 +1,6 @@
-import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { XIcon } from "lucide-react";
+import * as React from "react";
 
 import { cn } from "~/lib/utils";
 import { Logo } from "../logo";
@@ -172,7 +172,7 @@ export function DialogMain({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          "rounded-2xl px-0 pt-0 pb-0 shadow-xl max-h-[90vh] flex flex-col z-[1999]", // px-0 để scroll không đè padding
+          "rounded-2xl px-0 pt-0 pb-0 shadow-xl max-h-[90vh] flex flex-col z-[100]", // px-0 để scroll không đè padding
           widthClasses[width]
         )}
       >

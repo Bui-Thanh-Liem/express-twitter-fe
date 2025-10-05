@@ -1,8 +1,8 @@
+import { cn } from "~/lib/utils";
 import type { IResTodayNews } from "~/shared/dtos/res/explore.dto";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
 import { MediaContent } from "../list-tweets/item-tweet";
-import { cn } from "~/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 export function TodayNewsItemSkeleton() {
   return (

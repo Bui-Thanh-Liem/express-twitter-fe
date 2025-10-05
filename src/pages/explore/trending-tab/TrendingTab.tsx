@@ -1,14 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import {
-  WhatHappenItem,
-  WhatHappenItemSkeleton,
-} from "~/components/what-happen/what-happen-item";
-import { useGetTrending } from "~/hooks/useFetchExplore";
+import { TabsContent } from "~/components/ui/tabs";
+import { useGetTrending } from "~/hooks/useFetchTrending";
 import { cn } from "~/lib/utils";
 import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";
+import { TrendingItem, TrendingItemSkeleton } from "./TrendingItem";
 
-export function WhatHappen() {
+export function TrendingTab() {
   const location = useLocation();
   const [page, setPage] = useState(1);
   const [trending, setTrending] = useState<ITrending[]>([]);
@@ -16,7 +14,7 @@ export function WhatHappen() {
   const total_page_ref = useRef(0);
   const { data, isLoading } = useGetTrending({
     page: page.toString(),
-    limit: "10",
+    limit: "20",
   });
 
   // Mỗi lần fetch xong thì append thêm vào state
@@ -33,10 +31,10 @@ export function WhatHappen() {
     setPage((prev) => prev + 1);
   }
 
-  // Scroll to top khi có hash #what-happen
+  // Scroll to top khi có hash #outstanding-this-week
   useEffect(() => {
-    if (window.location.hash === "#what-happen") {
-      const el = document.getElementById("what-happen");
+    if (window.location.hash === "#outstanding-this-week") {
+      const el = document.getElementById("outstanding-this-week");
 
       if (el) {
         setTimeout(() => {
@@ -65,32 +63,19 @@ export function WhatHappen() {
       setTrending([]);
     };
   }, []);
-
-  //
   return (
-    <>
-      <a
-        id="what-happen"
-        className="block"
-        style={{
-          scrollMarginTop: "40px",
-        }}
-      />
-      <p className="text-xl font-bold mt-4 py-2 bg-gray-50 sticky top-16 z-30">
-        Chuyện gì đang xảy ra
-      </p>
-
+    <TabsContent value="trending" className="px-0 pb-4">
       {/*  */}
       <div>
-        {trending?.map((item) => (
-          <WhatHappenItem key={item._id} item={item} />
+        {trending?.map((item, idx) => (
+          <TrendingItem key={item._id} item={item} idx={idx + 1} />
         ))}
       </div>
 
       {/*  */}
       {isLoading
         ? Array.from({ length: 2 }).map((_, i) => (
-            <WhatHappenItemSkeleton key={`more-${i}`} />
+            <TrendingItemSkeleton key={`more-${i}`} />
           ))
         : !!trending.length && (
             <div className="px-4 py-3">
@@ -110,9 +95,9 @@ export function WhatHappen() {
 
       {!trending.length && !isLoading && (
         <div className="flex justify-center items-center h-20">
-          <p className="text-gray-400">Chưa có gì nổi bật</p>
+          <p className="text-gray-400">Chưa có sự kiện gì nổi bật</p>
         </div>
       )}
-    </>
+    </TabsContent>
   );
 }
