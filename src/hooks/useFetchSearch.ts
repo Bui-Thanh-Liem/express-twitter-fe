@@ -41,7 +41,7 @@ export const useSearchTweets = (queries?: IQuery<ITweet>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["search", "tweets", queries?.q, normalizedQueries],
+    queryKey: ["search", "tweets", queries?.q, queries?.pf, normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
@@ -66,7 +66,7 @@ export const useSearchUsers = (queries?: IQuery<IUser>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["search", "users", queries?.q, normalizedQueries],
+    queryKey: ["search", "users", queries?.q, queries?.pf, normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";

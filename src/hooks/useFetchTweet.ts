@@ -142,33 +142,6 @@ export const useGetTweetChildren = ({
   });
 };
 
-// 📄 GET - Lấy media của chính mình trong profile
-export const useGetProfileMedia = (queries?: IQuery<ITweet>) => {
-  const normalizedQueries = queries ? JSON.stringify(queries) : "";
-
-  return useQuery({
-    queryKey: ["tweets", "profile-media", normalizedQueries],
-    queryFn: () => {
-      // Tạo query string từ queries object
-      const queryString = queries ? buildQueryString(queries) : "";
-      const url = `/tweets/profile-media/${
-        queryString ? `?${queryString}` : ""
-      }`;
-
-      return apiCall<ResMultiType<Pick<ITweet, "_id" | "media">>>(url);
-    },
-
-    // Lên getNewFeeds đọc giải thích
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-    refetchOnWindowFocus: true,
-    refetchOnMount: "always",
-    refetchOnReconnect: false,
-    refetchInterval: false,
-    networkMode: "online",
-  });
-};
-
 // 📄 GET - Lấy tweet đã like
 export const useGetTweetLiked = (queries?: IQuery<ITweet>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";

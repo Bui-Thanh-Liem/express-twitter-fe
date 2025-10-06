@@ -8,6 +8,7 @@ import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 export function TweetTab() {
   const [searchParams] = useSearchParams();
   const q = searchParams.get("q");
+  const pf = searchParams.get("pf");
 
   // State để quản lý pagination và data
   const [page, setPage] = useState(1);
@@ -22,6 +23,7 @@ export function TweetTab() {
   const { data, isLoading, error } = useSearchTweets({
     limit: "10",
     q: q ?? "",
+    pf: pf ?? "",
     page: page.toString(),
   });
 

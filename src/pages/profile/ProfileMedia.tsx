@@ -1,16 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { MediaContent } from "~/components/list-tweets/item-tweet";
-import { useGetProfileMedia } from "~/hooks/useFetchTweet";
-import { EMediaType } from "~/shared/enums/type.enum";
-
-// Type cho media item (adjust theo interface thực tế của bạn)
-interface IMediaItem {
-  _id?: string;
-  media?: {
-    url: string;
-    type: EMediaType;
-  };
-}
+import { useGetProfileTweets } from "~/hooks/useFetchTweet";
+import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
+import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 
 export function ProfileMedia({
   profile_id,
@@ -21,7 +13,7 @@ export function ProfileMedia({
 }) {
   // State để quản lý pagination và data
   const [page, setPage] = useState(1);
-  const [allMedia, setAllMedia] = useState<IMediaItem[]>([]);
+  const [allMedia, setAllMedia] = useState<ITweet[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
@@ -29,7 +21,7 @@ export function ProfileMedia({
   const observerRef = useRef<HTMLDivElement>(null);
   const observerInstanceRef = useRef<IntersectionObserver | null>(null);
 
-  const { data, isLoading, error } = useGetProfileMedia({
+  const { data, isLoading, error } = useGetProfileTweets(ETweetType.Tweet, {
     limit: "10",
     user_id: profile_id,
     page: page.toString(),
@@ -38,7 +30,7 @@ export function ProfileMedia({
   // Effect để xử lý khi có data mới
   useEffect(() => {
     if (data?.data?.items) {
-      const newMedia = data.data.items as IMediaItem[];
+      const newMedia = data.data.items;
       if (page === 1) {
         // Nếu là trang đầu tiên, replace toàn bộ
         setAllMedia(() => {
@@ -155,6 +147,7 @@ export function ProfileMedia({
               className="aspect-square"
             >
               <MediaContent
+                tweet={m}
                 type={m.media?.type || EMediaType.Image}
                 url={m.media?.url || ""}
               />

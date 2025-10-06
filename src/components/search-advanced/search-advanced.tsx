@@ -4,10 +4,12 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDebounce } from "~/hooks/useDebounce";
 import { useSearchPending } from "~/hooks/useFetchSearch";
 import { cn } from "~/lib/utils";
-import { VerifyIcon } from "./icons/verify";
-import { AvatarMain } from "./ui/avatar";
-import { Input } from "./ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";
+import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import { VerifyIcon } from "../icons/verify";
+import { AvatarMain } from "../ui/avatar";
+import { Input } from "../ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 type SearchSize = "sm" | "md" | "lg";
 
@@ -68,6 +70,20 @@ export function SearchAdvanced({
   }
 
   //
+  function onClickTrendingItem(tr: ITrending) {
+    if (searchVal) navigate(`/search?q=${tr?.topic}`);
+    setSearchVal(tr.topic!);
+    setOpen(false);
+  }
+
+  //
+  function onClickUserItem(u: IUser) {
+    if (searchVal) navigate(`/${u.username}`);
+    setSearchVal(u.username!);
+    setOpen(false);
+  }
+
+  //
   function onClear() {
     setSearchVal("");
   }
@@ -115,6 +131,7 @@ export function SearchAdvanced({
                     <li
                       key={tr._id}
                       className="cursor-pointer hover:bg-gray-100 p-2 rounded flex items-center gap-1"
+                      onClick={() => onClickTrendingItem(tr)}
                     >
                       <Search className="h-4 w-4 text-muted-foreground" />
                       <h3 className="ml-4 text-md font-semibold">{tr.topic}</h3>
@@ -134,6 +151,7 @@ export function SearchAdvanced({
                     <li
                       key={u._id}
                       className="cursor-pointer hover:bg-gray-100 p-2 rounded flex items-center gap-1"
+                      onClick={() => onClickUserItem(u)}
                     >
                       <AvatarMain
                         src={u.avatar}

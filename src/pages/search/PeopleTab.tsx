@@ -12,6 +12,7 @@ import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 export function PeopleTab() {
   const [searchParams] = useSearchParams();
   const q = searchParams.get("q");
+  const pf = searchParams.get("pf");
 
   const [page, setPage] = useState(1);
   const [users, setUsers] = useState<IUser[]>([]);
@@ -21,22 +22,26 @@ export function PeopleTab() {
     page: page.toString(),
     limit: "10",
     q: q ?? "",
+    pf: pf ?? "",
   });
+
+  //
+  useEffect(() => {
+    setUsers([]);
+    setPage(1);
+    refetch();
+  }, [q, pf]);
 
   // Mỗi lần fetch xong thì append thêm vào state
   useEffect(() => {
     const items = data?.data?.items || [];
     const total_page = data?.data?.total_page;
     total_page_ref.current = total_page || 0;
+
     if (items) {
       setUsers((prev) => [...prev, ...items]);
     }
-  }, [data]);
-
-  //
-  useEffect(() => {
-    refetch();
-  }, [q]);
+  }, [data?.data]);
 
   //
   useEffect(() => {
@@ -50,6 +55,8 @@ export function PeopleTab() {
   function onSeeMore() {
     setPage((prev) => prev + 1);
   }
+
+  console.log("users::", users);
 
   return (
     <TabsContent value="people" className="px-0 pb-4">
