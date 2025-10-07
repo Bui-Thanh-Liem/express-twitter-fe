@@ -31,7 +31,7 @@ export function UserToFollowItemSkeleton() {
 }
 
 export function UserToFollowItem({ user }: { user: Partial<IUser> }) {
-  const [followed, setFollowed] = useState(false);
+  const [followed, setFollowed] = useState(user?.isFollow);
 
   //
   const { mutate, isError } = useFollowUser();

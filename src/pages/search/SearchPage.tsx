@@ -1,14 +1,17 @@
 import { ArrowLeftIcon } from "lucide-react";
 import { useState } from "react";
 import { SearchAdvanced } from "~/components/search-advanced/search-advanced";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { WrapIcon } from "~/components/wrapIcon";
+import { useUpdateQuery } from "~/hooks/useUpdateQuery";
+import { MediaTab } from "./MediaTab";
 import { PeopleTab } from "./PeopleTab";
 import { TopTab } from "./TopTab";
 import { TweetTab } from "./TweetTab";
 
 export function SearchPage() {
   const [searchVal, setSearchVal] = useState("");
+  const updateQuery = useUpdateQuery();
 
   return (
     <div>
@@ -30,16 +33,36 @@ export function SearchPage() {
         <Tabs defaultValue="top" className="mb-12">
           <div className="bg-white p-2 pt-5 px-4 sticky top-0 z-50">
             <TabsList className="w-full">
-              <TabsTrigger className="cursor-pointer" value="top">
+              <TabsTrigger
+                className="cursor-pointer"
+                value="top"
+                onClick={() =>
+                  updateQuery({ add: { t: "top" }, remove: ["f"] })
+                }
+              >
                 Tìm kiếm hàng đầu
               </TabsTrigger>
-              <TabsTrigger className="cursor-pointer" value="people">
+              <TabsTrigger
+                className="cursor-pointer"
+                value="people"
+                onClick={() => updateQuery({ remove: ["t", "f"] })}
+              >
                 Mọi người
               </TabsTrigger>
-              <TabsTrigger className="cursor-pointer" value="tweet">
+              <TabsTrigger
+                className="cursor-pointer"
+                value="tweet"
+                onClick={() => updateQuery({ remove: ["t", "f"] })}
+              >
                 Bài viết
               </TabsTrigger>
-              <TabsTrigger className="cursor-pointer" value="media">
+              <TabsTrigger
+                className="cursor-pointer"
+                value="media"
+                onClick={() =>
+                  updateQuery({ add: { f: "media" }, remove: ["t"] })
+                }
+              >
                 Hình ảnh/video
               </TabsTrigger>
             </TabsList>
@@ -47,9 +70,18 @@ export function SearchPage() {
 
           {/* Tab Content */}
           <div className="p-4 pt-0">
-            <TopTab />
-            <TweetTab />
-            <PeopleTab />
+            <TabsContent value="top" className="px-0 pb-4">
+              <TopTab />
+            </TabsContent>
+            <TabsContent value="tweet" className="px-0 pb-4">
+              <TweetTab />
+            </TabsContent>
+            <TabsContent value="people" className="px-0 pb-4">
+              <PeopleTab />
+            </TabsContent>
+            <TabsContent value="media" className="px-0 pb-4">
+              <MediaTab />
+            </TabsContent>
           </div>
         </Tabs>
       </div>

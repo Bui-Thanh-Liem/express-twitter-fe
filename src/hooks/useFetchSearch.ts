@@ -41,7 +41,14 @@ export const useSearchTweets = (queries?: IQuery<ITweet>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["search", "tweets", queries?.q, queries?.pf, normalizedQueries],
+    queryKey: [
+      "search",
+      "tweets",
+      queries?.q,
+      queries?.pf,
+      queries?.f,
+      normalizedQueries,
+    ],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";

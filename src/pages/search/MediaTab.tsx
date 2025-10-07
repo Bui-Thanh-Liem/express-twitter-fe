@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { SkeletonTweet, TweetItem } from "~/components/list-tweets/item-tweet";
+import { MediaContent } from "~/components/list-tweets/item-tweet";
 import { ButtonMain } from "~/components/ui/button";
 import { useSearchTweets } from "~/hooks/useFetchSearch";
+import { EMediaType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 
-export function TweetTab() {
+export function MediaTab() {
   const [searchParams] = useSearchParams();
   const q = searchParams.get("q");
   const pf = searchParams.get("pf");
@@ -22,9 +23,10 @@ export function TweetTab() {
   const observerInstanceRef = useRef<IntersectionObserver | null>(null);
 
   const { data, isLoading, error, refetch, isFetching } = useSearchTweets({
-    limit: "10",
+    limit: "12",
     q: q ?? "",
     pf: pf ?? "",
+    f: f ?? "",
     page: page.toString(),
   });
 
@@ -131,36 +133,53 @@ export function TweetTab() {
     setIsLoadingMore(false);
   }, [q]);
 
-  // Thực hiện khi xoá thành công tweet
-  function onDel(id: string) {
-    setAllTweets((prev) => prev.filter((tw) => tw._id !== id));
-  }
-
   const loading = isLoading || isFetching;
 
   return (
     <div className="max-h-[calc(100vh-(150px))] overflow-y-auto">
       {/* Loading state cho lần load đầu tiên */}
-      {loading && page === 1 && <SkeletonTweet />}
+      {loading && page === 1 && (
+        <div className="py-4">
+          <div className="grid grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div
+                key={`loading-${index}`}
+                className="aspect-square bg-gray-200 animate-pulse rounded-lg"
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Tweets list */}
       {allTweets.length > 0 && (
-        <div className="space-y-6">
-          {allTweets.map((tweet, index: number) => (
-            <span key={tweet._id}>
-              <TweetItem tweet={tweet} onSuccessDel={onDel} />
-              {index < allTweets.length - 1 && (
-                <hr className="border-gray-200" />
-              )}
-            </span>
+        <div className="grid grid-cols-3 gap-x-6 gap-y-0">
+          {allTweets.map((m, index) => (
+            <div
+              key={m.media?.url || `media-${index}`}
+              className="aspect-square"
+            >
+              <MediaContent
+                tweet={m}
+                type={m.media?.type || EMediaType.Image}
+                url={m.media?.url || ""}
+              />
+            </div>
           ))}
         </div>
       )}
 
       {/* Loading more indicator */}
-      {loading && (
+      {isLoadingMore && (
         <div className="py-4">
-          <SkeletonTweet count={2} />
+          <div className="grid grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div
+                key={`loading-${index}`}
+                className="aspect-square bg-gray-200 animate-pulse rounded-lg"
+              />
+            ))}
+          </div>
         </div>
       )}
 
@@ -168,7 +187,7 @@ export function TweetTab() {
       {!loading && allTweets.length === 0 && page === 1 && (
         <div className="text-center py-8">
           <p className="text-gray-500 text-lg mb-2">
-            Không có bài viết nào phù hợp với <strong>"{q}"</strong>
+            Không có hình ảnh hoặc video nào phù hợp với <strong>"{q}"</strong>
           </p>
         </div>
       )}

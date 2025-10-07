@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, Heart, MessageCircle, Repeat2, Share } from "lucide-react";
+import { BarChart3, Heart, MessageCircle, Repeat2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useGetTweetChildren } from "~/hooks/useFetchTweet";
@@ -26,6 +26,7 @@ import { ActionBookmarkTweet } from "./action-bookmark-tweet";
 import { ActionCommentTweet } from "./action-comment-tweet";
 import { ActionLikeTweet } from "./action-like-tweet";
 import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
+import { ActionShared } from "./action-shared";
 import { Content } from "./content";
 import { MediaContent, SkeletonTweet, TweetItem } from "./item-tweet";
 
@@ -276,9 +277,7 @@ export function TweetDetailDrawer() {
               {/* Bookmark and Shared */}
               <div className="flex items-center space-x-1">
                 <ActionBookmarkTweet tweet={tweet} />
-                <button className="p-2 rounded-full text-gray-500 hover:text-blue-500 hover:bg-blue-50 transition-colors cursor-pointer">
-                  <Share size={18} />
-                </button>
+                <ActionShared tweet={tweet} />
               </div>
             </div>
           </div>

@@ -29,6 +29,7 @@ export function WhoToFollows() {
     }
   }, [data]);
 
+  //
   function onSeeMore() {
     setPage((prev) => prev + 1);
   }

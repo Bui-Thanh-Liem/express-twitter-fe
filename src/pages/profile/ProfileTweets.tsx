@@ -27,12 +27,15 @@ export function ProfileTweets({
   const observerRef = useRef<HTMLDivElement>(null);
   const observerInstanceRef = useRef<IntersectionObserver | null>(null);
 
-  const { data, isLoading, error } = useGetProfileTweets(tweetType, {
-    limit: "10",
-    ishl: ishl,
-    user_id: profile_id,
-    page: page.toString(),
-  });
+  const { data, isLoading, error, isFetching } = useGetProfileTweets(
+    tweetType,
+    {
+      limit: "10",
+      ishl: ishl,
+      user_id: profile_id,
+      page: page.toString(),
+    }
+  );
 
   // Effect để xử lý khi có data mới
   useEffect(() => {
@@ -124,8 +127,12 @@ export function ProfileTweets({
     setAllTweets((prev) => prev.filter((tw) => tw._id !== id));
   }
 
+  const loading = isLoading || isFetching;
+
   return (
     <div>
+      {loading && page === 1 && <SkeletonTweet />}
+
       {/* Tweets list */}
       {allTweets.length > 0 && (
         <div className="space-y-6">
@@ -164,7 +171,7 @@ export function ProfileTweets({
       )}
 
       {/* Empty state - chưa có data nhưng không phải total = 0 */}
-      {!isLoading && allTweets.length === 0 && page === 1 && (
+      {!loading && allTweets.length === 0 && page === 1 && (
         <NotFoundTweet isOwn={isOwnProfile} />
       )}
 

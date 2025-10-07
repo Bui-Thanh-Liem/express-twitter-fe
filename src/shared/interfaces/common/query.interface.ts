@@ -3,6 +3,7 @@ export interface IQuery<T> {
   page?: string;
   sort?: Partial<Record<keyof T, 1 | -1>>;
   q?: string;
+  top?: string;
   f?: string; // media type
   pf?: string; // people follow
 
