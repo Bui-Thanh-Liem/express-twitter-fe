@@ -1,0 +1,17 @@
+<svg
+  width="32"
+  height="32"
+  viewBox="0 0 32 32"
+  aria-hidden="true"
+  fill="currentColor"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <g>
+    <path d="M3 4h3.8c2.8 0 4.7 1.6 4.7 4v8c0 2.4-1.9 4-4.7 4H3V4Zm2 2v12h1.6c1.7 0 2.8-1 2.8-2.7V8.7c0-1.7-1.1-2.7-2.8-2.7H5Z" />
+    <path d="M12 4h7v2h-5v4h4.5v2H14v4h5v2h-7V4Z" />
+    <path d="M21 4h2l-3.7 16h-2.4L13 4h2l2.9 12.5L21 4Z" />
+
+    <!-- Chấm thông báo màu xanh, đặt ở góc dưới phải -->
+    <circle cx="26" cy="26" r="5" fill="#1DA1F2" />
+  </g>
+</svg>

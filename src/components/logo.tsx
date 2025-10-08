@@ -7,17 +7,22 @@ type PropLogoType = {
 
 export function Logo({ size = 100, className = "text-black" }: PropLogoType) {
   return (
-    <Link to={"/home"} style={{ display: "block", width: size }}>
+    <Link to="/home" style={{ display: "block", width: size }}>
       <svg
         width={size}
         height={size}
         viewBox="0 0 24 24"
         aria-hidden="true"
-        className={`r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-rxcuwo r-1777fci r-m327ed r-494qqr ${className}`}
         fill="currentColor"
+        className={`r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-rxcuwo r-1777fci r-m327ed r-494qqr ${className}`}
       >
         <g>
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+          {/* D */}
+          <path d="M3 4h3.8c2.8 0 4.7 1.6 4.7 4v8c0 2.4-1.9 4-4.7 4H3V4Zm2 2v12h1.6c1.7 0 2.8-1 2.8-2.7V8.7c0-1.7-1.1-2.7-2.8-2.7H5Z" />
+          {/* E */}
+          <path d="M12 4h7v2h-5v4h4.5v2H14v4h5v2h-7V4Z" />
+          {/* V */}
+          <path d="M21 4h2l-3.7 16h-2.4L13 4h2l2.9 12.5L21 4Z" />
         </g>
       </svg>
     </Link>

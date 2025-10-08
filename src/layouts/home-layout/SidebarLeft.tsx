@@ -59,6 +59,21 @@ export function SidebarLeft() {
   useNotificationSocket(
     () => {},
     (unread) => {
+      if (unread > 0) {
+        document.title = `(${unread}) thông báo chưa đọc`;
+
+        const oldLinks = document.querySelectorAll(
+          'link[rel="icon"], link[rel="shortcut icon"]'
+        );
+        oldLinks.forEach((link) => link.remove());
+
+        // Tạo favicon mới
+        const link = document.createElement("link");
+        link.rel = "icon";
+        link.type = "image/svg+xml";
+        link.href = unread > 0 ? "/favicon-noti.svg" : "/favicon.svg";
+        document.head.appendChild(link);
+      }
       setUnreadCountNoti(unread);
     }
   );
@@ -67,6 +82,21 @@ export function SidebarLeft() {
   useConversationSocket(
     () => {},
     (unread) => {
+      if (unread > 0) {
+        document.title = `(${unread}) cuộc trò chuyện chưa đọc`;
+
+        const oldLinks = document.querySelectorAll(
+          'link[rel="icon"], link[rel="shortcut icon"]'
+        );
+        oldLinks.forEach((link) => link.remove());
+
+        // Tạo favicon mới
+        const link = document.createElement("link");
+        link.rel = "icon";
+        link.type = "image/svg+xml";
+        link.href = unread > 0 ? "/favicon-noti.svg" : "/favicon.svg";
+        document.head.appendChild(link);
+      }
       setUnreadCountConv(unread);
     },
     () => {}
