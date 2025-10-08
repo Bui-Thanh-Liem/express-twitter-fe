@@ -265,6 +265,7 @@ export function CreateConversationForm({
             type="button"
             className="flex-1"
             variant="outline"
+            onClick={() => setOpenForm(false)}
           >
             Hủy
           </ButtonMain>

@@ -1,9 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { EmojiSelector } from "~/components/emoji-picker";
 import { DotIcon } from "~/components/icons/dot";
 import { AvatarMain, GroupAvatarMain } from "~/components/ui/avatar";
 import { ButtonMain } from "~/components/ui/button";
+import { CircularProgress } from "~/components/ui/circular-progress";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
@@ -11,11 +19,10 @@ import { useGetMultiMessages } from "~/hooks/useFetchMessages";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
+import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useChatSocket } from "~/socket/hooks/useChatSocket";
 import { useUserStore } from "~/store/useUserStore";
 import { CreateConversation } from "./CreateConversation";
-import type { IUser } from "~/shared/interfaces/schemas/user.interface";
-import { CircularProgress } from "~/components/ui/circular-progress";
 
 const MAX_LENGTH_TEXT = 160;
 export function MessageView({
@@ -24,6 +31,7 @@ export function MessageView({
   conversation: IConversation | null;
 }) {
   //
+  const navigate = useNavigate();
   const { user } = useUserStore();
   const { sendMessage } = useChatSocket((newDataMessage) => {
     console.log("new message socket");
@@ -87,6 +95,11 @@ export function MessageView({
   );
 
   //
+  function onPreviewProfile() {
+    navigate(`/${conversation?.username}`);
+  }
+
+  //
   const onSubmit = useCallback(
     (data: { text: string }) => {
       sendMessage({
@@ -138,15 +151,29 @@ export function MessageView({
             )}
           />
 
-          <WrapIcon
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-            className="ml-4"
-          >
-            <DotIcon size={18} />
-          </WrapIcon>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button onClick={(e) => e.stopPropagation()} className="ml-3">
+                <WrapIcon>
+                  <DotIcon size={18} />
+                </WrapIcon>
+              </button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+              align="start"
+              side="right"
+              sideOffset={6}
+              className="rounded-2xl px-0"
+            >
+              <DropdownMenuItem
+                className="cursor-pointer px-3 font-semibold space-x-1"
+                onClick={onPreviewProfile}
+              >
+                Xem trang cá nhân
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

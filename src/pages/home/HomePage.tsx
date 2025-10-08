@@ -4,8 +4,11 @@ import { cn } from "~/lib/utils";
 import { EFeedType, ETweetType } from "~/shared/enums/type.enum";
 import { ListTweets } from "../../components/list-tweets/list-tweets";
 import { Tweet } from "../../components/tweet/Tweet";
+import { useReloadStore } from "~/store/useReloadStore";
 
 export function HomePage() {
+  const { triggerReload } = useReloadStore();
+
   // State để quản lý tab hiện tại
   const [activeTab, setActiveTab] = useState<EFeedType>(EFeedType.All);
 
@@ -21,7 +24,10 @@ export function HomePage() {
         <div className="flex w-full h-full">
           <TypographyP
             className={cn(classNav, activeTab === EFeedType.All && classActive)}
-            onClick={() => setActiveTab(EFeedType.All)}
+            onClick={() => {
+              triggerReload();
+              setActiveTab(EFeedType.All);
+            }}
           >
             Dành Cho Bạn
           </TypographyP>
@@ -30,7 +36,10 @@ export function HomePage() {
               classNav,
               activeTab === EFeedType.Following && classActive
             )}
-            onClick={() => setActiveTab(EFeedType.Following)}
+            onClick={() => {
+              triggerReload();
+              setActiveTab(EFeedType.Following);
+            }}
           >
             Đã Theo Dõi
           </TypographyP>
@@ -38,16 +47,11 @@ export function HomePage() {
       </div>
 
       {/* Scrollable Content */}
-      <div className="px-4 pt-4">
-        <Tweet key={ETweetType.Tweet} />
-      </div>
-      <div className="border-b border-gray-200" />
-
       <div className="flex-1 overflow-y-auto">
-        {/* <div className="px-4 pt-4">
+        <div className="px-4 pt-4">
           <Tweet key={ETweetType.Tweet} />
         </div>
-        <div className="border-b border-gray-200" /> */}
+        <div className="border-b border-gray-100" />
         <ListTweets feedType={activeTab} />
       </div>
     </main>

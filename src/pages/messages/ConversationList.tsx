@@ -1,5 +1,6 @@
-import { Pin, Trash } from "lucide-react";
+import { Pin, Trash, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { DotIcon } from "~/components/icons/dot";
 import { AvatarMain, GroupAvatarMain } from "~/components/ui/avatar";
 import {
@@ -16,6 +17,7 @@ import {
   useTogglePinConversation,
 } from "~/hooks/useFetchConversations";
 import { cn } from "~/lib/utils";
+import { EConversationType } from "~/shared/enums/type.enum";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
@@ -54,6 +56,7 @@ function ConversationItem({
   onTogglePinned?: (id: string) => void;
 }) {
   //
+  const navigate = useNavigate();
   const [isOnl, setOnl] = useState(false);
   const apiDelConversation = useDeleteConversation();
   const apiTogglePinConversation = useTogglePinConversation();
@@ -65,7 +68,7 @@ function ConversationItem({
   });
 
   //
-  const { avatar, lastMessage, name, _id } = conversation;
+  const { avatar, lastMessage, name, _id, type } = conversation;
 
   //
   let messageLastContent = "Chưa có tin nhắn";
@@ -94,6 +97,11 @@ function ConversationItem({
     e.stopPropagation();
     const res = await apiDelConversation.mutateAsync({ conversation_id: _id });
     if (onDeleted && res.statusCode == 200) onDeleted(_id);
+  }
+
+  //
+  function onPreviewProfile() {
+    navigate(`/${conversation.username}`);
   }
 
   //
@@ -157,14 +165,27 @@ function ConversationItem({
                 onClick={onTogglePin}
               >
                 <Pin strokeWidth={2} className="w-3 h-3" color="#000" />
-                <p className="text-sm">{!pinned ? "Ghim" : "Gỡ"}</p>
+                <p className="text-sm">{!pinned ? "Ghim" : "Gỡ ghim"}</p>
               </DropdownMenuItem>
+
+              {/*  */}
+              {type == EConversationType.Private && (
+                <DropdownMenuItem
+                  className="cursor-pointer px-3 font-semibold space-x-1"
+                  onClick={onPreviewProfile}
+                >
+                  <User strokeWidth={2} className="w-3 h-3" color="#000" />
+                  <p className="text-sm">Xem trang cá nhân</p>
+                </DropdownMenuItem>
+              )}
+
+              {/*  */}
               <DropdownMenuItem
                 className="cursor-pointer px-3 font-semibold space-x-1"
                 onClick={onDelete}
               >
                 <Trash className="w-3 h-3" color="var(--color-red-400)" />
-                <p className="text-red-400 text-sm">Xoá</p>
+                <p className="text-red-400 text-sm">Xoá cuộc trò chuyện</p>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

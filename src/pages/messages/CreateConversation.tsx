@@ -1,4 +1,4 @@
-import { UserPlus } from "lucide-react";
+import { UsersIcon } from "lucide-react";
 import { useState } from "react";
 import { CreateConversationForm } from "~/components/forms/CreateConversationForm";
 import { DialogMain } from "~/components/ui/dialog";
@@ -14,7 +14,7 @@ export function CreateConversation({
   return (
     <>
       <WrapIcon onClick={() => setIsOpen(true)}>
-        <UserPlus className="h-[18px] w-[18px]" />
+        <UsersIcon className="h-[18px] w-[18px]" />
       </WrapIcon>
 
       {/*  */}

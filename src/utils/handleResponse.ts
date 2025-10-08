@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import type { OkResponse } from "~/shared/classes/response.class";
+import { formatDateToDateVN } from "./formatDateToDateVN";
 
 export function handleResponse(
   res: OkResponse<object | boolean>,
@@ -11,13 +12,13 @@ export function handleResponse(
     callbacks.forEach((fn) => fn());
     toast.success(message, {
       // position: "top-center",
-      description: new Date().toJSON(),
+      description: formatDateToDateVN(new Date()),
       richColors: true,
     });
   } else {
     toast.error(message, {
       // position: "top-center",
-      description: new Date().toJSON(),
+      description: formatDateToDateVN(new Date()),
       richColors: true,
     });
   }

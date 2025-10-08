@@ -5,6 +5,7 @@ import type { EFeedType, ETweetType } from "~/shared/enums/type.enum";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { ResMultiType } from "~/shared/types/response.type";
+import { useReloadStore } from "~/store/useReloadStore";
 import { buildQueryString } from "~/utils/buildQueryString";
 import { apiCall } from "~/utils/callApi.util";
 
@@ -34,10 +35,11 @@ export const useGetNewFeeds = (
   feed_type: EFeedType,
   queries?: IQuery<ITweet>
 ) => {
+  const { reloadKey } = useReloadStore();
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["tweets", "feeds", feed_type, normalizedQueries],
+    queryKey: ["tweets", "feeds", feed_type, reloadKey, normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";

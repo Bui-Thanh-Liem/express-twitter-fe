@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import type { ReportTrendingDto } from "~/shared/dtos/req/trending.dto";
 import type { IResTodayNews } from "~/shared/dtos/res/explore.dto";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
 import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";
@@ -93,5 +94,16 @@ export const useGetOutstandingThisWeek = (
     refetchInterval: false,
     // Quan trọng: Đảm bảo không conflict với optimistic update
     networkMode: "online",
+  });
+};
+
+// 🔐 PATCH - report trending
+export const useReportTrending = () => {
+  return useMutation({
+    mutationFn: ({ trending_id }: ReportTrendingDto) =>
+      apiCall<boolean>(`/trending/report/${trending_id}`, {
+        method: "PATCH",
+      }),
+    onSuccess: () => {},
   });
 };

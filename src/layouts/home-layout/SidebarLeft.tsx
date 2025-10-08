@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { TypographyP } from "~/components/elements/p";
 import { BookmarkIcon } from "~/components/icons/bookmark";
 // import { CommunityIcon } from "~/components/icons/communities";
@@ -25,6 +25,7 @@ import { cn } from "~/lib/utils";
 import { ETweetType } from "~/shared/enums/type.enum";
 import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useNotificationSocket } from "~/socket/hooks/useNotificationSocket";
+import { useReloadStore } from "~/store/useReloadStore";
 import { useUserStore } from "~/store/useUserStore";
 import { Logo } from "../../components/logo";
 import { WrapIcon } from "../../components/wrapIcon";
@@ -38,13 +39,21 @@ type NavItem = {
 
 export function SidebarLeft() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { user } = useUserStore();
   const logout = useLogout();
+  const { triggerReload } = useReloadStore();
 
   //
   const [unreadCountNoti, setUnreadCountNoti] = useState(0);
   const [unreadCountConv, setUnreadCountConv] = useState(0);
   const [isOpenPost, setIsOpenPost] = useState(false);
+
+  //
+  function onClickNav(path: string) {
+    triggerReload();
+    navigate(path);
+  }
 
   //
   useNotificationSocket(
@@ -125,7 +134,7 @@ export function SidebarLeft() {
             const isActive = pathname === x.path;
             return (
               <li key={x.name} className="cursor-pointer group relative">
-                <Link to={x.path}>
+                <div onClick={() => onClickNav(x.path)}>
                   <TypographyP
                     className={cn(
                       "text-[22px] p-3 group-hover:bg-gray-100 rounded-3xl flex items-center gap-3",
@@ -144,7 +153,7 @@ export function SidebarLeft() {
                       </span>
                     )}
                   </TypographyP>
-                </Link>
+                </div>
               </li>
             );
           })}
