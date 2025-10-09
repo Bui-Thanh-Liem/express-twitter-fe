@@ -11,17 +11,20 @@ export function SidebarRight() {
   const { pathname } = useLocation();
 
   const isHiddenSearch = pathname === "/explore" || pathname === "/search";
+  const isOpenFilter = pathname === "/search";
 
   return (
     <div className="px-4">
       <div className="mb-4 mt-2">
-        {!isHiddenSearch ? (
+        {!isHiddenSearch && (
           <SearchAdvanced
             size="lg"
             className="w-[300px]"
             placeholder="bui_thanh_liem, #developer"
           />
-        ) : (
+        )}
+
+        {isOpenFilter && (
           <>
             <Card className="py-2 mb-4">
               <CardHeader className="px-4">
