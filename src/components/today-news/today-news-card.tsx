@@ -5,7 +5,10 @@ import { useGetTodayNews } from "~/hooks/useFetchTrending";
 import { cn } from "~/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { WrapIcon } from "../wrapIcon";
-import { TodayNewsItem, TodayNewsItemSkeleton } from "./today-news-item";
+import {
+  TodayNewsOrOutstandingItem,
+  TodayNewsOrOutstandingItemSkeleton,
+} from "../today-news-or-outstanding-item";
 
 export function TodayNewsCard() {
   //
@@ -18,6 +21,7 @@ export function TodayNewsCard() {
   const [open, setOpen] = useState(false);
 
   const news = useMemo(() => data?.data?.slice(0, 3) || [], [data?.data]);
+  console.log("news:::", news);
 
   useEffect(() => {
     setOpen(window.location.hash !== "#news-today");
@@ -40,9 +44,11 @@ export function TodayNewsCard() {
       <CardContent className="px-0">
         {isLoading
           ? Array.from({ length: 3 }).map((_, i) => (
-              <TodayNewsItemSkeleton key={`more-${i}`} />
+              <TodayNewsOrOutstandingItemSkeleton key={`more-${i}`} />
             ))
-          : news.map((item) => <TodayNewsItem key={item.id} item={item} />)}
+          : news.map((item) => (
+              <TodayNewsOrOutstandingItem key={item.id} item={item} />
+            ))}
 
         {/*  */}
         {news.length > 0 && (

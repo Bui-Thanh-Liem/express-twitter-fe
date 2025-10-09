@@ -56,24 +56,24 @@ export function SidebarLeft() {
   }
 
   //
+  const defaultTitleDocument = "Mạng xã hội (DEV)";
   useNotificationSocket(
     () => {},
     (unread) => {
-      if (unread > 0) {
-        document.title = `(${unread}) thông báo chưa đọc`;
+      document.title =
+        unread > 0 ? `(${unread}) thông báo chưa đọc` : defaultTitleDocument;
 
-        const oldLinks = document.querySelectorAll(
-          'link[rel="icon"], link[rel="shortcut icon"]'
-        );
-        oldLinks.forEach((link) => link.remove());
+      const oldLinks = document.querySelectorAll(
+        'link[rel="icon"], link[rel="shortcut icon"]'
+      );
+      oldLinks.forEach((link) => link.remove());
 
-        // Tạo favicon mới
-        const link = document.createElement("link");
-        link.rel = "icon";
-        link.type = "image/svg+xml";
-        link.href = unread > 0 ? "/favicon-noti.svg" : "/favicon.svg";
-        document.head.appendChild(link);
-      }
+      // Tạo favicon mới
+      const link = document.createElement("link");
+      link.rel = "icon";
+      link.type = "image/svg+xml";
+      link.href = unread > 0 ? "/favicon-noti.svg" : "/favicon.svg";
+      document.head.appendChild(link);
       setUnreadCountNoti(unread);
     }
   );
@@ -82,21 +82,20 @@ export function SidebarLeft() {
   useConversationSocket(
     () => {},
     (unread) => {
-      if (unread > 0) {
-        document.title = `(${unread}) cuộc trò chuyện chưa đọc`;
+      document.title =
+        unread > 0 ? `(${unread}) thông báo chưa đọc` : defaultTitleDocument;
 
-        const oldLinks = document.querySelectorAll(
-          'link[rel="icon"], link[rel="shortcut icon"]'
-        );
-        oldLinks.forEach((link) => link.remove());
+      const oldLinks = document.querySelectorAll(
+        'link[rel="icon"], link[rel="shortcut icon"]'
+      );
+      oldLinks.forEach((link) => link.remove());
 
-        // Tạo favicon mới
-        const link = document.createElement("link");
-        link.rel = "icon";
-        link.type = "image/svg+xml";
-        link.href = unread > 0 ? "/favicon-noti.svg" : "/favicon.svg";
-        document.head.appendChild(link);
-      }
+      // Tạo favicon mới
+      const link = document.createElement("link");
+      link.rel = "icon";
+      link.type = "image/svg+xml";
+      link.href = unread > 0 ? "/favicon-noti.svg" : "/favicon.svg";
+      document.head.appendChild(link);
       setUnreadCountConv(unread);
     },
     () => {}
@@ -154,9 +153,9 @@ export function SidebarLeft() {
   return (
     <>
       <div className="relative h-full pt-1">
-        <h2 className="text-lg font-semibold mb-4">
+        <h2 className="text-lg font-semibold">
           <WrapIcon>
-            <Logo size={30} />
+            <Logo size={40} />
           </WrapIcon>
         </h2>
         <ul className="space-y-3 text-sm text-gray-700">

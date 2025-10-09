@@ -1,19 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
-  TodayNewsItem,
-  TodayNewsItemSkeleton,
-} from "~/components/today-news/today-news-item";
+  TodayNewsOrOutstandingItem,
+  TodayNewsOrOutstandingItemSkeleton,
+} from "~/components/today-news-or-outstanding-item";
 import { useGetOutstandingThisWeek } from "~/hooks/useFetchTrending";
 import { cn } from "~/lib/utils";
-import type { IResTodayNews } from "~/shared/dtos/res/explore.dto";
+import type { IResTodayNewsOrOutstanding } from "~/shared/dtos/res/trending.dto";
 import { toastSimple } from "~/utils/toastSimple.util";
 
 export function OutstandingThisWeek() {
   const location = useLocation();
   const [limit, setLimit] = useState(4);
 
-  const [outstanding, setOutstanding] = useState<IResTodayNews[]>([]);
+  const [outstanding, setOutstanding] = useState<IResTodayNewsOrOutstanding[]>(
+    []
+  );
   const countWarning = useRef(0);
 
   //
@@ -107,14 +109,14 @@ export function OutstandingThisWeek() {
       {/*  */}
       <div>
         {outstanding?.map((item) => (
-          <TodayNewsItem key={item.id} item={item} isMedia />
+          <TodayNewsOrOutstandingItem key={item.id} item={item} isMedia />
         ))}
       </div>
 
       {/*  */}
       {isLoading
         ? Array.from({ length: 2 }).map((_, i) => (
-            <TodayNewsItemSkeleton key={`more-${i}`} />
+            <TodayNewsOrOutstandingItemSkeleton key={`more-${i}`} />
           ))
         : !!outstanding.length && (
             <div className="px-4 py-3">

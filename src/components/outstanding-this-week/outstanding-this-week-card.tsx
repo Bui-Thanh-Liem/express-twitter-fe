@@ -3,9 +3,9 @@ import { Link, useLocation } from "react-router-dom";
 import { useGetOutstandingThisWeek } from "~/hooks/useFetchTrending";
 import { cn } from "~/lib/utils";
 import {
-  TodayNewsItem,
-  TodayNewsItemSkeleton,
-} from "../today-news/today-news-item";
+  TodayNewsOrOutstandingItem,
+  TodayNewsOrOutstandingItemSkeleton,
+} from "../today-news-or-outstanding-item";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 export function OutstandingThisWeekCard() {
@@ -22,6 +22,8 @@ export function OutstandingThisWeekCard() {
     () => data?.data?.slice(0, 3) || [],
     [data?.data]
   );
+
+  console.log("outstanding:::", outstanding);
 
   useEffect(() => {
     setOpen(window.location.hash !== "#outstanding-this-week");
@@ -43,10 +45,10 @@ export function OutstandingThisWeekCard() {
         {/*  */}
         {isLoading
           ? Array.from({ length: 3 }).map((_, i) => (
-              <TodayNewsItemSkeleton key={`more-${i}`} />
+              <TodayNewsOrOutstandingItemSkeleton key={`more-${i}`} />
             ))
           : outstanding.map((item) => (
-              <TodayNewsItem key={item.id} item={item} />
+              <TodayNewsOrOutstandingItem key={item.id} item={item} />
             ))}
 
         {/*  */}

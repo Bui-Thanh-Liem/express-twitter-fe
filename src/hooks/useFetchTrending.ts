@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { ReportTrendingDto } from "~/shared/dtos/req/trending.dto";
-import type { IResTodayNews } from "~/shared/dtos/res/explore.dto";
+import type { IResTodayNews } from "~/shared/dtos/res/trending.dto";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
 import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";
 import type { ResMultiType } from "~/shared/types/response.type";

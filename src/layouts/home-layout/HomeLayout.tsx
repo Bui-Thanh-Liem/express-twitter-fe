@@ -36,6 +36,7 @@ export function HomeLayout() {
         <aside className="w-[22%] pr-4 h-screen">
           <SidebarLeft />
         </aside>
+
         <main
           className={cn(
             "w-[50%] col-span-6 border-r border-l border-gray-200",
@@ -47,7 +48,7 @@ export function HomeLayout() {
 
         {/* Trường hơp đặt biệt trang message */}
         {!isMessage ? (
-          <aside className="flex-1 pl-4 h-screen">
+          <aside className="flex-1 h-screen">
             <SidebarRight />
           </aside>
         ) : null}

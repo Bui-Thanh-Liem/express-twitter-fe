@@ -1,5 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { OutstandingThisWeekCard } from "~/components/outstanding-this-week/outstanding-this-week-card";
+import { RelatedWhoCard } from "~/components/related-who-card/related-who-card";
 import { SearchAdvanced } from "~/components/search-advanced/search-advanced";
 import { SearchFilterCard } from "~/components/search-advanced/search-filter-card";
 import { TodayNewsCard } from "~/components/today-news/today-news-card";
@@ -32,7 +33,8 @@ export function SidebarRight() {
         )}
       </div>
 
-      <div className="space-y-4 max-h-[88vh] overflow-y-auto">
+      <div className="space-y-4 max-h-[calc(100vh-80px)] overflow-y-auto scrollbar-hide">
+        <RelatedWhoCard />
         <TodayNewsCard />
         <OutstandingThisWeekCard />
         <WhoToFollowCard />
