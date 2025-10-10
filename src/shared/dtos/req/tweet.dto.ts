@@ -43,23 +43,29 @@ export const getTweetChildrenDtoSchemaParams = z.object({
 });
 
 export const getTweetChildrenDtoSchemaBody = z.object({
-  tweet_type: z.nativeEnum(ETweetType, {
-    errorMap: () => ({ message: "Invalid Tweet Type" }),
-  }),
+  tweet_type: z
+    .nativeEnum(ETweetType)
+    .refine((val) => Object.values(ETweetType).includes(val), {
+      message: "Invalid Tweet Type",
+    }),
 });
 
 export const getNewFeedTypeDtoSchema = z.object({
-  feed_type: z.nativeEnum(EFeedType, {
-    errorMap: () => ({ message: "Invalid Feed Type" }),
-  }),
+  feed_type: z
+    .nativeEnum(EFeedType)
+    .refine((val) => Object.values(ETweetType).includes(val), {
+      message: "Invalid Feed Type",
+    }),
 });
 
 export const getProfileTweetDtoSchema = z.object({
   tweet_type: z.preprocess(
     (val) => (typeof val === "string" ? Number(val) : val),
-    z.nativeEnum(ETweetType, {
-      errorMap: () => ({ message: "Invalid Tweet Type" }),
-    })
+    z
+      .nativeEnum(ETweetType)
+      .refine((val) => Object.values(ETweetType).includes(val), {
+        message: "Invalid Tweet Type",
+      })
   ),
 });
 

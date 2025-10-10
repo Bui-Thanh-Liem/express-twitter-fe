@@ -251,7 +251,7 @@ export function ProfilePage() {
                 <ProfileTweets
                   isOwnProfile={isOwnProfile}
                   tweetType={ETweetType.Tweet}
-                  profile_id={profile?._id}
+                  profile_id={profile?._id || ""}
                 />
               </div>
             </TabsContent>
@@ -264,7 +264,7 @@ export function ProfilePage() {
                 <ProfileTweets
                   isOwnProfile={isOwnProfile}
                   tweetType={ETweetType.Retweet}
-                  profile_id={profile?._id}
+                  profile_id={profile?._id || ""}
                 />
               </div>
             </TabsContent>
@@ -275,7 +275,7 @@ export function ProfilePage() {
                   ishl={"1"}
                   isOwnProfile={isOwnProfile}
                   tweetType={ETweetType.Tweet}
-                  profile_id={profile?._id}
+                  profile_id={profile?._id || ""}
                 />
               </div>
             </TabsContent>
@@ -283,7 +283,7 @@ export function ProfilePage() {
             <TabsContent value="media" className="px-0 py-4">
               <div className="space-y-4">
                 <ProfileMedia
-                  profile_id={profile?._id}
+                  profile_id={profile?._id || ""}
                   isOwnProfile={isOwnProfile}
                 />
               </div>
@@ -292,7 +292,7 @@ export function ProfilePage() {
             {isOwnProfile && (
               <TabsContent value="likes" className="px-0 py-4">
                 <div className="space-y-4">
-                  <ProfileLiked profile_id={profile?._id} />
+                  <ProfileLiked profile_id={profile?._id || ""} />
                 </div>
               </TabsContent>
             )}

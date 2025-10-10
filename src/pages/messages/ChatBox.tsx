@@ -19,23 +19,26 @@ import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useGetMultiMessages } from "~/hooks/useFetchMessages";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
+import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useChatSocket } from "~/socket/hooks/useChatSocket";
 import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useChatBoxStore } from "~/store/useChatBoxStore";
 import { useUserStore } from "~/store/useUserStore";
 import { CreateConversation } from "./CreateConversation";
-import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 
 export default function ChatBox() {
   //
   const { leaveConversation, joinConversation } = useConversationSocket(
     (newConversation) => {
-      console.log("Nhận từ server (socket) newConversation:::", newConversation);
+      console.log(
+        "Nhận từ server (socket) newConversation:::",
+        newConversation
+      );
     },
     (unreadCount) => {
       console.log("Nhận từ server (socket) unreadCount:::", unreadCount);
     },
-    () => {},
+    () => {}
   );
   const { pathname } = useLocation();
   const { close, conversation } = useChatBoxStore();
@@ -66,7 +69,7 @@ export default function ChatBox() {
   });
 
   //
-  const { data } = useGetMultiMessages(conversation?._id, {
+  const { data } = useGetMultiMessages(conversation?._id || "", {
     page: "1",
     limit: "100",
   });
@@ -123,8 +126,8 @@ export default function ChatBox() {
     (data: { text: string }) => {
       sendMessage({
         content: data.text,
-        sender: user?._id,
-        conversation: conversation?._id,
+        sender: user?._id || "",
+        conversation: conversation?._id || "",
       });
 
       reset();
@@ -161,9 +164,9 @@ export default function ChatBox() {
           </div>
           <CardAction className="flex items-center gap-2">
             <CreateConversation
-              initialUserIds={(conversation.participants as IUser[]).map(
-                (user) => user._id
-              )}
+              initialUserIds={(
+                conversation.participants as unknown as IUser[]
+              ).map((user) => user._id)}
             />
             <WrapIcon onClick={closeChatBox}>
               <X className="h-[18px] w-[18px]" />

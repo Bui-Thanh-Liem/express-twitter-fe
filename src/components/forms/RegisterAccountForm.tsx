@@ -28,7 +28,7 @@ export function RegisterAccountForm({
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterUserDto>({
-    resolver: zodResolver(RegisterUserDtoSchema),
+    resolver: zodResolver(RegisterUserDtoSchema) as any,
     defaultValues: {
       name: "",
       email: "",

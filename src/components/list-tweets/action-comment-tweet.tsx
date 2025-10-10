@@ -24,7 +24,7 @@ export function ActionCommentTweet({ tweet }: { tweet: ITweet }) {
 
   //
   const { content, user_id, created_at, mentions, comments_count } = tweet;
-  const author = user_id as IUser;
+  const author = user_id as unknown as IUser;
 
   //
   const [countComment, setCountComment] = useState(0);
@@ -116,7 +116,10 @@ export function ActionCommentTweet({ tweet }: { tweet: ITweet }) {
             {/* Nội dung tweet */}
             {content && (
               <div className="my-3">
-                <Content content={content} mentions={mentions} />
+                <Content
+                  content={content}
+                  mentions={mentions as unknown as IUser[]}
+                />
               </div>
             )}
           </div>

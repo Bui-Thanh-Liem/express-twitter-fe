@@ -19,7 +19,6 @@ import { useGetMultiMessages } from "~/hooks/useFetchMessages";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
-import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useChatSocket } from "~/socket/hooks/useChatSocket";
 import { useUserStore } from "~/store/useUserStore";
 import { CreateConversation } from "./CreateConversation";
@@ -43,7 +42,7 @@ export function MessageView({
   const [messages, setMessages] = useState<IMessage[]>([]);
 
   //
-  const { data } = useGetMultiMessages(conversation?._id, {
+  const { data } = useGetMultiMessages(conversation?._id || "", {
     page: "1",
     limit: "50",
   });
@@ -104,8 +103,8 @@ export function MessageView({
     (data: { text: string }) => {
       sendMessage({
         content: data.text,
-        sender: user?._id,
-        conversation: conversation?._id,
+        sender: user?._id || "",
+        conversation: conversation?._id || "",
       });
 
       reset();
@@ -146,8 +145,8 @@ export function MessageView({
 
         <div>
           <CreateConversation
-            initialUserIds={(conversation.participants as IUser[]).map(
-              (user) => user._id
+            initialUserIds={(conversation?.participants as any).map(
+              (user: { _id: any; }) => user._id
             )}
           />
 

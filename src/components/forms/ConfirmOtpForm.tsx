@@ -48,6 +48,7 @@ export function ConfirmOtpForm({
 
   //
   const onSubmit = (data: FormValues) => {
+    console.log("data:::", data);
     setOpenForm(false);
     onSuccess();
     reset();

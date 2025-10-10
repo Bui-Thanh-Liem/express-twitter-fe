@@ -369,7 +369,7 @@ export const useBookmarkTweet = () => {
     },
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onSuccess: (result, tweetId, context) => {
+    onSuccess: (result, tweetId) => {
       const isNowBookmarked = result.data?.status === "Bookmark";
 
       // ✅ Sync từ server cho TẤT CẢ pages

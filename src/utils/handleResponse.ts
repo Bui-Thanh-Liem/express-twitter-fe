@@ -3,7 +3,7 @@ import type { OkResponse } from "~/shared/classes/response.class";
 import { formatDateToDateVN } from "./formatDateToDateVN";
 
 export function handleResponse(
-  res: OkResponse<object | boolean>,
+  res: OkResponse<any | boolean>,
   ...callbacks: ((val?: unknown) => void)[]
 ) {
   const { statusCode, message } = res;

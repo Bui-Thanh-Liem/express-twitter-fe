@@ -388,7 +388,7 @@ export const useLikeTweet = () => {
     },
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onSuccess: (result, tweetId, context) => {
+    onSuccess: (result, tweetId) => {
       const isNowLiked = result.data?.status === "Like";
       const newLikesCount = result.data?.likes_count;
 

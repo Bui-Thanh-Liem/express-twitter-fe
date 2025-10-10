@@ -45,7 +45,8 @@ export function TrendingItem({ item, idx }: { item: ITrending; idx: number }) {
       navigate(`/search?q=${item.topic}`);
       return;
     }
-    if (item.hashtag) navigate(`/search?q=${(item.hashtag as IHashtag).name}`);
+    if (item.hashtag)
+      navigate(`/search?q=${(item.hashtag as unknown as IHashtag).name}`);
   }
 
   //
@@ -62,7 +63,7 @@ export function TrendingItem({ item, idx }: { item: ITrending; idx: number }) {
       <div className="flex justify-between items-center">
         <div>
           <p className="text-xs text-muted-foreground">
-            {`${idx} `}. {(item.hashtag as IHashtag)?.name}
+            {`${idx} `}. {(item.hashtag as unknown as IHashtag)?.name}
           </p>
           <p className="text-sm leading-snug font-semibold line-clamp-1">
             {item.topic}

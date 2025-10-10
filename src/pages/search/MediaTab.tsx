@@ -26,7 +26,7 @@ export function MediaTab() {
     limit: "12",
     q: q ?? "",
     pf: pf ?? "",
-    f: f ?? "",
+    f: (f as "media") ?? "media",
     page: page.toString(),
   });
 

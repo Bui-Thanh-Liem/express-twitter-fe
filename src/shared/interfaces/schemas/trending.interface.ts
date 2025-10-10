@@ -1,9 +1,8 @@
-import { ObjectId } from "mongodb";
-import { IBase } from "./base.interface";
+import type { IBase } from "./base.interface";
 
 export interface ITrending extends IBase {
   topic?: string;
   slug?: string;
-  hashtag?: ObjectId;
+  hashtag?: string;
   count: number;
 }

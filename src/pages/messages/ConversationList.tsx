@@ -73,7 +73,7 @@ function ConversationItem({
   //
   let messageLastContent = "Chưa có tin nhắn";
   if (lastMessage) {
-    const _lastMessage = lastMessage as IMessage;
+    const _lastMessage = lastMessage as unknown as IMessage;
     const isOwner = currentUser?._id === _lastMessage.sender;
     messageLastContent = `${isOwner ? "Bạn: " : ""}${_lastMessage.content}`;
   }
@@ -135,8 +135,8 @@ function ConversationItem({
         <div className="relative w-16 h-6 flex items-center justify-end">
           {/* time: fade out on hover */}
           <span className="text-gray-400 text-sm transition-opacity duration-150 opacity-100 group-hover:opacity-0">
-            {lastMessage?.created_at &&
-              formatTimeAgo(lastMessage.created_at as unknown as string)}
+            {(lastMessage as any)?.created_at &&
+              formatTimeAgo((lastMessage as any).created_at)}
           </span>
 
           {/* dropdown trigger: keep in DOM, hide visually until hover */}
@@ -328,16 +328,16 @@ export function ConversationList({
   //
   function onPinnedConv(id: string) {
     setAllConversations((prev) =>
-      prev.map((item) => {
+      prev.map((item: any) => {
         if (item._id === id) {
           const alreadyPinned = item.pinned?.some(
-            (p) => p.user_id === user?._id
+            (p: { user_id: string | undefined }) => p.user_id === user?._id
           );
 
           let newPinned;
           if (alreadyPinned) {
             // unpin
-            newPinned = item.pinned.filter((p) => p.user_id !== user?._id);
+            newPinned = item.pinned.filter((p: { user_id: string | undefined; }) => p.user_id !== user?._id);
           } else {
             // pin
             newPinned = [
@@ -375,7 +375,7 @@ export function ConversationList({
       {/* List conversations */}
       {allConversations.length > 0 && (
         <div>
-          {sortConversations(allConversations, user?._id).map(
+          {sortConversations(allConversations, user?._id || "").map(
             (conversation) => (
               <ConversationItem
                 currentUser={user}

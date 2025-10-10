@@ -125,13 +125,14 @@ export const TweetItem = ({
     guest_view,
   } = tweet;
 
-  const author = user_id as IUser;
+  const author = user_id as unknown as IUser;
 
   // Gọi api detail để lấy các retweet/quoteTweet
-  const { data } = useGetDetailTweet(parent_id);
+  const { data } = useGetDetailTweet(parent_id || "");
 
   //
   const quoteTweet = data?.data ? data?.data : ({} as ITweet);
+  const quoteTweet_user = quoteTweet.user_id as unknown as IUser;
 
   return (
     <div key={_id} className="px-4 py-2 group hover:bg-gray-50">
@@ -139,7 +140,7 @@ export const TweetItem = ({
       <div className="flex items-center mb-3">
         <AvatarMain src={author.avatar} alt={author.name} className="mr-3" />
         <div>
-          <ShortInfoProfile profile={tweet.user_id as IUser}>
+          <ShortInfoProfile profile={tweet.user_id as unknown as IUser}>
             <Link
               to={`/${author.username}`}
               className="flex items-center gap-2"
@@ -163,7 +164,7 @@ export const TweetItem = ({
         {/* Nội dung tweet */}
         {content && tweet.type !== ETweetType.Retweet && (
           <p className="text-gray-800 mb-3 leading-relaxed">
-            <Content content={content} mentions={mentions} />
+            <Content content={content} mentions={mentions as any} />
           </p>
         )}
 
@@ -183,27 +184,24 @@ export const TweetItem = ({
             {/* Header với thông tin người dùng */}
             <div className="flex items-center mb-3">
               <AvatarMain
-                src={quoteTweet.user_id?.avatar}
-                alt={quoteTweet.user_id?.name}
+                src={quoteTweet_user?.avatar}
+                alt={quoteTweet_user?.name}
                 className="mr-3"
               />
               <div>
-                <ShortInfoProfile profile={quoteTweet.user_id}>
+                <ShortInfoProfile profile={quoteTweet_user}>
                   <Link
-                    to={`/${quoteTweet.user_id?.username}`}
+                    to={`/${quoteTweet_user?.username}`}
                     className="flex items-center gap-2"
                   >
                     <h3 className="text-lg font-semibold hover:underline hover:cursor-pointer">
-                      {quoteTweet.user_id?.name}
+                      {quoteTweet_user?.name}
                     </h3>
-                    <VerifyIcon
-                      active={!!quoteTweet.user_id?.verify}
-                      size={20}
-                    />
+                    <VerifyIcon active={!!quoteTweet_user?.verify} size={20} />
                   </Link>
                 </ShortInfoProfile>
                 <p className="text-sm text-gray-500">
-                  {quoteTweet.user_id?.username} •{" "}
+                  {quoteTweet_user?.username} •{" "}
                   {formatTimeAgo(quoteTweet.created_at as unknown as string)}
                 </p>
               </div>
@@ -214,7 +212,7 @@ export const TweetItem = ({
               <p className="text-gray-800 mb-3 leading-relaxed">
                 <Content
                   content={quoteTweet?.content}
-                  mentions={quoteTweet?.mentions}
+                  mentions={quoteTweet?.mentions as unknown as IUser[]}
                 />
               </p>
             )}
@@ -268,7 +266,7 @@ function TweetAction({
   onSuccessDel: (id: string) => void;
 }) {
   const { user } = useUserStore();
-  const author = tweet?.user_id as IUser;
+  const author = tweet?.user_id as unknown as IUser;
   const apiDeleteTweet = useDeleteTweet();
 
   // Gỡ bài viết (xoá)

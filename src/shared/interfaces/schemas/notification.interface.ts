@@ -1,16 +1,15 @@
-import { ObjectId } from "mongodb";
 import { ENotificationType } from "~/shared/enums/type.enum";
-import { IBase } from "./base.interface";
-import { ITweet } from "./tweet.interface";
-import { IUser } from "./user.interface";
+import type { IBase } from "./base.interface";
+import type { ITweet } from "./tweet.interface";
+import type { IUser } from "./user.interface";
 
 export interface INotification extends IBase {
   content: string;
   type: ENotificationType;
-  sender: IUser | ObjectId;
-  receiver: IUser | ObjectId;
+  sender: IUser | string;
+  receiver: IUser | string;
   isRead: boolean;
-  refId: ObjectId | undefined;
+  refId: string | undefined;
 
   tweetRef?: ITweet;
   userRef?: IUser;

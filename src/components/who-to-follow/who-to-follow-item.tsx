@@ -68,7 +68,7 @@ export function UserToFollowItem({ user }: { user: Partial<IUser> }) {
           onClick={() => {
             setFollowed(!followed);
             mutate({
-              user_id: user._id,
+              user_id: user._id || '',
               username: user.username || "",
             });
           }}

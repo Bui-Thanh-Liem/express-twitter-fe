@@ -53,7 +53,7 @@ export function TweetDetailDrawer() {
 
   // Gọi api comments (theo page)
   const { data, isLoading: isLoadingCmm } = useGetTweetChildren({
-    tweet_id: tweet?._id,
+    tweet_id: tweet?._id || "",
     tweet_type: ETweetType.Comment,
     queries: {
       page: page.toString(),
@@ -151,7 +151,7 @@ export function TweetDetailDrawer() {
     retweets_count,
     quotes_count,
   } = tweet;
-  const author = user_id as IUser;
+  const author = user_id as unknown as IUser;
 
   //
   function handleClickPrev(e: React.MouseEvent) {
@@ -239,7 +239,7 @@ export function TweetDetailDrawer() {
                   className="mr-3"
                 />
                 <div>
-                  <ShortInfoProfile profile={tweet.user_id as IUser}>
+                  <ShortInfoProfile profile={tweet.user_id as unknown as IUser}>
                     <Link
                       to={`/${author.username}`}
                       className="flex items-center gap-2"
@@ -258,7 +258,7 @@ export function TweetDetailDrawer() {
               </div>
             </DrawerTitle>
             <DrawerDescription className="text-gray-700 text-base">
-              <Content content={content} mentions={mentions} />
+              <Content content={content} mentions={mentions as any} />
             </DrawerDescription>
           </DrawerHeader>
 
