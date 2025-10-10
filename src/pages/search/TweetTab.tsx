@@ -49,9 +49,11 @@ export function TweetTab() {
         setAllTweets((prev) => {
           // Loại bỏ duplicate tweets dựa trên _id
           const existingIds = new Set(prev.map((tweet) => tweet._id));
+
           const filteredNewTweets = newTweets.filter(
             (tweet) => !existingIds.has(tweet._id)
           );
+
           return [...prev, ...filteredNewTweets];
         });
       }

@@ -188,7 +188,9 @@ export function ProfileMedia({
       {/* End of content indicator */}
       {!hasMore && allMedia.length > 0 && (
         <div className="text-center py-8">
-          <p className="text-gray-500">🎉 Bạn đã xem hết tất cả media!</p>
+          <p className="text-gray-500">
+            🎉 Bạn đã xem hết tất cả hình ảnh và video!
+          </p>
         </div>
       )}
     </div>

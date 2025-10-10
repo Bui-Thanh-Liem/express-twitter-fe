@@ -21,7 +21,6 @@ export function TodayNewsCard() {
   const [open, setOpen] = useState(false);
 
   const news = useMemo(() => data?.data?.slice(0, 3) || [], [data?.data]);
-  console.log("news:::", news);
 
   useEffect(() => {
     setOpen(window.location.hash !== "#news-today");

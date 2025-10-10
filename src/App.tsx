@@ -11,7 +11,7 @@ import { BookmarkPage } from "./pages/bookmark/BookmarkPage";
 import { ExplorePage } from "./pages/explore/ExplorePage";
 import { HomePage } from "./pages/home/HomePage";
 import { MessagePage } from "./pages/messages/MessagePage";
-import { NotificationPage } from "./pages/notification/Notification";
+import { NotificationPage } from "./pages/notification/NotificationPage";
 import { ProfilePage } from "./pages/profile/ProfilePage";
 import { SearchPage } from "./pages/search/SearchPage";
 import { TweetDetailPage } from "./pages/tweet-detail/TweetDetailPage";

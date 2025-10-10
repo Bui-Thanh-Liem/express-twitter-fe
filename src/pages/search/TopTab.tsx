@@ -62,7 +62,14 @@ export function TopTab() {
     total_page_user_ref.current = total_page || 0;
 
     if (items) {
-      setUsers((prev) => [...prev, ...items]);
+      setUsers((prev) => {
+        // Loại bỏ duplicate tweets dựa trên _id
+        const existingIds = new Set(prev.map((u) => u._id));
+        const filteredNewUsers = items.filter(
+          (tweet) => !existingIds.has(tweet._id)
+        );
+        return [...prev, ...filteredNewUsers];
+      });
     }
   }, [data?.data]);
 
@@ -72,14 +79,21 @@ export function TopTab() {
     total_page_tweet_ref.current = total_page || 0;
 
     if (items) {
-      setTweets((prev) => [...prev, ...items]);
+      setTweets((prev) => {
+        // Loại bỏ duplicate tweets dựa trên _id
+        const existingIds = new Set(prev.map((tweet) => tweet._id));
+
+        const filteredNewTweets = items.filter(
+          (tweet) => !existingIds.has(tweet._id)
+        );
+
+        return [...prev, ...filteredNewTweets];
+      });
     }
   }, [dataTweets?.data]);
 
   //
   useEffect(() => {
-    
-    
     return () => {
       setUsers([]);
       setTweets([]);

@@ -49,8 +49,6 @@ function SkeletonNotiItem() {
 
 //
 function NotiItem({ noti, onClick, onDelete }: Props) {
-  console.log("noti:::", noti);
-
   const navigate = useNavigate();
   const [read, setRead] = useState(noti?.isRead);
   const sender =

@@ -23,8 +23,7 @@ export function OutstandingThisWeekCard() {
     [data?.data]
   );
 
-  console.log("outstanding:::", outstanding);
-
+  //
   useEffect(() => {
     setOpen(window.location.hash !== "#outstanding-this-week");
   }, [location.hash]);

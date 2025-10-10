@@ -1,7 +1,11 @@
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon } from "~/components/icons/arrow-left";
+import { SkeletonTweet, TweetItem } from "~/components/list-tweets/item-tweet";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { WrapIcon } from "~/components/wrapIcon";
+import { useGetTweetsByIds } from "~/hooks/useFetchTrending";
+import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import { useTrendingStore } from "~/store/useTrendingStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
 
@@ -9,6 +13,53 @@ export function TrendingPage() {
   const navigate = useNavigate();
   const { trendingItem } = useTrendingStore();
   const highlight = trendingItem?.highlight;
+  const relevantIds = trendingItem?.relevantIds || [];
+
+  const [limit, setLimit] = useState(5);
+  const [allTweets, setAllTweets] = useState<ITweet[]>([]);
+  const loaderRef = useRef<HTMLDivElement | null>(null);
+
+  const { data, isLoading, error, isFetching } = useGetTweetsByIds({
+    ids: relevantIds.slice(0, limit),
+  });
+
+  // Cập nhật danh sách khi fetch thành công
+  useEffect(() => {
+    if (data?.statusCode === 200) {
+      setAllTweets(data.data || []);
+    }
+  }, [data]);
+
+  // Xử lý xóa tweet thành công
+  const onSuccessDel = (id: string) => {
+    setAllTweets((prev) => prev.filter((tw) => tw._id !== id));
+  };
+
+  // Infinite Scroll với Intersection Observer
+  const handleObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const target = entries[0];
+      if (target.isIntersecting && !isFetching) {
+        setLimit((prev) => {
+          const next = prev + 5;
+          return next <= relevantIds.length ? next : prev;
+        });
+      }
+    },
+    [isFetching, relevantIds.length]
+  );
+
+  useEffect(() => {
+    const option = { root: null, rootMargin: "0px", threshold: 0 };
+    const observer = new IntersectionObserver(handleObserver, option);
+    const loader = loaderRef.current;
+    if (loader) observer.observe(loader);
+    return () => {
+      if (loader) observer.unobserve(loader);
+    };
+  }, [handleObserver]);
+
+  const loading = isLoading || isFetching;
 
   return (
     <div>
@@ -22,28 +73,77 @@ export function TrendingPage() {
         </div>
       </div>
 
-      {/*  */}
-      <div className="overflow-y-auto mt-1h-[calc(100vh-80px)]">
-        <ul className="my-3 px-8 space-y-3 list-disc">
-          {highlight?.map((h, i) => (
-            <li key={h._id}>
-              <p>
-                {h.content}
-                <Avatar
-                  key={`${h.avatar}-${i}`}
-                  className="inline-block ml-4 w-5 h-5"
-                >
-                  <AvatarImage src={h.avatar} alt={h.content} />
-                  <AvatarFallback>{h.avatar}</AvatarFallback>
-                </Avatar>
-                <span className="text-xs ml-2 text-gray-400">
-                  {formatTimeAgo(h.created_at as unknown as string)}
-                </span>
+      <div className="max-h-[calc(100vh-50px)] overflow-y-auto">
+        {/* Summary */}
+        <div>
+          <ul className="my-3 px-8 space-y-3 list-disc">
+            {highlight?.map((h, i) => (
+              <li key={h._id}>
+                <p>
+                  {h.content}
+                  <Avatar
+                    key={`${h.avatar}-${i}`}
+                    className="inline-block ml-4 w-5 h-5"
+                  >
+                    <AvatarImage src={h.avatar} alt={h.content} />
+                    <AvatarFallback>{h.avatar}</AvatarFallback>
+                  </Avatar>
+                  <span className="text-xs ml-2 text-gray-400">
+                    {formatTimeAgo(h.created_at as unknown as string)}
+                  </span>
+                </p>
+              </li>
+            ))}
+          </ul>
+          <hr />
+        </div>
+
+        {/* Tweets list */}
+        <div>
+          {isLoading && limit === 5 && <SkeletonTweet />}
+
+          {!isLoading && !error && allTweets.length === 0 && limit === 5 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg mb-2">
+                📭 Chưa có nội dung nào
               </p>
-            </li>
-          ))}
-        </ul>
-        <hr />
+            </div>
+          )}
+
+          {allTweets.length > 0 && (
+            <div className="space-y-6">
+              {allTweets.map((tweet, index: number) => (
+                <span key={tweet._id}>
+                  <TweetItem tweet={tweet} onSuccessDel={onSuccessDel} />
+                  {index < allTweets.length - 1 && (
+                    <hr className="border-gray-200" />
+                  )}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Loading more indicator */}
+          {loading && (
+            <div className="py-4">
+              <SkeletonTweet />
+            </div>
+          )}
+
+          {/* Loader */}
+          {limit < relevantIds.length && (
+            <div ref={loaderRef} className="text-center py-6" />
+          )}
+
+          {/* End of list */}
+          {limit >= relevantIds.length && !isFetching && (
+            <div className="text-center py-8">
+              <p className="text-gray-500">
+                🎉 Bạn đã xem hết tất cả nội dung!
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

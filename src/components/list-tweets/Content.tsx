@@ -38,7 +38,7 @@ export function Content({
       return (
         <Link
           key={i}
-          to={`/hashtag/${part}`}
+          to={`/search?q=${part.replace("#", "")}`}
           className="text-blue-400 font-medium hover:underline hover:cursor-pointer"
         >
           {part}

@@ -244,6 +244,7 @@ export function Tweet({
               handleResponse(resUploadMedia);
               return;
             }
+
             mediaUrl = resUploadMedia.data[0];
             setUploadedMediaUrl(mediaUrl);
             setUploadProgress(100);
@@ -273,6 +274,13 @@ export function Tweet({
 
         handleResponse(resCreateTweet, () => {
           successForm(resCreateTweet.data!);
+
+          setTimeout(() => {
+            // Nếu upload thành công và type === video thì phải đợi kiểm duyệt
+            if (mediaType == EMediaType.Video) {
+              toastSimple("Video của bạn đang được kiểm duyệt.");
+            }
+          }, 3000);
         });
       } catch (error) {
         console.error("Error submitting tweet:", error);
