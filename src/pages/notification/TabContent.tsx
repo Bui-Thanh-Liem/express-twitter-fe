@@ -149,7 +149,13 @@ function NotiItem({ noti, onClick, onDelete }: Props) {
   );
 }
 
-export function TabContent({ type }: { type: ENotificationType }) {
+export function TabContent({
+  type,
+  emptyText,
+}: {
+  type: ENotificationType;
+  emptyText: string;
+}) {
   //
   const [notis, setNotis] = useState<INotification[]>([]);
   const [page, setPage] = useState(1);
@@ -163,19 +169,14 @@ export function TabContent({ type }: { type: ENotificationType }) {
   const apiDeleteNoti = useDeleteNotification();
   const apiReadNoti = useReadNotification();
 
-  console.log("TabContent - type:::", type);
-  console.log("data?.data:::", data?.data);
-
   // Socket
   useNotificationSocket(
     (newNoti) => {
-      if (
-        newNoti &&
-        (newNoti.type === type || type === ENotificationType.ALL)
-      ) {
+      if (newNoti && newNoti.type === type) {
         setNotis((prev) => [newNoti, ...prev]);
       }
     },
+    () => {},
     () => {}
   );
 
@@ -253,10 +254,7 @@ export function TabContent({ type }: { type: ENotificationType }) {
       {!notis.length && !isLoading && (
         <div className="flex justify-center flex-col items-center">
           <p className="text-xl mb-1">Chưa có gì ở đây</p>
-          <p className="text-gray-400 w-96 text-justify">
-            Từ lượt thích đến lượt đăng lại và nhiều hơn thế nữa, đây chính là
-            nơi diễn ra mọi hoạt động.
-          </p>
+          <p className="text-gray-400 w-96 text-justify">{emptyText}</p>
         </div>
       )}
 

@@ -4,8 +4,10 @@ import { TweetDetailDrawer } from "~/components/list-tweets/tweet-detail-drawer"
 import { cn } from "~/lib/utils";
 import ChatBox from "~/pages/messages/ChatBox";
 import { CONSTANT_EVENT_NAMES } from "~/shared/constants";
+import { useNotificationSocket } from "~/socket/hooks/useNotificationSocket";
 import { socket } from "~/socket/socket";
 import { useChatBoxStore } from "~/store/useChatBoxStore";
+import { useUnreadNotiStore } from "~/store/useUnreadNotiStore";
 import { useUserStore } from "~/store/useUserStore";
 import { SidebarLeft } from "./SidebarLeft";
 import { SidebarRight } from "./SidebarRight";
@@ -13,10 +15,11 @@ import { SidebarRight } from "./SidebarRight";
 export function HomeLayout() {
   const { isOpen } = useChatBoxStore();
   const { user } = useUserStore();
+  const { setUnread, setUnreadByType } = useUnreadNotiStore();
   const { pathname } = useLocation();
   const isMessage = pathname === "/messages";
 
-  // Một kết nối duy nhất cho toàn ứng dụng
+  // Một kết nối socket duy nhất cho toàn ứng dụng
   useEffect(() => {
     socket.connect();
     console.log("mounted HomeLayout");
@@ -30,6 +33,10 @@ export function HomeLayout() {
     };
   }, []);
 
+  //
+  useNotificationSocket(() => {}, setUnread, setUnreadByType);
+
+  //
   return (
     <div className="w-full">
       <div className="mx-auto flex h-screen overflow-hidden">

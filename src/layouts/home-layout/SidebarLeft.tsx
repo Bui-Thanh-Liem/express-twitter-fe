@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TypographyP } from "~/components/elements/p";
 import { BookmarkIcon } from "~/components/icons/bookmark";
@@ -24,8 +24,8 @@ import { useLogout } from "~/hooks/useFetchAuth";
 import { cn } from "~/lib/utils";
 import { ETweetType } from "~/shared/enums/type.enum";
 import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
-import { useNotificationSocket } from "~/socket/hooks/useNotificationSocket";
 import { useReloadStore } from "~/store/useReloadStore";
+import { useUnreadNotiStore } from "~/store/useUnreadNotiStore";
 import { useUserStore } from "~/store/useUserStore";
 import { Logo } from "../../components/logo";
 import { WrapIcon } from "../../components/wrapIcon";
@@ -38,9 +38,16 @@ type NavItem = {
 };
 
 export function SidebarLeft() {
+  const defaultTitleDocument = "Mạng xã hội (DEV)";
+
+  //
   const { pathname } = useLocation();
   const navigate = useNavigate();
+
+  //
   const { user } = useUserStore();
+  const { unread } = useUnreadNotiStore();
+
   const logout = useLogout();
   const { triggerReload } = useReloadStore();
 
@@ -56,27 +63,23 @@ export function SidebarLeft() {
   }
 
   //
-  const defaultTitleDocument = "Mạng xã hội (DEV)";
-  useNotificationSocket(
-    () => {},
-    (unread) => {
-      document.title =
-        unread > 0 ? `(${unread}) thông báo chưa đọc` : defaultTitleDocument;
+  useEffect(() => {
+    document.title =
+      unread > 0 ? `(${unread}) thông báo chưa đọc` : defaultTitleDocument;
 
-      const oldLinks = document.querySelectorAll(
-        'link[rel="icon"], link[rel="shortcut icon"]'
-      );
-      oldLinks.forEach((link) => link.remove());
+    const oldLinks = document.querySelectorAll(
+      'link[rel="icon"], link[rel="shortcut icon"]'
+    );
+    oldLinks.forEach((link) => link.remove());
 
-      // Tạo favicon mới
-      const link = document.createElement("link");
-      link.rel = "icon";
-      link.type = "image/svg+xml";
-      link.href = unread > 0 ? "/favicon-noti.svg" : "/favicon.svg";
-      document.head.appendChild(link);
-      setUnreadCountNoti(unread);
-    }
-  );
+    // Tạo favicon mới
+    const link = document.createElement("link");
+    link.rel = "icon";
+    link.type = "image/svg+xml";
+    link.href = unread > 0 ? "/favicon-noti.svg" : "/favicon.svg";
+    document.head.appendChild(link);
+    setUnreadCountNoti(unread);
+  }, [unread]);
 
   //
   useConversationSocket(

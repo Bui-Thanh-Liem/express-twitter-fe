@@ -2,12 +2,15 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useForgotPassword } from "~/hooks/useFetchAuth";
 import {
   ForgotPasswordDtoSchema,
   type ForgotPasswordDto,
 } from "~/shared/dtos/req/auth.dto";
+import { handleResponse } from "~/utils/handleResponse";
 import { ButtonMain } from "../ui/button";
 import { InputMain } from "../ui/input";
+
 export function ForgotPasswordForm({
   setOpenForm,
   onSuccess,
@@ -29,18 +32,27 @@ export function ForgotPasswordForm({
   });
 
   //
+  const apiForgotPass = useForgotPassword();
+
+  //
   function onCancel(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     setOpenForm(false);
   }
 
   //
-  const onSubmit = (data: ForgotPasswordDto) => {
-    console.log("data:::", data);
+  const onSubmit = async (data: ForgotPasswordDto) => {
+    console.log("ForgotPasswordForm - onSubmit - data:::", data);
+    const res = await apiForgotPass.mutateAsync(data);
+    handleResponse(res, handleSuccess);
+  };
+
+  //
+  function handleSuccess() {
     setOpenForm(false);
     onSuccess();
     reset();
-  };
+  }
 
   return (
     <form

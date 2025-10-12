@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { AuthApple } from "~/components/auth-apple";
 import { AuthGoogle } from "~/components/auth-google";
 import { TypographyH1 } from "~/components/elements/h1";
@@ -7,57 +9,13 @@ import { ConfirmOtpForm } from "~/components/forms/ConfirmOtpForm";
 import { ForgotPasswordForm } from "~/components/forms/ForgotPasswordForm";
 import { LoginAccountForm } from "~/components/forms/LoginAccountForm";
 import { RegisterAccountForm } from "~/components/forms/RegisterAccountForm";
-import { Divider } from "~/components/ui/divider";
-import React, { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { Logo } from "../../components/logo";
 import { ResetPasswordForm } from "~/components/forms/ResetPasswordForm";
-import { useUserStore } from "~/store/useUserStore";
-import { useGetMe } from "~/hooks/useFetchAuth";
 import { ButtonMain } from "~/components/ui/button";
 import { DialogMain } from "~/components/ui/dialog";
-
-export function Footer() {
-  const links = [
-    "Giới thiệu",
-    "Tải ứng dụng X xuống",
-    "Grok",
-    "Trung tâm Trợ giúp",
-    "Điều khoản Dịch vụ",
-    "Chính sách Riêng tư",
-    "Chính sách cookie",
-    "Khả năng truy cập",
-    "Thông tin quảng cáo",
-    "Blog",
-    "Nghề nghiệp",
-    "Tài nguyên thương hiệu",
-    "Quảng cáo",
-    "Tiếp thị",
-    "X dành cho doanh nghiệp",
-    "Nhà phát triển",
-    "Danh mục",
-    "Cài đặt",
-  ];
-
-  return (
-    <div className="text-sm text-gray-600  bottom-0 px-4 py-2 w-[1200px]">
-      <div className="flex flex-wrap justify-center text-center gap-x-1 gap-y-1">
-        {links.map((label, idx) => (
-          <React.Fragment key={idx}>
-            <a
-              href="#"
-              className="hover:underline hover:text-black transition-colors px-1"
-            >
-              {label}
-            </a>
-            {idx < links.length - 1 && <span className="text-gray-400">|</span>}
-          </React.Fragment>
-        ))}
-      </div>
-      <div className="text-center mt-2">© 2025 X Corp.</div>
-    </div>
-  );
-}
+import { Divider } from "~/components/ui/divider";
+import { useGetMe } from "~/hooks/useFetchAuth";
+import { useUserStore } from "~/store/useUserStore";
+import { Logo } from "../../components/logo";
 
 export function AuthPage() {
   const getMe = useGetMe();
@@ -65,6 +23,7 @@ export function AuthPage() {
 
   // OAUTH
   const [params] = useSearchParams();
+  const { hash } = useLocation();
   const status = params.get("s") || "";
   useEffect(() => {
     async function onLoginOAuthSuccess() {
@@ -96,10 +55,19 @@ export function AuthPage() {
     setIsOpenForgotPass(true);
   }
 
+  //
   function onClickRegister() {
     setIsOpenLogin(false);
     setIsOpenRegister(true);
   }
+
+  //
+  useEffect(() => {
+    const clearHash = hash.split("?")[0];
+    if (clearHash === "#reset-password") {
+      setIsOpenResetPass(true);
+    }
+  }, [hash]);
 
   return (
     <div>
@@ -192,7 +160,8 @@ export function AuthPage() {
       >
         <ForgotPasswordForm
           setOpenForm={setIsOpenForgotPass}
-          onSuccess={() => setIsOpenConfirmOtp(true)}
+          // onSuccess={() => setIsOpenConfirmOtp(true)}
+          onSuccess={() => {}}
         />
       </DialogMain>
 
@@ -219,6 +188,48 @@ export function AuthPage() {
       >
         <ResetPasswordForm setOpenForm={setIsOpenResetPass} />
       </DialogMain>
+    </div>
+  );
+}
+
+export function Footer() {
+  const links = [
+    "Giới thiệu",
+    "Tải ứng dụng X xuống",
+    "Grok",
+    "Trung tâm Trợ giúp",
+    "Điều khoản Dịch vụ",
+    "Chính sách Riêng tư",
+    "Chính sách cookie",
+    "Khả năng truy cập",
+    "Thông tin quảng cáo",
+    "Blog",
+    "Nghề nghiệp",
+    "Tài nguyên thương hiệu",
+    "Quảng cáo",
+    "Tiếp thị",
+    "X dành cho doanh nghiệp",
+    "Nhà phát triển",
+    "Danh mục",
+    "Cài đặt",
+  ];
+
+  return (
+    <div className="text-sm text-gray-600  bottom-0 px-4 py-2 w-[1200px]">
+      <div className="flex flex-wrap justify-center text-center gap-x-1 gap-y-1">
+        {links.map((label, idx) => (
+          <React.Fragment key={idx}>
+            <a
+              href="#"
+              className="hover:underline hover:text-black transition-colors px-1"
+            >
+              {label}
+            </a>
+            {idx < links.length - 1 && <span className="text-gray-400">|</span>}
+          </React.Fragment>
+        ))}
+      </div>
+      <div className="text-center mt-2">© 2025 X Corp.</div>
     </div>
   );
 }

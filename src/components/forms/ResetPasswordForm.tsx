@@ -2,10 +2,13 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useResetPassword } from "~/hooks/useFetchAuth";
 import {
   ResetPasswordDtoSchema,
   type ResetPasswordDto,
 } from "~/shared/dtos/req/auth.dto";
+import { handleResponse } from "~/utils/handleResponse";
 import { ButtonMain } from "../ui/button";
 import { InputMain } from "../ui/input";
 
@@ -30,17 +33,40 @@ export function ResetPasswordForm({
   });
 
   //
+  const navigate = useNavigate();
+
+  //
+  const apiResetPass = useResetPassword();
+
+  //
   function onCancel(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     setOpenForm(false);
   }
 
   //
-  const onSubmit = (data: ResetPasswordDto) => {
+  const onSubmit = async (data: ResetPasswordDto) => {
     console.log("✅ Dữ liệu ResetPasswordForm :", data);
-    setOpenForm(false);
-    reset();
+    const params = new URLSearchParams(location.hash.split("?")[1]);
+    const token = params.get("token") || "";
+
+    console.log("data:::", {
+      ...data,
+      forgot_password_token: token,
+    });
+
+    //
+    const res = await apiResetPass.mutateAsync({
+      ...data,
+      forgot_password_token: token,
+    });
+    handleResponse(res, handleSuccess);
   };
+  function handleSuccess() {
+    navigate("/");
+    reset();
+    setOpenForm(false);
+  }
 
   return (
     <form

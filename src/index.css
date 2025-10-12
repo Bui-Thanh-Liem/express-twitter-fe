@@ -141,7 +141,7 @@
   * {
     @apply border-border outline-ring/50;
     scrollbar-width: thin;
-    scrollbar-color: #939597 var(--background);
+    scrollbar-color: #d9dadb var(--background);
   }
   *::-webkit-scrollbar {
     width: 8px;

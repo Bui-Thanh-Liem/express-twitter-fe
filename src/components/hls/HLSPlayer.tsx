@@ -22,9 +22,9 @@ export function HLSPlayer({ src }: { src: string }) {
       onPointerEnter={() => {
         playerRef.current?.play();
       }}
-      onPointerLeave={() => {
-        playerRef.current?.pause();
-      }}
+      // onPointerLeave={() => {
+      //   playerRef.current?.pause();
+      // }}
     >
       <MediaProvider>
         {textTracks.map((track) => (

@@ -11,11 +11,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 //
 function NameItemUser({ user }: { user: IUser }) {
   return (
-    <Link to={`/${user.username}`} className="flex items-center gap-2">
+    <Link to={`/${user?.username}`} className="flex items-center gap-2">
       <h3 className="text-lg font-semibold hover:underline hover:cursor-pointer">
-        {user.name}
+        {user?.name}
       </h3>
-      <VerifyIcon active={!!user.verify} size={20} />
+      <VerifyIcon active={!!user?.verify} size={20} />
     </Link>
   );
 }

@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import type {
+  ForgotPasswordDto,
   LoginUserDto,
   RegisterUserDto,
+  ResetPasswordDto,
   UpdateMeDto,
 } from "~/shared/dtos/req/auth.dto";
 import type { ResLoginUser } from "~/shared/dtos/res/auth.dto";
@@ -146,5 +148,29 @@ export const useUpdateMe = () => {
         });
       }
     },
+  });
+};
+
+// 🔐 POST - ForgotPassword
+export const useForgotPassword = () => {
+  return useMutation({
+    mutationFn: (payload: ForgotPasswordDto) =>
+      apiCall<ResLoginUser>("/auth/forgot-password", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: () => {},
+  });
+};
+
+// 🔐 POST - ResetPassword
+export const useResetPassword = () => {
+  return useMutation({
+    mutationFn: (payload: ResetPasswordDto) =>
+      apiCall<ResLoginUser>("/auth/reset-password", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: () => {},
   });
 };

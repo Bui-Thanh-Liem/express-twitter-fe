@@ -1,6 +1,10 @@
 import { BarChart3, Flag, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useDeleteTweet, useGetDetailTweet } from "~/hooks/useFetchTweet";
+import {
+  useDeleteTweet,
+  useGetDetailTweet,
+  useReportTweet,
+} from "~/hooks/useFetchTweet";
 import { cn } from "~/lib/utils";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import type { IMedia } from "~/shared/interfaces/common/media.interface";
@@ -258,6 +262,7 @@ export const TweetItem = ({
   );
 };
 
+//
 function TweetAction({
   tweet,
   onSuccessDel,
@@ -268,6 +273,7 @@ function TweetAction({
   const { user } = useUserStore();
   const author = tweet?.user_id as unknown as IUser;
   const apiDeleteTweet = useDeleteTweet();
+  const apiReportTweet = useReportTweet();
 
   // Gỡ bài viết (xoá)
   async function onDel() {
@@ -278,7 +284,12 @@ function TweetAction({
   }
 
   // Báo cáo bài viết
-  function onReport() {}
+  async function onReport() {
+    const resDeleted = await apiReportTweet.mutateAsync(tweet._id);
+    handleResponse(resDeleted, () => {
+      onSuccessDel(tweet._id);
+    });
+  }
 
   return (
     <div className="relative">
