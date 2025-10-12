@@ -15,19 +15,19 @@ import {
   useRemoveImages,
   useUploadWithValidation,
 } from "~/hooks/useFetchUpload";
+import {
+  UpdateMeDtoSchema,
+  type UpdateMeDto,
+} from "~/shared/dtos/req/auth.dto";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
+import { toastSimple } from "~/utils/toastSimple.util";
 import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
 import { DatePicker } from "../ui/date-picker";
 import { InputMain } from "../ui/input";
 import { TextareaMain } from "../ui/textarea";
 import { WrapIcon } from "../wrapIcon";
-import {
-  UpdateMeDtoSchema,
-  type UpdateMeDto,
-} from "~/shared/dtos/req/auth.dto";
-import { toastSimple } from "~/utils/toastSimple.util";
 
 interface UpdateUserFormProps {
   setOpenForm: (open: boolean) => void;
@@ -248,6 +248,8 @@ export function UpdateMeForm({
               errors={errors}
               control={control}
               register={register}
+              isMaxLength
+              maxCountLength={20}
             />
           </div>
 
