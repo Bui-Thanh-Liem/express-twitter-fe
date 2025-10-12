@@ -1,5 +1,6 @@
 import { BarChart3, Flag, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import {
   useDeleteTweet,
   useGetDetailTweet,
@@ -32,7 +33,6 @@ import { ActionLikeTweet } from "./action-like-tweet";
 import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
 import { ActionShared } from "./action-shared";
 import { Content } from "./content";
-
 // Component cho Media (Image hoặc Video)
 export const MediaContent = ({
   url,
@@ -45,7 +45,14 @@ export const MediaContent = ({
   //
   function handleClickMedia() {
     open();
-    if (tweet) setTweet(tweet);
+    if (tweet) {
+      setTweet(tweet);
+      toast.info("Nhấn 2 lần bên ngoài hình ảnh hoặc video để đóng.", {
+        position: "top-center",
+        richColors: true,
+        duration: 3000,
+      });
+    }
   }
 
   if (!url) return <></>;
