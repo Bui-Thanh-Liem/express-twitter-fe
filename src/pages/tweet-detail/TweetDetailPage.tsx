@@ -3,10 +3,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftIcon } from "~/components/icons/arrow-left";
 import { SkeletonTweet, TweetItem } from "~/components/list-tweets/item-tweet";
 import { Tweet } from "~/components/tweet/Tweet";
+import { TypingIndicator } from "~/components/typing-indicator";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useGetDetailTweet, useGetTweetChildren } from "~/hooks/useFetchTweet";
 import { ETweetType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
+import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import { useCommentSocket } from "~/socket/hooks/useCommentSocket";
+import { useUserStore } from "~/store/useUserStore";
 
 export function TweetDetailPage() {
   //
@@ -15,13 +19,61 @@ export function TweetDetailPage() {
 
   //
   const [tweetComments, setTweetComments] = useState<ITweet[]>([]);
+  const { user } = useUserStore();
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [newAuthorCmt, setNewAuthorCmt] = useState("");
 
   // Ref cho infinite scroll
   const observerRef = useRef<HTMLDivElement>(null);
   const observerInstanceRef = useRef<IntersectionObserver | null>(null);
+
+  //
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { joinComment, leaveComment } = useCommentSocket((newComment) => {
+    if (!newComment) return;
+
+    const isMyComment =
+      user?._id === (newComment.user_id as unknown as IUser)._id;
+
+    const addCommentIfNotExists = (comment: ITweet) => {
+      setTweetComments((prev) => {
+        if (prev.some((tw) => tw._id === comment._id)) return prev;
+        return [comment, ...prev];
+      });
+    };
+
+    // Nếu là comment của chính mình → thêm luôn, không hiện typing
+    if (isMyComment) {
+      addCommentIfNotExists(newComment);
+      return;
+    }
+
+    // Nếu người khác comment → bật typing (chỉ 1 lần)
+    if (!newAuthorCmt) {
+      setNewAuthorCmt((newComment.user_id as unknown as IUser).name);
+    }
+
+    // Clear timeout cũ (để tránh bị chồng typing)
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+
+    // Sau 2s, tắt typing và thêm comment
+    typingTimeoutRef.current = setTimeout(() => {
+      setNewAuthorCmt("");
+      addCommentIfNotExists(newComment);
+    }, 2000);
+  });
+
+  //
+  useEffect(() => {
+    console.log("joinComment");
+    if (tweet_id) joinComment(tweet_id);
+    return () => {
+      console.log("leaveComment");
+      if (tweet_id) leaveComment(tweet_id);
+    };
+  }, [joinComment, leaveComment, tweet_id]);
 
   //
   const { data, isLoading: isLoadingDetail } = useGetDetailTweet(tweet_id!);
@@ -155,6 +207,7 @@ export function TweetDetailPage() {
           />
         </div>
 
+        <TypingIndicator show={!!newAuthorCmt} authorName={newAuthorCmt} />
         {/* COMMENTS */}
         <div>
           {tweetComments?.length ? (

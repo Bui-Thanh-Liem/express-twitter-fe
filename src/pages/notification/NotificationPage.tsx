@@ -45,21 +45,21 @@ export function NotificationPage() {
                 className="cursor-pointer flex items-center"
                 value={ENotificationType.VERIFY}
               >
+                <span>Xác thực</span>
                 {unreadNoti && unreadNoti[ENotificationType.VERIFY] && (
-                  <p className="w-1.5 h-1.5 bg-sky-400 rounded-full">
+                  <p className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-sky-400 rounded-full">
                     {unreadNoti[ENotificationType.VERIFY]}
                   </p>
                 )}
-                Xác thực
               </TabsTrigger>
               <TabsTrigger
                 className="cursor-pointer flex items-center"
                 value={ENotificationType.REVIEW}
               >
+                <span>Kiểm duyệt</span>
                 {unreadNoti && unreadNoti[ENotificationType.REVIEW] && (
-                  <div className="w-1.5 h-1.5 bg-sky-400 rounded-full" />
+                  <div className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-sky-400 rounded-full" />
                 )}
-                Kiểm duyệt
               </TabsTrigger>
               <TabsTrigger
                 className="cursor-pointer flex items-center"
@@ -76,10 +76,10 @@ export function NotificationPage() {
                 className="cursor-pointer flex items-center"
                 value={ENotificationType.FOLLOW}
               >
+                <span>Theo dõi</span>
                 {unreadNoti && unreadNoti[ENotificationType.FOLLOW] && (
-                  <div className="w-1.5 h-1.5 bg-sky-400 rounded-full" />
+                  <div className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-sky-400 rounded-full" />
                 )}
-                Theo dõi
               </TabsTrigger>
             </TabsList>
           </div>

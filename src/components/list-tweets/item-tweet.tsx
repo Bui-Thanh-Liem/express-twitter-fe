@@ -33,6 +33,7 @@ import { ActionLikeTweet } from "./action-like-tweet";
 import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
 import { ActionShared } from "./action-shared";
 import { Content } from "./content";
+
 // Component cho Media (Image hoặc Video)
 export const MediaContent = ({
   url,
@@ -60,7 +61,7 @@ export const MediaContent = ({
   return (
     <div
       className={cn(
-        "w-full h-full aspect-video rounded-lg overflow-hidden mb-6",
+        "w-full h-full aspect-video rounded-lg overflow-hidden mb-6 bg-gray-300",
         tweet ? "cursor-pointer" : ""
       )}
       onClick={handleClickMedia}

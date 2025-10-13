@@ -73,11 +73,10 @@ export const useMediaPreview = () => {
             : MAX_SIZE_IMAGE_UPLOAD;
 
         if (file.size > maxSize) {
-          const sizeLimitText = type === EMediaType.Video ? "50MB" : "5MB";
+          const type_vn = type === EMediaType.Video ? "Video" : "Hình ảnh";
+          const sizeLimitText = type === EMediaType.Video ? "10MB" : "5MB";
           toastSimple(
-            `File ${
-              type === EMediaType.Video ? "video" : "ảnh"
-            } không được vượt quá ${sizeLimitText}\nFile hiện tại: ${formatFileSize(
+            `${type_vn} không được vượt quá ${sizeLimitText}, ${type_vn} bạn định tải lên: ${formatFileSize(
               file.size
             )}`,
             "warning"

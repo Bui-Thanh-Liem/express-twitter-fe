@@ -7,11 +7,14 @@ import { useGetTweetChildren } from "~/hooks/useFetchTweet";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import { useCommentSocket } from "~/socket/hooks/useCommentSocket";
 import { useDetailTweetStore } from "~/store/useDetailTweetStore";
+import { useUserStore } from "~/store/useUserStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
 import { ArrowLeftIcon } from "../icons/arrow-left";
 import { VerifyIcon } from "../icons/verify";
 import { ShortInfoProfile } from "../ShortInfoProfile";
+import { TypingIndicator } from "../typing-indicator";
 import { AvatarMain } from "../ui/avatar";
 import {
   Drawer,
@@ -35,16 +38,66 @@ export function TweetDetailDrawer() {
   const { pathname } = useLocation();
 
   //
+  const { user } = useUserStore();
+  const { tweet, close, isOpen, prevTweet, setTweet, setPrevTweet } =
+    useDetailTweetStore();
+
+  //
   const [tweetComments, setTweetComments] = useState<ITweet[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const { tweet, close, isOpen, prevTweet, setTweet, setPrevTweet } =
-    useDetailTweetStore();
+  const [newAuthorCmt, setNewAuthorCmt] = useState("");
 
   // Ref for infinite scroll
   const observerRef = useRef<HTMLDivElement>(null);
   const observerInstanceRef = useRef<IntersectionObserver | null>(null);
+
+  //
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { joinComment, leaveComment } = useCommentSocket((newComment) => {
+    if (!newComment) return;
+
+    const isMyComment =
+      user?._id === (newComment.user_id as unknown as IUser)._id;
+
+    const addCommentIfNotExists = (comment: ITweet) => {
+      setTweetComments((prev) => {
+        if (prev.some((tw) => tw._id === comment._id)) return prev;
+        return [comment, ...prev];
+      });
+    };
+
+    // Nếu là comment của chính mình → thêm luôn, không hiện typing
+    if (isMyComment) {
+      addCommentIfNotExists(newComment);
+      return;
+    }
+
+    // Nếu người khác comment → bật typing (chỉ 1 lần)
+    if (!newAuthorCmt) {
+      setNewAuthorCmt((newComment.user_id as unknown as IUser).name);
+    }
+
+    // Clear timeout cũ (để tránh bị chồng typing)
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+
+    // Sau 2s, tắt typing và thêm comment
+    typingTimeoutRef.current = setTimeout(() => {
+      setNewAuthorCmt("");
+      addCommentIfNotExists(newComment);
+    }, 2000);
+  });
+
+  //
+  useEffect(() => {
+    console.log("joinComment");
+    if (tweet?._id) joinComment(tweet._id);
+    return () => {
+      console.log("leaveComment");
+      if (tweet?._id) leaveComment(tweet._id);
+    };
+  }, [joinComment, leaveComment, tweet?._id]);
 
   //
   useEffect(() => {
@@ -282,6 +335,7 @@ export function TweetDetailDrawer() {
             </div>
           </div>
 
+          <TypingIndicator show={!!newAuthorCmt} authorName={newAuthorCmt} />
           {/* COMMENTS */}
           <div>
             {tweetComments?.length ? (

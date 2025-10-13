@@ -63,7 +63,7 @@ export const useConversationSocket = (
   //
   const leaveConversation = (ids: string[]) => {
     if (!socket.connected) {
-      console.warn("⚠️ Socket chưa connect, không thể join conversation");
+      console.warn("⚠️ Socket chưa connect, không thể leave conversation");
       return;
     }
     socket.emit(CONSTANT_EVENT_NAMES.LEAVE_CONVERSATION, ids);
