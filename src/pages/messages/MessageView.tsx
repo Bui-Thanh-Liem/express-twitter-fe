@@ -1,8 +1,10 @@
+import { Send } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { EmojiSelector } from "~/components/emoji-picker";
 import { DotIcon } from "~/components/icons/dot";
+import { ImageIcon } from "~/components/icons/image";
 import { AvatarMain, GroupAvatarMain } from "~/components/ui/avatar";
 import { ButtonMain } from "~/components/ui/button";
 import { CircularProgress } from "~/components/ui/circular-progress";
@@ -16,14 +18,16 @@ import { ScrollArea } from "~/components/ui/scroll-area";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useGetMultiMessages } from "~/hooks/useFetchMessages";
+import { useMediaPreviewMulti } from "~/hooks/useMediaPreviewMulti";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
+import { EMediaType } from "~/shared/enums/type.enum";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import { useChatSocket } from "~/socket/hooks/useChatSocket";
 import { useUserStore } from "~/store/useUserStore";
 import { CreateConversation } from "./CreateConversation";
 
-const MAX_LENGTH_TEXT = 160;
+const MAX_LENGTH_TEXT = 190;
 export function MessageView({
   conversation,
 }: {
@@ -39,10 +43,19 @@ export function MessageView({
     });
   });
 
+  //
+  const { previewUrls, mediaTypes, handleFileChange, removeMedia } =
+    useMediaPreviewMulti();
+
+  console.log("previewUrls:::", previewUrls);
+  console.log("mediaTypes:::", mediaTypes);
+
+  //
+  const [isUploading, setIsUploading] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
 
   //
-  const { data } = useGetMultiMessages(conversation?._id || "", {
+  const { data, isLoading } = useGetMultiMessages(conversation?._id || "", {
     page: "1",
     limit: "50",
   });
@@ -99,6 +112,14 @@ export function MessageView({
   }
 
   //
+  const handleFileSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleFileChange(e);
+    },
+    [handleFileChange]
+  );
+
+  //
   const onSubmit = useCallback(
     (data: { text: string }) => {
       sendMessage({
@@ -111,6 +132,10 @@ export function MessageView({
     },
     [conversation?._id, reset, sendMessage, user?._id]
   );
+
+  if (isLoading && conversation) {
+    return <MessageSkeleton />;
+  }
 
   if (!conversation)
     return (
@@ -143,10 +168,11 @@ export function MessageView({
           </div>
         </div>
 
+        {/*  */}
         <div>
           <CreateConversation
             initialUserIds={(conversation?.participants as any).map(
-              (user: { _id: any; }) => user._id
+              (user: { _id: any }) => user._id
             )}
           />
 
@@ -176,8 +202,8 @@ export function MessageView({
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col p-3">
-        <ScrollArea className="pr-4 h-[calc(100vh-250px)]">
+      <div className="flex-1 flex flex-col">
+        <ScrollArea className="px-4 pt-2 h-[calc(100vh-260px)]">
           <div className="flex flex-col gap-3">
             {messages.map((msg) => (
               <div
@@ -194,7 +220,7 @@ export function MessageView({
                   />
                 )}
                 <div
-                  className={`px-3 py-2 rounded-2xl max-w-[70%] text-sm ${
+                  className={`px-3 py-2 rounded-2xl max-w-[70%] text-[15px] ${
                     msg.sender === user?._id
                       ? "bg-blue-400 text-white ml-auto"
                       : "bg-gray-200 text-gray-800"
@@ -209,13 +235,51 @@ export function MessageView({
         </ScrollArea>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="relative flex gap-2 pt-4 border-t">
-            <div className="absolute top-1 -left-2.5 ">
+          <div className="relative border-t px-3">
+            <div className="absolute top-[108px] right-4">
               <CircularProgress
                 value={isNaN(contentValue?.length) ? 0 : contentValue?.length}
                 max={MAX_LENGTH_TEXT}
                 size={20}
               />
+            </div>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2 py-1">
+                <WrapIcon className="hover:bg-blue-100/60">
+                  <EmojiSelector onEmojiClick={handleEmojiClick} />
+                </WrapIcon>
+                <WrapIcon className="hover:bg-blue-100/60">
+                  <label
+                    htmlFor="image-upload-in-chat"
+                    className="cursor-pointer"
+                    title="Thêm ảnh hoặc video"
+                  >
+                    <ImageIcon />
+                    <input
+                      id="image-upload-in-chat"
+                      className="hidden"
+                      type="file"
+                      accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/mov,video/avi,video/quicktime"
+                      multiple
+                      onChange={handleFileSelect}
+                      disabled={isUploading}
+                    />
+                  </label>
+                </WrapIcon>
+
+                <PreviewMediaMulti
+                  mediaTypes={mediaTypes}
+                  previewUrls={previewUrls}
+                  removeMedia={removeMedia}
+                />
+              </div>
+              <ButtonMain
+                size="sm"
+                type="submit"
+                className="bg-transparent hover:bg-gray-50"
+              >
+                <Send color="#1d9bf0" />
+              </ButtonMain>
             </div>
             <textarea
               {...register("text")}
@@ -224,7 +288,7 @@ export function MessageView({
               value={contentValue}
               autoCorrect="off"
               spellCheck="false"
-              className="outline-0 w-full text-md placeholder:text-gray-500 bg-blue-50 rounded-xl resize-none p-2"
+              className="outline-0 w-full text-md placeholder:text-gray-500 bg-gray-100 rounded-xl resize-none p-2"
               placeholder="Nhập văn bản"
               onInput={handleTextareaInput}
               rows={3}
@@ -236,15 +300,131 @@ export function MessageView({
                 }
               }}
             />
-            <span>
-              <WrapIcon className="hover:bg-blue-100/60">
-                <EmojiSelector onEmojiClick={handleEmojiClick} />
-              </WrapIcon>
-            </span>
-            <ButtonMain type="submit">Gửi</ButtonMain>
           </div>
         </form>
       </div>
     </div>
+  );
+}
+
+export function MessageSkeleton() {
+  return (
+    <div className="col-span-8 h-full flex flex-col animate-pulse">
+      {/* Header Skeleton */}
+      <div className="p-3 flex items-center justify-between bg-blue-50 border-b">
+        <div className="flex items-center gap-3">
+          {/* Avatar */}
+          <div className="w-12 h-12 bg-gray-300 rounded-full" />
+
+          {/* Name and Status */}
+          <div className="space-y-2">
+            <div className="h-4 w-32 bg-gray-300 rounded" />
+            <div className="h-3 w-16 bg-gray-200 rounded" />
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-gray-300 rounded-full" />
+          <div className="w-8 h-8 bg-gray-300 rounded-full" />
+        </div>
+      </div>
+
+      {/* Messages Area */}
+      <div className="flex-1 flex flex-col p-3">
+        <div className="pr-4 h-[calc(100vh-250px)] space-y-3">
+          {/* Message from other user */}
+          <div className="flex items-start gap-2">
+            <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0" />
+            <div className="space-y-2">
+              <div className="h-16 w-64 bg-gray-200 rounded-2xl" />
+            </div>
+          </div>
+
+          {/* Message from current user */}
+          <div className="flex items-start gap-2 justify-end">
+            <div className="h-12 w-48 bg-blue-200 rounded-2xl ml-auto" />
+          </div>
+
+          {/* Message from other user */}
+          <div className="flex items-start gap-2">
+            <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0" />
+            <div className="space-y-2">
+              <div className="h-20 w-72 bg-gray-200 rounded-2xl" />
+            </div>
+          </div>
+
+          {/* Message from current user */}
+          <div className="flex items-start gap-2 justify-end">
+            <div className="h-16 w-56 bg-blue-200 rounded-2xl ml-auto" />
+          </div>
+
+          {/* Message from other user */}
+          <div className="flex items-start gap-2">
+            <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0" />
+            <div className="space-y-2">
+              <div className="h-10 w-40 bg-gray-200 rounded-2xl" />
+            </div>
+          </div>
+
+          {/* Message from current user */}
+          <div className="flex items-start gap-2 justify-end">
+            <div className="h-14 w-52 bg-blue-200 rounded-2xl ml-auto" />
+          </div>
+
+          {/* Message from other user */}
+          <div className="flex items-start gap-2">
+            <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0" />
+            <div className="space-y-2">
+              <div className="h-12 w-60 bg-gray-200 rounded-2xl" />
+            </div>
+          </div>
+        </div>
+
+        {/* Input Area Skeleton */}
+        <div className="pt-4 border-t">
+          <div className="flex gap-2 items-end">
+            {/* Textarea skeleton */}
+            <div className="flex-1 h-20 bg-blue-100 rounded-xl" />
+
+            {/* Emoji button */}
+            <div className="w-10 h-10 bg-gray-200 rounded-full flex-shrink-0" />
+
+            {/* Send button */}
+            <div className="w-16 h-10 bg-gray-300 rounded-full flex-shrink-0" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+//
+function PreviewMediaMulti({
+  mediaTypes,
+  previewUrls,
+  removeMedia,
+}: {
+  previewUrls: string[];
+  mediaTypes: EMediaType[];
+  removeMedia: (idx: number) => void;
+}) {
+  return (
+    <>
+      {previewUrls?.length > 0 &&
+        previewUrls.map((url, i) => {
+          return (
+            <div key={i} className="h-9 w-12 overflow-hidden rounded shadow">
+              {mediaTypes[i] === EMediaType.Image ? (
+                <img src={url} className="h-full w-full object-cover rounded" />
+              ) : (
+                <div className="h-full w-full flex items-center justify-center bg-sky-100">
+                  <p className="text-xs text-gray-400">Video</p>
+                </div>
+              )}
+            </div>
+          );
+        })}
+    </>
   );
 }

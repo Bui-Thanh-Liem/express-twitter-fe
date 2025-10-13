@@ -100,7 +100,10 @@ export function CreateConversationForm({
       );
 
       if (!initSelected?.length) {
-        toastSimple("Người dùng này không theo dõi bạn", "warning");
+        toastSimple(
+          "Bạn chỉ được thêm những người đang theo dõi bạn vào nhóm.",
+          "warning"
+        );
       }
 
       setUserSelected((prev) => [...prev, ...initSelected]);

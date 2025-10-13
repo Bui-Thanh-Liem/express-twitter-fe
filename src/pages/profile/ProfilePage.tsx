@@ -4,7 +4,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftIcon } from "~/components/icons/arrow-left";
 import { CloseIcon } from "~/components/icons/close";
 import { VerifyIcon } from "~/components/icons/verify";
-import { LoadingProcess } from "~/components/loading-process";
 import { AvatarMain } from "~/components/ui/avatar";
 import { ButtonMain } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
@@ -70,7 +69,7 @@ export function ProfilePage() {
 
   // Loading state
   if (isLoading && !data) {
-    return <LoadingProcess />;
+    return <ProfileSkeleton />;
   }
 
   // User not found
@@ -225,7 +224,13 @@ export function ProfilePage() {
                 className="cursor-pointer"
                 value={ETweetType.Retweet.toString()}
               >
-                Bài viết đã đăng lại
+                Đăng lại
+              </TabsTrigger>
+              <TabsTrigger
+                className="cursor-pointer"
+                value={ETweetType.QuoteTweet.toString()}
+              >
+                Đăng lại có trích dẫn
               </TabsTrigger>
               <TabsTrigger className="cursor-pointer" value="highlights">
                 Nổi bật
@@ -269,6 +274,19 @@ export function ProfilePage() {
               </div>
             </TabsContent>
 
+            <TabsContent
+              value={ETweetType.QuoteTweet.toString()}
+              className="px-0 py-4"
+            >
+              <div className="space-y-4">
+                <ProfileTweets
+                  isOwnProfile={isOwnProfile}
+                  tweetType={ETweetType.QuoteTweet}
+                  profile_id={profile?._id || ""}
+                />
+              </div>
+            </TabsContent>
+
             <TabsContent value="highlights" className="px-0 py-4">
               <div className="space-y-4">
                 <ProfileTweets
@@ -298,6 +316,105 @@ export function ProfilePage() {
             )}
           </div>
         </Tabs>
+      </div>
+    </div>
+  );
+}
+
+export function ProfileSkeleton() {
+  return (
+    <div className="animate-pulse">
+      {/* Header */}
+      <div className="px-3 flex justify-between items-center border border-gray-100">
+        <div className="flex h-12 items-center gap-4">
+          <div className="w-8 h-8 bg-gray-200 rounded-full" />
+          <div className="h-5 w-32 bg-gray-200 rounded" />
+        </div>
+      </div>
+
+      <div className="max-h-screen overflow-y-auto">
+        {/* Cover Photo Skeleton */}
+        <div className="w-full h-52 bg-gray-200" />
+
+        {/* Profile Section */}
+        <div className="px-4">
+          {/* Avatar and Action Button */}
+          <div className="flex justify-between items-start -mt-16 mb-3">
+            <div className="w-32 h-32 bg-gray-300 rounded-full border-4 border-white" />
+            <div className="mt-3 h-9 w-28 bg-gray-200 rounded-full" />
+          </div>
+
+          {/* Name and Username */}
+          <div className="mb-3">
+            <div className="h-6 w-40 bg-gray-200 rounded mb-2" />
+            <div className="h-4 w-32 bg-gray-200 rounded" />
+          </div>
+
+          {/* Bio */}
+          <div className="mb-3 space-y-2">
+            <div className="h-4 w-full bg-gray-200 rounded" />
+            <div className="h-4 w-3/4 bg-gray-200 rounded" />
+          </div>
+
+          {/* Location, Website and Join Date */}
+          <div className="flex items-center space-x-4 mb-3">
+            <div className="h-4 w-24 bg-gray-200 rounded" />
+            <div className="h-4 w-32 bg-gray-200 rounded" />
+            <div className="h-4 w-36 bg-gray-200 rounded" />
+          </div>
+
+          {/* Following and Followers */}
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="h-4 w-32 bg-gray-200 rounded" />
+            <div className="h-4 w-36 bg-gray-200 rounded" />
+          </div>
+        </div>
+
+        {/* Tabs Skeleton */}
+        <div className="bg-white p-2 px-4 sticky top-0">
+          <div className="flex space-x-2">
+            <div className="h-10 w-24 bg-gray-200 rounded" />
+            <div className="h-10 w-32 bg-gray-200 rounded" />
+            <div className="h-10 w-20 bg-gray-200 rounded" />
+            <div className="h-10 w-28 bg-gray-200 rounded" />
+          </div>
+        </div>
+
+        {/* Tweet Items Skeleton */}
+        <div className="px-4 py-4 space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="border-b border-gray-100 pb-4">
+              <div className="flex space-x-3">
+                {/* Avatar */}
+                <div className="w-12 h-12 bg-gray-200 rounded-full flex-shrink-0" />
+
+                {/* Content */}
+                <div className="flex-1 space-y-2">
+                  {/* Name and username */}
+                  <div className="flex items-center space-x-2">
+                    <div className="h-4 w-28 bg-gray-200 rounded" />
+                    <div className="h-3 w-20 bg-gray-200 rounded" />
+                  </div>
+
+                  {/* Tweet content */}
+                  <div className="space-y-2">
+                    <div className="h-4 w-full bg-gray-200 rounded" />
+                    <div className="h-4 w-5/6 bg-gray-200 rounded" />
+                    <div className="h-4 w-4/6 bg-gray-200 rounded" />
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center space-x-12 mt-3">
+                    <div className="h-4 w-12 bg-gray-200 rounded" />
+                    <div className="h-4 w-12 bg-gray-200 rounded" />
+                    <div className="h-4 w-12 bg-gray-200 rounded" />
+                    <div className="h-4 w-12 bg-gray-200 rounded" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

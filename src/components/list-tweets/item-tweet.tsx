@@ -48,10 +48,10 @@ export const MediaContent = ({
     open();
     if (tweet) {
       setTweet(tweet);
-      toast.info("Nhấn 2 lần bên ngoài hình ảnh hoặc video để đóng.", {
+      toast.info("Nhấn 2 lần vào điểm bất kì để đóng ", {
         position: "top-center",
         richColors: true,
-        duration: 3000,
+        duration: 2000,
       });
     }
   }
@@ -61,7 +61,7 @@ export const MediaContent = ({
   return (
     <div
       className={cn(
-        "w-full h-full aspect-video rounded-lg overflow-hidden mb-6 bg-gray-300",
+        "w-full h-full aspect-video rounded-lg overflow-hidden mb-6 bg-gray-50",
         tweet ? "cursor-pointer" : ""
       )}
       onClick={handleClickMedia}
