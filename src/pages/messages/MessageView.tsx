@@ -27,6 +27,7 @@ import { ScrollArea } from "~/components/ui/scroll-area";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useGetMultiMessages } from "~/hooks/useFetchMessages";
+import { useUploadWithValidation } from "~/hooks/useFetchUpload";
 import {
   useMediaPreviewMulti,
   type MediaItem,
@@ -37,6 +38,8 @@ import type { IConversation } from "~/shared/interfaces/schemas/conversation.int
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import { useChatSocket } from "~/socket/hooks/useChatSocket";
 import { useUserStore } from "~/store/useUserStore";
+import { handleResponse } from "~/utils/handleResponse";
+import { toastSimple } from "~/utils/toastSimple.util";
 import { CreateConversation } from "./CreateConversation";
 
 const MAX_LENGTH_TEXT = 190;
@@ -49,19 +52,17 @@ export function MessageView({
   const navigate = useNavigate();
   const { user } = useUserStore();
   const { sendMessage } = useChatSocket((newDataMessage) => {
-    console.log("new message socket");
+    console.log("new message socket:::");
     setMessages((prev) => {
       return [...prev, newDataMessage];
     });
   });
+  const apiUploadMedia = useUploadWithValidation();
 
   //
   const { mediaItems, handleFileChange, removeMedia } = useMediaPreviewMulti();
 
-  console.log("mediaItems:::", mediaItems);
-
   //
-  const [isUploading, setIsUploading] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
 
   //
@@ -131,22 +132,51 @@ export function MessageView({
 
   //
   const onSubmit = useCallback(
-    (data: { text: string }) => {
+    async (data: { text: string }) => {
+      let mediaUrls: string[] = [];
+      const selectedFiles = mediaItems.map((file) => file.file);
+
+      try {
+        //
+        const resUploadMedia = await apiUploadMedia.mutateAsync(selectedFiles);
+        if (resUploadMedia.statusCode !== 200 || !resUploadMedia.data) {
+          handleResponse(resUploadMedia);
+          return;
+        }
+
+        mediaUrls = resUploadMedia.data;
+      } catch (uploadError) {
+        console.error("Error submitting uploadMedia:", uploadError);
+        toastSimple((uploadError as { message: string }).message);
+      }
+
       sendMessage({
         content: data.text,
+        attachments: mediaUrls,
         sender: user?._id || "",
         conversation: conversation?._id || "",
       });
 
+      removeMedia();
       reset();
     },
-    [conversation?._id, reset, sendMessage, user?._id]
+    [
+      reset,
+      user?._id,
+      mediaItems,
+      removeMedia,
+      sendMessage,
+      apiUploadMedia,
+      conversation?._id,
+    ]
   );
 
+  //
   if (isLoading && conversation) {
     return <MessageSkeleton />;
   }
 
+  //
   if (!conversation)
     return (
       <div className="h-[calc(100vh-120px)] col-span-8 flex gap-5 flex-col items-center justify-center">
@@ -160,6 +190,9 @@ export function MessageView({
       </div>
     );
 
+  console.log("messages:::", messages);
+
+  //
   return (
     <div className="col-span-8 h-full flex flex-col">
       <div className="p-3 flex items-center justify-between bg-blue-50">
@@ -266,13 +299,12 @@ export function MessageView({
                   >
                     <ImageIcon />
                     <input
-                      id="image-upload-in-chat"
-                      className="hidden"
-                      type="file"
-                      accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/mov,video/avi,video/quicktime"
                       multiple
+                      type="file"
+                      className="hidden"
+                      id="image-upload-in-chat"
                       onChange={handleFileSelect}
-                      disabled={isUploading}
+                      accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/mov,video/avi,video/quicktime"
                     />
                   </label>
                 </WrapIcon>
