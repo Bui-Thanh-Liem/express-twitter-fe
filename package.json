@@ -33,6 +33,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "embla-carousel-react": "^8.6.0",
     "emoji-picker-react": "^4.13.2",
     "hls.js": "^1.6.7",
     "input-otp": "^1.4.2",

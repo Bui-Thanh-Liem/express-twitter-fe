@@ -6,13 +6,18 @@ import {
 import { EMediaType } from "~/shared/enums/type.enum";
 import { toastSimple } from "~/utils/toastSimple.util";
 
-export const MAX_FILE_COUNT = 5; // 👈 Giới hạn tối đa bao nhiêu file có thể chọn
+export const MAX_FILE_COUNT = 5;
+
+export interface MediaItem {
+  id: string;
+  file: File;
+  previewUrl: string;
+  mediaType: EMediaType;
+  uploadProgress: number;
+}
 
 export const useMediaPreviewMulti = () => {
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [mediaTypes, setMediaTypes] = useState<EMediaType[]>([]);
-  const [uploadProgress, setUploadProgress] = useState<number[]>([]);
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
 
   const getMediaType = (file: File): EMediaType | null => {
     if (file.type.startsWith("image/")) return EMediaType.Image;
@@ -47,104 +52,115 @@ export const useMediaPreviewMulti = () => {
         "video/quicktime",
       ];
 
-      const currentCount = selectedFiles.length;
-      const remainingSlots = MAX_FILE_COUNT - currentCount;
+      setMediaItems((prev) => {
+        const currentCount = prev.length;
+        const remainingSlots = MAX_FILE_COUNT - currentCount;
 
-      if (newFiles.length > remainingSlots) {
-        toastSimple(
-          `Chỉ được tải tối đa ${MAX_FILE_COUNT} hình ảnh hoặc video.`,
-          "warning"
-        );
-      }
-
-      const filesToProcess = newFiles.slice(0, remainingSlots);
-
-      const validFiles: File[] = [];
-      const urls: string[] = [];
-      const types: EMediaType[] = [];
-
-      for (const file of filesToProcess) {
-        const type = getMediaType(file);
-
-        if (
-          !validImageTypes.includes(file.type) &&
-          !validVideoTypes.includes(file.type)
-        ) {
+        if (newFiles.length > remainingSlots) {
           toastSimple(
-            "Chỉ hỗ trợ file ảnh (JPEG, PNG, GIF, WebP) và video (MP4, WebM, MOV, AVI)",
+            `Chỉ được tải tối đa ${MAX_FILE_COUNT} hình ảnh hoặc video.`,
             "warning"
           );
-          continue;
         }
 
-        const maxSize =
-          type === EMediaType.Video
-            ? MAX_SIZE_VIDEO_UPLOAD
-            : MAX_SIZE_IMAGE_UPLOAD;
+        const filesToProcess = newFiles.slice(0, remainingSlots);
+        const newMediaItems: MediaItem[] = [];
 
-        if (file.size > maxSize) {
-          const type_vn = type === EMediaType.Video ? "Video" : "Hình ảnh";
-          const sizeLimitText = type === EMediaType.Video ? "10MB" : "5MB";
-          toastSimple(
-            `${type_vn} không được vượt quá ${sizeLimitText}, ${type_vn} bạn định tải lên: ${formatFileSize(
-              file.size
-            )}`,
-            "warning"
-          );
-          continue;
+        let idCounter = 0; // ✅ Counter để đảm bảo ID unique trong cùng batch
+
+        for (const file of filesToProcess) {
+          const type = getMediaType(file);
+
+          if (
+            !validImageTypes.includes(file.type) &&
+            !validVideoTypes.includes(file.type)
+          ) {
+            toastSimple(
+              "Chỉ hỗ trợ file ảnh (JPEG, PNG, GIF, WebP) và video (MP4, WebM, MOV, AVI)",
+              "warning"
+            );
+            continue;
+          }
+
+          const maxSize =
+            type === EMediaType.Video
+              ? MAX_SIZE_VIDEO_UPLOAD
+              : MAX_SIZE_IMAGE_UPLOAD;
+
+          if (file.size > maxSize) {
+            const type_vn = type === EMediaType.Video ? "Video" : "Hình ảnh";
+            const sizeLimitText = type === EMediaType.Video ? "10MB" : "5MB";
+            toastSimple(
+              `${type_vn} không được vượt quá ${sizeLimitText}, ${type_vn} bạn định tải lên: ${formatFileSize(
+                file.size
+              )}`,
+              "warning"
+            );
+            continue;
+          }
+
+          // ✅ ID duy nhất với timestamp + counter + random
+          const id = `${Date.now()}-${idCounter++}-${Math.random()
+            .toString(36)
+            .substr(2, 9)}`;
+
+          newMediaItems.push({
+            id,
+            file,
+            previewUrl: URL.createObjectURL(file),
+            mediaType: type!,
+            uploadProgress: 0,
+          });
         }
 
-        validFiles.push(file);
-        urls.push(URL.createObjectURL(file));
-        types.push(type!);
-      }
+        if (!newMediaItems.length) return prev;
 
-      if (!validFiles.length) return;
-
-      setSelectedFiles((prev) => [...prev, ...validFiles]);
-      setPreviewUrls((prev) => [...prev, ...urls]);
-      setMediaTypes((prev) => [...prev, ...types]);
-      setUploadProgress((prev) => [
-        ...prev,
-        ...new Array(validFiles.length).fill(0),
-      ]);
+        return [...prev, ...newMediaItems];
+      });
     },
-    [selectedFiles]
+    [] // ✅ Không cần dependency vì dùng functional update
   );
 
-  const removeMedia = useCallback(
-    (index?: number) => {
-      if (typeof index === "number") {
-        URL.revokeObjectURL(previewUrls[index]);
-        setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
-        setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
-        setMediaTypes((prev) => prev.filter((_, i) => i !== index));
-        setUploadProgress((prev) => prev.filter((_, i) => i !== index));
-      } else {
-        previewUrls.forEach((url) => URL.revokeObjectURL(url));
-        setSelectedFiles([]);
-        setPreviewUrls([]);
-        setMediaTypes([]);
-        setUploadProgress([]);
-      }
-    },
-    [previewUrls]
-  );
+  const removeMedia = useCallback((id?: string) => {
+    if (id) {
+      setMediaItems((prev) => {
+        const itemToRemove = prev.find((item) => item.id === id);
+        if (itemToRemove) {
+          URL.revokeObjectURL(itemToRemove.previewUrl);
+        }
+        return prev.filter((item) => item.id !== id);
+      });
+    } else {
+      setMediaItems((prev) => {
+        prev.forEach((item) => URL.revokeObjectURL(item.previewUrl));
+        return [];
+      });
+    }
+  }, []); // ✅ Không cần dependency
+
+  const updateUploadProgress = useCallback((id: string, progress: number) => {
+    setMediaItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, uploadProgress: progress } : item
+      )
+    );
+  }, []); // ✅ Không cần dependency
 
   useEffect(() => {
     return () => {
-      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+      mediaItems.forEach((item) => URL.revokeObjectURL(item.previewUrl));
     };
-  }, [previewUrls]);
+  }, [mediaItems]);
 
   return {
-    selectedFiles,
-    previewUrls,
-    mediaTypes,
-    uploadProgress,
-    setUploadProgress,
+    mediaItems,
+    selectedFiles: mediaItems.map((item) => item.file),
+    previewUrls: mediaItems.map((item) => item.previewUrl),
+    mediaTypes: mediaItems.map((item) => item.mediaType),
+    uploadProgress: mediaItems.map((item) => item.uploadProgress),
     handleFileChange,
     removeMedia,
+    updateUploadProgress,
     formatFileSize,
     MAX_FILE_COUNT,
   };

@@ -3,10 +3,19 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { EmojiSelector } from "~/components/emoji-picker";
+import { CloseIcon } from "~/components/icons/close";
 import { DotIcon } from "~/components/icons/dot";
 import { ImageIcon } from "~/components/icons/image";
 import { AvatarMain, GroupAvatarMain } from "~/components/ui/avatar";
 import { ButtonMain } from "~/components/ui/button";
+import { Card, CardContent } from "~/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "~/components/ui/carousel";
 import { CircularProgress } from "~/components/ui/circular-progress";
 import {
   DropdownMenu,
@@ -18,7 +27,10 @@ import { ScrollArea } from "~/components/ui/scroll-area";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useGetMultiMessages } from "~/hooks/useFetchMessages";
-import { useMediaPreviewMulti } from "~/hooks/useMediaPreviewMulti";
+import {
+  useMediaPreviewMulti,
+  type MediaItem,
+} from "~/hooks/useMediaPreviewMulti";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
 import { EMediaType } from "~/shared/enums/type.enum";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
@@ -44,11 +56,9 @@ export function MessageView({
   });
 
   //
-  const { previewUrls, mediaTypes, handleFileChange, removeMedia } =
-    useMediaPreviewMulti();
+  const { mediaItems, handleFileChange, removeMedia } = useMediaPreviewMulti();
 
-  console.log("previewUrls:::", previewUrls);
-  console.log("mediaTypes:::", mediaTypes);
+  console.log("mediaItems:::", mediaItems);
 
   //
   const [isUploading, setIsUploading] = useState(false);
@@ -243,7 +253,7 @@ export function MessageView({
                 size={20}
               />
             </div>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center relative">
               <div className="flex items-center gap-2 py-1">
                 <WrapIcon className="hover:bg-blue-100/60">
                   <EmojiSelector onEmojiClick={handleEmojiClick} />
@@ -268,8 +278,7 @@ export function MessageView({
                 </WrapIcon>
 
                 <PreviewMediaMulti
-                  mediaTypes={mediaTypes}
-                  previewUrls={previewUrls}
+                  mediaItems={mediaItems}
                   removeMedia={removeMedia}
                 />
               </div>
@@ -399,24 +408,30 @@ export function MessageSkeleton() {
   );
 }
 
+interface PreviewProps {
+  mediaItems: MediaItem[];
+  removeMedia: (id: string) => void;
+}
+
 //
-function PreviewMediaMulti({
-  mediaTypes,
-  previewUrls,
-  removeMedia,
-}: {
-  previewUrls: string[];
-  mediaTypes: EMediaType[];
-  removeMedia: (idx: number) => void;
-}) {
+function PreviewMediaMulti({ mediaItems, removeMedia }: PreviewProps) {
+  const [openCarousel, setOpenCarousel] = useState(false);
+
   return (
     <>
-      {previewUrls?.length > 0 &&
-        previewUrls.map((url, i) => {
+      {mediaItems?.length > 0 &&
+        mediaItems.map((item) => {
           return (
-            <div key={i} className="h-9 w-12 overflow-hidden rounded shadow">
-              {mediaTypes[i] === EMediaType.Image ? (
-                <img src={url} className="h-full w-full object-cover rounded" />
+            <div
+              key={item.id}
+              onClick={() => setOpenCarousel(!openCarousel)}
+              className="cursor-pointer h-9 w-12 overflow-hidden rounded shadow"
+            >
+              {item.mediaType === EMediaType.Image ? (
+                <img
+                  src={item.previewUrl}
+                  className="h-full w-full object-cover rounded"
+                />
               ) : (
                 <div className="h-full w-full flex items-center justify-center bg-sky-100">
                   <p className="text-xs text-gray-400">Video</p>
@@ -425,6 +440,45 @@ function PreviewMediaMulti({
             </div>
           );
         })}
+
+      {openCarousel && mediaItems?.length > 0 && (
+        <Carousel className="w-[25vw] h-[240px] bg-sky-100 p-4 rounded-2xl absolute bottom-16 right-1/2 translate-x-1/2">
+          <CarouselContent className="h-full">
+            {mediaItems.map((item, i) => (
+              <CarouselItem
+                key={item.id}
+                className="lg:basis-2/3 h-[208px] flex items-center justify-center cursor-grab"
+              >
+                <Card className="relative w-full h-full overflow-hidden flex items-center justify-center">
+                  <WrapIcon
+                    className="absolute top-0 left-0 bg-transparent cursor-pointer"
+                    onClick={() => removeMedia(item.id)}
+                  >
+                    <CloseIcon size={16} color="red" />
+                  </WrapIcon>
+                  <CardContent className="w-full h-full p-0 flex items-center justify-center">
+                    {item.mediaType === EMediaType.Image ? (
+                      <img
+                        src={item.previewUrl}
+                        className="object-contain rounded"
+                        alt={`media-${i}`}
+                      />
+                    ) : (
+                      <video
+                        src={item.previewUrl}
+                        controls
+                        className="object-contain rounded"
+                      />
+                    )}
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+      )}
     </>
   );
 }
