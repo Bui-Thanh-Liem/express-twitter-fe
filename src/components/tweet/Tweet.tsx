@@ -46,7 +46,7 @@ export function Tweet({
   onSuccess,
   tweetType = ETweetType.Tweet,
   contentBtn = "Đăng Bài",
-  placeholder = "Có chuyện gì thế ? bui_thanh_liem, #developer",
+  placeholder = "Có chuyện gì thế ? @bui_thanh_liem, #developer",
 }: {
   tweet?: ITweet;
   placeholder?: string;
@@ -245,7 +245,7 @@ export function Tweet({
               return;
             }
 
-            mediaUrl = resUploadMedia.data[0];
+            mediaUrl = resUploadMedia.data[0].url;
             setUploadedMediaUrl(mediaUrl);
             setUploadProgress(100);
           } catch (uploadError) {

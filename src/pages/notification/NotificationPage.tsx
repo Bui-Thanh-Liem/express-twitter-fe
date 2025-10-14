@@ -19,6 +19,8 @@ export function NotificationPage() {
     number
   > | null>(null);
 
+  console.log("unreadNoti:::", unreadNoti);
+
   //
   useEffect(() => {
     setUnreadNoti(unreadByType);
@@ -58,7 +60,9 @@ export function NotificationPage() {
               >
                 <span>Kiểm duyệt</span>
                 {unreadNoti && unreadNoti[ENotificationType.REVIEW] && (
-                  <div className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-sky-400 rounded-full" />
+                  <div className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-sky-400 rounded-full">
+                    {unreadNoti[ENotificationType.REVIEW]}
+                  </div>
                 )}
               </TabsTrigger>
               <TabsTrigger
@@ -78,7 +82,9 @@ export function NotificationPage() {
               >
                 <span>Theo dõi</span>
                 {unreadNoti && unreadNoti[ENotificationType.FOLLOW] && (
-                  <div className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-sky-400 rounded-full" />
+                  <div className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-sky-400 rounded-full">
+                    {unreadNoti[ENotificationType.FOLLOW]}
+                  </div>
                 )}
               </TabsTrigger>
             </TabsList>

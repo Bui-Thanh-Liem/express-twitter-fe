@@ -5,17 +5,18 @@ import {
   MAX_SIZE_VIDEO_UPLOAD,
 } from "~/shared/constants";
 import type { RemoteImagesDto } from "~/shared/dtos/req/upload.dto";
+import type { ResUpload } from "~/shared/dtos/res/upload.dto";
 import { apiCall } from "~/utils/callApi.util";
 
 // 📸 POST - Upload single image/video (Dynamic endpoint)
 export const useUploadMedia = () => {
   return useMutation({
-    mutationFn: async (files: File[]): Promise<OkResponse<string[]>> => {
+    mutationFn: async (files: File[]): Promise<OkResponse<ResUpload[]>> => {
       // Phân loại files theo type
       const imageFiles = files.filter((file) => file.type.startsWith("image/"));
       const videoFiles = files.filter((file) => file.type.startsWith("video/"));
 
-      const uploadPromises: Promise<string[]>[] = [];
+      const uploadPromises: Promise<ResUpload[]>[] = [];
 
       // Upload images nếu có
       if (imageFiles.length > 0) {
@@ -24,7 +25,7 @@ export const useUploadMedia = () => {
           imageFormData.append("images", file);
         });
 
-        const imageUpload = apiCall<string[]>("/uploads/images", {
+        const imageUpload = apiCall<ResUpload[]>("/uploads/images", {
           method: "POST",
           body: imageFormData,
         }).then((response) => {
@@ -44,7 +45,7 @@ export const useUploadMedia = () => {
           videoFormData.append("videos", file);
         });
 
-        const videoUpload = apiCall<string[]>("/uploads/videos", {
+        const videoUpload = apiCall<ResUpload[]>("/uploads/videos", {
           method: "POST",
           body: videoFormData,
         }).then((response) => {
@@ -116,7 +117,7 @@ export const useUploadWithValidation = () => {
 export const useRemoveImages = () => {
   return useMutation({
     mutationFn: async (credentials: RemoteImagesDto) =>
-      apiCall("/uploads/remote/images", {
+      apiCall("/uploads/remove/images", {
         method: "POST",
         body: JSON.stringify(credentials),
       }),

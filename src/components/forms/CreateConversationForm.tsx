@@ -173,7 +173,7 @@ export function CreateConversationForm({
         return;
       }
 
-      data.avatar = resUploadAvatar?.data[0];
+      data.avatar = resUploadAvatar?.data[0].url;
     }
 
     const res = await apiCreateConversation.mutateAsync(data);

@@ -41,6 +41,7 @@ import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { toastSimple } from "~/utils/toastSimple.util";
 import { CreateConversation } from "./CreateConversation";
+import { HLSPlayer } from "~/components/hls/HLSPlayer";
 
 const MAX_LENGTH_TEXT = 190;
 export function MessageView({
@@ -133,7 +134,7 @@ export function MessageView({
   //
   const onSubmit = useCallback(
     async (data: { text: string }) => {
-      let mediaUrls: string[] = [];
+      let medias: { url: string; type: EMediaType }[] = [];
       const selectedFiles = mediaItems.map((file) => file.file);
 
       try {
@@ -144,7 +145,7 @@ export function MessageView({
           return;
         }
 
-        mediaUrls = resUploadMedia.data;
+        medias = resUploadMedia.data;
       } catch (uploadError) {
         console.error("Error submitting uploadMedia:", uploadError);
         toastSimple((uploadError as { message: string }).message);
@@ -152,7 +153,7 @@ export function MessageView({
 
       sendMessage({
         content: data.text,
-        attachments: mediaUrls,
+        attachments: medias,
         sender: user?._id || "",
         conversation: conversation?._id || "",
       });
@@ -248,31 +249,47 @@ export function MessageView({
       <div className="flex-1 flex flex-col">
         <ScrollArea className="px-4 pt-2 h-[calc(100vh-260px)]">
           <div className="flex flex-col gap-3">
-            {messages.map((msg) => (
-              <div
-                key={msg._id}
-                className={`flex items-start gap-2 ${
-                  msg.sender === "me" ? "justify-end" : "justify-start"
-                }`}
-              >
-                {msg.sender !== user?._id && (
-                  <AvatarMain
-                    className="w-8 h-8"
-                    src={conversation.avatar as string}
-                    alt={conversation.name as string}
-                  />
-                )}
+            {messages.map((msg) => {
+              const attachments = msg.attachments;
+
+              return (
                 <div
-                  className={`px-3 py-2 rounded-2xl max-w-[70%] text-[15px] ${
-                    msg.sender === user?._id
-                      ? "bg-blue-400 text-white ml-auto"
-                      : "bg-gray-200 text-gray-800"
+                  key={msg._id}
+                  className={`flex items-start gap-2 ${
+                    msg.sender === "me" ? "justify-end" : "justify-start"
                   }`}
                 >
-                  {msg.content}
+                  {msg.sender !== user?._id && (
+                    <AvatarMain
+                      className="w-8 h-8"
+                      src={conversation.avatar as string}
+                      alt={conversation.name as string}
+                    />
+                  )}
+                  <div
+                    className={`px-3 py-2 rounded-2xl max-w-[70%] text-[15px] ${
+                      msg.sender === user?._id
+                        ? "bg-blue-400 text-white ml-auto"
+                        : "bg-gray-200 text-gray-800"
+                    }`}
+                  >
+                    {msg.content}
+                    <div>
+                      {attachments.map((a) => {
+                        return a.type === EMediaType.Image ? (
+                          <img
+                            src={a.url}
+                            className="h-20 w-10 object-cover rounded"
+                          />
+                        ) : (
+                          <HLSPlayer src={a.url} />
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             <div ref={endOfMessagesRef} />
           </div>
         </ScrollArea>

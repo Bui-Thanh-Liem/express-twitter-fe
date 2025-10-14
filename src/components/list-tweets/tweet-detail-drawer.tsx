@@ -303,7 +303,7 @@ export function TweetDetailDrawer() {
                       <VerifyIcon active={!!author.verify} size={20} />
                     </Link>
                   </ShortInfoProfile>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-400">
                     {author.username} •{" "}
                     {formatTimeAgo(created_at as unknown as string)}
                   </p>

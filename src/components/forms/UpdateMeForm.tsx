@@ -105,7 +105,7 @@ export function UpdateMeForm({
             handleResponse(resUploadAvatar);
             return;
           }
-          data.avatar = resUploadAvatar?.data[0];
+          data.avatar = resUploadAvatar?.data[0].url;
         }
       }
 
@@ -120,7 +120,7 @@ export function UpdateMeForm({
             handleResponse(resUploadCover);
             return;
           }
-          data.cover_photo = resUploadCover?.data[0];
+          data.cover_photo = resUploadCover?.data[0].url;
         }
       }
 
