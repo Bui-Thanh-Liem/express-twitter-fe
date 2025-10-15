@@ -65,7 +65,7 @@ export function TodayNewsOrOutstandingItem({
         >
           {highlight[0].content}
         </p>
-        <div className="flex items-center gap-2 mt-1">
+        <div className="flex items-center gap-2 mt-2">
           <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2">
             {highlight?.map((h, i) => (
               <Avatar key={`${h.avatar}-${i}`} className="w-6 h-6">

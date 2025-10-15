@@ -45,6 +45,8 @@ import { handleResponse } from "~/utils/handleResponse";
 import { toastSimple } from "~/utils/toastSimple.util";
 import { CreateConversation } from "./CreateConversation";
 import { MAX_LENGTH_TEXT } from "~/shared/constants";
+import { useStatusSocket } from "~/socket/hooks/useStatusSocket";
+import { Logo } from "~/components/logo";
 
 interface PreviewProps {
   mediaItems: MediaItem[];
@@ -60,6 +62,16 @@ export function MessageView({
   //
   const navigate = useNavigate();
   const { user } = useUserStore();
+
+  //
+  const [isOnl, setOnl] = useState(false);
+  const [messages, setMessages] = useState<IMessage[]>([]);
+
+  //
+  useStatusSocket((val) => {
+    if (val._id === conversation?._id) setOnl(val.hasOnline);
+  });
+
   const { sendMessage } = useChatSocket((newDataMessage) => {
     console.log("new message socket:::");
     setMessages((prev) => {
@@ -70,9 +82,6 @@ export function MessageView({
 
   //
   const { mediaItems, handleFileChange, removeMedia } = useMediaPreviewMulti();
-
-  //
-  const [messages, setMessages] = useState<IMessage[]>([]);
 
   //
   const { data, isLoading } = useGetMultiMessages(conversation?._id || "", {
@@ -200,17 +209,17 @@ export function MessageView({
   if (!conversation)
     return (
       <div className="h-[calc(100vh-120px)] col-span-8 flex gap-5 flex-col items-center justify-center">
-        <p className="text-2xl font-bold">Chào mừng đến với x.com</p>
+        <div className="flex items-center gap-x-2">
+          <p className="text-2xl font-bold">Chào mừng đến với</p>
+          <Logo size={40} />
+        </div>
         <p className="w-2/3 text-gray-400">
-          Khám phá những tiện ích hỗ trợ làm việc và trò chuyện cùng người thân,
-          bạn bè được tối ưu hoá cho máy tính của bạn.
+          Trò chuyện cùng người thân, bạn bè được tối ưu hoá cho máy tính của
+          bạn. Nhắn tin nhiều hơn, soạn thảo ít hơn.
         </p>
         <img className="w-1/2" src="./message-view.png" alt="" />
-        <p>Nhắn tin nhiều hơn, soạn thảo ít hơn</p>
       </div>
     );
-
-  console.log("messages:::", messages);
 
   //
   return (
@@ -227,7 +236,14 @@ export function MessageView({
           )}
           <div>
             <p>{conversation?.name}</p>
-            <p className="text-sm text-gray-400">online</p>
+            <p
+              className={cn(
+                "text-gray-400 text-sm",
+                isOnl ? "text-green-500" : ""
+              )}
+            >
+              {!isOnl ? "Không" : "Đang"} hoạt động
+            </p>
           </div>
         </div>
 
@@ -273,6 +289,13 @@ export function MessageView({
             })}
             <div ref={endOfMessagesRef} />
           </div>
+
+          {!messages.length && (
+            <Logo
+              size={180}
+              className="text-gray-100 translate-y-48 translate-x-54"
+            />
+          )}
         </ScrollArea>
 
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -477,7 +500,7 @@ export function PreviewMediaMulti({ mediaItems, removeMedia }: PreviewProps) {
               >
                 <Card className="relative w-full h-full overflow-hidden flex items-center justify-center">
                   <WrapIcon
-                    className="absolute top-0 left-0 bg-transparent cursor-pointer"
+                    className="absolute top-0 left-0 bg-transparent cursor-pointer hover:bg-transparent"
                     onClick={() => removeMedia(item.id)}
                   >
                     <CloseIcon size={16} color="red" />
@@ -518,7 +541,7 @@ export const MessageItem = ({ msg, user }: { msg: IMessage; user: IUser }) => {
   return (
     <div
       key={msg._id}
-      className={`flex items-end gap-2 mb-2 ${
+      className={`flex items-end gap-2 ${
         isMe ? "justify-end" : "justify-start"
       }`}
     >

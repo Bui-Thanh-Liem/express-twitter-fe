@@ -73,7 +73,7 @@ export const useGetMultiConversations = (queries?: IQuery<IConversation>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["conversations", normalizedQueries],
+    queryKey: ["conversations", queries?.q, normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";

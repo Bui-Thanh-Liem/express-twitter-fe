@@ -1,6 +1,6 @@
-import { UsersIcon } from "lucide-react";
 import { useState } from "react";
 import { CreateConversationForm } from "~/components/forms/CreateConversationForm";
+import { CreateGroupIcon } from "~/components/icons/create-group";
 import { DialogMain } from "~/components/ui/dialog";
 import { WrapIcon } from "~/components/wrapIcon";
 
@@ -13,8 +13,8 @@ export function CreateConversation({
 
   return (
     <>
-      <WrapIcon onClick={() => setIsOpen(true)}>
-        <UsersIcon className="h-[18px] w-[18px]" />
+      <WrapIcon onClick={() => setIsOpen(true)} className="p-1.5">
+        <CreateGroupIcon size={22} />
       </WrapIcon>
 
       {/*  */}

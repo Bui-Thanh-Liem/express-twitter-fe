@@ -9,7 +9,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { SearchMain } from "~/components/ui/search";
 import { WrapIcon } from "~/components/wrapIcon";
+import { useDebounce } from "~/hooks/useDebounce";
 import {
   useDeleteConversation,
   useGetMultiConversations,
@@ -220,9 +222,14 @@ export function ConversationList({
   const [allConversations, setAllConversations] = useState<IConversation[]>([]);
   const total_page_ref = useRef(0);
 
+  // Search
+  const [searchVal, setSearchVal] = useState("");
+  const debouncedSearchVal = useDebounce(searchVal, 500);
+
   const { data, isLoading, error } = useGetMultiConversations({
     page: page.toString(),
     limit: "10",
+    q: debouncedSearchVal,
   });
 
   // apis
@@ -281,7 +288,9 @@ export function ConversationList({
     const total_page = data?.data?.total_page;
     total_page_ref.current = total_page || 0;
 
-    if (items && items.length > 0) {
+    if (page === 1 && debouncedSearchVal) {
+      setAllConversations(items);
+    } else {
       setAllConversations((prev) => {
         const existIds = new Set(prev.map((c) => c._id.toString()));
         const newItems = items.filter(
@@ -356,9 +365,21 @@ export function ConversationList({
     );
   }
 
+  console.log("data:::", data?.data);
+
   //
   return (
     <div>
+      {/*  */}
+      <div className="mx-3 my-4">
+        <SearchMain
+          size="md"
+          value={searchVal}
+          onClear={() => setSearchVal("")}
+          onChange={setSearchVal}
+        />
+      </div>
+
       {/*  */}
       {!isLoading && allConversations.length === 0 && page === 1 && (
         <p className="p-4 text-center text-gray-500">
@@ -375,49 +396,51 @@ export function ConversationList({
         </div>
       )}
 
-      {/* List conversations */}
-      {allConversations.length > 0 && (
-        <div>
-          {sortConversations(allConversations, user?._id || "").map(
-            (conversation) => (
-              <ConversationItem
-                currentUser={user}
-                onTogglePinned={onPinnedConv}
-                onDeleted={onDeletedConv}
-                conversation={conversation}
-                key={conversation._id.toString()}
-                isActive={idActive === conversation._id}
-                onclick={() => handleClickConversation(conversation)}
-              />
-            )
-          )}
-        </div>
-      )}
-
-      {/* Loading khi load thêm */}
-      {isLoading ? (
-        <div className="p-3">
-          {Array.from({ length: 2 }).map((_, i) => (
-            <ConversationItemSkeleton key={`more-${i}`} />
-          ))}
-        </div>
-      ) : (
-        !!allConversations.length && (
-          <div className="px-4 py-3">
-            <p
-              className={cn(
-                "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer",
-                total_page_ref.current <= page
-                  ? "text-gray-300 pointer-events-none cursor-default"
-                  : ""
-              )}
-              onClick={onSeeMore}
-            >
-              Xem thêm
-            </p>
+      <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+        {/* List conversations */}
+        {allConversations.length > 0 && (
+          <div>
+            {sortConversations(allConversations, user?._id || "").map(
+              (conversation) => (
+                <ConversationItem
+                  currentUser={user}
+                  onTogglePinned={onPinnedConv}
+                  onDeleted={onDeletedConv}
+                  conversation={conversation}
+                  key={conversation._id.toString()}
+                  isActive={idActive === conversation._id}
+                  onclick={() => handleClickConversation(conversation)}
+                />
+              )
+            )}
           </div>
-        )
-      )}
+        )}
+
+        {/* Loading khi load thêm */}
+        {isLoading ? (
+          <div className="p-3">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <ConversationItemSkeleton key={`more-${i}`} />
+            ))}
+          </div>
+        ) : (
+          !!allConversations.length && (
+            <div className="px-4 py-3">
+              <p
+                className={cn(
+                  "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer",
+                  total_page_ref.current <= page
+                    ? "text-gray-300 pointer-events-none cursor-default"
+                    : ""
+                )}
+                onClick={onSeeMore}
+              >
+                Xem thêm
+              </p>
+            </div>
+          )
+        )}
+      </div>
 
       {/* Error state */}
       {error && (
@@ -435,18 +458,24 @@ function sortConversations(conversations: IConversation[], user_id: string) {
     const bPinned = b.pinned?.some((p) => p.user_id === user_id) ?? false;
 
     if (aPinned && bPinned) {
-      // cả hai đều ghim, sort theo thời gian pin gần nhất
-      const aTime = a.pinned!.find((p) => p.user_id === user_id)!.at.getTime();
-      const bTime = b.pinned!.find((p) => p.user_id === user_id)!.at.getTime();
-      return bTime - aTime; // mới nhất lên trước
+      // Both pinned, sort by earliest pin time first
+      const aPin = a.pinned?.find((p) => p.user_id === user_id);
+      const bPin = b.pinned?.find((p) => p.user_id === user_id);
+
+      // Convert `at` to Date if it exists, otherwise use a default date
+      const aTime = aPin?.at ? new Date(aPin.at).getTime() : 0;
+      const bTime = bPin?.at ? new Date(bPin.at).getTime() : 0;
+
+      return aTime - bTime; // Earlier pinned first, newer pinned last
     }
 
-    if (aPinned) return -1; // a ghim, b không ghim → a lên trên
-    if (bPinned) return 1; // b ghim, a không ghim → b lên trên
+    if (aPinned) return -1; // a pinned, b not pinned → a first
+    if (bPinned) return 1; // b pinned, a not pinned → b first
 
-    // cả hai không ghim, sort theo updatedAt (hoặc giữ nguyên)
+    // Neither pinned, sort by updated_at (newest first)
     return (
-      new Date(b.updated_at!).getTime() - new Date(a.updated_at!).getTime()
+      new Date(b.updated_at ?? 0).getTime() -
+      new Date(a.updated_at ?? 0).getTime()
     );
   });
 }

@@ -31,6 +31,8 @@ import { useChatBoxStore } from "~/store/useChatBoxStore";
 import { useUserStore } from "~/store/useUserStore";
 import { CreateConversation } from "./CreateConversation";
 import { MessageItem, PreviewMediaMulti } from "./MessageView";
+import { cn } from "~/lib/utils";
+import { Logo } from "~/components/logo";
 
 export default function ChatBox() {
   //
@@ -167,9 +169,9 @@ export default function ChatBox() {
 
   return (
     <div className="fixed bottom-8 right-8 bg-white z-50">
-      <Card className="w-[400px] h-[580px] gap-2 rounded-2xl shadow-lg">
+      <Card className="w-[420px] h-[580px] gap-2 rounded-2xl shadow-lg">
         {/*  */}
-        <CardHeader>
+        <CardHeader className="px-4">
           <div className="flex gap-x-4 items-center">
             {typeof conversation.avatar === "string" ? (
               <AvatarMain
@@ -181,10 +183,13 @@ export default function ChatBox() {
             )}
             <div>
               <CardTitle>{conversation?.name}</CardTitle>
-              <CardDescription className="text-xs">
-                {isOnl && (
-                  <span className="absolute bottom-0 left-8 z-10 w-3 h-3 bg-green-400 rounded-full border border-white" />
+              <CardDescription
+                className={cn(
+                  "text-gray-400 text-sm mt-1",
+                  isOnl ? "text-green-500" : ""
                 )}
+              >
+                {!isOnl ? "Không" : "Đang"} hoạt động
               </CardDescription>
             </div>
           </div>
@@ -203,9 +208,9 @@ export default function ChatBox() {
         </CardHeader>
 
         {/*  */}
-        <CardContent className="flex-1 flex flex-col border-t pt-4">
+        <CardContent className="flex-1 flex flex-col border-t px-0">
           {/* View message */}
-          <ScrollArea className="pr-4 h-full max-h-[380px]">
+          <ScrollArea className="px-4 pt-2 h-[340px] max-h-[340px]">
             <div className="flex flex-col gap-3">
               {messages.map((msg) => (
                 <MessageItem msg={msg} user={user as IUser} />
@@ -213,10 +218,16 @@ export default function ChatBox() {
 
               <div ref={endOfMessagesRef} />
             </div>
+            {!messages.length && (
+              <Logo
+                size={100}
+                className="text-gray-100 translate-y-28 translate-x-32"
+              />
+            )}
           </ScrollArea>
 
           {/* Action message */}
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)} className="px-4">
             <div className="relative border-t">
               <div className="absolute top-[108px] right-1">
                 <CircularProgress

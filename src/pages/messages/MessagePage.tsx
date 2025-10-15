@@ -5,11 +5,10 @@ import { WrapIcon } from "~/components/wrapIcon";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import { ConversationList } from "./ConversationList";
 import { MessageView } from "./MessageView";
-import { SearchMain } from "~/components/ui/search";
 
 export function MessagePage() {
   const navigate = useNavigate();
-  const [searchVal, setSearchVal] = useState("");
+
   const [conversationActive, setConversationActive] =
     useState<IConversation | null>(null);
 
@@ -28,16 +27,8 @@ export function MessagePage() {
       {/* Content */}
       <div className="grid grid-cols-12">
         {/* Conversations */}
-        <div className="col-span-4 h-full border-r pt-3">
-          <div className="mx-3">
-            <SearchMain
-              size="md"
-              value={searchVal}
-              onClear={() => setSearchVal("")}
-              onChange={setSearchVal}
-            />
-          </div>
-          <div className="mt-5 max-h-[calc(100vh-130px)] overflow-y-auto">
+        <div className="col-span-4 h-full border-r">
+          <div>
             <ConversationList
               onclick={(conversation) => setConversationActive(conversation)}
             />
