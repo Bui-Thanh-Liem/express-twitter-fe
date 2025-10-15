@@ -278,7 +278,7 @@ export function Tweet({
           setTimeout(() => {
             // Nếu upload thành công và type === video thì phải đợi kiểm duyệt
             if (mediaType == EMediaType.Video) {
-              toastSimple("Video của bạn đang được kiểm duyệt.");
+              toastSimple("Video của bạn đang được kiểm duyệt, nhận thông tin tại phần thông báo.");
             }
           }, 3000);
         });

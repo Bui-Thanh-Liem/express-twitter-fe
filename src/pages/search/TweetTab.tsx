@@ -181,9 +181,7 @@ export function TweetTab() {
       {/* End of content indicator */}
       {!hasMore && allTweets.length > 0 && (
         <div className="text-center py-8">
-          <p className="text-gray-500">
-            🎉 Bạn đã xem hết tất cả tweet đã đánh dấu!
-          </p>
+          <p className="text-gray-500">🎉 Bạn đã xem hết tất cả tweet!</p>
         </div>
       )}
 

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { EmojiSelector } from "~/components/emoji-picker";
+import { HLSPlayer } from "~/components/hls/HLSPlayer";
 import { CloseIcon } from "~/components/icons/close";
 import { DotIcon } from "~/components/icons/dot";
 import { ImageIcon } from "~/components/icons/image";
@@ -33,17 +34,24 @@ import {
   type MediaItem,
 } from "~/hooks/useMediaPreviewMulti";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
+import { cn } from "~/lib/utils";
 import { EMediaType } from "~/shared/enums/type.enum";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
+import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useChatSocket } from "~/socket/hooks/useChatSocket";
 import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { toastSimple } from "~/utils/toastSimple.util";
 import { CreateConversation } from "./CreateConversation";
-import { HLSPlayer } from "~/components/hls/HLSPlayer";
+import { MAX_LENGTH_TEXT } from "~/shared/constants";
 
-const MAX_LENGTH_TEXT = 190;
+interface PreviewProps {
+  mediaItems: MediaItem[];
+  removeMedia: (id: string) => void;
+}
+
+//
 export function MessageView({
   conversation,
 }: {
@@ -141,7 +149,18 @@ export function MessageView({
         //
         const resUploadMedia = await apiUploadMedia.mutateAsync(selectedFiles);
         if (resUploadMedia.statusCode !== 200 || !resUploadMedia.data) {
-          handleResponse(resUploadMedia);
+          handleResponse(resUploadMedia, () => {
+            setTimeout(() => {
+              const isVideo = resUploadMedia.data!.some(
+                (i) => i.type === EMediaType.Video
+              );
+              if (isVideo) {
+                toastSimple(
+                  "Video của bạn đang được kiểm duyệt, nhận thông tin tại phần thông báo."
+                );
+              }
+            }, 3000);
+          });
           return;
         }
 
@@ -250,45 +269,7 @@ export function MessageView({
         <ScrollArea className="px-4 pt-2 h-[calc(100vh-260px)]">
           <div className="flex flex-col gap-3">
             {messages.map((msg) => {
-              const attachments = msg.attachments;
-
-              return (
-                <div
-                  key={msg._id}
-                  className={`flex items-start gap-2 ${
-                    msg.sender === "me" ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  {msg.sender !== user?._id && (
-                    <AvatarMain
-                      className="w-8 h-8"
-                      src={conversation.avatar as string}
-                      alt={conversation.name as string}
-                    />
-                  )}
-                  <div
-                    className={`px-3 py-2 rounded-2xl max-w-[70%] text-[15px] ${
-                      msg.sender === user?._id
-                        ? "bg-blue-400 text-white ml-auto"
-                        : "bg-gray-200 text-gray-800"
-                    }`}
-                  >
-                    {msg.content}
-                    <div>
-                      {attachments.map((a) => {
-                        return a.type === EMediaType.Image ? (
-                          <img
-                            src={a.url}
-                            className="h-20 w-10 object-cover rounded"
-                          />
-                        ) : (
-                          <HLSPlayer src={a.url} />
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              );
+              return <MessageItem msg={msg} user={user as IUser} />;
             })}
             <div ref={endOfMessagesRef} />
           </div>
@@ -365,6 +346,7 @@ export function MessageView({
   );
 }
 
+//
 export function MessageSkeleton() {
   return (
     <div className="col-span-8 h-full flex flex-col animate-pulse">
@@ -457,13 +439,8 @@ export function MessageSkeleton() {
   );
 }
 
-interface PreviewProps {
-  mediaItems: MediaItem[];
-  removeMedia: (id: string) => void;
-}
-
 //
-function PreviewMediaMulti({ mediaItems, removeMedia }: PreviewProps) {
+export function PreviewMediaMulti({ mediaItems, removeMedia }: PreviewProps) {
   const [openCarousel, setOpenCarousel] = useState(false);
 
   return (
@@ -531,3 +508,83 @@ function PreviewMediaMulti({ mediaItems, removeMedia }: PreviewProps) {
     </>
   );
 }
+
+//
+export const MessageItem = ({ msg, user }: { msg: IMessage; user: IUser }) => {
+  const { attachments } = msg;
+  const isMe = msg.sender === user?._id;
+  const conversation = msg.conversation as IConversation;
+
+  return (
+    <div
+      key={msg._id}
+      className={`flex items-end gap-2 mb-2 ${
+        isMe ? "justify-end" : "justify-start"
+      }`}
+    >
+      {/* Avatar người khác */}
+      {!isMe && (
+        <AvatarMain
+          className="w-8 h-8"
+          src={conversation.avatar as string}
+          alt={conversation.name as string}
+        />
+      )}
+
+      <div
+        className={cn(
+          "flex flex-col w-full",
+          isMe ? "items-end" : "items-start"
+        )}
+      >
+        {/* Bong bóng text */}
+        {msg.content && (
+          <div
+            className={cn(
+              "px-2 py-1 rounded-xl text-[15px] leading-relaxed shadow-sm max-w-[70%]",
+              isMe
+                ? "bg-blue-500 text-white rounded-br-none"
+                : "bg-gray-100 text-gray-800 rounded-bl-none"
+            )}
+          >
+            <p className="whitespace-pre-line break-words">{msg.content}</p>
+          </div>
+        )}
+
+        {/* Media nằm ngoài box */}
+        {attachments?.length > 0 && (
+          <div
+            className={cn(
+              `mt-2 max-w-[50%] flex flex-col gap-y-2`,
+              isMe ? "justify-end" : "justify-start"
+            )}
+          >
+            {attachments.map((a, i) => {
+              if (a.type === EMediaType.Image) {
+                return (
+                  <img
+                    key={i}
+                    src={a.url}
+                    alt={`attachment-${i}`}
+                    className="w-full object-contain rounded-lg"
+                    loading="lazy"
+                  />
+                );
+              }
+
+              if (a.type === EMediaType.Video) {
+                return (
+                  <div key={i} className="overflow-hidden rounded-lg bg-black">
+                    <HLSPlayer src={a.url} />
+                  </div>
+                );
+              }
+
+              return null;
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};

@@ -1,8 +1,9 @@
-import { X } from "lucide-react";
+import { Send, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import { EmojiSelector } from "~/components/emoji-picker";
+import { ImageIcon } from "~/components/icons/image";
 import { AvatarMain, GroupAvatarMain } from "~/components/ui/avatar";
 import { ButtonMain } from "~/components/ui/button";
 import {
@@ -13,18 +14,23 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import { CircularProgress } from "~/components/ui/circular-progress";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useGetMultiMessages } from "~/hooks/useFetchMessages";
+import { useMediaPreviewMulti } from "~/hooks/useMediaPreviewMulti";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
+import { MAX_LENGTH_TEXT } from "~/shared/constants";
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useChatSocket } from "~/socket/hooks/useChatSocket";
 import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
+import { useStatusSocket } from "~/socket/hooks/useStatusSocket";
 import { useChatBoxStore } from "~/store/useChatBoxStore";
 import { useUserStore } from "~/store/useUserStore";
 import { CreateConversation } from "./CreateConversation";
+import { MessageItem, PreviewMediaMulti } from "./MessageView";
 
 export default function ChatBox() {
   //
@@ -43,6 +49,7 @@ export default function ChatBox() {
   const { pathname } = useLocation();
   const { close, conversation } = useChatBoxStore();
   const { user } = useUserStore();
+  const [isOnl, setOnl] = useState(false);
 
   //
   useEffect(() => {
@@ -60,6 +67,11 @@ export default function ChatBox() {
   }, [conversation?._id]);
 
   //
+  useStatusSocket((val) => {
+    if (val._id === conversation?._id) setOnl(val.hasOnline);
+  });
+
+  //
   const [messages, setMessages] = useState<IMessage[]>([]);
   const { sendMessage } = useChatSocket((newDataMessage) => {
     console.log("new message socket");
@@ -67,6 +79,9 @@ export default function ChatBox() {
       return [...prev, newDataMessage];
     });
   });
+
+  //
+  const { mediaItems, handleFileChange, removeMedia } = useMediaPreviewMulti();
 
   //
   const { data } = useGetMultiMessages(conversation?._id || "", {
@@ -100,6 +115,14 @@ export default function ChatBox() {
   useEffect(() => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  //
+  const handleFileSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleFileChange(e);
+    },
+    [handleFileChange]
+  );
 
   // Memoized handlers
   const handleEmojiClick = useCallback(
@@ -145,6 +168,7 @@ export default function ChatBox() {
   return (
     <div className="fixed bottom-8 right-8 bg-white z-50">
       <Card className="w-[400px] h-[580px] gap-2 rounded-2xl shadow-lg">
+        {/*  */}
         <CardHeader>
           <div className="flex gap-x-4 items-center">
             {typeof conversation.avatar === "string" ? (
@@ -158,10 +182,14 @@ export default function ChatBox() {
             <div>
               <CardTitle>{conversation?.name}</CardTitle>
               <CardDescription className="text-xs">
-                2 phút trước
+                {isOnl && (
+                  <span className="absolute bottom-0 left-8 z-10 w-3 h-3 bg-green-400 rounded-full border border-white" />
+                )}
               </CardDescription>
             </div>
           </div>
+
+          {/*  */}
           <CardAction className="flex items-center gap-2">
             <CreateConversation
               initialUserIds={(
@@ -173,44 +201,66 @@ export default function ChatBox() {
             </WrapIcon>
           </CardAction>
         </CardHeader>
+
+        {/*  */}
         <CardContent className="flex-1 flex flex-col border-t pt-4">
+          {/* View message */}
           <ScrollArea className="pr-4 h-full max-h-[380px]">
             <div className="flex flex-col gap-3">
               {messages.map((msg) => (
-                <div
-                  key={msg._id}
-                  className={`flex items-start gap-2 ${
-                    msg.sender === "me" ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  {msg.sender !== user?._id && (
-                    <AvatarMain
-                      className="w-8 h-8"
-                      src={conversation.avatar as string}
-                      alt={conversation.name as string}
-                    />
-                  )}
-                  <div
-                    className={`px-3 py-2 rounded-2xl max-w-[70%] text-sm ${
-                      msg.sender === user?._id
-                        ? "bg-blue-500 text-white ml-auto"
-                        : "bg-gray-200 text-gray-800"
-                    }`}
-                  >
-                    {msg.content}
-                  </div>
-                </div>
+                <MessageItem msg={msg} user={user as IUser} />
               ))}
 
               <div ref={endOfMessagesRef} />
             </div>
           </ScrollArea>
 
+          {/* Action message */}
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="relative flex gap-2 pt-4 border-t">
-              <p className="absolute top-1 -left-2.5 w-5 h-5 flex items-center justify-center rounded-full bg-blue-400 text-[10px] text-white">
-                {60 - (isNaN(contentValue?.length) ? 0 : contentValue?.length)}
-              </p>
+            <div className="relative border-t">
+              <div className="absolute top-[108px] right-1">
+                <CircularProgress
+                  value={isNaN(contentValue?.length) ? 0 : contentValue?.length}
+                  max={MAX_LENGTH_TEXT}
+                  size={20}
+                />
+              </div>
+              <div className="flex justify-between items-center relative">
+                <div className="flex items-center gap-2 py-1">
+                  <WrapIcon className="hover:bg-blue-100/60">
+                    <EmojiSelector onEmojiClick={handleEmojiClick} />
+                  </WrapIcon>
+                  <WrapIcon className="hover:bg-blue-100/60">
+                    <label
+                      htmlFor="image-upload-in-chat"
+                      className="cursor-pointer"
+                      title="Thêm ảnh hoặc video"
+                    >
+                      <ImageIcon />
+                      <input
+                        multiple
+                        type="file"
+                        className="hidden"
+                        id="image-upload-in-chat"
+                        onChange={handleFileSelect}
+                        accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/mov,video/avi,video/quicktime"
+                      />
+                    </label>
+                  </WrapIcon>
+
+                  <PreviewMediaMulti
+                    mediaItems={mediaItems}
+                    removeMedia={removeMedia}
+                  />
+                </div>
+                <ButtonMain
+                  size="sm"
+                  type="submit"
+                  className="bg-transparent hover:bg-gray-50"
+                >
+                  <Send color="#1d9bf0" />
+                </ButtonMain>
+              </div>
               <textarea
                 {...register("text")}
                 ref={textareaRef}
@@ -218,11 +268,11 @@ export default function ChatBox() {
                 value={contentValue}
                 autoCorrect="off"
                 spellCheck="false"
-                className="outline-0 w-full text-md placeholder:text-gray-500 bg-blue-50 rounded-xl resize-none p-2"
+                className="outline-0 w-full text-md placeholder:text-gray-500 bg-gray-100 rounded-xl resize-none p-2"
                 placeholder="Nhập văn bản"
                 onInput={handleTextareaInput}
-                rows={2}
-                maxLength={60}
+                rows={3}
+                maxLength={MAX_LENGTH_TEXT}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault(); // chặn xuống dòng mặc định
@@ -230,12 +280,6 @@ export default function ChatBox() {
                   }
                 }}
               />
-              <span>
-                <WrapIcon className="hover:bg-blue-100/60">
-                  <EmojiSelector onEmojiClick={handleEmojiClick} />
-                </WrapIcon>
-              </span>
-              <ButtonMain type="submit">Gửi</ButtonMain>
             </div>
           </form>
         </CardContent>

@@ -199,7 +199,7 @@ export function MediaTab() {
       {!hasMore && allTweets.length > 0 && (
         <div className="text-center py-8">
           <p className="text-gray-500">
-            🎉 Bạn đã xem hết tất cả tweet đã đánh dấu!
+            🎉 Bạn đã xem hết tất cả hình ảnh và video!
           </p>
         </div>
       )}

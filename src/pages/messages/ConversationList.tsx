@@ -63,7 +63,6 @@ function ConversationItem({
 
   //
   useStatusSocket((val) => {
-    console.log("val::", val);
     if (val._id === conversation._id) setOnl(val.hasOnline);
   });
 
@@ -75,7 +74,9 @@ function ConversationItem({
   if (lastMessage) {
     const _lastMessage = lastMessage as unknown as IMessage;
     const isOwner = currentUser?._id === _lastMessage.sender;
-    messageLastContent = `${isOwner ? "Bạn: " : ""}${_lastMessage.content}`;
+    messageLastContent = `${isOwner ? "Bạn: " : ""}${
+      _lastMessage.content || "đã gửi hình ảnh hoặc video"
+    }`;
   }
 
   const isUnread = conversation.readStatus?.includes(currentUser?._id || "");
@@ -337,7 +338,9 @@ export function ConversationList({
           let newPinned;
           if (alreadyPinned) {
             // unpin
-            newPinned = item.pinned.filter((p: { user_id: string | undefined; }) => p.user_id !== user?._id);
+            newPinned = item.pinned.filter(
+              (p: { user_id: string | undefined }) => p.user_id !== user?._id
+            );
           } else {
             // pin
             newPinned = [
