@@ -12,6 +12,7 @@ import {
   useGetOneByUsername,
   useResendVerifyEmail,
 } from "~/hooks/useFetchUser";
+import { CONSTANT_DEFAULT_TITLE_DOCUMENT } from "~/shared/constants/default-title-document";
 import { ETweetType } from "~/shared/enums/type.enum";
 import { useUserStore } from "~/store/useUserStore";
 import { formatDateToDateVN } from "~/utils/formatDateToDateVN";
@@ -39,6 +40,14 @@ export function ProfilePage() {
     () => user?._id === profile?._id,
     [user?._id, profile?._id]
   );
+
+  //
+  useEffect(() => {
+    document.title = username || CONSTANT_DEFAULT_TITLE_DOCUMENT;
+    return () => {
+      document.title = CONSTANT_DEFAULT_TITLE_DOCUMENT;
+    };
+  }, []);
 
   //
   useEffect(() => {

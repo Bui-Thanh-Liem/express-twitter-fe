@@ -7,6 +7,7 @@ import { HLSPlayer } from "~/components/hls/HLSPlayer";
 import { CloseIcon } from "~/components/icons/close";
 import { DotIcon } from "~/components/icons/dot";
 import { ImageIcon } from "~/components/icons/image";
+import { Logo } from "~/components/logo";
 import { AvatarMain, GroupAvatarMain } from "~/components/ui/avatar";
 import { ButtonMain } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
@@ -40,13 +41,12 @@ import type { IConversation } from "~/shared/interfaces/schemas/conversation.int
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useChatSocket } from "~/socket/hooks/useChatSocket";
+import { useStatusSocket } from "~/socket/hooks/useStatusSocket";
 import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { toastSimple } from "~/utils/toastSimple.util";
 import { CreateConversation } from "./CreateConversation";
-import { MAX_LENGTH_TEXT } from "~/shared/constants";
-import { useStatusSocket } from "~/socket/hooks/useStatusSocket";
-import { Logo } from "~/components/logo";
+import { CONSTANT_MAX_LENGTH_TEXT } from "~/shared/constants";
 
 interface PreviewProps {
   mediaItems: MediaItem[];
@@ -303,7 +303,7 @@ export function MessageView({
             <div className="absolute top-[108px] right-4">
               <CircularProgress
                 value={isNaN(contentValue?.length) ? 0 : contentValue?.length}
-                max={MAX_LENGTH_TEXT}
+                max={CONSTANT_MAX_LENGTH_TEXT}
                 size={20}
               />
             </div>
@@ -354,7 +354,7 @@ export function MessageView({
               placeholder="Nhập văn bản"
               onInput={handleTextareaInput}
               rows={3}
-              maxLength={MAX_LENGTH_TEXT}
+              maxLength={CONSTANT_MAX_LENGTH_TEXT}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault(); // chặn xuống dòng mặc định

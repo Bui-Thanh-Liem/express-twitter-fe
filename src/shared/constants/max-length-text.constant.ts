@@ -1,1 +1,1 @@
-export const MAX_LENGTH_TEXT = 190;
+export const CONSTANT_MAX_LENGTH_TEXT = 190;

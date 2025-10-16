@@ -16,6 +16,7 @@ import { ProfilePage } from "./pages/profile/ProfilePage";
 import { SearchPage } from "./pages/search/SearchPage";
 import { TweetDetailPage } from "./pages/tweet-detail/TweetDetailPage";
 import { TrendingPage } from "./pages/trending/TrendingPage";
+import { CommunityPage } from "./pages/community/CommunityPage";
 
 // Router config
 const router = createBrowserRouter([
@@ -47,6 +48,7 @@ const router = createBrowserRouter([
           { path: "notifications", element: <NotificationPage /> },
           { path: "messages", element: <MessagePage /> },
           { path: "search", element: <SearchPage /> },
+          { path: "communities", element: <CommunityPage /> },
           { path: "trending", element: <TrendingPage /> },
           { path: "tweet/:tweet_id", element: <TweetDetailPage /> },
           { path: ":username", element: <ProfilePage /> },

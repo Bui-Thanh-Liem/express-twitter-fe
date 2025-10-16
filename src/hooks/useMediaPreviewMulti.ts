@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  MAX_SIZE_IMAGE_UPLOAD,
-  MAX_SIZE_VIDEO_UPLOAD,
+  CONSTANT_MAX_SIZE_IMAGE_UPLOAD,
+  CONSTANT_MAX_SIZE_VIDEO_UPLOAD,
 } from "~/shared/constants";
 import { EMediaType } from "~/shared/enums/type.enum";
 import { toastSimple } from "~/utils/toastSimple.util";
@@ -84,8 +84,8 @@ export const useMediaPreviewMulti = () => {
 
           const maxSize =
             type === EMediaType.Video
-              ? MAX_SIZE_VIDEO_UPLOAD
-              : MAX_SIZE_IMAGE_UPLOAD;
+              ? CONSTANT_MAX_SIZE_VIDEO_UPLOAD
+              : CONSTANT_MAX_SIZE_IMAGE_UPLOAD;
 
           if (file.size > maxSize) {
             const type_vn = type === EMediaType.Video ? "Video" : "Hình ảnh";

@@ -29,6 +29,8 @@ import { useUnreadNotiStore } from "~/store/useUnreadNotiStore";
 import { useUserStore } from "~/store/useUserStore";
 import { Logo } from "../../components/logo";
 import { WrapIcon } from "../../components/wrapIcon";
+import { CONSTANT_DEFAULT_TITLE_DOCUMENT } from "~/shared/constants/default-title-document";
+import { CommunityIcon } from "~/components/icons/communities";
 
 type NavItem = {
   name: string;
@@ -38,8 +40,6 @@ type NavItem = {
 };
 
 export function SidebarLeft() {
-  const defaultTitleDocument = "Mạng xã hội (DEV)";
-
   //
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -65,7 +65,9 @@ export function SidebarLeft() {
   //
   useEffect(() => {
     document.title =
-      unread > 0 ? `(${unread}) thông báo chưa đọc` : defaultTitleDocument;
+      unread > 0
+        ? `(${unread}) thông báo chưa đọc`
+        : CONSTANT_DEFAULT_TITLE_DOCUMENT;
 
     const oldLinks = document.querySelectorAll(
       'link[rel="icon"], link[rel="shortcut icon"]'
@@ -86,7 +88,7 @@ export function SidebarLeft() {
     () => {},
     (unread) => {
       document.title =
-        unread > 0 ? `(${unread}) thông báo chưa đọc` : defaultTitleDocument;
+        unread > 0 ? `(${unread}) thông báo chưa đọc` : CONSTANT_DEFAULT_TITLE_DOCUMENT;
 
       const oldLinks = document.querySelectorAll(
         'link[rel="icon"], link[rel="shortcut icon"]'
@@ -133,11 +135,11 @@ export function SidebarLeft() {
       path: "/messages",
       countNoti: unreadCountConv,
     },
-    // {
-    //   name: "Cộng đồng",
-    //   icon: <CommunityIcon />,
-    //   path: "/communities",
-    // },
+    {
+      name: "Cộng đồng",
+      icon: <CommunityIcon />,
+      path: "/communities",
+    },
     {
       name: "Hồ sơ",
       icon: <ProfileIcon />,
@@ -180,7 +182,7 @@ export function SidebarLeft() {
                       : x.icon}
                     <span className="line-clamp-1">{x.name}</span>
                     {!!x?.countNoti && (
-                      <span className="absolute top-2 left-6 flex items-center justify-center w-4 h-4 bg-sky-400 text-white rounded-full text-[10px]">
+                      <span className="absolute top-2 left-6 flex items-center justify-center w-5 h-5 bg-sky-400 text-white rounded-full text-[10px] border-2 border-white">
                         {x?.countNoti}
                       </span>
                     )}

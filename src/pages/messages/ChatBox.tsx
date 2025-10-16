@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import { EmojiSelector } from "~/components/emoji-picker";
 import { ImageIcon } from "~/components/icons/image";
+import { Logo } from "~/components/logo";
 import { AvatarMain, GroupAvatarMain } from "~/components/ui/avatar";
 import { ButtonMain } from "~/components/ui/button";
 import {
@@ -21,7 +22,8 @@ import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useGetMultiMessages } from "~/hooks/useFetchMessages";
 import { useMediaPreviewMulti } from "~/hooks/useMediaPreviewMulti";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
-import { MAX_LENGTH_TEXT } from "~/shared/constants";
+import { cn } from "~/lib/utils";
+import { CONSTANT_MAX_LENGTH_TEXT } from "~/shared/constants";
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useChatSocket } from "~/socket/hooks/useChatSocket";
@@ -31,8 +33,6 @@ import { useChatBoxStore } from "~/store/useChatBoxStore";
 import { useUserStore } from "~/store/useUserStore";
 import { CreateConversation } from "./CreateConversation";
 import { MessageItem, PreviewMediaMulti } from "./MessageView";
-import { cn } from "~/lib/utils";
-import { Logo } from "~/components/logo";
 
 export default function ChatBox() {
   //
@@ -232,7 +232,7 @@ export default function ChatBox() {
               <div className="absolute top-[108px] right-1">
                 <CircularProgress
                   value={isNaN(contentValue?.length) ? 0 : contentValue?.length}
-                  max={MAX_LENGTH_TEXT}
+                  max={CONSTANT_MAX_LENGTH_TEXT}
                   size={20}
                 />
               </div>
@@ -283,7 +283,7 @@ export default function ChatBox() {
                 placeholder="Nhập văn bản"
                 onInput={handleTextareaInput}
                 rows={3}
-                maxLength={MAX_LENGTH_TEXT}
+                maxLength={CONSTANT_MAX_LENGTH_TEXT}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault(); // chặn xuống dòng mặc định

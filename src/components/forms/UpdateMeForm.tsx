@@ -24,6 +24,7 @@ import { useUserStore } from "~/store/useUserStore";
 import { toastSimple } from "~/utils/toastSimple.util";
 import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
+import { CircularProgress } from "../ui/circular-progress";
 import { DatePicker } from "../ui/date-picker";
 import { InputMain } from "../ui/input";
 import { TextareaMain } from "../ui/textarea";
@@ -65,12 +66,12 @@ export function UpdateMeForm({
 
   const {
     reset,
+    watch,
     control,
     register,
-    handleSubmit,
-    watch,
     setValue,
     getValues,
+    handleSubmit,
     formState: { errors },
   } = useForm<UpdateMeDto>({
     resolver: zodResolver(UpdateMeDtoSchema),
@@ -87,6 +88,7 @@ export function UpdateMeForm({
         : undefined,
     },
   });
+  const valBio = watch("bio");
 
   //
   console.log("errors:::", errors);
@@ -264,16 +266,27 @@ export function UpdateMeForm({
             setValue={setValue}
           />
 
-          <TextareaMain
-            id="bio"
-            name="bio"
-            label="Tiểu sử"
-            errors={errors}
-            control={control}
-            register={register}
-            className="min-h-[100px] resize-none"
-            placeholder="Viết một vài dòng về bản thân..."
-          />
+          <div className="relative">
+            <TextareaMain
+              id="bio"
+              name="bio"
+              label="Tiểu sử"
+              errors={errors}
+              control={control}
+              register={register}
+              className="min-h-[100px] resize-none"
+              placeholder="Viết một vài dòng về bản thân..."
+              maxCountLength={200}
+            />
+
+            <div className="absolute right-1 bottom-1">
+              <CircularProgress
+                value={!valBio?.length ? 0 : valBio?.length}
+                max={200}
+                size={20}
+              />
+            </div>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">

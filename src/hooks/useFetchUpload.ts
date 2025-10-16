@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import { OkResponse } from "~/shared/classes/response.class";
 import {
-  MAX_SIZE_IMAGE_UPLOAD,
-  MAX_SIZE_VIDEO_UPLOAD,
+  CONSTANT_MAX_SIZE_IMAGE_UPLOAD,
+  CONSTANT_MAX_SIZE_VIDEO_UPLOAD,
 } from "~/shared/constants";
 import type { RemoteImagesDto } from "~/shared/dtos/req/upload.dto";
 import type { ResUpload } from "~/shared/dtos/res/upload.dto";
@@ -82,14 +82,14 @@ export const validateMediaFile = (file: File) => {
   ];
 
   if (allowedImgTypes.includes(file.type)) {
-    if (file.size > MAX_SIZE_IMAGE_UPLOAD) {
+    if (file.size > CONSTANT_MAX_SIZE_IMAGE_UPLOAD) {
       throw new Error("Dung lượng ảnh quá lớn. Tối đa 5MB.");
     }
     return true;
   }
 
   if (allowedVideoTypes.includes(file.type)) {
-    if (file.size > MAX_SIZE_VIDEO_UPLOAD) {
+    if (file.size > CONSTANT_MAX_SIZE_VIDEO_UPLOAD) {
       throw new Error("Dung lượng video quá lớn. Tối đa 10MB.");
     }
     return true;
