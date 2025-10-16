@@ -64,7 +64,10 @@ export function TrendingTab() {
     };
   }, []);
   return (
-    <TabsContent value="trending" className="px-0 pb-4">
+    <TabsContent
+      value="trending"
+      className="px-4 pb-4 overflow-y-auto h-[calc(100vh-140px)]"
+    >
       {/*  */}
       <div>
         {trending?.map((item, idx) => (

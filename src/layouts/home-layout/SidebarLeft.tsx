@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { TypographyP } from "~/components/elements/p";
 import { BookmarkIcon } from "~/components/icons/bookmark";
 // import { CommunityIcon } from "~/components/icons/communities";
+import { CommunityIcon } from "~/components/icons/communities";
 import { DotIcon } from "~/components/icons/dot";
 import { ExploreIcon } from "~/components/icons/explore";
 import { HomeIcon } from "~/components/icons/home";
@@ -22,6 +23,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { useLogout } from "~/hooks/useFetchAuth";
 import { cn } from "~/lib/utils";
+import { CONSTANT_DEFAULT_TITLE_DOCUMENT } from "~/shared/constants/default-title-document";
 import { ETweetType } from "~/shared/enums/type.enum";
 import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useReloadStore } from "~/store/useReloadStore";
@@ -29,8 +31,6 @@ import { useUnreadNotiStore } from "~/store/useUnreadNotiStore";
 import { useUserStore } from "~/store/useUserStore";
 import { Logo } from "../../components/logo";
 import { WrapIcon } from "../../components/wrapIcon";
-import { CONSTANT_DEFAULT_TITLE_DOCUMENT } from "~/shared/constants/default-title-document";
-import { CommunityIcon } from "~/components/icons/communities";
 
 type NavItem = {
   name: string;
@@ -57,7 +57,8 @@ export function SidebarLeft() {
   const [isOpenPost, setIsOpenPost] = useState(false);
 
   //
-  function onClickNav(path: string) {
+  function onClickNav(path: string, name: string) {
+    if (path !== "/home") document.title = name;
     triggerReload();
     navigate(path);
   }
@@ -88,7 +89,9 @@ export function SidebarLeft() {
     () => {},
     (unread) => {
       document.title =
-        unread > 0 ? `(${unread}) thông báo chưa đọc` : CONSTANT_DEFAULT_TITLE_DOCUMENT;
+        unread > 0
+          ? `(${unread}) thông báo chưa đọc`
+          : CONSTANT_DEFAULT_TITLE_DOCUMENT;
 
       const oldLinks = document.querySelectorAll(
         'link[rel="icon"], link[rel="shortcut icon"]'
@@ -118,6 +121,11 @@ export function SidebarLeft() {
       path: "/explore",
     },
     {
+      name: "Cộng đồng",
+      icon: <CommunityIcon />,
+      path: "/communities",
+    },
+    {
       name: "Thông báo",
       icon: <NotificationIcon />,
       path: "/notifications",
@@ -135,11 +143,7 @@ export function SidebarLeft() {
       path: "/messages",
       countNoti: unreadCountConv,
     },
-    {
-      name: "Cộng đồng",
-      icon: <CommunityIcon />,
-      path: "/communities",
-    },
+
     {
       name: "Hồ sơ",
       icon: <ProfileIcon />,
@@ -168,7 +172,7 @@ export function SidebarLeft() {
             const isActive = pathname === x.path;
             return (
               <li key={x.name} className="cursor-pointer group relative">
-                <div onClick={() => onClickNav(x.path)}>
+                <div onClick={() => onClickNav(x.path, x.name)}>
                   <TypographyP
                     className={cn(
                       "text-[22px] p-3 group-hover:bg-gray-100 rounded-3xl flex items-center gap-3",
@@ -180,7 +184,7 @@ export function SidebarLeft() {
                       ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         React.cloneElement(x.icon, { active: isActive } as any)
                       : x.icon}
-                    <span className="line-clamp-1">{x.name}</span>
+                    <span className="line-clamp-1">{x.name} </span>
                     {!!x?.countNoti && (
                       <span className="absolute top-2 left-6 flex items-center justify-center w-5 h-5 bg-sky-400 text-white rounded-full text-[10px] border-2 border-white">
                         {x?.countNoti}

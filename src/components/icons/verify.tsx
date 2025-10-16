@@ -32,7 +32,7 @@ export function VerifyIcon({
           viewBox="0 0 22 22"
           aria-hidden="true"
           className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd"
-          style={{ color: "rgb(29, 155, 240)" }}
+          style={{ color: color ? color : "rgb(29, 155, 240)" }}
           fill="currentColor"
         >
           <g>

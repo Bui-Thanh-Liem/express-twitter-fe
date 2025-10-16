@@ -68,10 +68,10 @@ export function WhoToFollows() {
         id="who-to-follow"
         className="block"
         style={{
-          scrollMarginTop: "60px",
+          scrollMarginTop: "80px",
         }}
       ></a>
-      <p className="text-xl font-bold mt-3 py-2 sticky top-16 z-40 bg-gray-50">
+      <p className="text-xl font-bold mt-3 py-2 sticky top-0 z-40 bg-gray-50">
         Ai để theo dõi
       </p>
 

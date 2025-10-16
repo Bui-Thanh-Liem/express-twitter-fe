@@ -19,8 +19,6 @@ export function NotificationPage() {
     number
   > | null>(null);
 
-  console.log("unreadNoti:::", unreadNoti);
-
   //
   useEffect(() => {
     setUnreadNoti(unreadByType);
@@ -39,9 +37,9 @@ export function NotificationPage() {
       </div>
 
       {/*  */}
-      <div className="mt-1">
+      <div>
         <Tabs defaultValue={ENotificationType.VERIFY} className="mb-12">
-          <div className="bg-white p-2 pt-5 px-4 sticky top-0 z-50">
+          <div className="bg-white sticky top-0 z-50">
             <TabsList className="w-full">
               <TabsTrigger
                 className="cursor-pointer flex items-center"

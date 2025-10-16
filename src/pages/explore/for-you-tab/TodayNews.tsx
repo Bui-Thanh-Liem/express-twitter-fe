@@ -99,7 +99,7 @@ export function TodayNews() {
           scrollMarginTop: "80px",
         }}
       />
-      <p className="text-xl font-bold py-2 bg-gray-50 sticky top-16 z-20">
+      <p className="text-xl font-bold py-2 bg-gray-50 sticky top-0 z-20">
         Tin tức hôm nay
       </p>
 

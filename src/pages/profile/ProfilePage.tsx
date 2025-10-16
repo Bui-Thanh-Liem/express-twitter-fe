@@ -221,7 +221,7 @@ export function ProfilePage() {
 
         {/* Tweets and media*/}
         <Tabs defaultValue={ETweetType.Tweet.toString()} className="mb-12">
-          <div className="bg-white p-2 px-4 sticky top-0 z-50">
+          <div className="bg-white sticky mt-4 top-0 z-50">
             <TabsList className="w-full">
               <TabsTrigger
                 className="cursor-pointer"
