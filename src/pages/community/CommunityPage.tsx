@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon } from "~/components/icons/arrow-left";
-import { CreateGroupIcon } from "~/components/icons/create-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { WrapIcon } from "~/components/wrapIcon";
+import { CreateCommunity } from "./CreateCommunity";
 import { JoinedTab } from "./joined-tab/JoinedTab";
 
 export function CommunityPage() {
@@ -18,9 +18,7 @@ export function CommunityPage() {
           </WrapIcon>
           <p className="font-semibold text-[20px]">Cộng đồng</p>
         </div>
-        <WrapIcon className="p-1.5">
-          <CreateGroupIcon size={26} />
-        </WrapIcon>
+        <CreateCommunity />
       </div>
 
       {/*  */}
@@ -44,8 +42,8 @@ export function CommunityPage() {
           </div>
 
           {/* Tab Content */}
-          <div className="p-4 pt-0 overflow-y-auto h-[calc(100vh-100px)]">
-            <TabsContent value="joined" className="py-4">
+          <div>
+            <TabsContent value="joined" className="py-3">
               <JoinedTab />
             </TabsContent>
             <TabsContent value="explore" className="py-4"></TabsContent>

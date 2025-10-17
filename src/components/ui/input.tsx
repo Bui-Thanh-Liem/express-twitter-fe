@@ -48,8 +48,8 @@ type InputMainProps<T extends object> = React.ComponentProps<typeof Input> & {
 
 const sizeStyles: Record<InputSize, string> = {
   sm: "h-8 px-3 text-sm",
-  md: "h-10 px-4 text-base",
-  lg: "h-12 px-6 text-lg",
+  md: "h-10 px-3 text-base",
+  lg: "h-12 px-3 text-lg",
 };
 
 function InputMain<T extends object>({

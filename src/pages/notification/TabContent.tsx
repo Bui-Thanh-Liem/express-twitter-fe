@@ -63,7 +63,7 @@ function NotiItem({ noti, onClick, onDelete }: Props) {
     if (!noti?.refId) return;
 
     //
-    if (noti.type === ENotificationType.MENTION_LIKE) {
+    if (noti.type === ENotificationType.Mention_like) {
       const _tweet = noti.tweetRef as ITweet; // Mentions thì ref là tweet
 
       // Được nhắc đến trong comment
@@ -80,7 +80,7 @@ function NotiItem({ noti, onClick, onDelete }: Props) {
     }
 
     //
-    if (noti.type === ENotificationType.FOLLOW) {
+    if (noti.type === ENotificationType.Follow) {
       const _user = noti.userRef as IUser; // Follow thì ref là user
       navigate(`/${_user.username}`);
       return;
@@ -166,6 +166,7 @@ export function TabContent({
     queries: { page: page.toString(), limit: "20" },
     type,
   });
+
   const apiDeleteNoti = useDeleteNotification();
   const apiReadNoti = useReadNotification();
 

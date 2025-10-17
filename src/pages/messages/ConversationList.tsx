@@ -365,8 +365,6 @@ export function ConversationList({
     );
   }
 
-  console.log("data:::", data?.data);
-
   //
   return (
     <div>

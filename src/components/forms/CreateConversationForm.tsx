@@ -230,7 +230,7 @@ export function CreateConversationForm({
         />
 
         <div className="flex flex-col items-center justify-center">
-          <Divider className="w-80" text="Những người dùng đã theo dõi bạn" />
+          <Divider className="w-80" text="Những người dùng đang theo dõi bạn" />
           <p className="text-xs text-red-400">
             {errors && errors?.participants
               ? errors.participants?.message
@@ -250,6 +250,13 @@ export function CreateConversationForm({
                 />
               ))}
             </div>
+            {!followers.length && (
+              <div className="h-full flex items-center justify-center">
+                <p className="text-sm text-gray-400">
+                  Chưa có người dùng theo dõi bạn.
+                </p>
+              </div>
+            )}
           </div>
           <div className="col-span-5 px-2 space-y-2 max-h-96 overflow-auto">
             {userSelected?.map((user) => (
@@ -259,6 +266,11 @@ export function CreateConversationForm({
                 onCancel={() => handleToggleUserFollower(user)}
               />
             ))}
+            {!userSelected.length && (
+              <div className="h-full flex items-center justify-center">
+                <p className="text-sm text-gray-400">Bạn chưa chọn.</p>
+              </div>
+            )}
           </div>
         </div>
 

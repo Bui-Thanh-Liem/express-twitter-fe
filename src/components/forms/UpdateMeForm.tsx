@@ -275,7 +275,7 @@ export function UpdateMeForm({
               control={control}
               register={register}
               className="min-h-[100px] resize-none"
-              placeholder="Viết một vài dòng về bản thân..."
+              placeholder="Viết một vài dòng về bản thân"
               maxCountLength={200}
             />
 

@@ -38,50 +38,50 @@ export function NotificationPage() {
 
       {/*  */}
       <div>
-        <Tabs defaultValue={ENotificationType.VERIFY} className="mb-12">
+        <Tabs defaultValue={ENotificationType.Verify} className="mb-12">
           <div className="bg-white sticky top-0 z-50">
             <TabsList className="w-full">
               <TabsTrigger
                 className="cursor-pointer flex items-center"
-                value={ENotificationType.VERIFY}
+                value={ENotificationType.Verify}
               >
                 <span>Xác thực</span>
-                {unreadNoti && unreadNoti[ENotificationType.VERIFY] && (
+                {unreadNoti && unreadNoti[ENotificationType.Verify] && (
                   <p className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-sky-400 rounded-full">
-                    {unreadNoti[ENotificationType.VERIFY]}
+                    {unreadNoti[ENotificationType.Verify]}
                   </p>
                 )}
               </TabsTrigger>
               <TabsTrigger
                 className="cursor-pointer flex items-center"
-                value={ENotificationType.REVIEW}
+                value={ENotificationType.Review}
               >
                 <span>Kiểm duyệt</span>
-                {unreadNoti && unreadNoti[ENotificationType.REVIEW] && (
+                {unreadNoti && unreadNoti[ENotificationType.Review] && (
                   <div className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-sky-400 rounded-full">
-                    {unreadNoti[ENotificationType.REVIEW]}
+                    {unreadNoti[ENotificationType.Review]}
                   </div>
                 )}
               </TabsTrigger>
               <TabsTrigger
                 className="cursor-pointer flex items-center"
-                value={ENotificationType.MENTION_LIKE}
+                value={ENotificationType.Mention_like}
               >
                 <span>Nhắc đến</span>
-                {unreadNoti && unreadNoti[ENotificationType.MENTION_LIKE] && (
+                {unreadNoti && unreadNoti[ENotificationType.Mention_like] && (
                   <p className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-sky-400 rounded-full">
-                    {unreadNoti[ENotificationType.MENTION_LIKE]}
+                    {unreadNoti[ENotificationType.Mention_like]}
                   </p>
                 )}
               </TabsTrigger>
               <TabsTrigger
                 className="cursor-pointer flex items-center"
-                value={ENotificationType.FOLLOW}
+                value={ENotificationType.Follow}
               >
                 <span>Theo dõi</span>
-                {unreadNoti && unreadNoti[ENotificationType.FOLLOW] && (
+                {unreadNoti && unreadNoti[ENotificationType.Follow] && (
                   <div className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-sky-400 rounded-full">
-                    {unreadNoti[ENotificationType.FOLLOW]}
+                    {unreadNoti[ENotificationType.Follow]}
                   </div>
                 )}
               </TabsTrigger>
@@ -90,34 +90,34 @@ export function NotificationPage() {
 
           {/* Tab Content */}
           <div className="p-4 pt-0 overflow-y-auto h-[calc(100vh-100px)]">
-            <TabsContent value={ENotificationType.VERIFY} className="px-0 py-4">
+            <TabsContent value={ENotificationType.Verify} className="px-0 py-4">
               <TabContent
-                type={ENotificationType.VERIFY}
-                key={ENotificationType.VERIFY}
+                type={ENotificationType.Verify}
+                key={ENotificationType.Verify}
                 emptyText="Thông báo về xác thực tài khoản của bạn có hợp lệ không."
               />
             </TabsContent>
-            <TabsContent value={ENotificationType.REVIEW} className="px-0 py-4">
+            <TabsContent value={ENotificationType.Review} className="px-0 py-4">
               <TabContent
-                type={ENotificationType.REVIEW}
-                key={ENotificationType.REVIEW}
+                type={ENotificationType.Review}
+                key={ENotificationType.Review}
                 emptyText="Chúng tôi sẽ thông báo cho bạn về video bạn đăng có vi phạm chính sách hay không."
               />
             </TabsContent>
             <TabsContent
-              value={ENotificationType.MENTION_LIKE}
+              value={ENotificationType.Mention_like}
               className="px-0 py-4"
             >
               <TabContent
-                type={ENotificationType.MENTION_LIKE}
-                key={ENotificationType.MENTION_LIKE}
+                type={ENotificationType.Mention_like}
+                key={ENotificationType.Mention_like}
                 emptyText="Từ lượt thích đến lượt đăng lại và nhiều hơn thế nữa, đây chính là nơi diễn ra mọi hoạt động."
               />
             </TabsContent>
-            <TabsContent value={ENotificationType.FOLLOW} className="px-0 py-4">
+            <TabsContent value={ENotificationType.Follow} className="px-0 py-4">
               <TabContent
-                type={ENotificationType.FOLLOW}
-                key={ENotificationType.FOLLOW}
+                type={ENotificationType.Follow}
+                key={ENotificationType.Follow}
                 emptyText="Những ai đang theo dõi bạn, đây chính là nơi diễn ra mọi hoạt động."
               />
             </TabsContent>
