@@ -67,7 +67,7 @@ export function NotificationPage() {
                 className="cursor-pointer flex items-center"
                 value={ENotificationType.Mention_like}
               >
-                <span>Nhắc đến</span>
+                <span>Nhắc đến / Thích</span>
                 {unreadNoti && unreadNoti[ENotificationType.Mention_like] && (
                   <p className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-sky-400 rounded-full">
                     {unreadNoti[ENotificationType.Mention_like]}

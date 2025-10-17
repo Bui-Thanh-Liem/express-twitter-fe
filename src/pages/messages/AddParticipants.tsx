@@ -1,20 +1,16 @@
 import { useState } from "react";
-import { CreateConversationForm } from "~/components/forms/CreateConversationForm";
+import { AddParticipantsForm } from "~/components/forms/AddParticipantsForm";
 import { CreateGroupIcon } from "~/components/icons/create-group";
 import { DialogMain } from "~/components/ui/dialog";
 import { WrapIcon } from "~/components/wrapIcon";
 
-export function CreateConversation({
-  initialUserIds,
-}: {
-  initialUserIds: string[];
-}) {
+export function AddParticipants() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       <WrapIcon onClick={() => setIsOpen(true)} className="p-1.5">
-        <CreateGroupIcon />
+        <CreateGroupIcon size={22} />
       </WrapIcon>
 
       {/*  */}
@@ -22,14 +18,11 @@ export function CreateConversation({
         isLogo={false}
         open={isOpen}
         onOpenChange={setIsOpen}
-        textHeader="Tạo nhóm"
-        textDesc="Một nhóm yêu cầu 3 thành viên trở lên."
+        textHeader="Thêm thành viên "
+        textDesc="Hãy cân nhắc cẩn thận trước khi thêm ai đó vào nhóm."
         width="xl"
       >
-        <CreateConversationForm
-          setOpenForm={setIsOpen}
-          initialUserIds={initialUserIds}
-        />
+        <AddParticipantsForm setOpenForm={setIsOpen} />
       </DialogMain>
     </>
   );

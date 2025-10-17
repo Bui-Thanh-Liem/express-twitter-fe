@@ -70,30 +70,34 @@ function AvatarMain({
   );
 }
 
-function GroupAvatarMain({ srcs, max = 3, className }: GroupAvatarMainProps) {
+function GroupAvatarMain({ srcs, max = 3 }: GroupAvatarMainProps) {
   console.log("srcs:::", srcs);
   const visibleUsers = srcs.slice(0, max);
-  const extraCount = srcs.length - max;
 
   return (
-    <div className={cn("flex -space-x-2", className)}>
-      {visibleUsers.map((src) => (
-        <AvatarMain
-          key={src}
-          src={src}
-          alt={src}
-          className="w-8 h-8 border-2 border-white"
-        />
-      ))}
-
-      {extraCount > 0 && (
-        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-xs font-medium border-2 border-white">
-          +{extraCount}
-        </div>
-      )}
+    <div className="-space-y-2">
+      <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2">
+        {visibleUsers.slice(0, 2).map((src) => (
+          <AvatarMain
+            key={src}
+            src={src}
+            alt={src}
+            className="w-7 h-7 border border-white"
+          />
+        ))}
+      </div>
+      <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
+        {visibleUsers.slice(2, 4).map((src) => (
+          <AvatarMain
+            key={src}
+            src={src}
+            alt={src}
+            className="w-7 h-7 border border-white"
+          />
+        ))}
+      </div>
     </div>
   );
 }
 
 export { Avatar, AvatarFallback, AvatarImage, AvatarMain, GroupAvatarMain };
-

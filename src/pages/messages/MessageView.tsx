@@ -1,11 +1,10 @@
-import { Send } from "lucide-react";
+import { LogOut, Send, Users } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { EmojiSelector } from "~/components/emoji-picker";
 import { HLSPlayer } from "~/components/hls/HLSPlayer";
 import { CloseIcon } from "~/components/icons/close";
-import { DotIcon } from "~/components/icons/dot";
 import { ImageIcon } from "~/components/icons/image";
 import { Logo } from "~/components/logo";
 import { AvatarMain, GroupAvatarMain } from "~/components/ui/avatar";
@@ -19,12 +18,6 @@ import {
   CarouselPrevious,
 } from "~/components/ui/carousel";
 import { CircularProgress } from "~/components/ui/circular-progress";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
@@ -36,7 +29,8 @@ import {
 } from "~/hooks/useMediaPreviewMulti";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
 import { cn } from "~/lib/utils";
-import { EMediaType } from "~/shared/enums/type.enum";
+import { CONSTANT_MAX_LENGTH_TEXT } from "~/shared/constants";
+import { EConversationType, EMediaType } from "~/shared/enums/type.enum";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
@@ -46,7 +40,7 @@ import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { toastSimple } from "~/utils/toastSimple.util";
 import { CreateConversation } from "./CreateConversation";
-import { CONSTANT_MAX_LENGTH_TEXT } from "~/shared/constants";
+import { AddParticipants } from "./AddParticipants";
 
 interface PreviewProps {
   mediaItems: MediaItem[];
@@ -60,7 +54,6 @@ export function MessageView({
   conversation: IConversation | null;
 }) {
   //
-  const navigate = useNavigate();
   const { user } = useUserStore();
 
   //
@@ -134,11 +127,6 @@ export function MessageView({
     },
     [autoResize, setValue, contentValue]
   );
-
-  //
-  function onPreviewProfile() {
-    navigate(`/${conversation?.username}`);
-  }
 
   //
   const handleFileSelect = useCallback(
@@ -223,149 +211,139 @@ export function MessageView({
 
   //
   return (
-    <div className="col-span-8 h-full flex flex-col">
-      <div className="p-3 flex items-center justify-between bg-blue-50">
-        <div className="flex items-center gap-3">
-          {typeof conversation.avatar === "string" ? (
-            <AvatarMain
-              src={conversation.avatar}
-              alt={conversation.name || ""}
-            />
-          ) : (
-            <GroupAvatarMain srcs={conversation.avatar as string[]} />
-          )}
-          <div>
-            <p>{conversation?.name}</p>
-            <p
-              className={cn(
-                "text-gray-400 text-sm",
-                isOnl ? "text-green-500" : ""
-              )}
-            >
-              {!isOnl ? "Không" : "Đang"} hoạt động
-            </p>
-          </div>
-        </div>
-
-        {/*  */}
-        <div>
-          <CreateConversation
-            initialUserIds={(conversation?.participants as any).map(
-              (user: { _id: any }) => user._id
-            )}
-          />
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button onClick={(e) => e.stopPropagation()} className="ml-3">
-                <WrapIcon>
-                  <DotIcon size={18} />
-                </WrapIcon>
-              </button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent
-              align="start"
-              side="right"
-              sideOffset={6}
-              className="rounded-2xl px-0"
-            >
-              <DropdownMenuItem
-                className="cursor-pointer px-3 font-semibold space-x-1"
-                onClick={onPreviewProfile}
-              >
-                Xem trang cá nhân
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-
-      <div className="flex-1 flex flex-col">
-        <ScrollArea className="px-4 pt-2 h-[calc(100vh-260px)]">
-          <div className="flex flex-col gap-3">
-            {messages.map((msg) => {
-              return <MessageItem msg={msg} user={user as IUser} />;
-            })}
-            <div ref={endOfMessagesRef} />
-          </div>
-
-          {!messages.length && (
-            <Logo
-              size={180}
-              className="text-gray-100 translate-y-48 translate-x-54"
-            />
-          )}
-        </ScrollArea>
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="relative border-t px-3">
-            <div className="absolute top-[108px] right-4">
-              <CircularProgress
-                value={isNaN(contentValue?.length) ? 0 : contentValue?.length}
-                max={CONSTANT_MAX_LENGTH_TEXT}
-                size={20}
+    <>
+      <div className="col-span-8 h-full flex flex-col">
+        <div className="p-3 flex items-center justify-between bg-blue-50">
+          <div className="flex items-center gap-3">
+            {typeof conversation.avatar === "string" ? (
+              <AvatarMain
+                src={conversation.avatar}
+                alt={conversation.name || ""}
               />
+            ) : (
+              <GroupAvatarMain srcs={conversation.avatar as string[]} />
+            )}
+            <div>
+              <p>{conversation?.name}</p>
+              <p
+                className={cn(
+                  "text-gray-400 text-[12px]",
+                  isOnl ? "text-green-500" : ""
+                )}
+              >
+                {!isOnl ? "Không" : "Đang"} hoạt động
+              </p>
             </div>
-            <div className="flex justify-between items-center relative">
-              <div className="flex items-center gap-2 py-1">
-                <WrapIcon className="hover:bg-blue-100/60">
-                  <EmojiSelector onEmojiClick={handleEmojiClick} />
-                </WrapIcon>
-                <WrapIcon className="hover:bg-blue-100/60">
-                  <label
-                    htmlFor="image-upload-in-chat"
-                    className="cursor-pointer"
-                    title="Thêm ảnh hoặc video"
-                  >
-                    <ImageIcon />
-                    <input
-                      multiple
-                      type="file"
-                      className="hidden"
-                      id="image-upload-in-chat"
-                      onChange={handleFileSelect}
-                      accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/mov,video/avi,video/quicktime"
-                    />
-                  </label>
-                </WrapIcon>
+          </div>
 
-                <PreviewMediaMulti
-                  mediaItems={mediaItems}
-                  removeMedia={removeMedia}
+          {/*  */}
+          <div className="mt-1 space-x-2">
+            {conversation.type === EConversationType.Group ? (
+              <>
+                <AddParticipants />
+                <WrapIcon>
+                  <Users size={18} color="#000" />
+                </WrapIcon>
+                <WrapIcon>
+                  <LogOut size={18} color="#fb2c36" />
+                </WrapIcon>
+              </>
+            ) : (
+              <CreateConversation
+                initialUserIds={(conversation?.participants as any).map(
+                  (user: { _id: any }) => user._id
+                )}
+              />
+            )}
+          </div>
+        </div>
+
+        <div className="flex-1 flex flex-col">
+          <ScrollArea className="px-4 pt-2 h-[calc(100vh-260px)]">
+            <div className="flex flex-col gap-3">
+              {messages.map((msg) => {
+                return <MessageItem msg={msg} user={user as IUser} />;
+              })}
+              <div ref={endOfMessagesRef} />
+            </div>
+
+            {!messages.length && (
+              <Logo
+                size={180}
+                className="text-gray-100 translate-y-48 translate-x-54"
+              />
+            )}
+          </ScrollArea>
+
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="relative border-t px-3">
+              <div className="absolute top-[108px] right-4">
+                <CircularProgress
+                  value={isNaN(contentValue?.length) ? 0 : contentValue?.length}
+                  max={CONSTANT_MAX_LENGTH_TEXT}
+                  size={20}
                 />
               </div>
-              <ButtonMain
-                size="sm"
-                type="submit"
-                className="bg-transparent hover:bg-gray-50"
-              >
-                <Send color="#1d9bf0" />
-              </ButtonMain>
+              <div className="flex justify-between items-center relative">
+                <div className="flex items-center gap-2 py-1">
+                  <WrapIcon className="hover:bg-blue-100/60">
+                    <EmojiSelector onEmojiClick={handleEmojiClick} />
+                  </WrapIcon>
+                  <WrapIcon className="hover:bg-blue-100/60">
+                    <label
+                      htmlFor="image-upload-in-chat"
+                      className="cursor-pointer"
+                      title="Thêm ảnh hoặc video"
+                    >
+                      <ImageIcon />
+                      <input
+                        multiple
+                        type="file"
+                        className="hidden"
+                        id="image-upload-in-chat"
+                        onChange={handleFileSelect}
+                        accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/mov,video/avi,video/quicktime"
+                      />
+                    </label>
+                  </WrapIcon>
+
+                  <PreviewMediaMulti
+                    mediaItems={mediaItems}
+                    removeMedia={removeMedia}
+                  />
+                </div>
+                <ButtonMain
+                  size="sm"
+                  type="submit"
+                  className="bg-transparent hover:bg-gray-50"
+                >
+                  <Send color="#1d9bf0" />
+                </ButtonMain>
+              </div>
+              <textarea
+                {...register("text")}
+                ref={textareaRef}
+                autoComplete="off"
+                value={contentValue}
+                autoCorrect="off"
+                spellCheck="false"
+                className="outline-0 w-full text-md placeholder:text-gray-500 bg-gray-100 rounded-xl resize-none p-2"
+                placeholder="Nhập văn bản"
+                onInput={handleTextareaInput}
+                rows={3}
+                maxLength={CONSTANT_MAX_LENGTH_TEXT}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault(); // chặn xuống dòng mặc định
+                    handleSubmit(onSubmit)(); // gọi submit form
+                  }
+                }}
+              />
             </div>
-            <textarea
-              {...register("text")}
-              ref={textareaRef}
-              autoComplete="off"
-              value={contentValue}
-              autoCorrect="off"
-              spellCheck="false"
-              className="outline-0 w-full text-md placeholder:text-gray-500 bg-gray-100 rounded-xl resize-none p-2"
-              placeholder="Nhập văn bản"
-              onInput={handleTextareaInput}
-              rows={3}
-              maxLength={CONSTANT_MAX_LENGTH_TEXT}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault(); // chặn xuống dòng mặc định
-                  handleSubmit(onSubmit)(); // gọi submit form
-                }
-              }}
-            />
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -535,8 +513,16 @@ export function PreviewMediaMulti({ mediaItems, removeMedia }: PreviewProps) {
 //
 export const MessageItem = ({ msg, user }: { msg: IMessage; user: IUser }) => {
   const { attachments } = msg;
-  const isMe = msg.sender === user?._id;
-  const conversation = msg.conversation as IConversation;
+
+  const navigate = useNavigate();
+
+  const sender = msg.sender as unknown as IUser;
+  const isMe = sender._id === user?._id;
+
+  //
+  function onPreviewProfile() {
+    navigate(`/${sender?.username}`);
+  }
 
   return (
     <div
@@ -547,11 +533,13 @@ export const MessageItem = ({ msg, user }: { msg: IMessage; user: IUser }) => {
     >
       {/* Avatar người khác */}
       {!isMe && (
-        <AvatarMain
-          className="w-8 h-8"
-          src={conversation.avatar as string}
-          alt={conversation.name as string}
-        />
+        <span className="cursor-pointer" onClick={onPreviewProfile}>
+          <AvatarMain
+            className="w-8 h-8"
+            src={sender.avatar as string}
+            alt={sender.name as string}
+          />
+        </span>
       )}
 
       <div
