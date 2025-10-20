@@ -4,7 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Upload } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useCreateCommunity } from "~/hooks/useFetchCommunity";
+import {
+  useCreateCommunity,
+  useGetAllCategories,
+} from "~/hooks/useFetchCommunity";
 import { useUploadWithValidation } from "~/hooks/useFetchUpload";
 import { useGetFollowed } from "~/hooks/useFetchUser";
 import {
@@ -89,6 +92,8 @@ export function CreateCommunityForm({
   const apiCreateCommunity = useCreateCommunity();
   const apiUploadMedia = useUploadWithValidation();
 
+  //
+  const { data: cates } = useGetAllCategories();
   const { data } = useGetFollowed({
     page: "1",
     limit: "100",
@@ -115,6 +120,7 @@ export function CreateCommunityForm({
       visibilityType: EVisibilityType.Public,
     },
   });
+  const categories = cates?.data || [];
   const valBio = watch("bio");
 
   //
@@ -169,6 +175,9 @@ export function CreateCommunityForm({
       ...data,
       category: categoryText || data.category,
     });
+
+    
+    
     handleResponse(res, successForm);
   };
 
@@ -177,14 +186,6 @@ export function CreateCommunityForm({
     setOpenForm(false);
     reset();
   }
-
-  console.log(
-    "",
-    Object.entries(EVisibilityType).map(([val, lab]) => ({
-      label: lab,
-      value: val,
-    }))
-  );
 
   return (
     <form
@@ -264,15 +265,15 @@ export function CreateCommunityForm({
               className="mt-2 h-12 px-6 text-lg px-3"
               id="category"
               value={categoryText}
-              placeholder="Tạo mới"
+              placeholder="Tạo mới (ưu tiên)"
               onChange={(e) => setCategoryText(e.target.value)}
             />
           </div>
           <SelectMain
             control={control}
-            options={Object.entries(EVisibilityType).map(([val, lab]) => ({
-              label: lab,
-              value: val,
+            options={categories?.map((item) => ({
+              label: item,
+              value: item,
             }))}
             id="suggest"
             errors={errors}

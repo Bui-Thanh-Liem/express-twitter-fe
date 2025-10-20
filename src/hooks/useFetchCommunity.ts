@@ -24,6 +24,26 @@ export const useCreateCommunity = () => {
 };
 
 // 📄 GET
+export const useGetAllCategories = () => {
+  return useQuery({
+    queryKey: ["communities", "categories"],
+    queryFn: () => {
+      const url = `/communities/categories`;
+      return apiCall<string[]>(url);
+    },
+
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    networkMode: "online",
+  });
+};
+
+// 📄 GET
 export const useGetMultiCommunities = (queries?: IQuery<ICommunity>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
