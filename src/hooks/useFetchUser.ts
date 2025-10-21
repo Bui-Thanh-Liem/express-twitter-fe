@@ -79,15 +79,49 @@ export const useResendVerifyEmail = () => {
 };
 
 // 📄 GET - Lấy user followed
-export const useGetFollowed = (queries?: IQuery<IUser>) => {
+export const useGetFollowedById = (
+  user_id: string,
+  queries?: IQuery<IUser>
+) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["users", "followed", normalizedQueries],
+    queryKey: ["users", "followed", user_id, normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
-      const url = `/users/followed${queryString ? `?${queryString}` : ""}`;
+      const url = `/users/followed/${user_id}${
+        queryString ? `?${queryString}` : ""
+      }`;
+      return apiCall<ResMultiType<IUser>>(url);
+    },
+
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    networkMode: "online",
+  });
+};
+
+// 📄 GET - Lấy user following
+export const useGetFollowingById = (
+  user_id: string,
+  queries?: IQuery<IUser>
+) => {
+  const normalizedQueries = queries ? JSON.stringify(queries) : "";
+
+  return useQuery({
+    queryKey: ["users", "following", user_id, normalizedQueries],
+    queryFn: () => {
+      // Tạo query string từ queries object
+      const queryString = queries ? buildQueryString(queries) : "";
+      const url = `/users/following/${user_id}${
+        queryString ? `?${queryString}` : ""
+      }`;
       return apiCall<ResMultiType<IUser>>(url);
     },
 

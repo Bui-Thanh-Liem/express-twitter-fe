@@ -69,7 +69,7 @@ export function SearchPage() {
           </div>
 
           {/* Tab Content */}
-          <div className="p-4 pt-0">
+          <div className="pt-0">
             <TabsContent value="top" className="px-0 pb-4">
               <TopTab />
             </TabsContent>

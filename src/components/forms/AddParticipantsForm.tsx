@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAddParticipants } from "~/hooks/useFetchConversations";
-import { useGetFollowed } from "~/hooks/useFetchUser";
+import { useGetFollowedById } from "~/hooks/useFetchUser";
 import {
   AddParticipantsDtoSchema,
   type AddParticipantsBodyDto,
@@ -15,6 +15,7 @@ import { handleResponse } from "~/utils/handleResponse";
 import { ButtonMain } from "../ui/button";
 import { Divider } from "../ui/divider";
 import { UserFollower, UserSelected } from "./CreateConversationForm";
+import { useUserStore } from "~/store/useUserStore";
 
 export function AddParticipantsForm({
   setOpenForm,
@@ -25,11 +26,12 @@ export function AddParticipantsForm({
 }) {
   const { participants } = conversation;
   const [userSelected, setUserSelected] = useState<IUser[]>([]);
+  const { user } = useUserStore();
 
   //
   const apiAddParticipants = useAddParticipants();
 
-  const { data } = useGetFollowed({
+  const { data } = useGetFollowedById(user!._id!, {
     page: "1",
     limit: "100",
   });

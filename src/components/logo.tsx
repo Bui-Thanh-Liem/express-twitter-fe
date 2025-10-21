@@ -24,7 +24,15 @@ export function Logo({ size = 100, className = "text-black" }: PropLogoType) {
           {/* V */}
           <path d="M21 4h2l-3.7 16h-2.4L13 4h2l2.9 12.5L21 4Z" />
         </g>
-        <text x="12" y="24" font-size="4" text-anchor="middle" fill="currentColor">mini</text>
+        <text
+          x="12"
+          y="24"
+          fontSize="4"
+          textAnchor="middle"
+          fill="currentColor"
+        >
+          mini
+        </text>
       </svg>
     </Link>
   );

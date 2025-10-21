@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useCreateConversation } from "~/hooks/useFetchConversations";
 import { useUploadWithValidation } from "~/hooks/useFetchUpload";
-import { useGetFollowed } from "~/hooks/useFetchUser";
+import { useGetFollowedById } from "~/hooks/useFetchUser";
 import {
   CreateConversationDtoSchema,
   type CreateConversationDto,
@@ -22,6 +22,7 @@ import { Divider } from "../ui/divider";
 import { InputMain } from "../ui/input";
 import { Label } from "../ui/label";
 import { WrapIcon } from "../wrapIcon";
+import { useUserStore } from "~/store/useUserStore";
 
 export function UserSelected({
   user,
@@ -77,6 +78,7 @@ export function CreateConversationForm({
   initialUserIds: string[];
   setOpenForm: (open: boolean) => void;
 }) {
+  const { user } = useUserStore();
   const [avatarPreview, setAvatarPreview] = useState<string>("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [userSelected, setUserSelected] = useState<IUser[]>([]);
@@ -85,7 +87,7 @@ export function CreateConversationForm({
   const apiCreateConversation = useCreateConversation();
   const apiUploadMedia = useUploadWithValidation();
 
-  const { data } = useGetFollowed({
+  const { data } = useGetFollowedById(user!._id!, {
     page: "1",
     limit: "100",
   });

@@ -1,47 +1,42 @@
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   UserToFollowItem,
   UserToFollowItemSkeleton,
 } from "~/components/who-to-follow/who-to-follow-item";
-import { useSearchUsers } from "~/hooks/useFetchSearch";
+import { useGetFollowingById, useGetOneByUsername } from "~/hooks/useFetchUser";
 import { cn } from "~/lib/utils";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 
-export function PeopleTab() {
-  const [searchParams] = useSearchParams();
-  const q = searchParams.get("q");
-  const pf = searchParams.get("pf");
-  const f = searchParams.get("f");
+export function FollowingPage() {
+  const { username } = useParams();
+
+  const { data } = useGetOneByUsername(username!);
+  const profile = data?.data;
 
   const [page, setPage] = useState(1);
   const [users, setUsers] = useState<IUser[]>([]);
 
   const total_page_ref = useRef(0);
-  const { data, isLoading, refetch, isFetching } = useSearchUsers({
+  const {
+    data: fg,
+    isLoading,
+    isFetching,
+  } = useGetFollowingById(profile?._id || "", {
     page: page.toString(),
-    limit: "10",
-    q: q ?? "",
-    pf: pf ?? "",
+    limit: "20",
   });
-
-  //
-  useEffect(() => {
-    setUsers([]);
-    setPage(1);
-    refetch();
-  }, [q, pf, f]);
 
   // Mỗi lần fetch xong thì append thêm vào state
   useEffect(() => {
-    const items = data?.data?.items || [];
-    const total_page = data?.data?.total_page;
+    const items = fg?.data?.items || [];
+    const total_page = fg?.data?.total_page;
     total_page_ref.current = total_page || 0;
 
     if (items) {
       setUsers((prev) => [...prev, ...items]);
     }
-  }, [data?.data]);
+  }, [fg?.data]);
 
   //
   useEffect(() => {
@@ -59,11 +54,10 @@ export function PeopleTab() {
   const loading = isLoading || isFetching;
 
   return (
-    <div className="max-h-[calc(100vh-(150px))] overflow-y-auto px-4">
-      {/*  */}
+    <div className="max-h-[calc(100vh-120px)] overflow-y-auto px-4">
       <div>
-        {users.map((item) => (
-          <UserToFollowItem key={item._id} user={item} />
+        {users.map((u) => (
+          <UserToFollowItem key={u?._id} user={u} />
         ))}
       </div>
 
@@ -91,9 +85,7 @@ export function PeopleTab() {
       {/*  */}
       {!users.length && !loading && (
         <div className="flex justify-center items-center h-20">
-          <p className="text-gray-500 text-lg">
-            Không có người dùng nào phù hợp với <strong>"{q}"</strong>
-          </p>
+          <p className="text-gray-500 text-lg">Không có người dùng</p>
         </div>
       )}
     </div>

@@ -1,6 +1,6 @@
 import { Calendar, Globe, MapPin } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftIcon } from "~/components/icons/arrow-left";
 import { CloseIcon } from "~/components/icons/close";
 import { VerifyIcon } from "~/components/icons/verify";
@@ -185,14 +185,20 @@ export function ProfilePage() {
 
           {/* <!-- Following and Followers --> */}
           <div className="flex items-center space-x-4 text-sm mb-4">
-            <div className="hover:underline cursor-pointer">
+            <Link
+              to={`/${username}/followers`}
+              className="hover:underline cursor-pointer"
+            >
               <span className="font-semibold">{profile?.following_count}</span>
               <span className="text-gray-500"> đang theo dõi</span>
-            </div>
-            <div className="hover:underline cursor-pointer">
+            </Link>
+            <Link
+              to={`/${username}/following`}
+              className="hover:underline cursor-pointer"
+            >
               <span className="font-semibold">{profile?.follower_count}</span>
               <span className="text-gray-500"> người theo dõi</span>
-            </div>
+            </Link>
           </div>
 
           {/* Verify email */}

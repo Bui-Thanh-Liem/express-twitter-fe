@@ -9,13 +9,14 @@ import {
   useGetAllCategories,
 } from "~/hooks/useFetchCommunity";
 import { useUploadWithValidation } from "~/hooks/useFetchUpload";
-import { useGetFollowed } from "~/hooks/useFetchUser";
+import { useGetFollowedById } from "~/hooks/useFetchUser";
 import {
   CreateCommunityDtoSchema,
   type CreateCommunityDto,
 } from "~/shared/dtos/req/community.dto";
 import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { toastSimple } from "~/utils/toastSimple.util";
 import { CloseIcon } from "../icons/close";
@@ -87,6 +88,7 @@ export function CreateCommunityForm({
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [userSelected, setUserSelected] = useState<IUser[]>([]);
   const [userInvited, setUserInvited] = useState<string[]>([]);
+  const { user } = useUserStore();
 
   //
   const apiCreateCommunity = useCreateCommunity();
@@ -94,7 +96,7 @@ export function CreateCommunityForm({
 
   //
   const { data: cates } = useGetAllCategories();
-  const { data } = useGetFollowed({
+  const { data } = useGetFollowedById(user!._id!, {
     page: "1",
     limit: "100",
   });
@@ -106,7 +108,6 @@ export function CreateCommunityForm({
     reset,
     control,
     register,
-    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<CreateCommunityDto>({
@@ -176,8 +177,6 @@ export function CreateCommunityForm({
       category: categoryText || data.category,
     });
 
-    
-    
     handleResponse(res, successForm);
   };
 
@@ -262,7 +261,7 @@ export function CreateCommunityForm({
           <div>
             <Label className="text-sm font-medium">Lĩnh vực / Danh mục</Label>
             <Input
-              className="mt-2 h-12 px-6 text-lg px-3"
+              className="mt-2 h-12 py-6 text-lg px-3"
               id="category"
               value={categoryText}
               placeholder="Tạo mới (ưu tiên)"

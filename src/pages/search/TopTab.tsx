@@ -119,7 +119,7 @@ export function TopTab() {
   const loadingTweet = isFetchingTweets || isLoadingTweets;
 
   return (
-    <div className="max-h-[calc(100vh-(150px))] overflow-y-auto">
+    <div className="max-h-[calc(100vh-(150px))] overflow-y-auto px-4">
       <div>
         {/*  */}
         <div>

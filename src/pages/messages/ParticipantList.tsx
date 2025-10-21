@@ -1,4 +1,4 @@
-import { LogOut, Users } from "lucide-react";
+import { ChevronsUp, LogOut, Users } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { AvatarMain } from "~/components/ui/avatar";
@@ -69,12 +69,19 @@ export function ParticipantList({
               </Link>
 
               {(findMentor(user!) || user?._id === u._id) && (
-                <WrapIcon
-                  className="p-1.5 hidden group-hover:block"
-                  onClick={() => leaveConversation(u)}
-                >
-                  <LogOut size={18} color="#fb2c36" />
-                </WrapIcon>
+                <div className="flex items-center gap-x-3">
+                  {!findMentor(u!) && (
+                    <WrapIcon>
+                      <ChevronsUp size={18} color="#666" />
+                    </WrapIcon>
+                  )}
+                  <WrapIcon
+                    className="p-1.5 hidden group-hover:block"
+                    onClick={() => leaveConversation(u)}
+                  >
+                    <LogOut size={18} color="#fb2c36" />
+                  </WrapIcon>
+                </div>
               )}
             </div>
           ))}

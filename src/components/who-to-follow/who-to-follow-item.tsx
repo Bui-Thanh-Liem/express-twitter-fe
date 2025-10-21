@@ -48,7 +48,7 @@ export function UserToFollowItem({ user }: { user: Partial<IUser> }) {
         <div className="flex gap-2">
           <AvatarMain src={user?.avatar} alt={user?.name} />
           <div>
-            <ShortInfoProfile profile={user as IUser}>
+            <ShortInfoProfile profile={user as IUser} className="inline-block">
               <Link
                 to={`/${user?.username}`}
                 className="flex items-center gap-2"
@@ -60,7 +60,7 @@ export function UserToFollowItem({ user }: { user: Partial<IUser> }) {
               </Link>
             </ShortInfoProfile>
             <p className="text-xs text-muted-foreground">{user.username}</p>
-            {user.bio && <p>{user.bio}</p>}
+            {user.bio && <p className="line-clamp-3 max-w-[95%]">{user.bio}</p>}
           </div>
         </div>
         <ButtonMain
@@ -68,7 +68,7 @@ export function UserToFollowItem({ user }: { user: Partial<IUser> }) {
           onClick={() => {
             setFollowed(!followed);
             mutate({
-              user_id: user._id || '',
+              user_id: user._id || "",
               username: user.username || "",
             });
           }}
