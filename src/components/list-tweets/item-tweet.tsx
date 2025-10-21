@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import {
   useDeleteTweet,
   useGetDetailTweet,
-  useReportTweet,
 } from "~/hooks/useFetchTweet";
 import { cn } from "~/lib/utils";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
@@ -33,6 +32,7 @@ import { ActionLikeTweet } from "./action-like-tweet";
 import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
 import { ActionShared } from "./action-shared";
 import { Content } from "./content";
+import { useReportTweet } from "~/hooks/useFetchReport";
 
 // Component cho Media (Image hoặc Video)
 export const MediaContent = ({

@@ -1,4 +1,4 @@
-import { LogOut, Send, Users } from "lucide-react";
+import { Send } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -39,8 +39,9 @@ import { useStatusSocket } from "~/socket/hooks/useStatusSocket";
 import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { toastSimple } from "~/utils/toastSimple.util";
-import { CreateConversation } from "./CreateConversation";
 import { AddParticipants } from "./AddParticipants";
+import { CreateConversation } from "./CreateConversation";
+import { ParticipantList } from "./ParticipantList";
 
 interface PreviewProps {
   mediaItems: MediaItem[];
@@ -237,16 +238,14 @@ export function MessageView({
           </div>
 
           {/*  */}
-          <div className="mt-1 space-x-2">
+          <div className="mt-1 space-x-3">
             {conversation.type === EConversationType.Group ? (
               <>
-                <AddParticipants />
-                <WrapIcon>
-                  <Users size={18} color="#000" />
-                </WrapIcon>
-                <WrapIcon>
-                  <LogOut size={18} color="#fb2c36" />
-                </WrapIcon>
+                <AddParticipants conversation={conversation} />
+                <ParticipantList conversation={conversation} />
+                {/* <WrapIcon>
+                  <DotIcon />
+                </WrapIcon> */}
               </>
             ) : (
               <CreateConversation

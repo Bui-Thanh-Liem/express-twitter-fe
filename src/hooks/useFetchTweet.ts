@@ -30,16 +30,6 @@ export const useDeleteTweet = () => {
   });
 };
 
-// ❌ POST - Báo cáo tweet
-export const useReportTweet = () => {
-  return useMutation({
-    mutationFn: (tweet_id: string) =>
-      apiCall<boolean>(`/tweets/report/${tweet_id}`, {
-        method: "POST",
-      }),
-  });
-};
-
 // 📄 GET - Lấy tweets mới nhất theo type feed: all - everyone - following
 export const useGetNewFeeds = (
   feed_type: EFeedType,

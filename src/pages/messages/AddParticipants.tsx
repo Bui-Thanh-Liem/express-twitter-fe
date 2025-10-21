@@ -3,8 +3,13 @@ import { AddParticipantsForm } from "~/components/forms/AddParticipantsForm";
 import { CreateGroupIcon } from "~/components/icons/create-group";
 import { DialogMain } from "~/components/ui/dialog";
 import { WrapIcon } from "~/components/wrapIcon";
+import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 
-export function AddParticipants() {
+export function AddParticipants({
+  conversation,
+}: {
+  conversation: IConversation;
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -22,7 +27,10 @@ export function AddParticipants() {
         textDesc="Hãy cân nhắc cẩn thận trước khi thêm ai đó vào nhóm."
         width="xl"
       >
-        <AddParticipantsForm setOpenForm={setIsOpen} />
+        <AddParticipantsForm
+          setOpenForm={setIsOpen}
+          conversation={conversation}
+        />
       </DialogMain>
     </>
   );

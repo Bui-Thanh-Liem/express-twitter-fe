@@ -3,13 +3,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useCreateConversation } from "~/hooks/useFetchConversations";
+import { useAddParticipants } from "~/hooks/useFetchConversations";
 import { useGetFollowed } from "~/hooks/useFetchUser";
 import {
-  CreateConversationDtoSchema,
-  type CreateConversationDto,
+  AddParticipantsDtoSchema,
+  type AddParticipantsBodyDto,
 } from "~/shared/dtos/req/conversation.dto";
-import { EConversationType } from "~/shared/enums/type.enum";
+import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { handleResponse } from "~/utils/handleResponse";
 import { ButtonMain } from "../ui/button";
@@ -18,19 +18,32 @@ import { UserFollower, UserSelected } from "./CreateConversationForm";
 
 export function AddParticipantsForm({
   setOpenForm,
+  conversation,
 }: {
+  conversation: IConversation;
   setOpenForm: (open: boolean) => void;
 }) {
+  const { participants } = conversation;
   const [userSelected, setUserSelected] = useState<IUser[]>([]);
 
   //
-  const apiCreateConversation = useCreateConversation();
+  const apiAddParticipants = useAddParticipants();
 
   const { data } = useGetFollowed({
     page: "1",
     limit: "100",
   });
-  const followers = useMemo(() => data?.data?.items || [], [data?.data?.items]);
+
+  const participant_ids = (participants as unknown as IUser[]).map(
+    (user) => user._id
+  );
+
+  //
+  const followers = useMemo(() => {
+    return data?.data?.items.filter(
+      (user) => !participant_ids.includes(user._id)
+    );
+  }, [data?.data?.items, participant_ids]);
 
   //
   const {
@@ -38,12 +51,9 @@ export function AddParticipantsForm({
     setValue,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateConversationDto>({
-    resolver: zodResolver(CreateConversationDtoSchema),
+  } = useForm<AddParticipantsBodyDto>({
+    resolver: zodResolver(AddParticipantsDtoSchema),
     defaultValues: {
-      name: "",
-      avatar: "",
-      type: EConversationType.Group,
       participants: [],
     },
   });
@@ -71,8 +81,11 @@ export function AddParticipantsForm({
   }
 
   //
-  const onSubmit = async (data: CreateConversationDto) => {
-    const res = await apiCreateConversation.mutateAsync(data);
+  const onSubmit = async (data: AddParticipantsBodyDto) => {
+    const res = await apiAddParticipants.mutateAsync({
+      payload: data,
+      conv_id: conversation._id,
+    });
     handleResponse(res, successForm);
   };
 
@@ -109,7 +122,7 @@ export function AddParticipantsForm({
                 />
               ))}
             </div>
-            {!followers.length && (
+            {!followers?.length && (
               <div className="h-full flex items-center justify-center">
                 <p className="text-sm text-gray-400">
                   Chưa có người dùng theo dõi bạn.

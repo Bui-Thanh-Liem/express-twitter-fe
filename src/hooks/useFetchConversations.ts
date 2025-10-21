@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
+  AddParticipantsBodyDto,
   CreateConversationDto,
   DeleteConversationDto,
   ReadConversationDto,
@@ -17,6 +18,29 @@ export const useCreateConversation = () => {
   return useMutation({
     mutationFn: (payload: CreateConversationDto) =>
       apiCall<IConversation>("/conversations", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: () => {
+      // Invalidate danh sách conversations
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+    },
+  });
+};
+
+// ➕ POST
+export const useAddParticipants = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      conv_id,
+      payload,
+    }: {
+      conv_id: string;
+      payload: AddParticipantsBodyDto;
+    }) =>
+      apiCall<IConversation>(`/conversations/add-participants/${conv_id}`, {
         method: "POST",
         body: JSON.stringify(payload),
       }),

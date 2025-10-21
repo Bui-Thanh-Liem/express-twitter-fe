@@ -54,6 +54,17 @@ export const ConversationIdDtoSchema = z.object({
   }),
 });
 
+export const AddParticipantsDtoSchema = z.object({
+  participants: z
+    .array(z.string().trim().regex(CONSTANT_REGEX.ID_MONGO), {
+      message: "Invalid MongoDB ObjectId",
+    })
+    .min(1, { message: "Ít nhất một thành viên khi thêm thành viên mới." })
+    .max(50, { message: "Tối đa 50 thành viên trong cuộc trò chuyện." }),
+});
+
 export type CreateConversationDto = z.infer<typeof CreateConversationDtoSchema>;
 export type ReadConversationDto = z.infer<typeof ConversationIdDtoSchema>;
 export type DeleteConversationDto = z.infer<typeof ConversationIdDtoSchema>;
+
+export type AddParticipantsBodyDto = z.infer<typeof AddParticipantsDtoSchema>;
