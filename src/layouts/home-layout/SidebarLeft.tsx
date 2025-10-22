@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TypographyP } from "~/components/elements/p";
 import { BookmarkIcon } from "~/components/icons/bookmark";
-// import { CommunityIcon } from "~/components/icons/communities";
 import { CommunityIcon } from "~/components/icons/communities";
 import { DotIcon } from "~/components/icons/dot";
 import { ExploreIcon } from "~/components/icons/explore";
@@ -29,9 +28,9 @@ import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useReloadStore } from "~/store/useReloadStore";
 import { useUnreadNotiStore } from "~/store/useUnreadNotiStore";
 import { useUserStore } from "~/store/useUserStore";
+import { playNotificationSound } from "~/utils/notificationSound";
 import { Logo } from "../../components/logo";
 import { WrapIcon } from "../../components/wrapIcon";
-import { playNotificationSound } from "~/utils/notificationSound";
 
 type NavItem = {
   name: string;
@@ -66,6 +65,12 @@ export function SidebarLeft() {
 
   //
   useEffect(() => {
+    //
+    if (unreadCountNoti < unread) {
+      playNotificationSound();
+    }
+
+    //
     document.title =
       unread > 0
         ? `(${unread}) thông báo chưa đọc`
@@ -74,6 +79,7 @@ export function SidebarLeft() {
     const oldLinks = document.querySelectorAll(
       'link[rel="icon"], link[rel="shortcut icon"]'
     );
+
     oldLinks.forEach((link) => link.remove());
 
     // Tạo favicon mới
@@ -88,11 +94,16 @@ export function SidebarLeft() {
   //
   useConversationSocket(
     () => {},
-    (unread) => {
-      playNotificationSound();
+    (_unread) => {
+      //
+      if (unreadCountConv < _unread) {
+        playNotificationSound();
+      }
+
+      //
       document.title =
-        unread > 0
-          ? `(${unread}) thông báo chưa đọc`
+        _unread > 0
+          ? `(${_unread}) tin nhắn chưa đọc`
           : CONSTANT_DEFAULT_TITLE_DOCUMENT;
 
       const oldLinks = document.querySelectorAll(
@@ -104,9 +115,9 @@ export function SidebarLeft() {
       const link = document.createElement("link");
       link.rel = "icon";
       link.type = "image/svg+xml";
-      link.href = unread > 0 ? "/favicon-noti.svg" : "/favicon.svg";
+      link.href = _unread > 0 ? "/favicon-noti.svg" : "/favicon.svg";
       document.head.appendChild(link);
-      setUnreadCountConv(unread);
+      setUnreadCountConv(_unread);
     },
     () => {}
   );
@@ -163,7 +174,7 @@ export function SidebarLeft() {
 
   return (
     <>
-      <div className="relative h-full pt-1">
+      <div className="relative h-full pt-1 ml-4 lg:ml-0">
         <h2 className="text-lg font-semibold">
           <WrapIcon>
             <Logo size={40} />
@@ -186,7 +197,9 @@ export function SidebarLeft() {
                       ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         React.cloneElement(x.icon, { active: isActive } as any)
                       : x.icon}
-                    <span className="line-clamp-1">{x.name} </span>
+                    <span className="line-clamp-1 hidden lg:block">
+                      {x.name}{" "}
+                    </span>
                     {!!x?.countNoti && (
                       <span className="absolute top-2 left-6 flex items-center justify-center w-5 h-5 bg-sky-400 text-white rounded-full text-[10px] border-2 border-white">
                         {x?.countNoti}
@@ -199,30 +212,46 @@ export function SidebarLeft() {
           })}
         </ul>
 
-        <div className="absolute w-full bottom-28">
+        <div className="absolute w-full bottom-20 lg:bottom-28">
           <ButtonMain
             size="lg"
             onClick={() => setIsOpenPost(true)}
-            className="w-full bg-black hover:bg-[#333]"
+            className="w-full bg-black hover:bg-[#333] hidden lg:block"
           >
             Đăng Bài
           </ButtonMain>
+          <ButtonMain
+            size="lg"
+            onClick={() => setIsOpenPost(true)}
+            className="w-full bg-black hover:bg-[#333] text-md lg:hidden"
+          >
+            Đăng
+          </ButtonMain>
         </div>
 
-        <div className="absolute w-full bottom-3 p-2 px-3 rounded-4xl hover:bg-gray-100 cursor-pointer flex items-center gap-3">
-          <AvatarMain src={user?.avatar} alt={user?.name} />
-          <div>
+        <div className="absolute w-full bottom-6 lg:bottom-3 p-2 px-3 rounded-4xl hover:bg-gray-100 cursor-pointer flex items-center gap-3">
+          <AvatarMain
+            src={user?.avatar}
+            alt={user?.name}
+            className="hidden lg:block"
+          />
+          <div className="hidden lg:block">
             <span className="block font-bold">{user?.name}</span>
             <span className="text-sm text-gray-400">{user?.username}</span>
           </div>
 
-          <div className="absolute right-4">
+          <div className="absolute right-1 lg:right-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="outline-0 outline-transparent">
-                  <WrapIcon>
+                  <WrapIcon className="hidden lg:block">
                     <DotIcon />
                   </WrapIcon>
+                  <AvatarMain
+                    src={user?.avatar}
+                    alt={user?.name}
+                    className="lg:hidden"
+                  />
                 </button>
               </DropdownMenuTrigger>
 

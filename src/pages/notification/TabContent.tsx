@@ -16,7 +16,6 @@ import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useNotificationSocket } from "~/socket/hooks/useNotificationSocket";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
 import { handleResponse } from "~/utils/handleResponse";
-import { playNotificationSound } from "~/utils/notificationSound";
 
 //
 type Props = {
@@ -174,7 +173,6 @@ export function TabContent({
   // Socket
   useNotificationSocket(
     (newNoti) => {
-      playNotificationSound();
       if (newNoti && newNoti.type === type) {
         setNotis((prev) => [newNoti, ...prev]);
       }
@@ -213,6 +211,7 @@ export function TabContent({
   async function handlerReadNoti(noti: INotification) {
     if (!noti.isRead) {
       await apiReadNoti.mutateAsync(noti._id);
+      refetch();
     }
   }
 

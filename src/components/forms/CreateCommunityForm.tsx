@@ -2,14 +2,16 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Upload } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDebounce } from "~/hooks/useDebounce";
 import {
   useCreateCommunity,
   useGetAllCategories,
 } from "~/hooks/useFetchCommunity";
 import { useUploadWithValidation } from "~/hooks/useFetchUpload";
 import { useGetFollowedById } from "~/hooks/useFetchUser";
+import { cn } from "~/lib/utils";
 import {
   CreateCommunityDtoSchema,
   type CreateCommunityDto,
@@ -27,10 +29,11 @@ import { CircularProgress } from "../ui/circular-progress";
 import { Divider } from "../ui/divider";
 import { Input, InputMain } from "../ui/input";
 import { Label } from "../ui/label";
+import { SearchMain } from "../ui/search";
 import { SelectMain } from "../ui/select";
 import { TextareaMain } from "../ui/textarea";
 import { WrapIcon } from "../wrapIcon";
-import { cn } from "~/lib/utils";
+import { UserFollowerSkeleton } from "./CreateConversationForm";
 
 function UserSelected({
   user,
@@ -89,19 +92,62 @@ export function CreateCommunityForm({
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [userSelected, setUserSelected] = useState<IUser[]>([]);
   const [userInvited, setUserInvited] = useState<string[]>([]);
+
+  //
   const { user } = useUserStore();
 
   //
   const apiCreateCommunity = useCreateCommunity();
   const apiUploadMedia = useUploadWithValidation();
 
+  // Search
+  const [searchVal, setSearchVal] = useState("");
+  const debouncedSearchVal = useDebounce(searchVal, 500);
+
+  //
+  const [page, setPage] = useState(1);
+  const total_page_ref = useRef(0);
+  const [followers, setFollowers] = useState<IUser[]>([]);
+
   //
   const { data: cates } = useGetAllCategories();
-  const { data } = useGetFollowedById(user!._id!, {
-    page: "1",
-    limit: "100",
+  const { data, isLoading } = useGetFollowedById(user!._id!, {
+    page: page.toString(),
+    q: debouncedSearchVal,
+    limit: "15",
   });
-  const followers = useMemo(() => data?.data?.items || [], [data?.data?.items]);
+
+  // Mỗi lần fetch API xong thì merge vào state (loại bỏ duplicate)
+  useEffect(() => {
+    const items = data?.data?.items || [];
+    const total_page = data?.data?.total_page;
+    total_page_ref.current = total_page || 0;
+
+    if (page === 1 && debouncedSearchVal) {
+      setFollowers(items);
+    } else {
+      setFollowers((prev) => {
+        const existIds = new Set(prev.map((c) => c._id.toString()));
+        const newItems = items.filter(
+          (item) => !existIds.has(item._id.toString())
+        );
+        return [...prev, ...newItems];
+      });
+    }
+  }, [data, debouncedSearchVal, page]);
+
+  //
+  function onSeeMore() {
+    setPage((prev) => prev + 1);
+  }
+
+  //
+  useEffect(() => {
+    return () => {
+      setPage(1);
+      setFollowers([]);
+    };
+  }, []);
 
   //
   const {
@@ -325,8 +371,9 @@ export function CreateCommunityForm({
         </div>
 
         <div className="grid grid-cols-12">
-          <div className="col-span-7 border-r pr-4 min-h-48">
-            <div className="space-y-2 max-h-96 overflow-auto">
+          <div className="col-span-7 border-r pr-4 ">
+            <SearchMain onChange={setSearchVal} value={searchVal} size="sm" />
+            <div className="space-y-2 h-96 max-h-96 overflow-auto mt-2">
               {followers?.map((user) => (
                 <UserFollower
                   isCheck={userSelected.some((_) => _._id === user._id)}
@@ -335,14 +382,45 @@ export function CreateCommunityForm({
                   onCheck={() => handleToggleUserFollower(user)}
                 />
               ))}
+
+              {isLoading &&
+                Array.from({ length: 4 }, (_, i) => (
+                  <UserFollowerSkeleton key={i} />
+                ))}
+
+              {/* Loading khi load thêm */}
+              {isLoading ? (
+                <div>
+                  {Array.from({ length: 2 }).map((_, i) => (
+                    <UserFollowerSkeleton key={`more-${i}`} />
+                  ))}
+                </div>
+              ) : (
+                !!followers.length && (
+                  <div className="px-4 py-3">
+                    <p
+                      className={cn(
+                        "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer",
+                        total_page_ref.current <= page
+                          ? "text-gray-300 pointer-events-none cursor-default"
+                          : ""
+                      )}
+                      onClick={onSeeMore}
+                    >
+                      Xem thêm
+                    </p>
+                  </div>
+                )
+              )}
+
+              {!followers.length && (
+                <div className="h-full flex items-center justify-center">
+                  <p className="text-sm text-gray-400">
+                    Chưa có người dùng theo dõi bạn.
+                  </p>
+                </div>
+              )}
             </div>
-            {!followers.length && (
-              <div className="h-full flex items-center justify-center">
-                <p className="text-sm text-gray-400">
-                  Chưa có người dùng theo dõi bạn.
-                </p>
-              </div>
-            )}
           </div>
           <div className="col-span-5 px-2 space-y-2 max-h-96 overflow-auto">
             {userSelected?.map((user) => (

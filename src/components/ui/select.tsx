@@ -1,14 +1,14 @@
-import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import * as React from "react";
 
-import { cn } from "~/lib/utils";
 import {
   Controller,
   type Control,
   type FieldErrors,
   type Path,
 } from "react-hook-form";
+import { cn } from "~/lib/utils";
 import { getNestedError } from "~/utils/getNestedError";
 import { Label } from "./label";
 
@@ -258,10 +258,11 @@ export {
   SelectGroup,
   SelectItem,
   SelectLabel,
+  SelectMain,
   SelectScrollDownButton,
   SelectScrollUpButton,
   SelectSeparator,
   SelectTrigger,
-  SelectValue,
-  SelectMain,
+  SelectValue
 };
+

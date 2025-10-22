@@ -39,7 +39,6 @@ import { useStatusSocket } from "~/socket/hooks/useStatusSocket";
 import { useConversationActiveStore } from "~/store/useConversationActiveStore";
 import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
-import { playNotificationSound } from "~/utils/notificationSound";
 import { toastSimple } from "~/utils/toastSimple.util";
 import { AddParticipants } from "./AddParticipants";
 import { CreateConversation } from "./CreateConversation";
@@ -75,7 +74,6 @@ export function MessageView({
 
   const { sendMessage } = useChatSocket((newDataMessage) => {
     console.log("new message socket:::");
-    playNotificationSound();
     setMessages((prev) => {
       return [...prev, newDataMessage];
     });

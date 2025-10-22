@@ -241,7 +241,7 @@ export function TweetDetailDrawer() {
               </WrapIcon>
             )}
 
-            <div className="h-[92%]">
+            <div className="h-[92%] w-[70%] lg:w-full">
               {media ? (
                 <MediaContent
                   tweet={undefined}
@@ -256,7 +256,7 @@ export function TweetDetailDrawer() {
             </div>
 
             {/*  */}
-            <div className="flex justify-center gap-28 mt-8">
+            <div className="flex justify-center gap-28 mt-8 w-[70%] lg:w-full">
               <div className="text-white flex items-center gap-3">
                 <MessageCircle size={24} />
                 <span className="text-sm">{comments_count || 0}</span>

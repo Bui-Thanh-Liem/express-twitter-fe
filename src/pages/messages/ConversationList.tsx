@@ -28,7 +28,6 @@ import { useStatusSocket } from "~/socket/hooks/useStatusSocket";
 import { useConversationActiveStore } from "~/store/useConversationActiveStore";
 import { useUserStore } from "~/store/useUserStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
-import { playNotificationSound } from "~/utils/notificationSound";
 
 //
 function ConversationItemSkeleton() {
@@ -241,7 +240,6 @@ export function ConversationList({
   const { joinConversation, leaveConversation } = useConversationSocket(
     (_new) => {
       // cập nhật khi có new conversation
-      playNotificationSound();
       console.log("_new:::", _new);
       setAllConversations((prev) =>
         prev.map((c) =>
@@ -251,7 +249,6 @@ export function ConversationList({
     },
     () => {},
     (changed) => {
-      playNotificationSound();
       console.log("changed:::", changed);
       setAllConversations((prev) => {
         const exists = prev.some(
