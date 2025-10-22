@@ -31,6 +31,7 @@ import { useUnreadNotiStore } from "~/store/useUnreadNotiStore";
 import { useUserStore } from "~/store/useUserStore";
 import { Logo } from "../../components/logo";
 import { WrapIcon } from "../../components/wrapIcon";
+import { playNotificationSound } from "~/utils/notificationSound";
 
 type NavItem = {
   name: string;
@@ -88,6 +89,7 @@ export function SidebarLeft() {
   useConversationSocket(
     () => {},
     (unread) => {
+      playNotificationSound();
       document.title =
         unread > 0
           ? `(${unread}) thông báo chưa đọc`

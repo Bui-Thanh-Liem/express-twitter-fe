@@ -30,6 +30,7 @@ import { Label } from "../ui/label";
 import { SelectMain } from "../ui/select";
 import { TextareaMain } from "../ui/textarea";
 import { WrapIcon } from "../wrapIcon";
+import { cn } from "~/lib/utils";
 
 function UserSelected({
   user,
@@ -280,7 +281,10 @@ export function CreateCommunityForm({
             size="lg"
             placeholder="Lĩnh vực / Danh mục"
             label="Cộng đồng khác đã dùng"
-            classname="mt-1"
+            classname={cn(
+              "mt-1",
+              categories?.length > 0 ? "" : "pointer-events-none"
+            )}
           />
         </div>
 

@@ -31,21 +31,15 @@ import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useStatusSocket } from "~/socket/hooks/useStatusSocket";
 import { useChatBoxStore } from "~/store/useChatBoxStore";
 import { useUserStore } from "~/store/useUserStore";
+import { playNotificationSound } from "~/utils/notificationSound";
 import { CreateConversation } from "./CreateConversation";
 import { MessageItem, PreviewMediaMulti } from "./MessageView";
 
 export default function ChatBox() {
   //
   const { leaveConversation, joinConversation } = useConversationSocket(
-    (newConversation) => {
-      console.log(
-        "Nhận từ server (socket) newConversation:::",
-        newConversation
-      );
-    },
-    (unreadCount) => {
-      console.log("Nhận từ server (socket) unreadCount:::", unreadCount);
-    },
+    () => {},
+    () => {},
     () => {}
   );
   const { pathname } = useLocation();
@@ -77,6 +71,7 @@ export default function ChatBox() {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const { sendMessage } = useChatSocket((newDataMessage) => {
     console.log("new message socket");
+    playNotificationSound();
     setMessages((prev) => {
       return [...prev, newDataMessage];
     });

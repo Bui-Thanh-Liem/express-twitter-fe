@@ -54,7 +54,7 @@ export const ConversationIdDtoSchema = z.object({
   }),
 });
 
-export const AddParticipantsDtoSchema = z.object({
+export const ParticipantsDtoSchema = z.object({
   participants: z
     .array(z.string().trim().regex(CONSTANT_REGEX.ID_MONGO), {
       message: "Invalid MongoDB ObjectId",
@@ -67,4 +67,6 @@ export type CreateConversationDto = z.infer<typeof CreateConversationDtoSchema>;
 export type ReadConversationDto = z.infer<typeof ConversationIdDtoSchema>;
 export type DeleteConversationDto = z.infer<typeof ConversationIdDtoSchema>;
 
-export type AddParticipantsBodyDto = z.infer<typeof AddParticipantsDtoSchema>;
+export type AddParticipantsBodyDto = z.infer<typeof ParticipantsDtoSchema>;
+export type RemoveParticipantsBodyDto = z.infer<typeof ParticipantsDtoSchema>;
+export type PromoteMentorBodyDto = z.infer<typeof ParticipantsDtoSchema>;

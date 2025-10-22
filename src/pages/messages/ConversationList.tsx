@@ -25,8 +25,10 @@ import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useStatusSocket } from "~/socket/hooks/useStatusSocket";
+import { useConversationActiveStore } from "~/store/useConversationActiveStore";
 import { useUserStore } from "~/store/useUserStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
+import { playNotificationSound } from "~/utils/notificationSound";
 
 //
 function ConversationItemSkeleton() {
@@ -218,7 +220,7 @@ export function ConversationList({
   const { user } = useUserStore();
 
   const [page, setPage] = useState(1);
-  const [idActive, setIdActive] = useState("");
+  const { activeId, setActiveId } = useConversationActiveStore();
   const [allConversations, setAllConversations] = useState<IConversation[]>([]);
   const total_page_ref = useRef(0);
 
@@ -239,6 +241,7 @@ export function ConversationList({
   const { joinConversation, leaveConversation } = useConversationSocket(
     (_new) => {
       // cập nhật khi có new conversation
+      playNotificationSound();
       console.log("_new:::", _new);
       setAllConversations((prev) =>
         prev.map((c) =>
@@ -248,6 +251,7 @@ export function ConversationList({
     },
     () => {},
     (changed) => {
+      playNotificationSound();
       console.log("changed:::", changed);
       setAllConversations((prev) => {
         const exists = prev.some(
@@ -317,7 +321,7 @@ export function ConversationList({
   //
   async function handleClickConversation(conversation: IConversation) {
     onclick(conversation);
-    setIdActive(conversation?._id);
+    setActiveId(conversation?._id);
 
     // không gọi api đọc khi đọc rồi
     const isUnread = conversation.readStatus?.includes(user?._id || "");
@@ -331,7 +335,7 @@ export function ConversationList({
   //
   function onDeletedConv(id: string) {
     setAllConversations((prev) => prev.filter((x) => x._id !== id));
-    setIdActive("");
+    setActiveId("");
     onclick(null);
   }
 
@@ -406,7 +410,7 @@ export function ConversationList({
                   onDeleted={onDeletedConv}
                   conversation={conversation}
                   key={conversation._id.toString()}
-                  isActive={idActive === conversation._id}
+                  isActive={activeId === conversation._id}
                   onclick={() => handleClickConversation(conversation)}
                 />
               )

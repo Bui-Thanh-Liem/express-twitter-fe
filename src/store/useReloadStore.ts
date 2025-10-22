@@ -1,12 +1,12 @@
 // useReloadStore.ts
 import { create } from "zustand";
 
-interface ReloadStore {
+interface State {
   reloadKey: number;
   triggerReload: () => void;
 }
 
-export const useReloadStore = create<ReloadStore>((set) => ({
+export const useReloadStore = create<State>((set) => ({
   reloadKey: 0,
   triggerReload: () =>
     set((state) => ({

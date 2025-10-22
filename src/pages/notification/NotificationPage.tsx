@@ -85,6 +85,18 @@ export function NotificationPage() {
                   </div>
                 )}
               </TabsTrigger>
+
+              <TabsTrigger
+                className="cursor-pointer flex items-center"
+                value={ENotificationType.Other}
+              >
+                <span>Khác</span>
+                {unreadNoti && unreadNoti[ENotificationType.Other] && (
+                  <div className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-sky-400 rounded-full">
+                    {unreadNoti[ENotificationType.Other]}
+                  </div>
+                )}
+              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -119,6 +131,14 @@ export function NotificationPage() {
                 type={ENotificationType.Follow}
                 key={ENotificationType.Follow}
                 emptyText="Những ai đang theo dõi bạn, đây chính là nơi diễn ra mọi hoạt động."
+              />
+            </TabsContent>
+
+            <TabsContent value={ENotificationType.Other} className="px-0 py-4">
+              <TabContent
+                type={ENotificationType.Other}
+                key={ENotificationType.Other}
+                emptyText="Đây chính là nơi diễn ra mọi hoạt động."
               />
             </TabsContent>
           </div>

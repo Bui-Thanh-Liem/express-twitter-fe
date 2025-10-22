@@ -1,21 +1,28 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDebounce } from "~/hooks/useDebounce";
 import { useAddParticipants } from "~/hooks/useFetchConversations";
 import { useGetFollowedById } from "~/hooks/useFetchUser";
+import { cn } from "~/lib/utils";
 import {
-  AddParticipantsDtoSchema,
+  ParticipantsDtoSchema,
   type AddParticipantsBodyDto,
 } from "~/shared/dtos/req/conversation.dto";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { ButtonMain } from "../ui/button";
 import { Divider } from "../ui/divider";
-import { UserFollower, UserSelected } from "./CreateConversationForm";
-import { useUserStore } from "~/store/useUserStore";
+import { SearchMain } from "../ui/search";
+import {
+  UserFollower,
+  UserFollowerSkeleton,
+  UserSelected,
+} from "./CreateConversationForm";
 
 export function AddParticipantsForm({
   setOpenForm,
@@ -28,24 +35,62 @@ export function AddParticipantsForm({
   const [userSelected, setUserSelected] = useState<IUser[]>([]);
   const { user } = useUserStore();
 
+  // Search
+  const [searchVal, setSearchVal] = useState("");
+  const debouncedSearchVal = useDebounce(searchVal, 500);
+
+  //
+  const [page, setPage] = useState(1);
+  const total_page_ref = useRef(0);
+  const [followers, setFollowers] = useState<IUser[]>([]);
+
   //
   const apiAddParticipants = useAddParticipants();
 
-  const { data } = useGetFollowedById(user!._id!, {
-    page: "1",
-    limit: "100",
+  const { data, isLoading } = useGetFollowedById(user!._id!, {
+    page: page.toString(),
+    q: debouncedSearchVal,
+    limit: "15",
   });
 
-  const participant_ids = (participants as unknown as IUser[]).map(
-    (user) => user._id
-  );
+  // Mỗi lần fetch API xong thì merge vào state (loại bỏ duplicate)
+  useEffect(() => {
+    //
+    const participant_ids = (participants as unknown as IUser[]).map(
+      (user) => user._id
+    );
+
+    const items =
+      data?.data?.items.filter((user) => !participant_ids.includes(user._id)) ||
+      [];
+    const total_page = data?.data?.total_page;
+    total_page_ref.current = total_page || 0;
+
+    if (page === 1 && debouncedSearchVal) {
+      setFollowers(items);
+    } else {
+      setFollowers((prev) => {
+        const existIds = new Set(prev.map((c) => c._id.toString()));
+        const newItems = items.filter(
+          (item) => !existIds.has(item._id.toString())
+        );
+        return [...prev, ...newItems];
+      });
+    }
+  }, [data, debouncedSearchVal, page, participants]);
 
   //
-  const followers = useMemo(() => {
-    return data?.data?.items.filter(
-      (user) => !participant_ids.includes(user._id)
-    );
-  }, [data?.data?.items, participant_ids]);
+  useEffect(() => {
+    return () => {
+      setPage(1);
+      setFollowers([]);
+    };
+  }, []);
+
+  //
+  function onSeeMore() {
+    setPage((prev) => prev + 1);
+  }
 
   //
   const {
@@ -54,7 +99,7 @@ export function AddParticipantsForm({
     handleSubmit,
     formState: { errors },
   } = useForm<AddParticipantsBodyDto>({
-    resolver: zodResolver(AddParticipantsDtoSchema),
+    resolver: zodResolver(ParticipantsDtoSchema),
     defaultValues: {
       participants: [],
     },
@@ -113,8 +158,9 @@ export function AddParticipantsForm({
         </div>
 
         <div className="grid grid-cols-12">
-          <div className="col-span-7 border-r pr-4 min-h-48">
-            <div className="space-y-2 max-h-96 overflow-auto">
+          <div className="col-span-7 border-r pr-4">
+            <SearchMain onChange={setSearchVal} value={searchVal} size="sm" />
+            <div className="space-y-2 h-96 max-h-96 overflow-auto mt-2">
               {followers?.map((user) => (
                 <UserFollower
                   isCheck={userSelected.some((_) => _._id === user._id)}
@@ -123,16 +169,47 @@ export function AddParticipantsForm({
                   onCheck={() => handleToggleUserFollower(user)}
                 />
               ))}
+
+              {isLoading &&
+                Array.from({ length: 4 }, (_, i) => (
+                  <UserFollowerSkeleton key={i} />
+                ))}
+
+              {/* Loading khi load thêm */}
+              {isLoading ? (
+                <div>
+                  {Array.from({ length: 2 }).map((_, i) => (
+                    <UserFollowerSkeleton key={`more-${i}`} />
+                  ))}
+                </div>
+              ) : (
+                !!followers.length && (
+                  <div className="px-4 py-3">
+                    <p
+                      className={cn(
+                        "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer",
+                        total_page_ref.current <= page
+                          ? "text-gray-300 pointer-events-none cursor-default"
+                          : ""
+                      )}
+                      onClick={onSeeMore}
+                    >
+                      Xem thêm
+                    </p>
+                  </div>
+                )
+              )}
+
+              {!followers?.length && (
+                <div className="h-full flex items-center justify-center">
+                  <p className="text-sm text-gray-400">
+                    Chưa có người dùng theo dõi bạn.
+                  </p>
+                </div>
+              )}
             </div>
-            {!followers?.length && (
-              <div className="h-full flex items-center justify-center">
-                <p className="text-sm text-gray-400">
-                  Chưa có người dùng theo dõi bạn.
-                </p>
-              </div>
-            )}
           </div>
-          <div className="col-span-5 px-2 space-y-2 max-h-96 overflow-auto">
+          <div className="col-span-5 px-2 space-y-2 h-96 max-h-96 overflow-auto">
             {userSelected?.map((user) => (
               <UserSelected
                 user={user}

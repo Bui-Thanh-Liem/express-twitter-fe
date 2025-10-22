@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { ENotificationType } from "~/shared/enums/type.enum";
+import { playNotificationSound } from "~/utils/notificationSound";
 
 interface State {
   unread: number;
@@ -15,8 +16,14 @@ export const useUnreadNotiStore = create<State>()(
     (set) => ({
       unread: 0,
       unreadByType: null,
-      setUnread: (val) => set({ unread: val }),
-      setUnreadByType: (val) => set({ unreadByType: val }),
+      setUnread: (val) => {
+        playNotificationSound();
+        return set({ unread: val });
+      },
+      setUnreadByType: (val) => {
+        playNotificationSound();
+        return set({ unreadByType: val });
+      },
     }),
     {
       name: "unread-noti",

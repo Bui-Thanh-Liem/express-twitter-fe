@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 
-interface DetailTweetStore {
+interface State {
   isOpen: boolean;
   open: () => void;
   close: () => void;
@@ -12,7 +12,7 @@ interface DetailTweetStore {
   setTweet: (val?: ITweet) => void;
 }
 
-export const useDetailTweetStore = create<DetailTweetStore>((set) => ({
+export const useDetailTweetStore = create<State>((set) => ({
   isOpen: false,
   tweet: undefined,
   prevTweet: undefined,
@@ -21,7 +21,7 @@ export const useDetailTweetStore = create<DetailTweetStore>((set) => ({
   close: () => set({ isOpen: false, tweet: undefined, prevTweet: undefined }),
   setTweet: (val) =>
     set((state) => {
-      const update: Partial<DetailTweetStore> = { tweet: val };
+      const update: Partial<State> = { tweet: val };
       if (!state.prevTweet && state.tweet) {
         update.prevTweet = state.tweet;
       }

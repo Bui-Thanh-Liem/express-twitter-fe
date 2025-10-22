@@ -33,6 +33,7 @@ export enum ENotificationType {
   Mention_like = "mention-like",
   Follow = "follow",
   Review = "review",
+  Other = "other",
 }
 
 export enum EMembershipType {

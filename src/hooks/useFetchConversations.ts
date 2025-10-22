@@ -3,7 +3,9 @@ import type {
   AddParticipantsBodyDto,
   CreateConversationDto,
   DeleteConversationDto,
+  PromoteMentorBodyDto,
   ReadConversationDto,
+  RemoveParticipantsBodyDto,
 } from "~/shared/dtos/req/conversation.dto";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
@@ -41,6 +43,52 @@ export const useAddParticipants = () => {
       payload: AddParticipantsBodyDto;
     }) =>
       apiCall<IConversation>(`/conversations/add-participants/${conv_id}`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: () => {
+      // Invalidate danh sách conversations
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+    },
+  });
+};
+
+// ➕ POST
+export const useRemoveParticipants = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      conv_id,
+      payload,
+    }: {
+      conv_id: string;
+      payload: RemoveParticipantsBodyDto;
+    }) =>
+      apiCall<IConversation>(`/conversations/remove-participants/${conv_id}`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: () => {
+      // Invalidate danh sách conversations
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+    },
+  });
+};
+
+// ➕ POST
+export const usePromoteMentor = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      conv_id,
+      payload,
+    }: {
+      conv_id: string;
+      payload: PromoteMentorBodyDto;
+    }) =>
+      apiCall<IConversation>(`/conversations/promote-mentor/${conv_id}`, {
         method: "POST",
         body: JSON.stringify(payload),
       }),

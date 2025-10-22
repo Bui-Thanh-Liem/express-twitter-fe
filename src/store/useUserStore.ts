@@ -1,14 +1,14 @@
 import { create } from "zustand";
-import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { persist } from "zustand/middleware";
+import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 
-interface UserState {
+interface State {
   user: IUser | null;
   setUser: (user: IUser) => void;
   clearUser: () => void;
 }
 
-export const useUserStore = create<UserState>()(
+export const useUserStore = create<State>()(
   persist(
     (set) => ({
       user: null,

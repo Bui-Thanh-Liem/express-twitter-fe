@@ -2,17 +2,20 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Upload } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDebounce } from "~/hooks/useDebounce";
 import { useCreateConversation } from "~/hooks/useFetchConversations";
 import { useUploadWithValidation } from "~/hooks/useFetchUpload";
 import { useGetFollowedById } from "~/hooks/useFetchUser";
+import { cn } from "~/lib/utils";
 import {
   CreateConversationDtoSchema,
   type CreateConversationDto,
 } from "~/shared/dtos/req/conversation.dto";
 import { EConversationType } from "~/shared/enums/type.enum";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { CloseIcon } from "../icons/close";
 import { AvatarMain } from "../ui/avatar";
@@ -21,8 +24,8 @@ import { Checkbox } from "../ui/checkbox";
 import { Divider } from "../ui/divider";
 import { InputMain } from "../ui/input";
 import { Label } from "../ui/label";
+import { SearchMain } from "../ui/search";
 import { WrapIcon } from "../wrapIcon";
-import { useUserStore } from "~/store/useUserStore";
 
 export function UserSelected({
   user,
@@ -71,6 +74,25 @@ export function UserFollower({
   );
 }
 
+export function UserFollowerSkeleton() {
+  return (
+    <div className="flex items-center gap-3 py-1 px-2 rounded-sm">
+      {/* Checkbox giả */}
+      <div className="w-5 h-5 rounded-full bg-gray-200 animate-pulse" />
+
+      {/* Avatar giả */}
+      <div className="w-10 h-10 rounded-full relative overflow-hidden bg-gray-200">
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-shimmer" />
+      </div>
+
+      {/* Tên giả */}
+      <div className="h-4 w-28 rounded bg-gray-200 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-shimmer" />
+      </div>
+    </div>
+  );
+}
+
 export function CreateConversationForm({
   initialUserIds,
   setOpenForm,
@@ -83,17 +105,58 @@ export function CreateConversationForm({
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [userSelected, setUserSelected] = useState<IUser[]>([]);
 
+  // Search
+  const [searchVal, setSearchVal] = useState("");
+  const debouncedSearchVal = useDebounce(searchVal, 500);
+
+  //
+  const [page, setPage] = useState(1);
+  const total_page_ref = useRef(0);
+  const [followers, setFollowers] = useState<IUser[]>([]);
+
   //
   const apiCreateConversation = useCreateConversation();
   const apiUploadMedia = useUploadWithValidation();
 
-  const { data } = useGetFollowedById(user!._id!, {
-    page: "1",
-    limit: "100",
+  const { data, isLoading } = useGetFollowedById(user!._id!, {
+    page: page.toString(),
+    limit: "10",
+    q: debouncedSearchVal,
   });
-  const followers = useMemo(() => data?.data?.items || [], [data?.data?.items]);
+
+  // Mỗi lần fetch API xong thì merge vào state (loại bỏ duplicate)
+  useEffect(() => {
+    const items = data?.data?.items || [];
+    const total_page = data?.data?.total_page;
+    total_page_ref.current = total_page || 0;
+
+    if (page === 1 && debouncedSearchVal) {
+      setFollowers(items);
+    } else {
+      setFollowers((prev) => {
+        const existIds = new Set(prev.map((c) => c._id.toString()));
+        const newItems = items.filter(
+          (item) => !existIds.has(item._id.toString())
+        );
+        return [...prev, ...newItems];
+      });
+    }
+  }, [data]);
 
   //
+  useEffect(() => {
+    return () => {
+      setPage(1);
+      setFollowers([]);
+    };
+  }, []);
+
+  //
+  function onSeeMore() {
+    setPage((prev) => prev + 1);
+  }
+
+  // Tự động chọn user trong view
   useEffect(() => {
     if (initialUserIds?.length) {
       const initSelected = followers.filter((user) =>
@@ -189,7 +252,7 @@ export function CreateConversationForm({
         <div className="relative mb-4 h-28 w-28 mx-auto">
           <AvatarMain
             src={avatarPreview}
-            alt={watch("name") || "G"}
+            alt={watch("name") || "N"}
             className="w-28 h-28 border-4 border-white rounded-full object-cover"
           />
 
@@ -236,7 +299,8 @@ export function CreateConversationForm({
 
         <div className="grid grid-cols-12">
           <div className="col-span-7 border-r pr-4 min-h-48">
-            <div className="space-y-2 max-h-96 overflow-auto">
+            <SearchMain onChange={setSearchVal} value={searchVal} size="sm" />
+            <div className="space-y-2 h-80 max-h-80 overflow-auto mt-2">
               {followers?.map((user) => (
                 <UserFollower
                   isCheck={userSelected.some((_) => _._id === user._id)}
@@ -245,16 +309,47 @@ export function CreateConversationForm({
                   onCheck={() => handleToggleUserFollower(user)}
                 />
               ))}
+
+              {isLoading &&
+                Array.from({ length: 6 }, (_, i) => (
+                  <UserFollowerSkeleton key={i} />
+                ))}
+
+              {/* Loading khi load thêm */}
+              {isLoading ? (
+                <div>
+                  {Array.from({ length: 2 }).map((_, i) => (
+                    <UserFollowerSkeleton key={`more-${i}`} />
+                  ))}
+                </div>
+              ) : (
+                !!followers.length && (
+                  <div className="px-4 py-3">
+                    <p
+                      className={cn(
+                        "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer",
+                        total_page_ref.current <= page
+                          ? "text-gray-300 pointer-events-none cursor-default"
+                          : ""
+                      )}
+                      onClick={onSeeMore}
+                    >
+                      Xem thêm
+                    </p>
+                  </div>
+                )
+              )}
+
+              {!followers.length && (
+                <div className="h-full flex items-center justify-center">
+                  <p className="text-sm text-gray-400">
+                    Chưa có người dùng theo dõi bạn.
+                  </p>
+                </div>
+              )}
             </div>
-            {!followers.length && (
-              <div className="h-full flex items-center justify-center">
-                <p className="text-sm text-gray-400">
-                  Chưa có người dùng theo dõi bạn.
-                </p>
-              </div>
-            )}
           </div>
-          <div className="col-span-5 px-2 space-y-2 max-h-96 overflow-auto">
+          <div className="col-span-5 px-2 space-y-2 h-80 max-h-80 overflow-auto">
             {userSelected?.map((user) => (
               <UserSelected
                 user={user}
