@@ -158,6 +158,9 @@
   *::-webkit-scrollbar-thumb:hover {
     background: var(--primary-foreground);
   }
+  *::selection {
+    background-color: #bfdbf8;
+  }
   body {
     @apply bg-background text-foreground;
     overflow-x: hidden;

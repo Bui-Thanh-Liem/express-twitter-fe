@@ -280,7 +280,7 @@ export function CreateCommunityForm({
           placeholder="Cộng động Developer"
           required
           isMaxLength
-          maxCountLength={16}
+          maxCountLength={32}
         />
 
         <div className="relative">
@@ -422,7 +422,7 @@ export function CreateCommunityForm({
               )}
             </div>
           </div>
-          <div className="col-span-5 px-2 space-y-2 max-h-96 overflow-auto">
+          <div className="mt-10 col-span-5 px-2 space-y-2 max-h-96 overflow-auto">
             {userSelected?.map((user) => (
               <UserSelected
                 user={user}

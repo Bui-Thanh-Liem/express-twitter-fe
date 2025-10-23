@@ -2,7 +2,7 @@ import { z } from "zod";
 import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";
 
 export const CreateCommunityDtoSchema = z.object({
-  name: z.string().trim().min(1).max(16),
+  name: z.string().trim().min(1).max(32),
   cover: z.string().trim().max(200).optional(),
   bio: z.string().trim().max(200).optional(),
   category: z.string().trim().max(16),

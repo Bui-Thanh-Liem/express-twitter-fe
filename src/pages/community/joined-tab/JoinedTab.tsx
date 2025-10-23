@@ -1,23 +1,59 @@
+import type { CarouselApi } from "@/components/ui/carousel";
 import { useEffect, useRef, useState } from "react";
+import { Card, CardContent } from "~/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "~/components/ui/carousel";
 import { SearchMain } from "~/components/ui/search";
 import { useDebounce } from "~/hooks/useDebounce";
 import { useGetMultiCommunities } from "~/hooks/useFetchCommunity";
 import { cn } from "~/lib/utils";
+import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import { JoinedCard, JoinedCardSkeleton } from "./JoinedCard";
+
+const carouselItems = [
+  "Tất cả",
+  ...Object.values(EVisibilityType),
+  ...Object.values(EMembershipType),
+];
 
 export function JoinedTab() {
   const [page, setPage] = useState(1);
   const [allCommunities, setAllCommunities] = useState<ICommunity[]>([]);
   const total_page_ref = useRef(0);
 
-  // Search
+  // Search, Carousel
   const [searchVal, setSearchVal] = useState("");
   const debouncedSearchVal = useDebounce(searchVal, 500);
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const debouncedCarouselVal = useDebounce(
+    carouselItems[current] === "Tất cả" ? "" : carouselItems[current],
+    1000
+  );
+
+  //
+  useEffect(() => {
+    if (!api) return;
+
+    // Lấy index hiện tại khi carousel được khởi tạo
+    setCurrent(api.selectedScrollSnap());
+
+    // Lắng nghe sự kiện khi carousel scroll
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+  }, [api]);
 
   const { data, isLoading } = useGetMultiCommunities({
-    page: page.toString(),
     limit: "10",
+    qe: debouncedCarouselVal,
+    page: page.toString(),
     q: debouncedSearchVal,
   });
 
@@ -27,7 +63,7 @@ export function JoinedTab() {
     const total_page = data?.data?.total_page;
     total_page_ref.current = total_page || 0;
 
-    if (page === 1 && debouncedSearchVal) {
+    if (page === 1 && (debouncedSearchVal || debouncedCarouselVal)) {
       setAllCommunities(items);
     } else {
       setAllCommunities((prev) => {
@@ -38,7 +74,7 @@ export function JoinedTab() {
         return [...newItems, ...prev];
       });
     }
-  }, [data]);
+  }, [debouncedCarouselVal, data, debouncedSearchVal, page]);
 
   //
   useEffect(() => {
@@ -56,19 +92,36 @@ export function JoinedTab() {
   return (
     <div>
       {/*  */}
-      <div className="mb-4 px-4">
-        <SearchMain
-          size="md"
-          value={searchVal}
-          onClear={() => setSearchVal("")}
-          onChange={setSearchVal}
-        />
+      <div className="mb-4 px-4 flex items-center gap-4">
+        <div className="mr-12 flex-1">
+          <SearchMain
+            size="md"
+            value={searchVal}
+            onClear={() => setSearchVal("")}
+            onChange={setSearchVal}
+          />
+        </div>
+        <Carousel className="w-[40%] ml-auto mr-14" setApi={setApi}>
+          <CarouselContent className="-ml-1 px-6">
+            {carouselItems.map((_) => (
+              <CarouselItem key={_} className="pl-1 md:basis-1/1 lg:basis-1/1">
+                <Card className="py-1 rounded-2xl">
+                  <CardContent className="flex items-center justify-center">
+                    <span className="text-[15px] font-medium">{_}</span>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
       </div>
 
       <div className="overflow-y-auto h-[calc(100vh-180px)] px-4">
         {/*  */}
         {!isLoading && allCommunities.length === 0 && page === 1 && (
-          <p className="p-4 text-center text-gray-500">
+          <p className="mt-24 p-4 text-center text-gray-500">
             Bạn chưa tham gia vào bất kỳ cộng đồng nào.
           </p>
         )}
@@ -76,7 +129,7 @@ export function JoinedTab() {
         {/* Loading lần đầu */}
         {isLoading && page === 1 && (
           <div className="grid grid-cols-3 gap-3">
-            {Array.from({ length: 4 }).map((_, i) => (
+            {Array.from({ length: 6 }).map((_, i) => (
               <JoinedCardSkeleton key={`more-${i}`} />
             ))}
           </div>
@@ -92,8 +145,8 @@ export function JoinedTab() {
         )}
 
         {/* Loading khi load thêm */}
-        {isLoading ? (
-          <div className="grid grid-cols-3 gap-3">
+        {isLoading && page > 1 ? (
+          <div className="grid grid-cols-3 gap-3 mt-3">
             {Array.from({ length: 2 }).map((_, i) => (
               <JoinedCardSkeleton key={`more-${i}`} />
             ))}

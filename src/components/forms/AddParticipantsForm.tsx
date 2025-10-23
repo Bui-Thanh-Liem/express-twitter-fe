@@ -209,7 +209,7 @@ export function AddParticipantsForm({
               )}
             </div>
           </div>
-          <div className="col-span-5 px-2 space-y-2 h-96 max-h-96 overflow-auto">
+          <div className="mt-10 col-span-5 px-2 space-y-2 h-96 max-h-96 overflow-auto">
             {userSelected?.map((user) => (
               <UserSelected
                 user={user}

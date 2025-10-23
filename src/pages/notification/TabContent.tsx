@@ -91,7 +91,7 @@ function NotiItem({ noti, onClick, onDelete }: Props) {
   return (
     <button
       onClick={handlerClick}
-      className={`w-full text-left flex items-start gap-3 p-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-sky-300 relative cursor-pointer ${
+      className={`w-full text-left flex items-start gap-3 p-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-sky-300 relative cursor-pointer group ${
         read ? "bg-slate-50 hover:bg-slate-100" : "bg-sky-50"
       }`}
     >
@@ -136,7 +136,7 @@ function NotiItem({ noti, onClick, onDelete }: Props) {
       </div>
 
       <WrapIcon
-        className="p-[3px] absolute top-1.5 right-1.5 bg-slate-50"
+        className="p-[3px] absolute top-1.5 right-1.5 bg-transparent hidden group-hover:inline-block"
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();

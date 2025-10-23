@@ -31,7 +31,7 @@ export function Logo({ size = 100, className = "text-black" }: PropLogoType) {
           textAnchor="middle"
           fill="currentColor"
         >
-          mini
+          &BUG
         </text>
       </svg>
     </Link>

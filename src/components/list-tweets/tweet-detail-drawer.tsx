@@ -32,6 +32,7 @@ import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
 import { ActionShared } from "./action-shared";
 import { Content } from "./content";
 import { MediaContent, SkeletonTweet, TweetItem } from "./item-tweet";
+import { Logo } from "../logo";
 
 export function TweetDetailDrawer() {
   //
@@ -250,7 +251,7 @@ export function TweetDetailDrawer() {
                 />
               ) : (
                 <div className="h-full flex items-center justify-center text-white">
-                  <p>Bài viết này không có hình ảnh hay video</p>
+                  <Logo className="text-gray-400" size={300} />
                 </div>
               )}
             </div>

@@ -182,7 +182,7 @@ export function SidebarLeft() {
         </h2>
         <ul className="space-y-3 text-sm text-gray-700">
           {navs.map((x) => {
-            const isActive = pathname === x.path;
+            const isActive = pathname.startsWith(x.path);
             return (
               <li key={x.name} className="cursor-pointer group relative">
                 <div onClick={() => onClickNav(x.path, x.name)}>

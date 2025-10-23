@@ -43,12 +43,21 @@ export const useGetAllCategories = () => {
   });
 };
 
+// 🚪 GET - Get Community By slug
+export const useGetOneCommunityBySlug = (slug: string, enabled = true) => {
+  return useQuery({
+    queryKey: ["community", slug],
+    queryFn: () => apiCall<ICommunity>(`/communities/slug/${slug}`),
+    enabled: enabled && !!slug,
+  });
+};
+
 // 📄 GET
 export const useGetMultiCommunities = (queries?: IQuery<ICommunity>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["communities", queries?.q, normalizedQueries],
+    queryKey: ["communities", queries?.q, queries?.qe, normalizedQueries],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
