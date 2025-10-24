@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CONSTANT_REGEX } from "~/shared/constants";
 import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";
 
 export const CreateCommunityDtoSchema = z.object({
@@ -8,6 +9,13 @@ export const CreateCommunityDtoSchema = z.object({
   category: z.string().trim().max(16),
   visibilityType: z.nativeEnum(EVisibilityType),
   membershipType: z.nativeEnum(EMembershipType),
+  member_ids: z
+    .array(
+      z.string().trim().regex(CONSTANT_REGEX.ID_MONGO, {
+        message: "Invalid MongoDB ObjectId",
+      })
+    )
+    .optional(),
 });
 
 export type CreateCommunityDto = z.infer<typeof CreateCommunityDtoSchema>;

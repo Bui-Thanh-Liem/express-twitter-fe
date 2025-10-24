@@ -38,31 +38,21 @@ export function NotificationPage() {
 
       {/*  */}
       <div>
-        <Tabs defaultValue={ENotificationType.Verify} className="mb-12">
+        <Tabs defaultValue={ENotificationType.Community} className="mb-12">
           <div className="bg-white sticky top-0 z-50">
             <TabsList className="w-full">
               <TabsTrigger
                 className="cursor-pointer flex items-center"
-                value={ENotificationType.Verify}
+                value={ENotificationType.Community}
               >
-                <span>Xác thực</span>
-                {unreadNoti && unreadNoti[ENotificationType.Verify] && (
+                <span>Cộng đồng</span>
+                {unreadNoti && unreadNoti[ENotificationType.Community] && (
                   <p className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-sky-400 rounded-full">
-                    {unreadNoti[ENotificationType.Verify]}
+                    {unreadNoti[ENotificationType.Community]}
                   </p>
                 )}
               </TabsTrigger>
-              <TabsTrigger
-                className="cursor-pointer flex items-center"
-                value={ENotificationType.Review}
-              >
-                <span>Kiểm duyệt</span>
-                {unreadNoti && unreadNoti[ENotificationType.Review] && (
-                  <div className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-sky-400 rounded-full">
-                    {unreadNoti[ENotificationType.Review]}
-                  </div>
-                )}
-              </TabsTrigger>
+
               <TabsTrigger
                 className="cursor-pointer flex items-center"
                 value={ENotificationType.Mention_like}
@@ -74,6 +64,7 @@ export function NotificationPage() {
                   </p>
                 )}
               </TabsTrigger>
+
               <TabsTrigger
                 className="cursor-pointer flex items-center"
                 value={ENotificationType.Follow}
@@ -102,20 +93,17 @@ export function NotificationPage() {
 
           {/* Tab Content */}
           <div className="p-4 pt-0 overflow-y-auto h-[calc(100vh-100px)]">
-            <TabsContent value={ENotificationType.Verify} className="px-0 py-4">
+            <TabsContent
+              value={ENotificationType.Community}
+              className="px-0 py-4"
+            >
               <TabContent
-                type={ENotificationType.Verify}
-                key={ENotificationType.Verify}
-                emptyText="Thông báo về xác thực tài khoản của bạn có hợp lệ không."
+                type={ENotificationType.Community}
+                key={ENotificationType.Community}
+                emptyText="Tất cả các hoạt động lên quan đến cộng đồng sẽ xuất hiện tại đây."
               />
             </TabsContent>
-            <TabsContent value={ENotificationType.Review} className="px-0 py-4">
-              <TabContent
-                type={ENotificationType.Review}
-                key={ENotificationType.Review}
-                emptyText="Chúng tôi sẽ thông báo cho bạn về video bạn đăng có vi phạm chính sách hay không."
-              />
-            </TabsContent>
+
             <TabsContent
               value={ENotificationType.Mention_like}
               className="px-0 py-4"
@@ -138,7 +126,7 @@ export function NotificationPage() {
               <TabContent
                 type={ENotificationType.Other}
                 key={ENotificationType.Other}
-                emptyText="Đây chính là nơi diễn ra mọi hoạt động."
+                emptyText="Đây chính là nơi diễn ra mọi hoạt động khác."
               />
             </TabsContent>
           </div>

@@ -222,6 +222,7 @@ export function CreateCommunityForm({
     const res = await apiCreateCommunity.mutateAsync({
       ...data,
       category: categoryText || data.category,
+      ...(userInvited.length > 0 ? { member_ids: userInvited } : {}),
     });
 
     handleResponse(res, successForm);

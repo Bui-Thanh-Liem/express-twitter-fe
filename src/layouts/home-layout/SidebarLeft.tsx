@@ -31,6 +31,7 @@ import { useUserStore } from "~/store/useUserStore";
 import { playNotificationSound } from "~/utils/notificationSound";
 import { Logo } from "../../components/logo";
 import { WrapIcon } from "../../components/wrapIcon";
+import { BadgePlus, Plus } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -220,13 +221,12 @@ export function SidebarLeft() {
           >
             Đăng Bài
           </ButtonMain>
-          <ButtonMain
-            size="lg"
+          <WrapIcon
             onClick={() => setIsOpenPost(true)}
-            className="w-full bg-black hover:bg-[#333] text-md lg:hidden"
+            className="bg-black hover:bg-[#333] ml-1 lg:hidden"
           >
-            Đăng
-          </ButtonMain>
+            <Plus size={24} color="#fff" />
+          </WrapIcon>
         </div>
 
         <div className="absolute w-full bottom-6 lg:bottom-3 p-2 px-3 rounded-4xl hover:bg-gray-100 cursor-pointer flex items-center gap-3">
@@ -275,7 +275,12 @@ export function SidebarLeft() {
         </div>
       </div>
 
-      <DialogMain isLogo={false} open={isOpenPost} onOpenChange={setIsOpenPost}>
+      <DialogMain
+        isLogo={false}
+        open={isOpenPost}
+        onOpenChange={setIsOpenPost}
+        width="2xl"
+      >
         <Tweet
           contentBtn="Đăng bài"
           tweetType={ETweetType.Tweet}
