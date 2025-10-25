@@ -65,6 +65,7 @@ export const ParticipantsDtoSchema = z.object({
 
 export type CreateConversationDto = z.infer<typeof CreateConversationDtoSchema>;
 export type ReadConversationDto = z.infer<typeof ConversationIdDtoSchema>;
+export type PinConversationDto = z.infer<typeof ConversationIdDtoSchema>;
 export type DeleteConversationDto = z.infer<typeof ConversationIdDtoSchema>;
 
 export type AddParticipantsBodyDto = z.infer<typeof ParticipantsDtoSchema>;

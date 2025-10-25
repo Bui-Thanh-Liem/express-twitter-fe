@@ -14,7 +14,7 @@ import { useGetMultiCommunitiesJoined } from "~/hooks/useFetchCommunity";
 import { cn } from "~/lib/utils";
 import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
-import { CommunityCard, CommunityCardSkeleton } from "../CommunityCard";
+import { JoinedCard, JoinedCardSkeleton } from "../CommunityCard";
 
 const carouselItems = [
   "Tất cả",
@@ -143,7 +143,7 @@ export function JoinedTab() {
         {isLoading && page === 1 && (
           <div className="grid grid-cols-3 gap-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <CommunityCardSkeleton key={`more-${i}`} />
+              <JoinedCardSkeleton key={`more-${i}`} />
             ))}
           </div>
         )}
@@ -152,7 +152,7 @@ export function JoinedTab() {
         {allCommunities.length > 0 && (
           <div className="grid grid-cols-3 gap-3">
             {sortCommunity(allCommunities).map((community) => (
-              <CommunityCard
+              <JoinedCard
                 key={community._id}
                 community={community}
                 onTogglePinned={onPinnedCommunity}
@@ -165,7 +165,7 @@ export function JoinedTab() {
         {isLoading && page > 1 ? (
           <div className="grid grid-cols-3 gap-3 mt-3">
             {Array.from({ length: 2 }).map((_, i) => (
-              <CommunityCardSkeleton key={`more-${i}`} />
+              <JoinedCardSkeleton key={`more-${i}`} />
             ))}
           </div>
         ) : (

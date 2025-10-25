@@ -21,10 +21,7 @@ import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { toastSimple } from "~/utils/toastSimple.util";
-import { CloseIcon } from "../icons/close";
-import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
-import { Checkbox } from "../ui/checkbox";
 import { CircularProgress } from "../ui/circular-progress";
 import { Divider } from "../ui/divider";
 import { Input, InputMain } from "../ui/input";
@@ -33,54 +30,8 @@ import { SearchMain } from "../ui/search";
 import { SelectMain } from "../ui/select";
 import { TextareaMain } from "../ui/textarea";
 import { WrapIcon } from "../wrapIcon";
-import { UserFollowerSkeleton } from "./CreateConversationForm";
+import { UserFollower, UserFollowerSkeleton, UserSelected } from "./CreateConversationForm";
 
-function UserSelected({
-  user,
-  onCancel,
-}: {
-  user: IUser;
-  onCancel: () => void;
-}) {
-  return (
-    <div className="rounded-2xl p-1 border border-blue-100 bg-blue-50 flex items-center gap-3">
-      <AvatarMain src={user.avatar} alt={user.name} className="w-6 h-6" />
-      <p className="text-xs max-w-28 line-clamp-1">{user.name}</p>
-
-      <div className="ml-auto p-1 cursor-pointer" onClick={onCancel}>
-        <CloseIcon color="red" size={16} />
-      </div>
-    </div>
-  );
-}
-
-function UserFollower({
-  user,
-  isCheck,
-  onCheck,
-}: {
-  user: IUser;
-  isCheck: boolean;
-  onCheck: () => void;
-}) {
-  return (
-    <Label
-      htmlFor={user._id}
-      className="flex items-center gap-3 hover:bg-gray-100 py-1 px-2 rounded-sm cursor-pointer"
-    >
-      <Checkbox
-        id={user._id}
-        checked={isCheck}
-        className="rounded-full data-[state=checked]:border-0 data-[state=checked]:bg-blue-400 data-[state=checked]:text-primary-foreground"
-        onCheckedChange={() => {
-          onCheck();
-        }}
-      />
-      <AvatarMain src={user.avatar} alt={user.name} className="w-10 h-10" />
-      <p className="max-w-28 line-clamp-1">{user.name}</p>
-    </Label>
-  );
-}
 
 export function CreateCommunityForm({
   setOpenForm,

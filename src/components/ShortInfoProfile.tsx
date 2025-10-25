@@ -1,12 +1,11 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { cn } from "~/lib/utils";
 import { ProfileAction } from "~/pages/profile/ProfileAction";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
 import { VerifyIcon } from "./icons/verify";
 import { AvatarMain } from "./ui/avatar";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
 //
 function NameItemUser({ user }: { user: IUser }) {
@@ -25,7 +24,6 @@ export function ShortInfoProfile({
   profile,
   children,
   isInfor = false,
-  className,
 }: {
   profile: IUser;
   children: ReactNode;
@@ -34,33 +32,15 @@ export function ShortInfoProfile({
 }) {
   const { user } = useUserStore();
 
-  const [isOpen, setIsOpen] = useState(false);
-
-  function onOpen() {
-    setTimeout(() => {
-      setIsOpen(true);
-    }, 300);
-  }
-
   const isOwnProfile = useMemo(
     () => user?._id === profile?._id,
     [profile?._id, user?._id]
   );
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger
-        className={cn("outline-0 border-0", className)}
-        asChild
-        onMouseEnter={onOpen}
-      >
-        {children}
-      </PopoverTrigger>
-      <PopoverContent
-        className="w-72 p-4 bg-white border rounded-2xl shadow-lg overflow-hidden"
-        onMouseEnter={onOpen}
-        onMouseLeave={() => setIsOpen(false)}
-      >
+    <HoverCard openDelay={200}>
+      <HoverCardTrigger asChild>{children}</HoverCardTrigger>
+      <HoverCardContent className="w-72 p-4 bg-white border rounded-2xl shadow-lg overflow-hidden">
         <div className="flex items-center justify-between">
           <AvatarMain
             src={profile?.avatar}
@@ -84,7 +64,7 @@ export function ShortInfoProfile({
             </p>
           ))}
         </div>
-      </PopoverContent>
-    </Popover>
+      </HoverCardContent>
+    </HoverCard>
   );
 }

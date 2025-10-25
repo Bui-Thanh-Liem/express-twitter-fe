@@ -1,5 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { CreateCommunityDto } from "~/shared/dtos/req/community.dto";
+import type {
+  CreateCommunityDto,
+  InvitationMembersDto,
+  PinCommunityDto,
+} from "~/shared/dtos/req/community.dto";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { ResMultiType } from "~/shared/types/response.type";
@@ -13,6 +17,23 @@ export const useCreateCommunity = () => {
   return useMutation({
     mutationFn: (payload: CreateCommunityDto) =>
       apiCall<ICommunity>("/communities", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: () => {
+      // Invalidate danh sách communities
+      queryClient.invalidateQueries({ queryKey: ["communities"] });
+    },
+  });
+};
+
+// ➕ POST
+export const useInviteCommunity = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: InvitationMembersDto) =>
+      apiCall<ICommunity>("/communities/invite-members", {
         method: "POST",
         body: JSON.stringify(payload),
       }),
@@ -53,15 +74,21 @@ export const useGetOneCommunityBySlug = (slug: string, enabled = true) => {
 };
 
 // 📄 GET
-export const useGetMultiCommunities = (queries?: IQuery<ICommunity>) => {
+export const useGetMultiCommunitiesOwner = (queries?: IQuery<ICommunity>) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
   return useQuery({
-    queryKey: ["communities", queries?.q, queries?.qe, normalizedQueries],
+    queryKey: [
+      "communities",
+      "owner",
+      queries?.q,
+      queries?.qe,
+      normalizedQueries,
+    ],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
-      const url = `/communities/${queryString ? `?${queryString}` : ""}`;
+      const url = `/communities/owner/${queryString ? `?${queryString}` : ""}`;
       return apiCall<ResMultiType<ICommunity>>(url);
     },
 
@@ -73,5 +100,46 @@ export const useGetMultiCommunities = (queries?: IQuery<ICommunity>) => {
     refetchOnReconnect: false,
     refetchInterval: false,
     networkMode: "online",
+  });
+};
+
+// 📄 GET
+export const useGetMultiCommunitiesJoined = (queries?: IQuery<ICommunity>) => {
+  const normalizedQueries = queries ? JSON.stringify(queries) : "";
+
+  return useQuery({
+    queryKey: [
+      "communities",
+      "joined",
+      queries?.q,
+      queries?.qe,
+      normalizedQueries,
+    ],
+    queryFn: () => {
+      // Tạo query string từ queries object
+      const queryString = queries ? buildQueryString(queries) : "";
+      const url = `/communities/joined/${queryString ? `?${queryString}` : ""}`;
+      return apiCall<ResMultiType<ICommunity>>(url);
+    },
+
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    networkMode: "online",
+  });
+};
+
+// ➕ PATCH
+export const useTogglePinCommunity = () => {
+  return useMutation({
+    mutationFn: (payload: PinCommunityDto) =>
+      apiCall<ICommunity>(`/communities/toggle-pin/${payload.community_id}`, {
+        method: "PATCH",
+      }),
+    onSuccess: () => {},
   });
 };

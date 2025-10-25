@@ -1,3 +1,4 @@
+import { Plus } from "lucide-react";
 import type { ReactNode } from "react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -31,7 +32,6 @@ import { useUserStore } from "~/store/useUserStore";
 import { playNotificationSound } from "~/utils/notificationSound";
 import { Logo } from "../../components/logo";
 import { WrapIcon } from "../../components/wrapIcon";
-import { BadgePlus, Plus } from "lucide-react";
 
 type NavItem = {
   name: string;

@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { WrapIcon } from "~/components/wrapIcon";
 import { CreateCommunity } from "./CreateCommunity";
 import { JoinedTab } from "./joined-tab/JoinedTab";
+import { OwnerTab } from "./owner-tab/OwnerTab";
 
 export function CommunitiesPage() {
   const navigate = useNavigate();
@@ -23,15 +24,23 @@ export function CommunitiesPage() {
 
       {/*  */}
       <div>
-        <Tabs defaultValue="joined" className="mb-12">
+        <Tabs defaultValue="owner" className="mb-12">
           <div className="sticky top-0 z-50">
             <TabsList className="w-full">
+              <TabsTrigger
+                className="cursor-pointer flex items-center"
+                value="owner"
+              >
+                <span>Của bạn</span>
+              </TabsTrigger>
+
               <TabsTrigger
                 className="cursor-pointer flex items-center"
                 value="joined"
               >
                 <span>Đã tham gia</span>
               </TabsTrigger>
+
               <TabsTrigger
                 className="cursor-pointer flex items-center"
                 value="explore"
@@ -43,6 +52,9 @@ export function CommunitiesPage() {
 
           {/* Tab Content */}
           <div>
+            <TabsContent value="owner" className="py-2">
+              <OwnerTab />
+            </TabsContent>
             <TabsContent value="joined" className="py-2">
               <JoinedTab />
             </TabsContent>

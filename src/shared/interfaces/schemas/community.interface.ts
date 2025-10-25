@@ -3,11 +3,13 @@ import type {
   EVisibilityType,
 } from "~/shared/enums/type.enum";
 import { type IBase } from "./base.interface";
+import type { IUser } from "./user.interface";
 
 export interface ICommunity extends IBase {
   name: string;
   slug: string;
   cover: string;
+  admin: IUser;
   bio: string;
   pin: boolean;
   visibilityType: EVisibilityType; // tất cả mọi người đều thấy nhưng không thể tương tác
@@ -15,4 +17,6 @@ export interface ICommunity extends IBase {
 
   category: string;
   verify: boolean;
+
+  pinned?: boolean;
 }

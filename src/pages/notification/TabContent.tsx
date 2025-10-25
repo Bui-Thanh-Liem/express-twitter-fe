@@ -10,6 +10,7 @@ import {
 } from "~/hooks/useFetchNotifications";
 import { cn } from "~/lib/utils";
 import { ENotificationType, ETweetType } from "~/shared/enums/type.enum";
+import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { INotification } from "~/shared/interfaces/schemas/notification.interface";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
@@ -60,6 +61,8 @@ function NotiItem({ noti, onClick, onDelete }: Props) {
     setRead(true);
 
     //
+    console.log("noti?.refId:::", noti);
+
     if (!noti?.refId) return;
 
     //
@@ -83,6 +86,13 @@ function NotiItem({ noti, onClick, onDelete }: Props) {
     if (noti.type === ENotificationType.Follow) {
       const _user = noti.userRef as IUser; // Follow thì ref là user
       navigate(`/${_user.username}`);
+      return;
+    }
+
+    //
+    if (noti.type === ENotificationType.Community) {
+      const _community = noti.communityRef as ICommunity;
+      navigate(`/communities/${_community?.slug}`);
       return;
     }
   }

@@ -18,7 +18,7 @@ import { TweetDetailPage } from "./pages/tweet-detail/TweetDetailPage";
 import { TrendingPage } from "./pages/trending/TrendingPage";
 import { CommunitiesPage } from "./pages/community/CommunitiesPage";
 import { FollowersFollowing } from "./pages/followers-following/FollowersFollowing";
-import { CommunityPage } from "./pages/community/CommunityPage";
+import { CommunityPage } from "./pages/community/Community-page/CommunityPage";
 
 // Router config
 const router = createBrowserRouter([

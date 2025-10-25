@@ -1,5 +1,6 @@
 import { ENotificationType } from "~/shared/enums/type.enum";
 import type { IBase } from "./base.interface";
+import type { ICommunity } from "./community.interface";
 import type { ITweet } from "./tweet.interface";
 import type { IUser } from "./user.interface";
 
@@ -13,4 +14,5 @@ export interface INotification extends IBase {
 
   tweetRef?: ITweet;
   userRef?: IUser;
+  communityRef?: ICommunity;
 }

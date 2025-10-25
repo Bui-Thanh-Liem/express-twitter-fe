@@ -3,6 +3,7 @@ import type {
   AddParticipantsBodyDto,
   CreateConversationDto,
   DeleteConversationDto,
+  PinConversationDto,
   PromoteMentorBodyDto,
   ReadConversationDto,
   RemoveParticipantsBodyDto,
@@ -113,7 +114,7 @@ export const useReadConversation = () => {
 // ➕ PATCH
 export const useTogglePinConversation = () => {
   return useMutation({
-    mutationFn: (payload: ReadConversationDto) =>
+    mutationFn: (payload: PinConversationDto) =>
       apiCall<IConversation>(
         `/conversations/toggle-pin/${payload.conversation_id}`,
         {

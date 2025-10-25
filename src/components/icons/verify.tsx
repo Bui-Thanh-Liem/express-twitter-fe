@@ -18,7 +18,7 @@ export function VerifyIcon({
           role="img"
           className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-1cvl2hr r-f9ja8p r-og9te1 r-3t4u6i"
           data-testid="icon-verified"
-          style={{ color: color ? color : "#666" }}
+          style={{ color: "#666" }}
           fill="currentColor"
         >
           <g>

@@ -1,6 +1,4 @@
-import audio from "../../public/sounds/notification.mp3";
-
-const sound = new Audio(audio);
+const sound = new Audio("/sounds/notification.mp3");
 
 export function playNotificationSound() {
   sound.currentTime = 0; // reset nếu đang phát
