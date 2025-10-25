@@ -6,6 +6,7 @@ import { VerifyIcon } from "../icons/verify";
 import { ShortInfoProfile } from "../ShortInfoProfile";
 import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
+import { useUserStore } from "~/store/useUserStore";
 
 export function UserToFollowItemSkeleton() {
   return (
@@ -31,6 +32,7 @@ export function UserToFollowItemSkeleton() {
 }
 
 export function UserToFollowItem({ user }: { user: Partial<IUser> }) {
+  const { user: userActive } = useUserStore();
   const [followed, setFollowed] = useState(user?.isFollow);
 
   //
@@ -63,18 +65,23 @@ export function UserToFollowItem({ user }: { user: Partial<IUser> }) {
             {user.bio && <p className="line-clamp-3 max-w-[95%]">{user.bio}</p>}
           </div>
         </div>
-        <ButtonMain
-          size="sm"
-          onClick={() => {
-            setFollowed(!followed);
-            mutate({
-              user_id: user._id || "",
-              username: user.username || "",
-            });
-          }}
-        >
-          {!followed ? "Theo dõi" : "Bỏ theo dõi"}
-        </ButtonMain>
+
+        {userActive?._id === user._id ? (
+          <p className="text-gray-400">là bạn</p>
+        ) : (
+          <ButtonMain
+            size="sm"
+            onClick={() => {
+              setFollowed(!followed);
+              mutate({
+                user_id: user._id || "",
+                username: user.username || "",
+              });
+            }}
+          >
+            {!followed ? "Theo dõi" : "Bỏ theo dõi"}
+          </ButtonMain>
+        )}
       </div>
     </div>
   );

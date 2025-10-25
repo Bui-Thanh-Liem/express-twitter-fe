@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
   CreateCommunityDto,
   InvitationMembersDto,
+  JoinCommunityDto,
   PinCommunityDto,
 } from "~/shared/dtos/req/community.dto";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
@@ -44,6 +45,23 @@ export const useInviteCommunity = () => {
   });
 };
 
+// ➕ POST
+export const useJoinCommunity = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: JoinCommunityDto) =>
+      apiCall<boolean>("/communities/join", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: () => {
+      // Invalidate danh sách communities
+      queryClient.invalidateQueries({ queryKey: ["communities"] });
+    },
+  });
+};
+
 // 📄 GET
 export const useGetAllCategories = () => {
   return useQuery({
@@ -64,12 +82,21 @@ export const useGetAllCategories = () => {
   });
 };
 
-// 🚪 GET - Get Community By slug
+// 🚪 GET - Get bare Community By slug
 export const useGetOneCommunityBySlug = (slug: string, enabled = true) => {
   return useQuery({
     queryKey: ["community", slug],
     queryFn: () => apiCall<ICommunity>(`/communities/slug/${slug}`),
     enabled: enabled && !!slug,
+  });
+};
+
+// 🚪 GET - Get members mentors Community By id
+export const useGetMMCommunityById = (id: string, enabled = true) => {
+  return useQuery({
+    queryKey: ["community", id],
+    queryFn: () => apiCall<ICommunity>(`/communities/mm/${id}`),
+    enabled: enabled && !!id,
   });
 };
 

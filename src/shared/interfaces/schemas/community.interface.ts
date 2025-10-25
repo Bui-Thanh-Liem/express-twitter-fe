@@ -19,4 +19,8 @@ export interface ICommunity extends IBase {
   verify: boolean;
 
   pinned?: boolean;
+  member_count?: number;
+
+  members?: IUser[];
+  mentors?: IUser[];
 }
