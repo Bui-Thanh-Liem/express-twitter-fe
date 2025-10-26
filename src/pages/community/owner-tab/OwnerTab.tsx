@@ -105,8 +105,8 @@ export function OwnerTab() {
   return (
     <div>
       {/*  */}
-      <div className="mb-4 px-4 flex items-center gap-4">
-        <div className="mr-12 flex-1">
+      <div className="mb-4 px-4 flex items-center justify-between">
+        <div className="w-[40%]">
           <SearchMain
             size="md"
             value={searchVal}
@@ -114,21 +114,24 @@ export function OwnerTab() {
             onChange={setSearchVal}
           />
         </div>
-        <Carousel className="w-[40%] ml-auto mr-14" setApi={setApi}>
-          <CarouselContent className="-ml-1 px-6">
-            {carouselItems.map((_) => (
-              <CarouselItem key={_} className="pl-1 md:basis-1/1 lg:basis-1/1">
-                <Card className="py-1 rounded-2xl">
-                  <CardContent className="flex items-center justify-center">
-                    <span className="text-[15px] font-medium">{_}</span>
-                  </CardContent>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+
+        <div className="w-[50%]">
+          <Carousel setApi={setApi} className="w-[82%]">
+            <CarouselContent className="-ml-1">
+              {carouselItems.map((_) => (
+                <CarouselItem key={_} className="pl-1">
+                  <Card className="py-1 rounded-2xl">
+                    <CardContent className="flex items-center justify-center">
+                      <span className="text-[15px] font-medium">{_}</span>
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </div>
       </div>
 
       <div className="overflow-y-auto h-[calc(100vh-180px)] px-4">

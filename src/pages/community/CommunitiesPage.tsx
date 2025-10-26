@@ -6,8 +6,23 @@ import { CreateCommunity } from "./CreateCommunity";
 import { JoinedTab } from "./joined-tab/JoinedTab";
 import { OwnerTab } from "./owner-tab/OwnerTab";
 
+export const joined_tab = "joined";
+export const explore_tab = "explore";
+
 export function CommunitiesPage() {
   const navigate = useNavigate();
+
+  // ✅ Xác định type theo pathname hiện tại
+  const type = location.pathname.endsWith(joined_tab)
+    ? joined_tab
+    : location.pathname.endsWith(explore_tab)
+    ? explore_tab
+    : "/";
+
+  // ✅ Khi người dùng đổi tab → điều hướng sang route tương ứng
+  const handleTabChange = (value: string) => {
+    navigate(`/communities${value !== "/" ? `/t/${value}` : ""}`);
+  };
 
   return (
     <div>
@@ -24,26 +39,31 @@ export function CommunitiesPage() {
 
       {/*  */}
       <div>
-        <Tabs defaultValue="owner" className="mb-12">
+        <Tabs
+          defaultValue="/"
+          className="mb-12"
+          value={type}
+          onValueChange={handleTabChange}
+        >
           <div className="sticky top-0 z-50">
             <TabsList className="w-full">
               <TabsTrigger
                 className="cursor-pointer flex items-center"
-                value="owner"
+                value="/"
               >
                 <span>Của bạn</span>
               </TabsTrigger>
 
               <TabsTrigger
                 className="cursor-pointer flex items-center"
-                value="joined"
+                value={joined_tab}
               >
                 <span>Đã tham gia</span>
               </TabsTrigger>
 
               <TabsTrigger
                 className="cursor-pointer flex items-center"
-                value="explore"
+                value={explore_tab}
               >
                 <span>Khám phá</span>
               </TabsTrigger>
@@ -52,13 +72,13 @@ export function CommunitiesPage() {
 
           {/* Tab Content */}
           <div>
-            <TabsContent value="owner" className="py-2">
+            <TabsContent value="/" className="py-2">
               <OwnerTab />
             </TabsContent>
-            <TabsContent value="joined" className="py-2">
+            <TabsContent value={joined_tab} className="py-2">
               <JoinedTab />
             </TabsContent>
-            <TabsContent value="explore" className="py-4"></TabsContent>
+            <TabsContent value={explore_tab} className="py-4"></TabsContent>
           </div>
         </Tabs>
       </div>

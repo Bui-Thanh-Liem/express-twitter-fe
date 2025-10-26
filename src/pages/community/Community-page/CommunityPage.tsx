@@ -5,16 +5,14 @@ import { VerifyIcon } from "~/components/icons/verify";
 import { ButtonMain } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { WrapIcon } from "~/components/wrapIcon";
-import {
-  useGetOneCommunityBySlug,
-  useJoinCommunity,
-} from "~/hooks/useFetchCommunity";
-import { EMembershipType, ETweetType } from "~/shared/enums/type.enum";
+import { useGetOneCommunityBySlug } from "~/hooks/useFetchCommunity";
+import { ETweetType } from "~/shared/enums/type.enum";
 import { formatDateToDateVN } from "~/utils/formatDateToDateVN";
-import { handleResponse } from "~/utils/handleResponse";
 import { ProfileSkeleton } from "../../profile/ProfilePage";
 import { CommunityInfo } from "./CommunityInfo";
 import { CommunityInvite } from "./CommunityInvite";
+import { CommunityJoinLeave } from "./CommunityJoinLeave";
+import { CommunitySetting } from "./CommunitySetting";
 
 export function CommunityPage() {
   const { slug } = useParams();
@@ -23,8 +21,6 @@ export function CommunityPage() {
   //
   const { data, refetch, isLoading, error } = useGetOneCommunityBySlug(slug!);
   const community = data?.data;
-
-  const apiJoinCommunity = useJoinCommunity();
 
   // Error handling
   if (error) {
@@ -58,13 +54,7 @@ export function CommunityPage() {
     );
   }
 
-  //
-  async function handleJoin() {
-    const res = await apiJoinCommunity.mutateAsync({
-      community_id: community?._id || "",
-    });
-    handleResponse(res);
-  }
+  console.log("community::", community);
 
   return (
     <div>
@@ -106,16 +96,17 @@ export function CommunityPage() {
               />
             </h2>
             <div className="flex items-center gap-3">
+              {/*  */}
+              <CommunitySetting community={community} />
+
+              {/*  */}
               <CommunityInfo community={community} />
+
+              {/*  */}
               <CommunityInvite community={community} />
-              {community?.membershipType === EMembershipType.Open && (
-                <ButtonMain size="sm" onClick={handleJoin}>
-                  Tham gia
-                </ButtonMain>
-              )}
-              {/* <WrapIcon className="border border-red-100">
-                  <LogOut size={18} color="#fb2c36" />
-                </WrapIcon> */}
+
+              {/*  */}
+              <CommunityJoinLeave community={community} />
             </div>
           </div>
           <div className="my-3 px-3 rounded-2xl border inline-block">

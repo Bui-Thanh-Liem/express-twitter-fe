@@ -8,17 +8,25 @@ import RootLayout from "./layouts/root-layout/RootLayout";
 import { AuthPage } from "./pages/auth/AuthPage";
 import { VerifyEmail } from "./pages/auth/VerifyEmail";
 import { BookmarkPage } from "./pages/bookmark/BookmarkPage";
+import {
+  CommunitiesPage,
+  explore_tab,
+  joined_tab,
+} from "./pages/community/CommunitiesPage";
+import { CommunityPage } from "./pages/community/Community-page/CommunityPage";
 import { ExplorePage } from "./pages/explore/ExplorePage";
+import {
+  followers_tab,
+  FollowersFollowing,
+  following_tab,
+} from "./pages/followers-following/FollowersFollowing";
 import { HomePage } from "./pages/home/HomePage";
 import { MessagePage } from "./pages/messages/MessagePage";
 import { NotificationPage } from "./pages/notification/NotificationPage";
 import { ProfilePage } from "./pages/profile/ProfilePage";
 import { SearchPage } from "./pages/search/SearchPage";
-import { TweetDetailPage } from "./pages/tweet-detail/TweetDetailPage";
 import { TrendingPage } from "./pages/trending/TrendingPage";
-import { CommunitiesPage } from "./pages/community/CommunitiesPage";
-import { FollowersFollowing } from "./pages/followers-following/FollowersFollowing";
-import { CommunityPage } from "./pages/community/Community-page/CommunityPage";
+import { TweetDetailPage } from "./pages/tweet-detail/TweetDetailPage";
 
 // Router config
 const router = createBrowserRouter([
@@ -51,11 +59,22 @@ const router = createBrowserRouter([
           { path: "messages", element: <MessagePage /> },
           { path: "search", element: <SearchPage /> },
           { path: "communities", element: <CommunitiesPage /> },
+          { path: `communities/t/${joined_tab}`, element: <CommunitiesPage /> },
+          {
+            path: `communities/t/${explore_tab}`,
+            element: <CommunitiesPage />,
+          },
           { path: "communities/:slug", element: <CommunityPage /> },
           { path: "trending", element: <TrendingPage /> },
           { path: "tweet/:tweet_id", element: <TweetDetailPage /> },
-          { path: ":username/following", element: <FollowersFollowing /> },
-          { path: ":username/followers", element: <FollowersFollowing /> },
+          {
+            path: `:username/${following_tab}`,
+            element: <FollowersFollowing />,
+          },
+          {
+            path: `:username/${followers_tab}`,
+            element: <FollowersFollowing />,
+          },
           { path: ":username", element: <ProfilePage /> },
         ],
       },

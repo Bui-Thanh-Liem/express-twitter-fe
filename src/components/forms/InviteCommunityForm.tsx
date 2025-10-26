@@ -16,13 +16,13 @@ import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { ButtonMain } from "../ui/button";
-import { Divider } from "../ui/divider";
 import { SearchMain } from "../ui/search";
 import {
   UserFollower,
   UserFollowerSkeleton,
   UserSelected,
 } from "./CreateConversationForm";
+import { toastSimple } from "~/utils/toastSimple.util";
 
 export function InviteCommunityForm({
   community,
@@ -93,6 +93,12 @@ export function InviteCommunityForm({
     },
   });
 
+  useEffect(() => {
+    if (errors.member_ids?.message) {
+      toastSimple(errors.member_ids?.message, "error");
+    }
+  }, [errors]);
+
   //
   useEffect(() => {
     setValue("community_id", community._id);
@@ -143,16 +149,6 @@ export function InviteCommunityForm({
       className="flex items-center justify-center"
     >
       <div className="mt-4 space-y-6 min-w-[460px]">
-        <div className="flex flex-col items-center justify-center">
-          <Divider
-            className="w-80"
-            text="Mời những người dùng đang theo dõi bạn"
-          />
-          <p className="text-xs text-red-400">
-            {errors && errors?.member_ids ? errors.member_ids?.message : null}
-          </p>
-        </div>
-
         <div className="grid grid-cols-12">
           <div className="col-span-7 border-r pr-4 ">
             <SearchMain onChange={setSearchVal} value={searchVal} size="sm" />

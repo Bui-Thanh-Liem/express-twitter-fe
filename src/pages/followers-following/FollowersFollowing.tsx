@@ -6,8 +6,8 @@ import { useGetOneByUsername } from "~/hooks/useFetchUser";
 import { FollowersPage } from "./FollowersPage";
 import { FollowingPage } from "./FollowingPage";
 
-const followers_type = "followers";
-const following_type = "following";
+export const followers_tab = "followers";
+export const following_tab = "following";
 
 export function FollowersFollowing() {
   const navigate = useNavigate();
@@ -16,8 +16,8 @@ export function FollowersFollowing() {
 
   // ✅ Xác định type theo pathname hiện tại
   const type = location.pathname.endsWith("/followers")
-    ? followers_type
-    : following_type;
+    ? followers_tab
+    : following_tab;
 
   // ✅ Lấy dữ liệu user
   const { data } = useGetOneByUsername(username!);
@@ -47,17 +47,17 @@ export function FollowersFollowing() {
       <Tabs value={type} onValueChange={handleTabChange} className="mb-12">
         <div className="bg-white sticky top-0 z-50">
           <TabsList className="w-full">
-            <TabsTrigger value={followers_type}>Người theo dõi</TabsTrigger>
-            <TabsTrigger value={following_type}>Đang theo dõi</TabsTrigger>
+            <TabsTrigger value={following_tab}>Đang theo dõi</TabsTrigger>
+            <TabsTrigger value={followers_tab}>Người theo dõi</TabsTrigger>
           </TabsList>
         </div>
 
         <div className="pt-0">
-          <TabsContent value={followers_type} className="px-0 py-4">
+          <TabsContent value={followers_tab} className="px-0 py-4">
             <FollowersPage />
           </TabsContent>
 
-          <TabsContent value={following_type} className="px-0 py-4">
+          <TabsContent value={following_tab} className="px-0 py-4">
             <FollowingPage />
           </TabsContent>
         </div>

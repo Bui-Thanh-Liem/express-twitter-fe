@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
   CreateCommunityDto,
   InvitationMembersDto,
-  JoinCommunityDto,
+  JoinLeaveCommunityDto,
   PinCommunityDto,
 } from "~/shared/dtos/req/community.dto";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
@@ -50,14 +50,29 @@ export const useJoinCommunity = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: JoinCommunityDto) =>
-      apiCall<boolean>("/communities/join", {
+    mutationFn: (payload: JoinLeaveCommunityDto) =>
+      apiCall<boolean>(`/communities/join/${payload.community_id}`, {
         method: "POST",
-        body: JSON.stringify(payload),
       }),
     onSuccess: () => {
       // Invalidate danh sách communities
-      queryClient.invalidateQueries({ queryKey: ["communities"] });
+      queryClient.invalidateQueries({ queryKey: ["communities", "community"] });
+    },
+  });
+};
+
+// ➕ POST
+export const useLeaveCommunity = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: JoinLeaveCommunityDto) =>
+      apiCall<boolean>(`/communities/leave/${payload.community_id}`, {
+        method: "POST",
+      }),
+    onSuccess: () => {
+      // Invalidate danh sách communities
+      queryClient.invalidateQueries({ queryKey: ["communities", "community"] });
     },
   });
 };
@@ -92,10 +107,20 @@ export const useGetOneCommunityBySlug = (slug: string, enabled = true) => {
 };
 
 // 🚪 GET - Get members mentors Community By id
-export const useGetMMCommunityById = (id: string, enabled = true) => {
+export const useGetMMCommunityById = (
+  id: string,
+  queries: IQuery<ICommunity>,
+  enabled = true
+) => {
+  const normalizedQueries = queries ? JSON.stringify(queries) : "";
+  const queryString = queries ? buildQueryString(queries) : "";
+
   return useQuery({
-    queryKey: ["community", id],
-    queryFn: () => apiCall<ICommunity>(`/communities/mm/${id}`),
+    queryKey: ["community", id, queries.q, normalizedQueries],
+    queryFn: () =>
+      apiCall<ICommunity>(
+        `/communities/mm/${id}${queryString ? `?${queryString}` : ""}`
+      ),
     enabled: enabled && !!id,
   });
 };

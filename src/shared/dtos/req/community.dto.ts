@@ -31,7 +31,7 @@ export const InvitationMembersDtoSchema = z.object({
   }),
 });
 
-export const JoinCommunityDtoSchema = z.object({
+export const JoinLeaveCommunityDtoSchema = z.object({
   community_id: z.string().trim().regex(CONSTANT_REGEX.ID_MONGO, {
     message: "Invalid MongoDB ObjectId",
   }),
@@ -47,8 +47,18 @@ export const GetOneBySlugDtoSchema = z.object({
   slug: z.string().trim(),
 });
 
+export const PromoteMentorDtoSchema = z.object({
+  user_id: z.string().trim().regex(CONSTANT_REGEX.ID_MONGO, {
+    message: "Invalid MongoDB ObjectId",
+  }),
+  community_id: z.string().trim().regex(CONSTANT_REGEX.ID_MONGO, {
+    message: "Invalid MongoDB ObjectId",
+  }),
+});
+
 export type CreateCommunityDto = z.infer<typeof CreateCommunityDtoSchema>;
 export type InvitationMembersDto = z.infer<typeof InvitationMembersDtoSchema>;
-export type JoinCommunityDto = z.infer<typeof JoinCommunityDtoSchema>;
+export type JoinLeaveCommunityDto = z.infer<typeof JoinLeaveCommunityDtoSchema>;
 export type GetOneBySlugDto = z.infer<typeof GetOneBySlugDtoSchema>;
+export type PromoteMentorDto = z.infer<typeof PromoteMentorDtoSchema>;
 export type PinCommunityDto = z.infer<typeof PinCommunityDtoSchema>;

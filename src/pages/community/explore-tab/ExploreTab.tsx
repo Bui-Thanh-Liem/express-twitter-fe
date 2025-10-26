@@ -14,7 +14,7 @@ import { useGetMultiCommunitiesJoined } from "~/hooks/useFetchCommunity";
 import { cn } from "~/lib/utils";
 import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
-import { JoinedCard, JoinedCardSkeleton } from "../CommunityCard";
+import { CommunityCard, CommunityCardSkeleton } from "../CommunityCard";
 
 const carouselItems = [
   "Tất cả",
@@ -22,7 +22,7 @@ const carouselItems = [
   ...Object.values(EMembershipType),
 ];
 
-export function JoinedTab() {
+export function ExploreTab() {
   //
   const [page, setPage] = useState(1);
   const [allCommunities, setAllCommunities] = useState<ICommunity[]>([]);
@@ -105,8 +105,8 @@ export function JoinedTab() {
   return (
     <div>
       {/*  */}
-      <div className="mb-4 px-4 flex items-center gap-4">
-        <div className="mr-12 flex-1">
+      <div className="mb-4 px-4 flex items-center justify-between">
+        <div className="w-[40%]">
           <SearchMain
             size="md"
             value={searchVal}
@@ -114,21 +114,24 @@ export function JoinedTab() {
             onChange={setSearchVal}
           />
         </div>
-        <Carousel className="w-[40%] ml-auto mr-14" setApi={setApi}>
-          <CarouselContent className="-ml-1 px-6">
-            {carouselItems.map((_) => (
-              <CarouselItem key={_} className="pl-1 md:basis-1/1 lg:basis-1/1">
-                <Card className="py-1 rounded-2xl">
-                  <CardContent className="flex items-center justify-center">
-                    <span className="text-[15px] font-medium">{_}</span>
-                  </CardContent>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+
+        <div className="w-[50%]">
+          <Carousel setApi={setApi} className="w-[82%]">
+            <CarouselContent className="-ml-1">
+              {carouselItems.map((_) => (
+                <CarouselItem key={_} className="pl-1">
+                  <Card className="py-1 rounded-2xl">
+                    <CardContent className="flex items-center justify-center">
+                      <span className="text-[15px] font-medium">{_}</span>
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </div>
       </div>
 
       <div className="overflow-y-auto h-[calc(100vh-180px)] px-4">
@@ -143,7 +146,7 @@ export function JoinedTab() {
         {isLoading && page === 1 && (
           <div className="grid grid-cols-3 gap-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <JoinedCardSkeleton key={`more-${i}`} />
+              <CommunityCardSkeleton key={`more-${i}`} />
             ))}
           </div>
         )}
@@ -152,7 +155,7 @@ export function JoinedTab() {
         {allCommunities.length > 0 && (
           <div className="grid grid-cols-3 gap-3">
             {sortCommunity(allCommunities).map((community) => (
-              <JoinedCard
+              <CommunityCard
                 key={community._id}
                 community={community}
                 onTogglePinned={onPinnedCommunity}
@@ -165,7 +168,7 @@ export function JoinedTab() {
         {isLoading && page > 1 ? (
           <div className="grid grid-cols-3 gap-3 mt-3">
             {Array.from({ length: 2 }).map((_, i) => (
-              <JoinedCardSkeleton key={`more-${i}`} />
+              <CommunityCardSkeleton key={`more-${i}`} />
             ))}
           </div>
         ) : (

@@ -30,8 +30,11 @@ import { SearchMain } from "../ui/search";
 import { SelectMain } from "../ui/select";
 import { TextareaMain } from "../ui/textarea";
 import { WrapIcon } from "../wrapIcon";
-import { UserFollower, UserFollowerSkeleton, UserSelected } from "./CreateConversationForm";
-
+import {
+  UserFollower,
+  UserFollowerSkeleton,
+  UserSelected,
+} from "./CreateConversationForm";
 
 export function CreateCommunityForm({
   setOpenForm,
@@ -258,12 +261,14 @@ export function CreateCommunityForm({
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label className="text-sm font-medium">Lĩnh vực / Danh mục</Label>
+            <Label className="text-sm font-medium">
+              Lĩnh vực / Danh mục (ưu tiên)
+            </Label>
             <Input
               className="mt-2 h-12 py-6 text-lg px-3"
               id="category"
               value={categoryText}
-              placeholder="Tạo mới (ưu tiên)"
+              placeholder="Tạo mới"
               onChange={(e) => setCategoryText(e.target.value)}
             />
           </div>
@@ -297,7 +302,7 @@ export function CreateCommunityForm({
             errors={errors}
             id="visibilityType"
             name="visibilityType"
-            label="Chế độ xem"
+            label="Cài đặt hiển thị"
             size="lg"
           />
           <SelectMain

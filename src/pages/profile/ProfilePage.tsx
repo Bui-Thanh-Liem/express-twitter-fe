@@ -186,14 +186,14 @@ export function ProfilePage() {
           {/* <!-- Following and Followers --> */}
           <div className="flex items-center space-x-4 text-sm mb-4">
             <Link
-              to={`/${username}/followers`}
+              to={`/${username}/following`}
               className="hover:underline cursor-pointer"
             >
               <span className="font-semibold">{profile?.following_count}</span>
               <span className="text-gray-500"> đang theo dõi</span>
             </Link>
             <Link
-              to={`/${username}/following`}
+              to={`/${username}/followers`}
               className="hover:underline cursor-pointer"
             >
               <span className="font-semibold">{profile?.follower_count}</span>
