@@ -171,7 +171,9 @@ export function SidebarLeft() {
   }
 
   //
-  function onSuccessComment() {}
+  function onSuccessPost() {
+    setIsOpenPost(false);
+  }
 
   return (
     <>
@@ -285,7 +287,7 @@ export function SidebarLeft() {
           contentBtn="Đăng bài"
           tweetType={ETweetType.Tweet}
           placeholder="Có chuyện gì thế ?"
-          onSuccess={onSuccessComment}
+          onSuccess={onSuccessPost}
         />
       </DialogMain>
     </>

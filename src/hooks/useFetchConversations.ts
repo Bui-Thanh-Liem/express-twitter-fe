@@ -89,7 +89,7 @@ export const usePromoteMentor = () => {
       conv_id: string;
       payload: PromoteMentorBodyDto;
     }) =>
-      apiCall<IConversation>(`/conversations/promote-mentor/${conv_id}`, {
+      apiCall<IConversation>(`/conversations/promote/${conv_id}`, {
         method: "POST",
         body: JSON.stringify(payload),
       }),

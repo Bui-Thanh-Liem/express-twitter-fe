@@ -30,6 +30,7 @@ import { ButtonMain } from "../ui/button";
 import { CircularProgress } from "../ui/circular-progress";
 import { HashtagSuggest } from "./HashtagSuggest";
 import { Mentions } from "./Mentions";
+import { TweetCommunity } from "./TweetCommunity";
 
 // Constants
 const DEFAULT_VALUES: CreateTweetDto = {
@@ -71,6 +72,8 @@ export function Tweet({
   const [audience, setAudience] = useState<ETweetAudience>(
     ETweetAudience.Everyone
   );
+  const [communityId, setCommunityId] = useState("");
+
   const { insertEmoji } = useEmojiInsertion(textareaRef);
   const {
     selectedFile,
@@ -266,8 +269,9 @@ export function Tweet({
           hashtags,
           type: tweetType,
           content: data.content,
-          media: mediaUrl ? { url: mediaUrl, type: mediaType! } : undefined,
           mentions: mentionIds,
+          ...(communityId && { community_id: communityId }),
+          media: mediaUrl ? { url: mediaUrl, type: mediaType! } : undefined,
         };
 
         const resCreateTweet = await apiCreateTweet.mutateAsync(tweetData);
@@ -278,7 +282,9 @@ export function Tweet({
           setTimeout(() => {
             // Nếu upload thành công và type === video thì phải đợi kiểm duyệt
             if (mediaType == EMediaType.Video) {
-              toastSimple("Video của bạn đang được kiểm duyệt, nhận thông tin tại phần thông báo.");
+              toastSimple(
+                "Video của bạn đang được kiểm duyệt, nhận thông tin tại phần thông báo."
+              );
             }
           }, 3000);
         });
@@ -424,10 +430,18 @@ export function Tweet({
             </div>
           )}
 
+          <div>
+            {/*  */}
+            {(tweetType === ETweetType.Tweet ||
+              tweetType === ETweetType.QuoteTweet) && (
+              <TweetAudience onChangeAudience={setAudience} />
+            )}
+          </div>
+
           {/*  */}
           {(tweetType === ETweetType.Tweet ||
             tweetType === ETweetType.QuoteTweet) && (
-            <TweetAudience onChangeAudience={setAudience} />
+            <TweetCommunity onchange={setCommunityId} />
           )}
 
           {/*  */}

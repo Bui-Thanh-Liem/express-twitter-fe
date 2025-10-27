@@ -15,6 +15,7 @@ import type { ICommunity } from "~/shared/interfaces/schemas/community.interface
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
+import { toastSimple } from "~/utils/toastSimple.util";
 import { ButtonMain } from "../ui/button";
 import { SearchMain } from "../ui/search";
 import {
@@ -22,7 +23,6 @@ import {
   UserFollowerSkeleton,
   UserSelected,
 } from "./CreateConversationForm";
-import { toastSimple } from "~/utils/toastSimple.util";
 
 export function InviteCommunityForm({
   community,
@@ -151,7 +151,12 @@ export function InviteCommunityForm({
       <div className="mt-4 space-y-6 min-w-[460px]">
         <div className="grid grid-cols-12">
           <div className="col-span-7 border-r pr-4 ">
-            <SearchMain onChange={setSearchVal} value={searchVal} size="sm" />
+            <SearchMain
+              size="sm"
+              value={searchVal}
+              onChange={setSearchVal}
+              onClear={() => setSearchVal("")}
+            />
             <div className="space-y-2 h-96 max-h-96 overflow-auto mt-2">
               {followers?.map((user) => (
                 <UserFollower

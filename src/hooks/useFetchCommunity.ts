@@ -1,81 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
+  ChangeMembershipTypeDto,
+  ChangeVisibilityTypeDto,
   CreateCommunityDto,
+  DemoteMentorDto,
   InvitationMembersDto,
   JoinLeaveCommunityDto,
   PinCommunityDto,
+  PromoteMentorDto,
 } from "~/shared/dtos/req/community.dto";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { ResMultiType } from "~/shared/types/response.type";
 import { buildQueryString } from "~/utils/buildQueryString";
 import { apiCall } from "~/utils/callApi.util";
-
-// ➕ POST
-export const useCreateCommunity = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (payload: CreateCommunityDto) =>
-      apiCall<ICommunity>("/communities", {
-        method: "POST",
-        body: JSON.stringify(payload),
-      }),
-    onSuccess: () => {
-      // Invalidate danh sách communities
-      queryClient.invalidateQueries({ queryKey: ["communities"] });
-    },
-  });
-};
-
-// ➕ POST
-export const useInviteCommunity = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (payload: InvitationMembersDto) =>
-      apiCall<ICommunity>("/communities/invite-members", {
-        method: "POST",
-        body: JSON.stringify(payload),
-      }),
-    onSuccess: () => {
-      // Invalidate danh sách communities
-      queryClient.invalidateQueries({ queryKey: ["communities"] });
-    },
-  });
-};
-
-// ➕ POST
-export const useJoinCommunity = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (payload: JoinLeaveCommunityDto) =>
-      apiCall<boolean>(`/communities/join/${payload.community_id}`, {
-        method: "POST",
-      }),
-    onSuccess: () => {
-      // Invalidate danh sách communities
-      queryClient.invalidateQueries({ queryKey: ["communities", "community"] });
-    },
-  });
-};
-
-// ➕ POST
-export const useLeaveCommunity = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (payload: JoinLeaveCommunityDto) =>
-      apiCall<boolean>(`/communities/leave/${payload.community_id}`, {
-        method: "POST",
-      }),
-    onSuccess: () => {
-      // Invalidate danh sách communities
-      queryClient.invalidateQueries({ queryKey: ["communities", "community"] });
-    },
-  });
-};
 
 // 📄 GET
 export const useGetAllCategories = () => {
@@ -84,6 +22,26 @@ export const useGetAllCategories = () => {
     queryFn: () => {
       const url = `/communities/categories`;
       return apiCall<string[]>(url);
+    },
+
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    networkMode: "online",
+  });
+};
+
+// 📄 GET
+export const useGetAllBareCommunities = () => {
+  return useQuery({
+    queryKey: ["communities", "bare"],
+    queryFn: () => {
+      const url = `/communities/bare`;
+      return apiCall<ICommunity[]>(url);
     },
 
     // Lên getNewFeeds đọc giải thích
@@ -185,13 +143,171 @@ export const useGetMultiCommunitiesJoined = (queries?: IQuery<ICommunity>) => {
   });
 };
 
+// ➕ POST
+export const useCreateCommunity = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateCommunityDto) =>
+      apiCall<ICommunity>("/communities", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: async () => {
+      // Invalidate danh sách communities
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["communities"] }),
+        queryClient.invalidateQueries({ queryKey: ["community"] }),
+      ]);
+    },
+  });
+};
+
+// ➕ POST
+export const useInviteCommunity = () => {
+  return useMutation({
+    mutationFn: (payload: InvitationMembersDto) =>
+      apiCall<ICommunity>("/communities/invite-members", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: () => {},
+  });
+};
+
+// ➕ POST
+export const useJoinCommunity = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: JoinLeaveCommunityDto) =>
+      apiCall<boolean>(`/communities/join/${payload.community_id}`, {
+        method: "POST",
+      }),
+    onSuccess: async () => {
+      // Invalidate danh sách communities
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["communities"] }),
+        queryClient.invalidateQueries({ queryKey: ["community"] }),
+      ]);
+    },
+  });
+};
+
+// ➕ POST
+export const useLeaveCommunity = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: JoinLeaveCommunityDto) =>
+      apiCall<boolean>(`/communities/leave/${payload.community_id}`, {
+        method: "POST",
+      }),
+    onSuccess: async () => {
+      // Invalidate danh sách communities
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["communities"] }),
+        queryClient.invalidateQueries({ queryKey: ["community"] }),
+      ]);
+    },
+  });
+};
+
+// ➕ POST
+export const usePromoteMentor = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: PromoteMentorDto) =>
+      apiCall<boolean>(`/communities/promote/`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: async () => {
+      // Invalidate danh sách communities
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["communities"] }),
+        queryClient.invalidateQueries({ queryKey: ["community"] }),
+      ]);
+    },
+  });
+};
+
+// ➕ POST
+export const useDemoteMentor = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: DemoteMentorDto) =>
+      apiCall<boolean>(`/communities/demote/`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: async () => {
+      // Invalidate danh sách communities
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["communities"] }),
+        queryClient.invalidateQueries({ queryKey: ["community"] }),
+      ]);
+    },
+  });
+};
+
+// ➕ POST
+export const useChangeMemberShip = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: ChangeMembershipTypeDto) =>
+      apiCall<boolean>(`/communities/change-membership-type/`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: async () => {
+      // Invalidate danh sách communities
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["communities"] }),
+        queryClient.invalidateQueries({ queryKey: ["community"] }),
+      ]);
+    },
+  });
+};
+
+// ➕ POST
+export const useChangeVisibility = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: ChangeVisibilityTypeDto) =>
+      apiCall<boolean>(`/communities/change-visibility-type/`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: async () => {
+      // Invalidate danh sách communities
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["communities"] }),
+        queryClient.invalidateQueries({ queryKey: ["community"] }),
+      ]);
+    },
+  });
+};
+
 // ➕ PATCH
 export const useTogglePinCommunity = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (payload: PinCommunityDto) =>
       apiCall<ICommunity>(`/communities/toggle-pin/${payload.community_id}`, {
         method: "PATCH",
       }),
-    onSuccess: () => {},
+    onSuccess: async () => {
+      // Invalidate danh sách communities
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["communities"] }),
+        queryClient.invalidateQueries({ queryKey: ["community"] }),
+      ]);
+    },
   });
 };

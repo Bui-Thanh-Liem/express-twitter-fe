@@ -159,7 +159,12 @@ export function AddParticipantsForm({
 
         <div className="grid grid-cols-12">
           <div className="col-span-7 border-r pr-4">
-            <SearchMain onChange={setSearchVal} value={searchVal} size="sm" />
+            <SearchMain
+              size="sm"
+              value={searchVal}
+              onChange={setSearchVal}
+              onClear={() => setSearchVal("")}
+            />
             <div className="space-y-2 h-96 max-h-96 overflow-auto mt-2">
               {followers?.map((user) => (
                 <UserFollower

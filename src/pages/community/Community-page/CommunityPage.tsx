@@ -1,5 +1,5 @@
 import { Calendar } from "lucide-react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftIcon } from "~/components/icons/arrow-left";
 import { VerifyIcon } from "~/components/icons/verify";
 import { ButtonMain } from "~/components/ui/button";
@@ -53,8 +53,6 @@ export function CommunityPage() {
       </div>
     );
   }
-
-  console.log("community::", community);
 
   return (
     <div>
@@ -136,14 +134,14 @@ export function CommunityPage() {
           </div>
 
           {/* <!-- Members --> */}
-          <div className="flex items-center space-x-4 text-sm mb-4">
-            <Link
+          <div className="flex items-center space-x-2 text-sm mb-4">
+            {/* <Link
               to={`/${slug}/followers`}
               className="hover:underline cursor-pointer"
             >
-              <span className="font-semibold">{community.member_count}</span>
-              <span className="text-gray-500"> thành viên</span>
-            </Link>
+            </Link> */}
+            <span className="font-semibold">{community.member_count}</span>
+            <span className="text-gray-500"> thành viên</span>
           </div>
         </div>
 
