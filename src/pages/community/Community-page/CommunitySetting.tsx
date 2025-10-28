@@ -4,7 +4,7 @@ import {
   CircleQuestionMark,
   Settings,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ShortInfoProfile } from "~/components/ShortInfoProfile";
 import { AvatarMain } from "~/components/ui/avatar";
@@ -12,6 +12,8 @@ import { DialogMain } from "~/components/ui/dialog";
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { SearchMain } from "~/components/ui/search";
+import { Slider } from "~/components/ui/slider";
+import { Switch } from "~/components/ui/switch";
 import {
   Tooltip,
   TooltipContent,
@@ -20,11 +22,10 @@ import {
 import { WrapIcon } from "~/components/wrapIcon";
 import { useDebounce } from "~/hooks/useDebounce";
 import {
-  useChangeMemberShip,
-  useChangeVisibility,
   useDemoteMentor,
-  useGetMMCommunityById,
   usePromoteMentor,
+  useUpdateCommunity,
+  useGetMultiMMCommunityById,
 } from "~/hooks/useFetchCommunity";
 import { cn } from "~/lib/utils";
 import { CONSTANT_MAX_LENGTH_MENTOR } from "~/shared/constants";
@@ -40,6 +41,21 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
   const [members, setMembers] = useState<IUser[]>([]);
   const [mentors, setMentors] = useState<IUser[]>([]);
 
+  //
+  const [inviteExpireDays, setInviteExpireDays] = useState(
+    community.inviteExpireDays
+  );
+  const debounceDays = useDebounce(inviteExpireDays, 1000);
+
+  const [isLogMentor, setIsLogMentor] = useState(community.showLogForMentor);
+  const [isLogMember, setIsLogMember] = useState(community.showLogForMember);
+  const [isInviteMentor, setIsInviteMentor] = useState(
+    community.showInviteListForMentor
+  );
+  const [isInviteMember, setIsInviteMember] = useState(
+    community.showInviteListForMentor
+  );
+
   // Search
   const [searchVal, setSearchVal] = useState("");
   const debouncedSearchVal = useDebounce(searchVal, 500);
@@ -47,20 +63,46 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
   //
   const apiPromote = usePromoteMentor();
   const apiDemote = useDemoteMentor();
-  const apiChangeMembershipType = useChangeMemberShip();
-  const apiChangeVisibilityType = useChangeVisibility();
-  const { data } = useGetMMCommunityById(
+  const apiUpdate = useUpdateCommunity();
+  const { data } = useGetMultiMMCommunityById(
     community._id!,
-    { page: "1", limit: "20", q: debouncedSearchVal },
+    { page: "1", limit: "20", q: debouncedSearchVal }, // mentor sẽ max 20 và không phân trang (phân trang chỉ ảnh hưởng tới members)
     isOpen
   );
-  const communityDetail = data?.data;
+  const communityMM = data?.data;
 
   //
   useEffect(() => {
-    setMembers(communityDetail?.members || []);
-    setMentors(communityDetail?.mentors || []);
-  }, [communityDetail]);
+    setMembers(communityMM?.members || []);
+    setMentors(communityMM?.mentors || []);
+  }, [communityMM]);
+
+  //
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return; // ⛔ Bỏ qua lần đầu
+    }
+
+    // Nếu debounceDays === giá trị gốc → không gọi API
+    if (debounceDays === community.inviteExpireDays) return;
+
+    (async () => {
+      try {
+        const res = await apiUpdate.mutateAsync({
+          community_id: community._id,
+          inviteExpireDays: debounceDays,
+        });
+
+        if (![200, 201].includes(res.statusCode)) {
+          throw new Error(res.message);
+        }
+      } catch (error: any) {
+        toastSimple(error.message || "Cập nhật thất bại", "error");
+      }
+    })();
+  }, [debounceDays]); // không thêm nữa bỏ qua eslint
 
   //
   if (!community.isAdmin) return null;
@@ -127,8 +169,9 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
     }
   }
 
+  //
   async function handleChangeMembership(type: EMembershipType | string) {
-    const res = await apiChangeMembershipType.mutateAsync({
+    const res = await apiUpdate.mutateAsync({
       community_id: community._id,
       membershipType: type as EMembershipType,
     });
@@ -137,14 +180,79 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
     }
   }
 
+  //
   async function handleChangeVisibility(type: EVisibilityType | string) {
-    const res = await apiChangeVisibilityType.mutateAsync({
+    const res = await apiUpdate.mutateAsync({
       community_id: community._id,
       visibilityType: type as EVisibilityType,
     });
     if (res.statusCode !== 200 && res.statusCode !== 201) {
       toastSimple(res.message, "error");
     }
+  }
+
+  //
+  async function handleChangeShowLog(valMentor: boolean, valMember: boolean) {
+    // Lưu lại trạng thái cũ (phòng khi cần rollback)
+    const prevMentor = isLogMentor;
+    const prevMember = isLogMember;
+
+    // Cập nhật UI trước (optimistic update)
+    setIsLogMentor(valMentor);
+    setIsLogMember(valMember);
+
+    try {
+      const res = await apiUpdate.mutateAsync({
+        community_id: community._id,
+        showLogForMentor: valMentor,
+        showLogForMember: valMember,
+      });
+
+      if (![200, 201].includes(res.statusCode)) {
+        throw new Error(res.message);
+      }
+    } catch (error: any) {
+      // Rollback UI nếu lỗi
+      setIsLogMentor(prevMentor);
+      setIsLogMember(prevMember);
+      toastSimple(error.message || "Cập nhật thất bại", "error");
+    }
+  }
+
+  //
+  async function handleChangeShowInvite(
+    valMentor: boolean,
+    valMember: boolean
+  ) {
+    // Lưu lại giá trị cũ phòng khi cần rollback
+    const prevMentor = isInviteMentor;
+    const prevMember = isInviteMember;
+
+    // Cập nhật UI trước (optimistic update)
+    setIsInviteMentor(valMentor);
+    setIsInviteMember(valMember);
+
+    try {
+      const res = await apiUpdate.mutateAsync({
+        community_id: community._id,
+        showInviteListForMember: valMember,
+        showInviteListForMentor: valMentor,
+      });
+
+      if (![200, 201].includes(res.statusCode)) {
+        throw new Error(res.message);
+      }
+    } catch (error: any) {
+      // Rollback UI nếu lỗi
+      setIsInviteMentor(prevMentor);
+      setIsInviteMember(prevMember);
+      toastSimple(error.message || "Cập nhật thất bại", "error");
+    }
+  }
+
+  //
+  async function handleChangeDay([days]: [number]) {
+    setInviteExpireDays(days);
   }
 
   return (
@@ -161,6 +269,80 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
         textDesc={`Những thay đổi này chỉ ảnh hưởng trong cộng đồng ${community.name}`}
         onOpenChange={setIsOpen}
       >
+        <div className="p-3 rounded-2xl border shadow grid grid-cols-3">
+          {/*  */}
+          <div>
+            <p className="mb-3 font-medium">Ai được xem hoạt động ?</p>
+            <div className="flex items-center gap-x-5">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="showLogForMentor"
+                  className="cursor-pointer"
+                  checked={isLogMentor}
+                  onCheckedChange={(c) => {
+                    handleChangeShowLog(c, isLogMember);
+                  }}
+                />
+                <Label htmlFor="showLogForMentor">Điều hành viên</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="showLogForMember"
+                  className="cursor-pointer"
+                  checked={isLogMember}
+                  onCheckedChange={(c) => {
+                    handleChangeShowLog(isLogMentor, c);
+                  }}
+                />
+                <Label htmlFor="showLogForMember">Thành viên</Label>
+              </div>
+            </div>
+          </div>
+
+          {/*  */}
+          <div>
+            <p className="mb-3 font-medium">Ai được xem danh sách mời ?</p>
+            <div className="flex items-center gap-x-5">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="showInviteListForMentor"
+                  className="cursor-pointer"
+                  checked={isInviteMentor}
+                  onCheckedChange={(c) => {
+                    handleChangeShowInvite(c, isInviteMember);
+                  }}
+                />
+                <Label htmlFor="showInviteListForMentor">Điều hành viên</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="showInviteListForMember"
+                  className="cursor-pointer"
+                  checked={isInviteMember}
+                  onCheckedChange={(c) => {
+                    handleChangeShowInvite(isInviteMentor, c);
+                  }}
+                />
+                <Label htmlFor="showInviteListForMember">Thành viên</Label>
+              </div>
+            </div>
+          </div>
+
+          {/*  */}
+          <div>
+            <p className="mb-4 font-medium">Lời mời có hiệu lực trong ?</p>
+            <div className="flex items-center gap-x-5">
+              <Slider
+                step={1}
+                max={50}
+                className={cn("w-[70%]")}
+                onValueChange={handleChangeDay}
+                defaultValue={[community.inviteExpireDays]}
+              />
+              <Label>{inviteExpireDays} Ngày</Label>
+            </div>
+          </div>
+        </div>
         <div className="grid grid-cols-3 gap-x-4 mt-6">
           {/*  */}
           <div className="p-3 rounded-2xl border shadow">

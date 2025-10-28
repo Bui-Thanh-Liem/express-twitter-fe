@@ -43,7 +43,7 @@ export function TweetCommunity({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="outline-0 outline-transparent -ml-3 px-3 text-[#1D9BF0] hover:bg-blue-100/60 rounded-2xl inline-flex gap-2 items-center cursor-pointer transition-colors py-1">
+        <button className="outline-0 outline-transparent px-3 text-[#1D9BF0] bg-blue-100/50 rounded-2xl inline-flex gap-2 items-center cursor-pointer transition-colors py-1">
           {selectedOptionData?.icon &&
           React.isValidElement(selectedOptionData.icon) ? (
             React.cloneElement(selectedOptionData.icon, {
@@ -69,7 +69,9 @@ export function TweetCommunity({
             Bài viết này sẽ xuất hiện ở đâu ?
           </h3>
           <p className="text-sm text-gray-500">Trên dòng thời gian của bạn.</p>
-          <p className="text-sm text-gray-500">Trong một cộng đồng nào đó.</p>
+          <p className="text-sm text-gray-500">
+            Trong cộng đồng bạn đã tham gia.
+          </p>
         </div>
 
         {/* Options */}

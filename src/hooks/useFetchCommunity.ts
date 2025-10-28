@@ -1,16 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
-  ChangeMembershipTypeDto,
-  ChangeVisibilityTypeDto,
   CreateCommunityDto,
+  deleteInvitationDto,
   DemoteMentorDto,
   InvitationMembersDto,
   JoinLeaveCommunityDto,
   PinCommunityDto,
   PromoteMentorDto,
+  UpdateDto,
 } from "~/shared/dtos/req/community.dto";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
-import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
+import type {
+  ICommunity,
+  ICommunityInvitation,
+} from "~/shared/interfaces/schemas/community.interface";
 import type { ResMultiType } from "~/shared/types/response.type";
 import { buildQueryString } from "~/utils/buildQueryString";
 import { apiCall } from "~/utils/callApi.util";
@@ -65,7 +68,7 @@ export const useGetOneCommunityBySlug = (slug: string, enabled = true) => {
 };
 
 // 🚪 GET - Get members mentors Community By id
-export const useGetMMCommunityById = (
+export const useGetMultiMMCommunityById = (
   id: string,
   queries: IQuery<ICommunity>,
   enabled = true
@@ -80,6 +83,53 @@ export const useGetMMCommunityById = (
         `/communities/mm/${id}${queryString ? `?${queryString}` : ""}`
       ),
     enabled: enabled && !!id,
+  });
+};
+
+// 📄 GET - lấy những lời mời đã mời
+export const useGetMultiInvitations = (
+  community_id: string,
+  queries?: IQuery<ICommunity>
+) => {
+  const normalizedQueries = queries ? JSON.stringify(queries) : "";
+
+  return useQuery({
+    queryKey: ["invited", community_id, normalizedQueries],
+    queryFn: () => {
+      // Tạo query string từ queries object
+      const queryString = queries ? buildQueryString(queries) : "";
+      const url = `/communities/invite/${community_id}${
+        queryString ? `?${queryString}` : ""
+      }`;
+      return apiCall<ResMultiType<ICommunityInvitation>>(url);
+    },
+
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    networkMode: "online",
+  });
+};
+
+// ❌ DELETE
+export const useDeleteInvitation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: deleteInvitationDto) =>
+      apiCall<boolean>(
+        `/communities/invite/${payload.invitation_id}/${payload.community_id}`,
+        {
+          method: "DELETE",
+        }
+      ),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["invited"] });
+    },
   });
 };
 
@@ -165,13 +215,17 @@ export const useCreateCommunity = () => {
 
 // ➕ POST
 export const useInviteCommunity = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (payload: InvitationMembersDto) =>
       apiCall<ICommunity>("/communities/invite-members", {
         method: "POST",
         body: JSON.stringify(payload),
       }),
-    onSuccess: () => {},
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["invited"] });
+    },
   });
 };
 
@@ -253,34 +307,14 @@ export const useDemoteMentor = () => {
   });
 };
 
-// ➕ POST
-export const useChangeMemberShip = () => {
+// ➕ PATCH
+export const useUpdateCommunity = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: ChangeMembershipTypeDto) =>
-      apiCall<boolean>(`/communities/change-membership-type/`, {
-        method: "POST",
-        body: JSON.stringify(payload),
-      }),
-    onSuccess: async () => {
-      // Invalidate danh sách communities
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["communities"] }),
-        queryClient.invalidateQueries({ queryKey: ["community"] }),
-      ]);
-    },
-  });
-};
-
-// ➕ POST
-export const useChangeVisibility = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (payload: ChangeVisibilityTypeDto) =>
-      apiCall<boolean>(`/communities/change-visibility-type/`, {
-        method: "POST",
+    mutationFn: (payload: UpdateDto) =>
+      apiCall<boolean>(`/communities/update/`, {
+        method: "PATCH",
         body: JSON.stringify(payload),
       }),
     onSuccess: async () => {

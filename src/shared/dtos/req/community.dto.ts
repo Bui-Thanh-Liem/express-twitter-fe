@@ -58,18 +58,26 @@ export const PromoteMentorDtoSchema = z.object({
 
 export const DemoteMentorDtoSchema = PromoteMentorDtoSchema;
 
-export const ChangeMembershipTypeDtoSchema = z.object({
+export const UpdateDtoSchema = z.object({
   community_id: z.string().trim().regex(CONSTANT_REGEX.ID_MONGO, {
     message: "ObjectId không hợp lệ",
   }),
-  membershipType: z.nativeEnum(EMembershipType),
+  showLogForMember: z.boolean().optional(),
+  showLogForMentor: z.boolean().optional(),
+  showInviteListForMember: z.boolean().optional(),
+  showInviteListForMentor: z.boolean().optional(),
+  membershipType: z.nativeEnum(EMembershipType).optional(),
+  visibilityType: z.nativeEnum(EVisibilityType).optional(),
+  inviteExpireDays: z.number().optional(),
 });
 
-export const ChangeVisibilityTypeDtoSchema = z.object({
+export const deleteInvitationDtoSchema = z.object({
+  invitation_id: z.string().trim().regex(CONSTANT_REGEX.ID_MONGO, {
+    message: "ObjectId không hợp lệ",
+  }),
   community_id: z.string().trim().regex(CONSTANT_REGEX.ID_MONGO, {
     message: "ObjectId không hợp lệ",
   }),
-  visibilityType: z.nativeEnum(EVisibilityType),
 });
 
 export type CreateCommunityDto = z.infer<typeof CreateCommunityDtoSchema>;
@@ -79,9 +87,5 @@ export type GetOneBySlugDto = z.infer<typeof GetOneBySlugDtoSchema>;
 export type DemoteMentorDto = z.infer<typeof DemoteMentorDtoSchema>;
 export type PromoteMentorDto = z.infer<typeof PromoteMentorDtoSchema>;
 export type PinCommunityDto = z.infer<typeof PinCommunityDtoSchema>;
-export type ChangeMembershipTypeDto = z.infer<
-  typeof ChangeMembershipTypeDtoSchema
->;
-export type ChangeVisibilityTypeDto = z.infer<
-  typeof ChangeVisibilityTypeDtoSchema
->;
+export type UpdateDto = z.infer<typeof UpdateDtoSchema>;
+export type deleteInvitationDto = z.infer<typeof deleteInvitationDtoSchema>;

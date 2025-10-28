@@ -13,6 +13,8 @@ import { CommunityInfo } from "./CommunityInfo";
 import { CommunityInvite } from "./CommunityInvite";
 import { CommunityJoinLeave } from "./CommunityJoinLeave";
 import { CommunitySetting } from "./CommunitySetting";
+import { CommunityActivity } from "./CommunityActivity";
+import { CommunityInvitedList } from "./CommunityInvitedList";
 
 export function CommunityPage() {
   const { slug } = useParams();
@@ -96,6 +98,12 @@ export function CommunityPage() {
             <div className="flex items-center gap-3">
               {/*  */}
               <CommunitySetting community={community} />
+
+              {/*  */}
+              <CommunityActivity community={community} />
+
+              {/*  */}
+              <CommunityInvitedList community={community} />
 
               {/*  */}
               <CommunityInfo community={community} />

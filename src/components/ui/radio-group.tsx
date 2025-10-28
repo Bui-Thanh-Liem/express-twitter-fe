@@ -30,7 +30,7 @@ function RadioGroupItem({
         "dark:bg-input/30 aspect-square size-4 shrink-0 rounded-full border shadow-xs transition-all outline-none",
         "focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
         // ✅ Khi checked thì border đổi sang sky-400
-        "data-[state=checked]:border-blue-500 data-[state=checked]:text-blue-400",
+        "data-[state=checked]:border-sky-500 data-[state=checked]:text-sky-400",
         className
       )}
       {...props}
@@ -56,9 +56,9 @@ function RadioGroupItemMain({
       className={cn(
         // base shape
         "relative flex items-center justify-center rounded-full border transition-all cursor-pointer",
-        "size-5 border-gray-300 hover:border-blue-400 focus-visible:ring-2 focus-visible:ring-blue-400",
+        "size-5 border-gray-300 hover:border-sky-400 focus-visible:ring-2 focus-visible:ring-sky-400",
         // checked
-        "data-[state=checked]:bg-blue-400 data-[state=checked]:border-blue-400",
+        "data-[state=checked]:bg-sky-400 data-[state=checked]:border-blue-400",
         // disabled
         "disabled:cursor-not-allowed disabled:opacity-50",
         className

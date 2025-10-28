@@ -9,6 +9,8 @@ import type { ICommunity } from "~/shared/interfaces/schemas/community.interface
 export function CommunityInvite({ community }: { community: ICommunity }) {
   const [isOpen, setIsOpen] = useState(false);
 
+  //
+  if (!community.isJoined) return;
   if (
     community.membershipType === EMembershipType.Invite_only &&
     !community.isAdmin &&

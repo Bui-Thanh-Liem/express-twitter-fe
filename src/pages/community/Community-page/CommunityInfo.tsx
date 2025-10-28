@@ -6,7 +6,7 @@ import {
   UserToFollowItemSkeleton,
 } from "~/components/who-to-follow/who-to-follow-item";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useGetMMCommunityById } from "~/hooks/useFetchCommunity";
+import { useGetMultiMMCommunityById } from "~/hooks/useFetchCommunity";
 import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
@@ -27,13 +27,14 @@ export const infoMap = {
 export function CommunityInfo({ community }: { community: ICommunity }) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data, isLoading } = useGetMMCommunityById(
+  const { data, isLoading } = useGetMultiMMCommunityById(
     community._id!,
-    { page: "1", limit: "20" },
+    { page: "1", limit: "20" }, // mentor sẽ max 20 và không phân trang (phân trang chỉ ảnh hưởng tới members)
     isOpen
   );
   const communityDetail = data?.data;
 
+  //
   const renderUserList = (title: string, users?: IUser[]) => (
     <div>
       <p className="font-medium pb-3">{title}</p>
@@ -91,7 +92,7 @@ export function CommunityInfo({ community }: { community: ICommunity }) {
           {/* Admin */}
           <section>
             <p className="font-medium pb-3">Quản trị viên / Chủ sở hữu</p>
-            <UserToFollowItem user={community?.admin} />
+            <UserToFollowItem user={community?.admin as Partial<IUser>} />
           </section>
 
           {/* Mentors */}

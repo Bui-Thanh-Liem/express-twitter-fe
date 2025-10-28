@@ -261,6 +261,8 @@ export function Tweet({
         // Lọc lấy hashtag
         const hashtags = data.content.match(/#[\w.]+/g) || [];
 
+        // Nếu có community_id thì audience là mọi người
+
         //
         const tweetData: CreateTweetDto = {
           ...data,
@@ -270,7 +272,10 @@ export function Tweet({
           type: tweetType,
           content: data.content,
           mentions: mentionIds,
-          ...(communityId && { community_id: communityId }),
+          ...(communityId && {
+            community_id: communityId,
+            audience: ETweetAudience.Everyone,
+          }),
           media: mediaUrl ? { url: mediaUrl, type: mediaType! } : undefined,
         };
 
@@ -283,7 +288,7 @@ export function Tweet({
             // Nếu upload thành công và type === video thì phải đợi kiểm duyệt
             if (mediaType == EMediaType.Video) {
               toastSimple(
-                "Video của bạn đang được kiểm duyệt, nhận thông tin tại phần thông báo."
+                "Video của bạn đang được xử lý, vui lòng chờ đợi trong vaif giây."
               );
             }
           }, 3000);
@@ -304,13 +309,14 @@ export function Tweet({
       tweet?._id,
       audience,
       tweetType,
-      mediaType,
       mentionIds,
+      communityId,
+      mediaType,
       apiCreateTweet,
-      successForm,
       setUploadProgress,
       apiUploadMedia,
       setUploadedMediaUrl,
+      successForm,
     ]
   );
 
@@ -430,19 +436,19 @@ export function Tweet({
             </div>
           )}
 
-          <div>
+          <div className="mt-3 flex justify-between items-center">
             {/*  */}
             {(tweetType === ETweetType.Tweet ||
+              tweetType === ETweetType.QuoteTweet) && (
+              <TweetCommunity onchange={setCommunityId} />
+            )}
+
+            {/*  */}
+            {((!communityId && tweetType === ETweetType.Tweet) ||
               tweetType === ETweetType.QuoteTweet) && (
               <TweetAudience onChangeAudience={setAudience} />
             )}
           </div>
-
-          {/*  */}
-          {(tweetType === ETweetType.Tweet ||
-            tweetType === ETweetType.QuoteTweet) && (
-            <TweetCommunity onchange={setCommunityId} />
-          )}
 
           {/*  */}
           {tweetType === ETweetType.QuoteTweet && tweet && (

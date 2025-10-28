@@ -1,11 +1,16 @@
 export enum EUserVerifyStatus {
   Unverified,
   Verified,
-  Banned
+  Banned,
 }
 
 export enum EVideoStatus {
   Pending,
   Reject,
-  Success
+  Success,
+}
+
+export enum EInvitationStatus {
+  Pending,
+  Accepted,
 }

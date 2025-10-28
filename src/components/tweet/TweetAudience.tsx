@@ -21,12 +21,12 @@ const replyOptions = [
   },
   {
     id: ETweetAudience.Mentions,
-    title: "Chỉ những ai bạn nhắc đến",
+    title: "Chỉ những ai tôi nhắc đến",
     icon: <MentionsIcon color="#fff" />,
   },
   {
     id: ETweetAudience.Followers,
-    title: "Chỉ những ai đang theo dõi bạn",
+    title: "Chỉ những ai đang theo dõi tôi",
     icon: <AccountFollowIcon color="#fff" />,
   },
 ];
@@ -51,14 +51,14 @@ export function TweetAudience({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="outline-0 outline-transparent -ml-3 mt-3 px-3 text-[#1D9BF0] hover:bg-blue-100/60 rounded-2xl inline-flex gap-2 items-center cursor-pointer transition-colors py-1">
+        <button className="outline-0 outline-transparent px-3 text-[#1D9BF0] bg-blue-100/50 rounded-2xl inline-flex gap-2 items-center cursor-pointer transition-colors py-1">
           {selectedOptionData?.icon &&
             React.isValidElement(selectedOptionData.icon) &&
             React.cloneElement(selectedOptionData.icon, {
               color: "rgb(29, 155, 240)",
             } as { color: string })}
           <TypographyP className="font-semibold text-sm">
-            {selectedOptionData?.title} có thể tương tác
+            {selectedOptionData?.title}
           </TypographyP>
         </button>
       </DropdownMenuTrigger>
