@@ -436,7 +436,7 @@ export function Tweet({
             </div>
           )}
 
-          <div className="mt-3 flex justify-between items-center">
+          <div className="my-3 flex justify-between items-center">
             {/*  */}
             {(tweetType === ETweetType.Tweet ||
               tweetType === ETweetType.QuoteTweet) && (
@@ -445,7 +445,7 @@ export function Tweet({
 
             {/*  */}
             {((!communityId && tweetType === ETweetType.Tweet) ||
-              tweetType === ETweetType.QuoteTweet) && (
+              (!communityId && tweetType === ETweetType.QuoteTweet)) && (
               <TweetAudience onChangeAudience={setAudience} />
             )}
           </div>

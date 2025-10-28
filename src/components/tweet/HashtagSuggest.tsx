@@ -46,7 +46,7 @@ export function HashtagSuggest({
         {children}
       </PopoverTrigger>
       <PopoverContent
-        className="p-4 bg-white border rounded-2xl shadow-lg max-h-72 overflow-y-auto"
+        className="p-4 bg-white border rounded-2xl shadow-lg max-h-72 overflow-y-auto z-[100] pointer-events-auto"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         {isLoading ? (

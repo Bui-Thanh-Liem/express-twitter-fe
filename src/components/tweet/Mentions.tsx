@@ -3,9 +3,9 @@ import { useDebounce } from "~/hooks/useDebounce";
 import { useGetMultiForMentions } from "~/hooks/useFetchUser";
 import { cn } from "~/lib/utils";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { AvatarMain } from "../ui/avatar";
 import { VerifyIcon } from "../icons/verify";
+import { AvatarMain } from "../ui/avatar";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 interface MentionsProps {
   open: boolean;
@@ -68,7 +68,7 @@ export function Mentions({
         {children}
       </PopoverTrigger>
       <PopoverContent
-        className="bg-white border rounded-2xl shadow-lg max-h-72 overflow-y-auto z-[4000]"
+        className="bg-white border rounded-2xl shadow-lg max-h-72 overflow-y-auto z-[100] pointer-events-auto"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         {isLoading ? (

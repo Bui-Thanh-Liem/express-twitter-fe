@@ -129,6 +129,13 @@ export function CommunityInvitedList({ community }: { community: ICommunity }) {
                   </p>
                 </div>
               )}
+
+          {/*  */}
+          {!isLoading && invited.length === 0 && page === 1 && (
+            <p className="p-4 text-center text-gray-400">
+              Cộng đồng của bạn chưa mời ai
+            </p>
+          )}
         </div>
       </DialogMain>
     </>
@@ -162,7 +169,8 @@ export function InvitedItem({
       </div>
       <div>
         <p className="text-sm text-gray-400 group-hover:hidden">
-          {invited.inviter && `${(invited.inviter as unknown as IUser)?.name} đã mời ,`}
+          {invited.inviter &&
+            `${(invited.inviter as unknown as IUser)?.name} đã mời ,`}
           {formatTimeUntil(invited.exp as unknown as string)}
         </p>
         <WrapIcon
