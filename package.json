@@ -71,5 +71,8 @@
     "typescript-eslint": "^8.34.1",
     "vite": "^7.0.0",
     "vite-bundle-visualizer": "^1.0.0"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-musl": "4.9.5"
   }
 }
