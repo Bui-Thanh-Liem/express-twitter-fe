@@ -5,6 +5,9 @@ import { WrapIcon } from "~/components/wrapIcon";
 import { CreateCommunity } from "./CreateCommunity";
 import { JoinedTab } from "./joined-tab/JoinedTab";
 import { OwnerTab } from "./owner-tab/OwnerTab";
+import { ExploreTab } from "./explore-tab/ExploreTab";
+import { SearchMain } from "~/components/ui/search";
+import { Search } from "lucide-react";
 
 export const joined_tab = "joined";
 export const explore_tab = "explore";
@@ -34,6 +37,17 @@ export function CommunitiesPage() {
           </WrapIcon>
           <p className="font-semibold text-[20px]">Cộng đồng</p>
         </div>
+        <div className="w-32">
+          <SearchMain
+            size="md"
+            value={""}
+            onClear={() => {}}
+            onChange={() => {}}
+          />
+        </div>
+        <WrapIcon>
+          <Search size={18}/>
+        </WrapIcon>
         <CreateCommunity />
       </div>
 
@@ -78,7 +92,9 @@ export function CommunitiesPage() {
             <TabsContent value={joined_tab} className="py-2">
               <JoinedTab />
             </TabsContent>
-            <TabsContent value={explore_tab} className="py-4"></TabsContent>
+            <TabsContent value={explore_tab} className="py-2">
+              <ExploreTab />
+            </TabsContent>
           </div>
         </Tabs>
       </div>

@@ -193,6 +193,38 @@ export const useGetMultiCommunitiesJoined = (queries?: IQuery<ICommunity>) => {
   });
 };
 
+// 📄 GET
+export const useGetMultiCommunities = (queries?: IQuery<ICommunity>) => {
+  const normalizedQueries = queries ? JSON.stringify(queries) : "";
+
+  return useQuery({
+    queryKey: [
+      "communities",
+      "explore",
+      queries?.q,
+      queries?.qe,
+      normalizedQueries,
+    ],
+    queryFn: () => {
+      // Tạo query string từ queries object
+      const queryString = queries ? buildQueryString(queries) : "";
+      const url = `/communities/explore/${
+        queryString ? `?${queryString}` : ""
+      }`;
+      return apiCall<ResMultiType<ICommunity>>(url);
+    },
+
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    networkMode: "online",
+  });
+};
+
 // ➕ POST
 export const useCreateCommunity = () => {
   const queryClient = useQueryClient();

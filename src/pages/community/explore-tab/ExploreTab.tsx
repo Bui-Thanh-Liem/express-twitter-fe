@@ -6,21 +6,16 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-  type CarouselApi,
 } from "~/components/ui/carousel";
 import { SearchMain } from "~/components/ui/search";
 import { useDebounce } from "~/hooks/useDebounce";
-import { useGetMultiCommunitiesJoined } from "~/hooks/useFetchCommunity";
+import {
+  useGetAllCategories,
+  useGetMultiCommunities,
+} from "~/hooks/useFetchCommunity";
 import { cn } from "~/lib/utils";
-import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import { CommunityCard, CommunityCardSkeleton } from "../CommunityCard";
-
-const carouselItems = [
-  "Tất cả",
-  ...Object.values(EVisibilityType),
-  ...Object.values(EMembershipType),
-];
 
 export function ExploreTab() {
   //
@@ -31,29 +26,13 @@ export function ExploreTab() {
   // Search, Carousel
   const [searchVal, setSearchVal] = useState("");
   const debouncedSearchVal = useDebounce(searchVal, 500);
-  const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-  const debouncedCarouselVal = useDebounce(
-    carouselItems[current] === "Tất cả" ? "" : carouselItems[current],
-    1000
-  );
+  const [cate, setCate] = useState("");
 
   //
-  useEffect(() => {
-    if (!api) return;
-
-    // Lấy index hiện tại khi carousel được khởi tạo
-    setCurrent(api.selectedScrollSnap());
-
-    // Lắng nghe sự kiện khi carousel scroll
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap());
-    });
-  }, [api]);
-
-  const { data, isLoading } = useGetMultiCommunitiesJoined({
+  const { data: cates } = useGetAllCategories();
+  const { data, isLoading } = useGetMultiCommunities({
     limit: "10",
-    qe: debouncedCarouselVal,
+    qe: cate,
     page: page.toString(),
     q: debouncedSearchVal,
   });
@@ -64,7 +43,7 @@ export function ExploreTab() {
     const total_page = data?.data?.total_page;
     total_page_ref.current = total_page || 0;
 
-    if (page === 1 && (debouncedSearchVal || debouncedCarouselVal)) {
+    if (page === 1 && debouncedSearchVal) {
       setAllCommunities(items);
     } else {
       setAllCommunities((prev) => {
@@ -75,7 +54,7 @@ export function ExploreTab() {
         return [...newItems, ...prev];
       });
     }
-  }, [debouncedCarouselVal, data, debouncedSearchVal, page]);
+  }, [data, debouncedSearchVal, page]);
 
   //
   useEffect(() => {
@@ -105,22 +84,16 @@ export function ExploreTab() {
   return (
     <div>
       {/*  */}
-      <div className="mb-4 px-4 flex items-center justify-between">
-        <div className="w-[40%]">
-          <SearchMain
-            size="md"
-            value={searchVal}
-            onClear={() => setSearchVal("")}
-            onChange={setSearchVal}
-          />
-        </div>
-
-        <div className="w-[50%]">
-          <Carousel setApi={setApi} className="w-[82%]">
+      <div className="px-4 mb-4">
+        <div className="flex mb-4">
+          <Carousel className="group w-full">
             <CarouselContent className="-ml-1">
-              {carouselItems.map((_) => (
-                <CarouselItem key={_} className="pl-1">
-                  <Card className="py-1 rounded-2xl">
+              {cates?.data?.map((_) => (
+                <CarouselItem
+                  key={_}
+                  className="pl-1 md:basis-1/2 lg:basis-1/4"
+                >
+                  <Card className="py-1 rounded-2xl border border-gray-200 cursor-pointer">
                     <CardContent className="flex items-center justify-center">
                       <span className="text-[15px] font-medium">{_}</span>
                     </CardContent>
@@ -128,17 +101,23 @@ export function ExploreTab() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="bg-gray-100 w-10 h-10 -left-3 hidden group-hover:flex" />
+            <CarouselNext className="bg-gray-100 w-10 h-10 -right-3 hidden group-hover:flex" />
           </Carousel>
         </div>
+        <SearchMain
+          size="md"
+          value={searchVal}
+          onClear={() => setSearchVal("")}
+          onChange={setSearchVal}
+        />
       </div>
 
-      <div className="overflow-y-auto h-[calc(100vh-180px)] px-4">
+      <div className="overflow-y-auto h-[calc(100vh-220px)] px-4">
         {/*  */}
         {!isLoading && allCommunities.length === 0 && page === 1 && (
           <p className="mt-24 p-4 text-center text-gray-500">
-            Bạn chưa tham gia vào bất kỳ cộng đồng nào.
+            không tìm thấy cộng đồng.
           </p>
         )}
 
@@ -147,6 +126,32 @@ export function ExploreTab() {
           <div className="grid grid-cols-3 gap-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <CommunityCardSkeleton key={`more-${i}`} />
+            ))}
+          </div>
+        )}
+
+        {/*  */}
+        {allCommunities.length > 0 && (
+          <div className="grid grid-cols-3 gap-3">
+            {sortCommunity(allCommunities).map((community) => (
+              <CommunityCard
+                key={community._id}
+                community={community}
+                onTogglePinned={onPinnedCommunity}
+              />
+            ))}
+          </div>
+        )}
+
+        {/*  */}
+        {allCommunities.length > 0 && (
+          <div className="grid grid-cols-3 gap-3">
+            {sortCommunity(allCommunities).map((community) => (
+              <CommunityCard
+                key={community._id}
+                community={community}
+                onTogglePinned={onPinnedCommunity}
+              />
             ))}
           </div>
         )}

@@ -164,6 +164,11 @@ export function CreateCommunityForm({
       return;
     }
 
+    if (categoryText.length > 10) {
+      toastSimple("Danh mục / dịch vụ tối đa 16 kí tự.", "error");
+      return;
+    }
+
     if (coverFile) {
       const resUploadCover = await apiUploadMedia.mutateAsync([coverFile]);
       if (resUploadCover.statusCode !== 200 || !resUploadCover.data) {

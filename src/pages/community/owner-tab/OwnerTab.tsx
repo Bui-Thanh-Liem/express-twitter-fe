@@ -51,6 +51,7 @@ export function OwnerTab() {
     });
   }, [api]);
 
+  //
   const { data, isLoading } = useGetMultiCommunitiesOwner({
     limit: "10",
     qe: debouncedCarouselVal,
@@ -120,7 +121,7 @@ export function OwnerTab() {
             <CarouselContent className="-ml-1">
               {carouselItems.map((_) => (
                 <CarouselItem key={_} className="pl-1">
-                  <Card className="py-1 rounded-2xl">
+                  <Card className="py-1 rounded-2xl border-gray-200">
                     <CardContent className="flex items-center justify-center">
                       <span className="text-[15px] font-medium">{_}</span>
                     </CardContent>
@@ -138,7 +139,7 @@ export function OwnerTab() {
         {/*  */}
         {!isLoading && allCommunities.length === 0 && page === 1 && (
           <p className="mt-24 p-4 text-center text-gray-500">
-            Bạn chưa tham gia vào bất kỳ cộng đồng nào.
+            Bạn chưa tự tạo bất kỳ cộng đồng nào.
           </p>
         )}
 

@@ -106,7 +106,7 @@ export function JoinedTab() {
     <div>
       {/*  */}
       <div className="mb-4 px-4 flex items-center justify-between">
-        <div className="w-[30%]">
+        <div className="w-[40%]">
           <SearchMain
             size="md"
             value={searchVal}
@@ -120,7 +120,7 @@ export function JoinedTab() {
             <CarouselContent className="-ml-1">
               {carouselItems.map((_) => (
                 <CarouselItem key={_} className="pl-1">
-                  <Card className="py-1 rounded-2xl">
+                  <Card className="py-1 rounded-2xl border-gray-200">
                     <CardContent className="flex items-center justify-center">
                       <span className="text-[15px] font-medium">{_}</span>
                     </CardContent>

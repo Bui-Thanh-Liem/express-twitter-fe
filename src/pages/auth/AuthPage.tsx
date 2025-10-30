@@ -70,16 +70,16 @@ export function AuthPage() {
   }, [hash]);
 
   return (
-    <div>
+    <div className="m-auto w-[700px] md:w-[800px] lg:w-[1200px]">
       <div className="h-screen flex justify-between items-center">
         <div className="flex-1">
-          <Logo size={332} />
+          <Logo size={332} className="w-[240px] lg:w-auto" />
         </div>
         <div className="flex-1">
-          <TypographyH1 className="text-7xl lg:text-5xl">
+          <TypographyH1 className="text-7xl lg:text-5xl hidden lg:block">
             Đang diễn ra ngay bây giờ
           </TypographyH1>
-          <TypographyH2 className="mt-12 text-4xl mb-8">
+          <TypographyH2 className="mt-12 text-4xl mb-8 hidden lg:block">
             Tham gia ngay.
           </TypographyH2>
           <div className="space-y-2 w-80">
@@ -195,27 +195,22 @@ export function AuthPage() {
 export function Footer() {
   const links = [
     "Giới thiệu",
-    "Tải ứng dụng X xuống",
-    "Grok",
-    "Trung tâm Trợ giúp",
     "Điều khoản Dịch vụ",
     "Chính sách Riêng tư",
     "Chính sách cookie",
     "Khả năng truy cập",
     "Thông tin quảng cáo",
     "Blog",
-    "Nghề nghiệp",
     "Tài nguyên thương hiệu",
     "Quảng cáo",
     "Tiếp thị",
-    "X dành cho doanh nghiệp",
     "Nhà phát triển",
     "Danh mục",
     "Cài đặt",
   ];
 
   return (
-    <div className="text-sm text-gray-600  bottom-0 px-4 py-2 w-[1200px]">
+    <div className="text-sm text-gray-600 bottom-0 px-4 py-2">
       <div className="flex flex-wrap justify-center text-center gap-x-1 gap-y-1">
         {links.map((label, idx) => (
           <React.Fragment key={idx}>
@@ -229,7 +224,9 @@ export function Footer() {
           </React.Fragment>
         ))}
       </div>
-      <div className="text-center mt-2">© 2025 X Corp.</div>
+      <div className="text-center mt-2">
+        © 2025 <strong>Liemdev</strong>.
+      </div>
     </div>
   );
 }
