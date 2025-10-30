@@ -3,6 +3,9 @@ import type { ResLoginUser } from "~/shared/dtos/res/auth.dto";
 
 const apiUrl = import.meta.env.VITE_SERVER_URL;
 
+console.log("🔍 VITE_SERVER_URL:", import.meta.env.VITE_SERVER_URL);
+console.log("🔍 All env:", import.meta.env);
+
 export const apiCall = async <T>(
   endpoint: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
