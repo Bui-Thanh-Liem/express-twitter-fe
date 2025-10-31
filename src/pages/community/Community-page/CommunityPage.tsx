@@ -9,12 +9,13 @@ import { useGetOneCommunityBySlug } from "~/hooks/useFetchCommunity";
 import { ETweetType } from "~/shared/enums/type.enum";
 import { formatDateToDateVN } from "~/utils/formatDateToDateVN";
 import { ProfileSkeleton } from "../../profile/ProfilePage";
-import { CommunityInfo } from "./CommunityInfo";
-import { CommunityInvite } from "./CommunityInvite";
-import { CommunityJoinLeave } from "./CommunityJoinLeave";
-import { CommunitySetting } from "./CommunitySetting";
-import { CommunityActivity } from "./CommunityActivity";
-import { CommunityInvitedList } from "./CommunityInvitedList";
+import { CommunityInfo } from "./actions/CommunityInfo";
+import { CommunityInvite } from "./actions/CommunityInvite";
+import { CommunityJoinLeave } from "./actions/CommunityJoinLeave";
+import { CommunitySetting } from "./actions/CommunitySetting";
+import { CommunityActivity } from "./actions/CommunityActivity";
+import { CommunityInvitedList } from "./actions/CommunityInvitedList";
+import { CommunityTweets } from "./CommunityTweets";
 
 export function CommunityPage() {
   const { slug } = useParams();
@@ -143,11 +144,6 @@ export function CommunityPage() {
 
           {/* <!-- Members --> */}
           <div className="flex items-center space-x-2 text-sm mb-4">
-            {/* <Link
-              to={`/${slug}/followers`}
-              className="hover:underline cursor-pointer"
-            >
-            </Link> */}
             <span className="font-semibold">{community.member_count}</span>
             <span className="text-gray-500"> thành viên</span>
           </div>
@@ -178,7 +174,15 @@ export function CommunityPage() {
               value={ETweetType.Tweet.toString()}
               className="px-0 py-4"
             >
-              <div className="space-y-4"></div>
+              <div className="space-y-4">
+                <CommunityTweets community_id={community._id} />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="highlights" className="px-0 py-4">
+              <div className="space-y-4">
+                <CommunityTweets community_id={community._id} ishl="1" />
+              </div>
             </TabsContent>
           </div>
         </Tabs>

@@ -3,7 +3,7 @@ export interface IQuery<T> {
   page?: string;
   sort?: Partial<Record<keyof T, 1 | -1>>;
   q?: string;
-  qe?: string;  // q extra
+  qe?: string; // q extra
   t?: "top";
   f?: "media"; // trả về những tweet có media
   pf?: string; // people follow
@@ -12,6 +12,7 @@ export interface IQuery<T> {
 
   // Profile
   user_id?: string;
+  community_id?: string;
   ishl?: "1" | "0";
   ids?: string[];
 

@@ -12,6 +12,7 @@ import type {
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
 import type {
   ICommunity,
+  ICommunityActivity,
   ICommunityInvitation,
 } from "~/shared/interfaces/schemas/community.interface";
 import type { ResMultiType } from "~/shared/types/response.type";
@@ -77,10 +78,29 @@ export const useGetMultiMMCommunityById = (
   const queryString = queries ? buildQueryString(queries) : "";
 
   return useQuery({
-    queryKey: ["community", id, queries.q, normalizedQueries],
+    queryKey: ["community", "mm", id, queries.q, normalizedQueries],
     queryFn: () =>
       apiCall<ICommunity>(
         `/communities/mm/${id}${queryString ? `?${queryString}` : ""}`
+      ),
+    enabled: enabled && !!id,
+  });
+};
+
+// 🚪 GET - Get activity Community By id
+export const useGetMultiActivities = (
+  id: string,
+  queries: IQuery<ICommunity>,
+  enabled = true
+) => {
+  const normalizedQueries = queries ? JSON.stringify(queries) : "";
+  const queryString = queries ? buildQueryString(queries) : "";
+
+  return useQuery({
+    queryKey: ["community", "activity", id, queries.q, normalizedQueries],
+    queryFn: () =>
+      apiCall<ResMultiType<ICommunityActivity>>(
+        `/communities/activity/${id}${queryString ? `?${queryString}` : ""}`
       ),
     enabled: enabled && !!id,
   });
@@ -257,6 +277,9 @@ export const useInviteCommunity = () => {
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["invited"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["communities", "activities"],
+      });
     },
   });
 };

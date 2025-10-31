@@ -43,3 +43,10 @@ export interface ICommunityInvitation extends IBase {
   community_id: string;
   status: EInvitationStatus;
 }
+
+export interface ICommunityActivity extends IBase {
+  actor_id: string; // người thực hiện hành động
+  community_id: string; // cộng đồng bị tác động
+  action: string; // ví dụ: "join", "leave", "post_created", ...
+  target_id?: string; // nếu có đối tượng cụ thể (bài viết, bình luận, v.v.)
+}

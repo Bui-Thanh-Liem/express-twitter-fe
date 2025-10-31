@@ -109,6 +109,34 @@ export const useGetProfileTweets = (
   });
 };
 
+// 📄 GET - Lấy tweets của chính mình trong profile
+export const useGetCommunityTweets = (
+  queries?: IQuery<ITweet> & {
+    ishl?: "0" | "1";
+  }
+) => {
+  const normalizedQueries = queries ? JSON.stringify(queries) : "";
+
+  return useQuery({
+    queryKey: ["tweets", "community", queries?.community_id, normalizedQueries],
+    queryFn: () => {
+      // Tạo query string từ queries object
+      const queryString = queries ? buildQueryString(queries) : "";
+      const url = `/tweets/community/${queryString ? `?${queryString}` : ""}`;
+      return apiCall<ResMultiType<ITweet>>(url);
+    },
+
+    // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    networkMode: "online",
+  });
+};
+
 // 📄 GET - Lấy tweets con của một tweet
 export const useGetTweetChildren = ({
   tweet_id,
