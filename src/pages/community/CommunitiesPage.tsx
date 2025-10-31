@@ -1,19 +1,27 @@
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeftIcon } from "~/components/icons/arrow-left";
+import { SearchMain } from "~/components/ui/search";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { WrapIcon } from "~/components/wrapIcon";
 import { CreateCommunity } from "./CreateCommunity";
+import { ExploreTab } from "./explore-tab/ExploreTab";
 import { JoinedTab } from "./joined-tab/JoinedTab";
 import { OwnerTab } from "./owner-tab/OwnerTab";
-import { ExploreTab } from "./explore-tab/ExploreTab";
-import { SearchMain } from "~/components/ui/search";
-import { Search } from "lucide-react";
+import { cn } from "~/lib/utils";
 
 export const joined_tab = "joined";
 export const explore_tab = "explore";
 
 export function CommunitiesPage() {
+  const { pathname } = useLocation();
   const navigate = useNavigate();
+
+  //
+  const [searchVal, setSearchVal] = useState("");
+
+  //
+  const isOpenSearch = pathname === "/communities/t/explore";
 
   // ✅ Xác định type theo pathname hiện tại
   const type = location.pathname.endsWith(joined_tab)
@@ -27,6 +35,13 @@ export function CommunitiesPage() {
     navigate(`/communities${value !== "/" ? `/t/${value}` : ""}`);
   };
 
+  //
+  function handleSearch(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      navigate(`${pathname}${searchVal ? `?search=${searchVal}` : ""}`);
+    }
+  }
+
   return (
     <div>
       {/* Header */}
@@ -37,18 +52,18 @@ export function CommunitiesPage() {
           </WrapIcon>
           <p className="font-semibold text-[20px]">Cộng đồng</p>
         </div>
-        <div className="w-32">
-          <SearchMain
-            size="md"
-            value={""}
-            onClear={() => {}}
-            onChange={() => {}}
-          />
+        <div className="flex items-center gap-x-3">
+          <span className={cn("hidden", isOpenSearch ? "block" : "")}>
+            <SearchMain
+              size="sm"
+              value={searchVal}
+              onChange={setSearchVal}
+              onKeyDown={handleSearch}
+              onClear={() => setSearchVal("")}
+            />
+          </span>
+          <CreateCommunity />
         </div>
-        <WrapIcon>
-          <Search size={18}/>
-        </WrapIcon>
-        <CreateCommunity />
       </div>
 
       {/*  */}

@@ -92,7 +92,7 @@ export function NotificationPage() {
           </div>
 
           {/* Tab Content */}
-          <div className="p-4 pt-0 overflow-y-auto h-[calc(100vh-100px)]">
+          <div className="p-4 pt-0 overflow-y-auto h-[calc(100vh-110px)]">
             <TabsContent
               value={ENotificationType.Community}
               className="px-0 py-4"

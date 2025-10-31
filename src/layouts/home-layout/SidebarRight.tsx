@@ -10,7 +10,10 @@ import { WhoToFollowCard } from "~/components/who-to-follow/who-to-follow-card";
 export function SidebarRight() {
   const { pathname } = useLocation();
 
-  const isHiddenSearch = pathname === "/explore" || pathname === "/search";
+  const isHiddenSearch =
+    pathname === "/explore" ||
+    pathname === "/search" ||
+    pathname === "/communities/t/explore";
   const isOpenFilter = pathname === "/search";
 
   return (

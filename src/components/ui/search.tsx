@@ -1,6 +1,6 @@
 import { Search, X } from "lucide-react";
-import { Input } from "./input";
 import { cn } from "~/lib/utils";
+import { Input } from "./input";
 
 type SearchSize = "sm" | "md" | "lg";
 
@@ -18,9 +18,10 @@ interface Suggestion {
 interface SearchBarProps {
   size?: SearchSize;
   value: string;
-  onChange: (value: string) => void;
   onClear?: () => void;
   suggestions?: Suggestion[];
+  onChange: (value: string) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onSelectSuggestion?: (item: Suggestion) => void;
 }
 
@@ -28,6 +29,7 @@ export function SearchMain({
   value,
   onChange,
   onClear,
+  onKeyDown,
   size = "md",
   suggestions = [],
   onSelectSuggestion,
@@ -44,6 +46,7 @@ export function SearchMain({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={cn("rounded-full", sizeStyles[size])}
+        onKeyDown={onKeyDown}
       />
 
       {/* Nút clear */}

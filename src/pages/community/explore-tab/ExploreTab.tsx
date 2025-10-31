@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Card, CardContent } from "~/components/ui/card";
 import {
   Carousel,
@@ -7,8 +8,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "~/components/ui/carousel";
-import { SearchMain } from "~/components/ui/search";
-import { useDebounce } from "~/hooks/useDebounce";
 import {
   useGetAllCategories,
   useGetMultiCommunities,
@@ -19,22 +18,26 @@ import { CommunityCard, CommunityCardSkeleton } from "../CommunityCard";
 
 export function ExploreTab() {
   //
+  const [searchParams] = useSearchParams();
+
+  //
+  const searchVal = searchParams.get("search");
+
+  //
   const [page, setPage] = useState(1);
   const [allCommunities, setAllCommunities] = useState<ICommunity[]>([]);
   const total_page_ref = useRef(0);
 
   // Search, Carousel
-  const [searchVal, setSearchVal] = useState("");
-  const debouncedSearchVal = useDebounce(searchVal, 500);
   const [cate, setCate] = useState("");
 
   //
   const { data: cates } = useGetAllCategories();
   const { data, isLoading } = useGetMultiCommunities({
-    limit: "10",
     qe: cate,
+    limit: "10",
+    q: searchVal || "",
     page: page.toString(),
-    q: debouncedSearchVal,
   });
 
   // Mỗi lần fetch API xong thì merge vào state (loại bỏ duplicate)
@@ -43,7 +46,7 @@ export function ExploreTab() {
     const total_page = data?.data?.total_page;
     total_page_ref.current = total_page || 0;
 
-    if (page === 1 && debouncedSearchVal) {
+    if (page === 1 && (searchVal || cate)) {
       setAllCommunities(items);
     } else {
       setAllCommunities((prev) => {
@@ -54,7 +57,7 @@ export function ExploreTab() {
         return [...newItems, ...prev];
       });
     }
-  }, [data, debouncedSearchVal, page]);
+  }, [data, searchVal, page, cate]);
 
   //
   useEffect(() => {
@@ -65,16 +68,9 @@ export function ExploreTab() {
   }, []);
 
   //
-  function onPinnedCommunity(id: string) {
-    setAllCommunities((prev) =>
-      prev.map((item: any) => {
-        if (item._id === id) {
-          return { ...item, pinned: !item.pinned };
-        }
-        return item;
-      })
-    );
-  }
+  useEffect(() => {
+    if (searchVal || cate) setPage(1);
+  }, [searchVal, cate]);
 
   //
   function onSeeMore() {
@@ -84,33 +80,28 @@ export function ExploreTab() {
   return (
     <div>
       {/*  */}
-      <div className="px-4 mb-4">
-        <div className="flex mb-4">
-          <Carousel className="group w-full">
-            <CarouselContent className="-ml-1">
-              {cates?.data?.map((_) => (
-                <CarouselItem
-                  key={_}
-                  className="pl-1 md:basis-1/2 lg:basis-1/4"
+      <div className="flex mb-4 px-4">
+        <Carousel className="group w-full">
+          <CarouselContent className="-ml-1">
+            {cates?.data?.map((_) => (
+              <CarouselItem key={_} className="pl-1 md:basis-1/3 lg:basis-1/4">
+                <Card
+                  className={cn(
+                    "py-1 rounded-2xl border border-gray-200 cursor-pointer",
+                    _ === cate ? "border-sky-400" : ""
+                  )}
+                  onClick={() => setCate(_ === cate ? "" : _)}
                 >
-                  <Card className="py-1 rounded-2xl border border-gray-200 cursor-pointer">
-                    <CardContent className="flex items-center justify-center">
-                      <span className="text-[15px] font-medium">{_}</span>
-                    </CardContent>
-                  </Card>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="bg-gray-100 w-10 h-10 -left-3 hidden group-hover:flex" />
-            <CarouselNext className="bg-gray-100 w-10 h-10 -right-3 hidden group-hover:flex" />
-          </Carousel>
-        </div>
-        <SearchMain
-          size="md"
-          value={searchVal}
-          onClear={() => setSearchVal("")}
-          onChange={setSearchVal}
-        />
+                  <CardContent className="flex items-center justify-center">
+                    <span className="text-[15px] font-medium">{_}</span>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="bg-gray-100 w-10 h-10 -left-3 hidden group-hover:flex" />
+          <CarouselNext className="bg-gray-100 w-10 h-10 -right-3 hidden group-hover:flex" />
+        </Carousel>
       </div>
 
       <div className="overflow-y-auto h-[calc(100vh-220px)] px-4">
@@ -134,37 +125,7 @@ export function ExploreTab() {
         {allCommunities.length > 0 && (
           <div className="grid grid-cols-3 gap-3">
             {sortCommunity(allCommunities).map((community) => (
-              <CommunityCard
-                key={community._id}
-                community={community}
-                onTogglePinned={onPinnedCommunity}
-              />
-            ))}
-          </div>
-        )}
-
-        {/*  */}
-        {allCommunities.length > 0 && (
-          <div className="grid grid-cols-3 gap-3">
-            {sortCommunity(allCommunities).map((community) => (
-              <CommunityCard
-                key={community._id}
-                community={community}
-                onTogglePinned={onPinnedCommunity}
-              />
-            ))}
-          </div>
-        )}
-
-        {/*  */}
-        {allCommunities.length > 0 && (
-          <div className="grid grid-cols-3 gap-3">
-            {sortCommunity(allCommunities).map((community) => (
-              <CommunityCard
-                key={community._id}
-                community={community}
-                onTogglePinned={onPinnedCommunity}
-              />
+              <CommunityCard key={community._id} community={community} />
             ))}
           </div>
         )}

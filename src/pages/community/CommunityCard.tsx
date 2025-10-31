@@ -46,7 +46,7 @@ export function CommunityCard({
         </Link>
         <CardHeader className="p-0 px-3 mb-3">
           <CardTitle className="flex items-center gap-1">
-            <p className="max-w-[80%] line-clamp-1">
+            <p className="max-w-[80%] line-clamp-1 pb-0.5">
               <Link to={`/communities/${community?.slug}`}>
                 {community.name}
               </Link>
@@ -54,37 +54,39 @@ export function CommunityCard({
             <VerifyIcon active={community.verify} size={20} color="orange" />
           </CardTitle>
 
-          <WrapIcon
-            onClick={onTogglePin}
-            className={`absolute -top-1 -right-1 rounded-none rounded-bl-xl p-1.5 cursor-pointer transition-all duration-200 ease-out bg-white shadow-sm
+          {onTogglePinned && (
+            <WrapIcon
+              onClick={onTogglePin}
+              className={`absolute -top-1 -right-1 rounded-none rounded-bl-xl p-1.5 cursor-pointer transition-all duration-200 ease-out bg-white shadow-sm
               ${
                 community.pinned
                   ? "opacity-100"
                   : "opacity-0 group-hover:opacity-100"
               }
             `}
-          >
-            {community.pinned ? (
-              <>
-                {/* 📌 Pin hiện sẵn, hover ẩn */}
+            >
+              {community.pinned ? (
+                <>
+                  {/* 📌 Pin hiện sẵn, hover ẩn */}
+                  <Pin
+                    size={18}
+                    className="rotate-45 transition-opacity duration-200 ease-out opacity-100 group-hover:opacity-0"
+                  />
+                  {/* ❌ PinOff hiện khi hover */}
+                  <PinOff
+                    size={18}
+                    className="rotate-45 text-red-400 absolute inset-0 m-auto transition-opacity duration-200 ease-out opacity-0 group-hover:opacity-100"
+                  />
+                </>
+              ) : (
+                // 🩶 Khi chưa pin → hover mới hiện icon pin
                 <Pin
                   size={18}
-                  className="rotate-45 transition-opacity duration-200 ease-out opacity-100 group-hover:opacity-0"
+                  className="rotate-45 text-gray-600 transition-opacity duration-200 ease-out opacity-100"
                 />
-                {/* ❌ PinOff hiện khi hover */}
-                <PinOff
-                  size={18}
-                  className="rotate-45 text-red-400 absolute inset-0 m-auto transition-opacity duration-200 ease-out opacity-0 group-hover:opacity-100"
-                />
-              </>
-            ) : (
-              // 🩶 Khi chưa pin → hover mới hiện icon pin
-              <Pin
-                size={18}
-                className="rotate-45 text-gray-600 transition-opacity duration-200 ease-out opacity-100"
-              />
-            )}
-          </WrapIcon>
+              )}
+            </WrapIcon>
+          )}
         </CardHeader>
         <div className="absolute top-[72px] left-2 flex gap-2 items-center">
           <CommunityTag text={community.visibilityType} />

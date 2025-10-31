@@ -9,7 +9,7 @@ export function CreateCommunity() {
 
   return (
     <>
-      <WrapIcon onClick={() => setIsOpen(true)} className="p-1.5">
+      <WrapIcon onClick={() => setIsOpen(true)} className="p-1 border">
         <CreateGroupIcon size={26} />
       </WrapIcon>
 
