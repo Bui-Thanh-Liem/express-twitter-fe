@@ -118,7 +118,7 @@ export const useRemoveImages = () => {
   return useMutation({
     mutationFn: async (credentials: RemoteImagesDto) =>
       apiCall("/uploads/remove/images", {
-        method: "POST",
+        method: "DELETE",
         body: JSON.stringify(credentials),
       }),
   });

@@ -1,10 +1,7 @@
 import { BarChart3, Flag, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import {
-  useDeleteTweet,
-  useGetDetailTweet,
-} from "~/hooks/useFetchTweet";
+import { useDeleteTweet, useGetDetailTweet } from "~/hooks/useFetchTweet";
 import { cn } from "~/lib/utils";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import type { IMedia } from "~/shared/interfaces/common/media.interface";
@@ -220,21 +217,22 @@ export const TweetItem = ({
             </div>
 
             {/* Nội dung tweet */}
-            {quoteTweet?.content && (
-              <p className="text-gray-800 mb-3 leading-relaxed">
-                <Content
-                  content={quoteTweet?.content}
-                  mentions={quoteTweet?.mentions as unknown as IUser[]}
-                />
-              </p>
-            )}
-
-            {/* Media content */}
-            <MediaContent
-              tweet={quoteTweet}
-              url={quoteTweet.media?.url || ""}
-              type={quoteTweet.media?.type || EMediaType.Image}
-            />
+            <div className="ml-14">
+              {quoteTweet?.content && (
+                <p className="text-gray-800 mb-3 leading-relaxed">
+                  <Content
+                    content={quoteTweet?.content}
+                    mentions={quoteTweet?.mentions as unknown as IUser[]}
+                  />
+                </p>
+              )}
+              {/* Media content */}
+              <MediaContent
+                tweet={quoteTweet}
+                url={quoteTweet.media?.url || ""}
+                type={quoteTweet.media?.type || EMediaType.Image}
+              />
+            </div>
           </div>
         ) : null}
 

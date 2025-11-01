@@ -6,7 +6,7 @@ import { ButtonMain } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useGetOneCommunityBySlug } from "~/hooks/useFetchCommunity";
-import { ETweetType } from "~/shared/enums/type.enum";
+import { ETweetType, EVisibilityType } from "~/shared/enums/type.enum";
 import { formatDateToDateVN } from "~/utils/formatDateToDateVN";
 import { ProfileSkeleton } from "../../profile/ProfilePage";
 import { CommunityInfo } from "./actions/CommunityInfo";
@@ -16,6 +16,7 @@ import { CommunitySetting } from "./actions/CommunitySetting";
 import { CommunityActivity } from "./actions/CommunityActivity";
 import { CommunityInvitedList } from "./actions/CommunityInvitedList";
 import { CommunityTweets } from "./CommunityTweets";
+import { CommunityMedia } from "./CommunityMedia";
 
 export function CommunityPage() {
   const { slug } = useParams();
@@ -150,42 +151,60 @@ export function CommunityPage() {
         </div>
 
         {/* Tweets and media*/}
-        <Tabs defaultValue={ETweetType.Tweet.toString()} className="mb-12">
-          <div className="bg-white sticky mt-4 top-0 z-50">
-            <TabsList className="w-full">
-              <TabsTrigger
-                className="cursor-pointer"
+        {community.visibilityType === EVisibilityType.Public ||
+        community.isJoined ? (
+          <Tabs defaultValue={ETweetType.Tweet.toString()} className="mb-12">
+            <div className="bg-white sticky mt-4 top-0 z-50">
+              <TabsList className="w-full">
+                <TabsTrigger
+                  className="cursor-pointer"
+                  value={ETweetType.Tweet.toString()}
+                >
+                  Bài viết
+                </TabsTrigger>
+                <TabsTrigger className="cursor-pointer" value="highlights">
+                  Nổi bật
+                </TabsTrigger>
+                <TabsTrigger className="cursor-pointer" value="media">
+                  Hình ảnh/video
+                </TabsTrigger>
+              </TabsList>
+            </div>
+
+            {/* Tab Content */}
+            <div className="pt-0">
+              <TabsContent
                 value={ETweetType.Tweet.toString()}
+                className="px-0 py-4"
               >
-                Bài viết
-              </TabsTrigger>
-              <TabsTrigger className="cursor-pointer" value="highlights">
-                Nổi bật
-              </TabsTrigger>
-              <TabsTrigger className="cursor-pointer" value="media">
-                Hình ảnh/video
-              </TabsTrigger>
-            </TabsList>
-          </div>
+                <div className="space-y-4">
+                  <CommunityTweets community_id={community._id} />
+                </div>
+              </TabsContent>
 
-          {/* Tab Content */}
-          <div className="pt-0">
-            <TabsContent
-              value={ETweetType.Tweet.toString()}
-              className="px-0 py-4"
-            >
-              <div className="space-y-4">
-                <CommunityTweets community_id={community._id} />
-              </div>
-            </TabsContent>
+              <TabsContent value="highlights" className="px-0 py-4">
+                <div className="space-y-4">
+                  <CommunityTweets community_id={community._id} ishl="1" />
+                </div>
+              </TabsContent>
 
-            <TabsContent value="highlights" className="px-0 py-4">
-              <div className="space-y-4">
-                <CommunityTweets community_id={community._id} ishl="1" />
-              </div>
-            </TabsContent>
+              <TabsContent value="media" className="px-0 py-4">
+                <div className="space-y-4">
+                  <CommunityMedia community_id={community._id} />
+                </div>
+              </TabsContent>
+            </div>
+          </Tabs>
+        ) : (
+          <div className="flex items-center flex-col pt-32 border-t border-gray-100">
+            <p className="text-gray-500 text-lg mb-2">
+              ✋ Cộng đồng này là riêng tư ✋
+            </p>
+            <p className="text-gray-400">
+              Chỉ xem được nội dung khi bạn là thành viên.
+            </p>
           </div>
-        </Tabs>
+        )}
       </div>
     </div>
   );

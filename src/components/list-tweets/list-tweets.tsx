@@ -1,17 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGetNewFeeds } from "~/hooks/useFetchTweet";
-import { EFeedType } from "~/shared/enums/type.enum";
+import { CommunityCard } from "~/pages/community/CommunityCard";
+import { EFeedType, ETweetType } from "~/shared/enums/type.enum";
+import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import { useUserStore } from "~/store/useUserStore";
 import { ErrorProcess } from "../error-process";
 import { SkeletonTweet, TweetItem } from "./item-tweet";
+import { Link } from "react-router-dom";
 
 export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
   const { user } = useUserStore();
 
   // State để quản lý pagination và data
   const [page, setPage] = useState(1);
-  const [allTweets, setAllTweets] = useState<ITweet[]>([]);
+  const [feeds, setFeeds] = useState<ITweet[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
@@ -29,18 +32,23 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
     if (data?.data?.items) {
       const newTweets = data.data.items as ITweet[];
 
+      // Chèn cộng đồng vào newFeeds
+      const extraType = data.data.extra?.type;
+      const newCommunities = data.data.extra?.items as ICommunity[];
+      const _newCommunities = { type: extraType, extra: newCommunities } as any;
+
       if (page === 1) {
         // Nếu là trang đầu tiên, replace toàn bộ
-        setAllTweets(newTweets);
+        setFeeds(newTweets);
       } else {
         // Nếu là trang tiếp theo, append vào cuối
-        setAllTweets((prev) => {
+        setFeeds((prev) => {
           // Loại bỏ duplicate tweets dựa trên _id
           const existingIds = new Set(prev.map((tweet) => tweet._id));
           const filteredNewTweets = newTweets.filter(
             (tweet) => !existingIds.has(tweet._id)
           );
-          return [...prev, ...filteredNewTweets];
+          return [...prev, _newCommunities, ...filteredNewTweets];
         });
       }
 
@@ -64,14 +72,14 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
         hasMore &&
         !isLoading &&
         !isLoadingMore &&
-        allTweets.length > 0
+        feeds.length > 0
       ) {
         console.log("Loading more tweets...");
         setIsLoadingMore(true);
         setPage((prev) => prev + 1);
       }
     },
-    [allTweets?.length, hasMore, isLoading, isLoadingMore]
+    [feeds?.length, hasMore, isLoading, isLoadingMore]
   );
 
   // Setup Intersection Observer
@@ -133,7 +141,7 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
 
   // Thực hiện khi xoá bài viết thành công ở BE
   function onSuccessDel(id: string) {
-    setAllTweets((prev) => prev.filter((tw) => tw._id !== id));
+    setFeeds((prev) => prev.filter((tw) => tw._id !== id));
   }
 
   return (
@@ -146,7 +154,7 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
         <ErrorProcess
           onClick={() => {
             setPage(1);
-            setAllTweets([]);
+            setFeeds([]);
             setHasMore(true);
             window.location.reload();
           }}
@@ -154,7 +162,7 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
       )}
 
       {/* Empty state */}
-      {!isLoading && !error && allTweets.length === 0 && page === 1 && (
+      {!isLoading && !error && feeds.length === 0 && page === 1 && (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg mb-2">📭 Chưa có nội dung nào</p>
           <p className="text-gray-400">
@@ -164,20 +172,39 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
       )}
 
       {/* Tweets list */}
-      {allTweets.length > 0 && (
+      {feeds.length > 0 && (
         <div className="space-y-6">
-          {allTweets.map((tweet, index: number) => (
-            <span key={tweet._id}>
-              <TweetItem
-                tweet={tweet}
-                key={tweet._id}
-                onSuccessDel={onSuccessDel}
-              />
-              {index < allTweets.length - 1 && (
-                <hr className="border-gray-200" />
-              )}
-            </span>
-          ))}
+          {feeds.map((item, index: number) => {
+            const isTweet = Object.values(ETweetType).includes(item?.type);
+            const communities = isTweet
+              ? []
+              : (item as unknown as { extra: ICommunity[] })?.extra;
+
+            return isTweet ? (
+              <span key={item._id}>
+                <TweetItem
+                  tweet={item}
+                  key={item._id}
+                  onSuccessDel={onSuccessDel}
+                />
+                {index < feeds.length - 1 && <hr className="border-gray-200" />}
+              </span>
+            ) : (
+              !!communities.length && (
+                <div className="m-4 grid grid-cols-3 items-center gap-x-3">
+                  {communities.map((com) => (
+                    <CommunityCard community={com} />
+                  ))}
+                  <Link
+                    to={"/communities/t/explore"}
+                    className="text-center text-gray-400 font-medium cursor-pointer p-2 hover:underline"
+                  >
+                    Xem thêm
+                  </Link>
+                </div>
+              )
+            );
+          })}
         </div>
       )}
 
@@ -192,7 +219,7 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
       <div ref={observerRef} className="h-10 w-full" />
 
       {/* End of content indicator */}
-      {!hasMore && allTweets.length > 0 && (
+      {!hasMore && feeds.length > 0 && (
         <div className="text-center py-8">
           <p className="text-gray-500">🎉 Bạn đã xem hết tất cả nội dung!</p>
         </div>

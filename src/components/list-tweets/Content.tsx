@@ -15,14 +15,14 @@ export function Content({
       const mention = mentions.find((m) => m?.username === part);
       return (
         <ShortInfoProfile
+          isInfor
           key={i}
           profile={mention as IUser}
-          isInfor
           className="inline"
         >
           <Link
             to={`/${mention?.username}`}
-            className="flex items-center gap-2"
+            className="items-center gap-2 inline"
           >
             <span className="text-blue-400 font-semibold hover:underline hover:cursor-pointer mb-2 inline-block">
               {mention?.username}
