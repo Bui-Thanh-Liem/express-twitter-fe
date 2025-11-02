@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { SkeletonTweet, TweetItem } from "~/components/list-tweets/item-tweet";
 import { ButtonMain } from "~/components/ui/button";
-import { useSearchTweets } from "~/hooks/useFetchSearch";
+import { useSearchTweets } from "~/hooks/apis/useFetchSearch";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 
 export function TweetTab() {

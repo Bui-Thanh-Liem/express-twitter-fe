@@ -8,9 +8,9 @@ import { useDebounce } from "~/hooks/useDebounce";
 import {
   useCreateCommunity,
   useGetAllCategories,
-} from "~/hooks/useFetchCommunity";
-import { useUploadWithValidation } from "~/hooks/useFetchUpload";
-import { useGetFollowedById } from "~/hooks/useFetchUser";
+} from "~/hooks/apis/useFetchCommunity";
+import { useUploadWithValidation } from "~/hooks/apis/useFetchUpload";
+import { useGetFollowedById } from "~/hooks/apis/useFetchUser";
 import { cn } from "~/lib/utils";
 import {
   CreateCommunityDtoSchema,

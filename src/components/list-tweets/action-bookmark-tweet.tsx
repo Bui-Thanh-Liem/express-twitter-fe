@@ -1,6 +1,6 @@
 import { Bookmark } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useBookmarkTweet } from "~/hooks/useFetchBookmark";
+import { useBookmarkTweet } from "~/hooks/apis/useFetchBookmark";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 
 export function ActionBookmarkTweet({ tweet }: { tweet: ITweet }) {

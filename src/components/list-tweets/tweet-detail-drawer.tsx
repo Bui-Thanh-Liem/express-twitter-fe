@@ -3,7 +3,7 @@
 import { BarChart3, Heart, MessageCircle, Repeat2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useGetTweetChildren } from "~/hooks/useFetchTweet";
+import { useGetTweetChildren } from "~/hooks/apis/useFetchTweet";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";

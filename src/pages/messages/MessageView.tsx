@@ -21,8 +21,8 @@ import { CircularProgress } from "~/components/ui/circular-progress";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
-import { useGetMultiMessages } from "~/hooks/useFetchMessages";
-import { useUploadWithValidation } from "~/hooks/useFetchUpload";
+import { useGetMultiMessages } from "~/hooks/apis/useFetchMessages";
+import { useUploadWithValidation } from "~/hooks/apis/useFetchUpload";
 import {
   useMediaPreviewMulti,
   type MediaItem,

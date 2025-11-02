@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MediaContent } from "~/components/list-tweets/item-tweet";
-import { useGetProfileTweets } from "~/hooks/useFetchTweet";
+import { useGetProfileTweets } from "~/hooks/apis/useFetchTweet";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 

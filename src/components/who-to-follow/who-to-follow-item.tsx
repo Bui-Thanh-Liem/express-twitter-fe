@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useFollowUser } from "~/hooks/useFetchFollow";
+import { useFollowUser } from "~/hooks/apis/useFetchFollow";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { VerifyIcon } from "../icons/verify";
 import { ShortInfoProfile } from "../ShortInfoProfile";

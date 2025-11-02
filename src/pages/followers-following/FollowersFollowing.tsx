@@ -2,7 +2,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftIcon } from "~/components/icons/arrow-left";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useGetOneByUsername } from "~/hooks/useFetchUser";
+import { useGetOneByUsername } from "~/hooks/apis/useFetchUser";
 import { FollowersPage } from "./FollowersPage";
 import { FollowingPage } from "./FollowingPage";
 

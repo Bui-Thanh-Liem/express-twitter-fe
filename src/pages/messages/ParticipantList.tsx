@@ -7,7 +7,7 @@ import { WrapIcon } from "~/components/wrapIcon";
 import {
   usePromoteMentor,
   useRemoveParticipants,
-} from "~/hooks/useFetchConversations";
+} from "~/hooks/apis/useFetchConversations";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useConversationActiveStore } from "~/store/useConversationActiveStore";

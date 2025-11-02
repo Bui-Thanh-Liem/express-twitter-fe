@@ -2,7 +2,10 @@ import { LogOut } from "lucide-react";
 import { useState } from "react";
 import { ButtonMain } from "~/components/ui/button";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useJoinCommunity, useLeaveCommunity } from "~/hooks/useFetchCommunity";
+import {
+  useJoinCommunity,
+  useLeaveCommunity,
+} from "~/hooks/apis/useFetchCommunity";
 import { EMembershipType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import { handleResponse } from "~/utils/handleResponse";

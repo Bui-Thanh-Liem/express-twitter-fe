@@ -1,13 +1,15 @@
+import { ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useGetNewFeeds } from "~/hooks/useFetchTweet";
+import { Link } from "react-router-dom";
+import { useGetNewFeeds } from "~/hooks/apis/useFetchTweet";
 import { CommunityCard } from "~/pages/community/CommunityCard";
 import { EFeedType, ETweetType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import { useUserStore } from "~/store/useUserStore";
 import { ErrorProcess } from "../error-process";
+import { ButtonMain } from "../ui/button";
 import { SkeletonTweet, TweetItem } from "./item-tweet";
-import { Link } from "react-router-dom";
 
 export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
   const { user } = useUserStore();
@@ -191,16 +193,23 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
               </span>
             ) : (
               !!communities.length && (
-                <div className="m-4 grid grid-cols-3 items-center gap-x-3">
-                  {communities.map((com) => (
-                    <CommunityCard community={com} />
-                  ))}
-                  <Link
-                    to={"/communities/t/explore"}
-                    className="text-center text-gray-400 font-medium cursor-pointer p-2 hover:underline"
-                  >
-                    Xem thêm
-                  </Link>
+                <div className="border-b border-gray-200">
+                  <p className="ml-4 mt-2 text-gray-500 font-medium">
+                    Gợi ý tham gia
+                  </p>
+                  <div className="m-4 mt-2 grid grid-cols-3 items-center gap-x-3">
+                    {communities.map((com) => (
+                      <CommunityCard community={com} />
+                    ))}
+                    <Link
+                      to={"/communities/t/explore"}
+                      className="animate-bounce duration-75"
+                    >
+                      <ButtonMain className="flex items-center ml-auto">
+                        Xem thêm <ArrowRight />
+                      </ButtonMain>
+                    </Link>
+                  </div>
                 </div>
               )
             );

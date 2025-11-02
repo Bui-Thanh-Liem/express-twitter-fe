@@ -2,7 +2,7 @@ import { Search, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDebounce } from "~/hooks/useDebounce";
-import { useSearchPending } from "~/hooks/useFetchSearch";
+import { useSearchPending } from "~/hooks/apis/useFetchSearch";
 import { cn } from "~/lib/utils";
 import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";

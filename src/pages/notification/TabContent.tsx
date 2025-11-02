@@ -7,7 +7,7 @@ import {
   useDeleteNotification,
   useGetMultiByType,
   useReadNotification,
-} from "~/hooks/useFetchNotifications";
+} from "~/hooks/apis/useFetchNotifications";
 import { cn } from "~/lib/utils";
 import { ENotificationType, ETweetType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";

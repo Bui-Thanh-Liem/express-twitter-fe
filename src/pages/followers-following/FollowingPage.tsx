@@ -4,7 +4,10 @@ import {
   UserToFollowItem,
   UserToFollowItemSkeleton,
 } from "~/components/who-to-follow/who-to-follow-item";
-import { useGetFollowingById, useGetOneByUsername } from "~/hooks/useFetchUser";
+import {
+  useGetFollowingById,
+  useGetOneByUsername,
+} from "~/hooks/apis/useFetchUser";
 import { cn } from "~/lib/utils";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 

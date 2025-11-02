@@ -26,7 +26,7 @@ import {
   usePromoteMentor,
   useUpdateCommunity,
   useGetMultiMMCommunityById,
-} from "~/hooks/useFetchCommunity";
+} from "~/hooks/apis/useFetchCommunity";
 import { cn } from "~/lib/utils";
 import { CONSTANT_MAX_LENGTH_MENTOR } from "~/shared/constants";
 import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";
@@ -269,6 +269,7 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
         textDesc={`Những thay đổi này chỉ ảnh hưởng trong cộng đồng ${community.name}`}
         onOpenChange={setIsOpen}
       >
+        {/*  */}
         <div className="p-3 rounded-2xl border shadow grid grid-cols-3">
           {/*  */}
           <div>
@@ -343,6 +344,7 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
             </div>
           </div>
         </div>
+
         <div className="grid grid-cols-3 gap-x-4 mt-6">
           {/*  */}
           <div className="p-3 rounded-2xl border shadow">
@@ -404,12 +406,15 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button className="mr-2">
-                    <CircleQuestionMark size={16} color="#99a1af" />
+                    <CircleQuestionMark size={16} color="red" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="text-sm">Được mời người dùng khác tham gia</p>
                   <p className="text-sm">Được duyệt nội dung trong cộng đồng</p>
+                  <p className="text-sm">
+                    Được đăng bài viết mà không cần kiểm duyệt
+                  </p>
                 </TooltipContent>
               </Tooltip>
               <span className="font-thin">

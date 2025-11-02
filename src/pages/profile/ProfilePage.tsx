@@ -11,7 +11,7 @@ import { WrapIcon } from "~/components/wrapIcon";
 import {
   useGetOneByUsername,
   useResendVerifyEmail,
-} from "~/hooks/useFetchUser";
+} from "~/hooks/apis/useFetchUser";
 import { CONSTANT_DEFAULT_TITLE_DOCUMENT } from "~/shared/constants/default-title-document";
 import { ETweetType } from "~/shared/enums/type.enum";
 import { useUserStore } from "~/store/useUserStore";

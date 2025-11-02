@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ErrorProcess } from "~/components/error-process";
 import { SkeletonTweet, TweetItem } from "~/components/list-tweets/item-tweet";
 import { NotFoundTweet } from "~/components/list-tweets/not-found-tweet";
-import { useGetCommunityTweets } from "~/hooks/useFetchTweet";
+import { useGetCommunityTweets } from "~/hooks/apis/useFetchTweet";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 
 export function CommunityTweets({

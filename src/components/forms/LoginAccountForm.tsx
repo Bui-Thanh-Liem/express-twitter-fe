@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useLogin } from "~/hooks/useFetchAuth";
+import { useLogin } from "~/hooks/apis/useFetchAuth";
 import {
   LoginUserDtoSchema,
   type LoginUserDto,

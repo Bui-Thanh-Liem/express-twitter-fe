@@ -109,7 +109,8 @@ export const useGetMultiActivities = (
 // 📄 GET - lấy những lời mời đã mời
 export const useGetMultiInvitations = (
   community_id: string,
-  queries?: IQuery<ICommunity>
+  queries?: IQuery<ICommunity>,
+  enabled = true
 ) => {
   const normalizedQueries = queries ? JSON.stringify(queries) : "";
 
@@ -125,6 +126,7 @@ export const useGetMultiInvitations = (
     },
 
     // Lên getNewFeeds đọc giải thích
+    enabled: enabled && !!community_id,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: true,

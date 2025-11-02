@@ -6,7 +6,7 @@ import {
   UserToFollowItem,
   UserToFollowItemSkeleton,
 } from "./who-to-follow-item";
-import { useGetTopFollowedUsers } from "~/hooks/useFetchUser";
+import { useGetTopFollowedUsers } from "~/hooks/apis/useFetchUser";
 
 export function WhoToFollowCard() {
   const { data, isLoading } = useGetTopFollowedUsers({

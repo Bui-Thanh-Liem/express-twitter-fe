@@ -1,4 +1,5 @@
 import { ETweetAudience } from "~/shared/enums/common.enum";
+import type { ETweetStatus } from "~/shared/enums/status.enum";
 import { ETweetType } from "~/shared/enums/type.enum";
 import type { IMedia } from "../common/media.interface";
 import type { IBase } from "./base.interface";
@@ -12,6 +13,7 @@ export interface ITweet extends IBase {
   hashtags: string[];
   mentions: string[]; // nhắc đến
   media: IMedia | null;
+  status: ETweetStatus;
   guest_view: number;
   user_view: number;
 

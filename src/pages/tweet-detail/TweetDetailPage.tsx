@@ -5,7 +5,10 @@ import { SkeletonTweet, TweetItem } from "~/components/list-tweets/item-tweet";
 import { Tweet } from "~/components/tweet/Tweet";
 import { TypingIndicator } from "~/components/typing-indicator";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useGetDetailTweet, useGetTweetChildren } from "~/hooks/useFetchTweet";
+import {
+  useGetDetailTweet,
+  useGetTweetChildren,
+} from "~/hooks/apis/useFetchTweet";
 import { ETweetType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";

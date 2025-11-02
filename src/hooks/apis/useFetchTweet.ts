@@ -109,7 +109,7 @@ export const useGetProfileTweets = (
   });
 };
 
-// 📄 GET - Lấy tweets của chính mình trong profile
+// 📄 GET - Lấy tweets bằng community_id
 export const useGetCommunityTweets = (
   queries?: IQuery<ITweet> & {
     ishl?: "0" | "1";
@@ -127,6 +127,42 @@ export const useGetCommunityTweets = (
     },
 
     // Lên getNewFeeds đọc giải thích
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    networkMode: "online",
+  });
+};
+
+// 📄 GET - Lấy tweets bằng community_id và status = pending
+export const useGetTweetsPendingByCommunityId = (
+  queries?: IQuery<ITweet>,
+  enabled = true
+) => {
+  const normalizedQueries = queries ? JSON.stringify(queries) : "";
+
+  return useQuery({
+    queryKey: [
+      "tweets",
+      "community",
+      "pending",
+      queries?.community_id,
+      normalizedQueries,
+    ],
+    queryFn: () => {
+      // Tạo query string từ queries object
+      const queryString = queries ? buildQueryString(queries) : "";
+      const url = `/tweets/community/pending/${
+        queryString ? `?${queryString}` : ""
+      }`;
+      return apiCall<ResMultiType<ITweet>>(url);
+    },
+
+    // Lên getNewFeeds đọc giải thích
+    enabled: enabled && !!queries?.community_id,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: true,

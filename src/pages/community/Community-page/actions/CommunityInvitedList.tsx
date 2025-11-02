@@ -8,7 +8,7 @@ import { WrapIcon } from "~/components/wrapIcon";
 import {
   useDeleteInvitation,
   useGetMultiInvitations,
-} from "~/hooks/useFetchCommunity";
+} from "~/hooks/apis/useFetchCommunity";
 import { cn } from "~/lib/utils";
 import type {
   ICommunity,
@@ -28,10 +28,14 @@ export function CommunityInvitedList({ community }: { community: ICommunity }) {
   const total_page_ref = useRef(0);
 
   const apiDelete = useDeleteInvitation();
-  const { data, isLoading } = useGetMultiInvitations(community._id, {
-    page: page.toString(),
-    limit: "10",
-  });
+  const { data, isLoading } = useGetMultiInvitations(
+    community._id,
+    {
+      page: page.toString(),
+      limit: "10",
+    },
+    isOpen
+  );
 
   // Mỗi lần fetch xong thì append thêm vào state
   useEffect(() => {

@@ -10,11 +10,11 @@ import { handleResponse } from "~/utils/handleResponse";
 
 // UI components - theo cách import của bạn
 import { useNavigate } from "react-router-dom";
-import { useUpdateMe } from "~/hooks/useFetchAuth";
+import { useUpdateMe } from "~/hooks/apis/useFetchAuth";
 import {
   useRemoveImages,
   useUploadWithValidation,
-} from "~/hooks/useFetchUpload";
+} from "~/hooks/apis/useFetchUpload";
 import {
   UpdateMeDtoSchema,
   type UpdateMeDto,

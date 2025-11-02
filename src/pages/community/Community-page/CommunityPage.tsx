@@ -5,7 +5,7 @@ import { VerifyIcon } from "~/components/icons/verify";
 import { ButtonMain } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useGetOneCommunityBySlug } from "~/hooks/useFetchCommunity";
+import { useGetOneCommunityBySlug } from "~/hooks/apis/useFetchCommunity";
 import { ETweetType, EVisibilityType } from "~/shared/enums/type.enum";
 import { formatDateToDateVN } from "~/utils/formatDateToDateVN";
 import { ProfileSkeleton } from "../../profile/ProfilePage";
@@ -17,6 +17,7 @@ import { CommunityActivity } from "./actions/CommunityActivity";
 import { CommunityInvitedList } from "./actions/CommunityInvitedList";
 import { CommunityTweets } from "./CommunityTweets";
 import { CommunityMedia } from "./CommunityMedia";
+import { CommunityApprove } from "./actions/CommunityApprove";
 
 export function CommunityPage() {
   const { slug } = useParams();
@@ -100,6 +101,9 @@ export function CommunityPage() {
             <div className="flex items-center gap-3">
               {/*  */}
               <CommunitySetting community={community} />
+
+              {/*  */}
+              <CommunityApprove community={community} />
 
               {/*  */}
               <CommunityActivity community={community} />

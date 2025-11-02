@@ -4,7 +4,7 @@ import {
   TodayNewsOrOutstandingItem,
   TodayNewsOrOutstandingItemSkeleton,
 } from "~/components/today-news-or-outstanding-item";
-import { useGetOutstandingThisWeek } from "~/hooks/useFetchTrending";
+import { useGetOutstandingThisWeek } from "~/hooks/apis/useFetchTrending";
 import { cn } from "~/lib/utils";
 import type { IResTodayNewsOrOutstanding } from "~/shared/dtos/res/trending.dto";
 import { toastSimple } from "~/utils/toastSimple.util";

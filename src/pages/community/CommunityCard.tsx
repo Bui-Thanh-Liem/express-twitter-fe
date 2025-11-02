@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { VerifyIcon } from "~/components/icons/verify";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useTogglePinCommunity } from "~/hooks/useFetchCommunity";
+import { useTogglePinCommunity } from "~/hooks/apis/useFetchCommunity";
 import { cn } from "~/lib/utils";
 import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";

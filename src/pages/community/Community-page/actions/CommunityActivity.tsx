@@ -1,4 +1,10 @@
-import { BadgeCheckIcon, Cctv, ChevronRightIcon } from "lucide-react";
+import {
+  ArrowLeftFromLine,
+  ArrowRightFromLine,
+  Cctv,
+  ChevronRightIcon,
+  UserPlus,
+} from "lucide-react";
 import { useState } from "react";
 import { DialogMain } from "~/components/ui/dialog";
 import {
@@ -9,17 +15,29 @@ import {
   ItemTitle,
 } from "~/components/ui/item";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useGetMultiActivities } from "~/hooks/useFetchCommunity";
+import { useGetMultiActivities } from "~/hooks/apis/useFetchCommunity";
+import { EActivityType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
+import { toastSimple } from "~/utils/toastSimple.util";
+
+const icons = {
+  [EActivityType.Invite]: <UserPlus className="size-5 text-green-400" />,
+  [EActivityType.Leave]: <ArrowRightFromLine className="size-5 text-red-400" />,
+  [EActivityType.Join]: <ArrowLeftFromLine className="size-5 text-sky-400" />,
+};
 
 export function CommunityActivity({ community }: { community: ICommunity }) {
   const [isOpen, setIsOpen] = useState(false);
 
   //
-  const { data } = useGetMultiActivities(community._id, {
-    page: "1",
-    limit: "50",
-  });
+  const { data } = useGetMultiActivities(
+    community._id,
+    {
+      page: "1",
+      limit: "50",
+    },
+    isOpen
+  );
   const activities = data?.data?.items || [];
 
   //
@@ -31,6 +49,11 @@ export function CommunityActivity({ community }: { community: ICommunity }) {
     ) {
       return null;
     }
+  }
+
+  //
+  function handleClickItem() {
+    toastSimple("Tính năng đang được cập nhật.");
   }
 
   //
@@ -51,18 +74,25 @@ export function CommunityActivity({ community }: { community: ICommunity }) {
         <div className="space-y-3">
           {activities.map((ac) => {
             return (
-              <Item key={ac._id} variant="outline" size="sm" asChild>
-                <a href="#">
-                  <ItemMedia>
-                    <BadgeCheckIcon className="size-5" />
-                  </ItemMedia>
+              <Item
+                asChild
+                size="sm"
+                key={ac._id}
+                variant="outline"
+                className="group"
+              >
+                <div>
+                  <ItemMedia>{icons[ac.action.key]}</ItemMedia>
                   <ItemContent>
-                    <ItemTitle>{ac.action}</ItemTitle>
+                    <ItemTitle>{ac.action.message}</ItemTitle>
                   </ItemContent>
                   <ItemActions>
-                    <ChevronRightIcon className="size-4" />
+                    <ChevronRightIcon
+                      className="size-5 cursor-pointer hidden group-hover:flex"
+                      onClick={handleClickItem}
+                    />
                   </ItemActions>
-                </a>
+                </div>
               </Item>
             );
           })}

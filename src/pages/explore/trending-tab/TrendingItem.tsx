@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useReportTrending } from "~/hooks/useFetchTrending";
+import { useReportTrending } from "~/hooks/apis/useFetchTrending";
 import { cn } from "~/lib/utils";
 import type { IHashtag } from "~/shared/interfaces/schemas/hashtag.interface";
 import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";

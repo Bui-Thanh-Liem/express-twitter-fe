@@ -1,6 +1,6 @@
 import { User, Users } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useGetAllBareCommunities } from "~/hooks/useFetchCommunity";
+import { useGetAllBareCommunities } from "~/hooks/apis/useFetchCommunity";
 import { TypographyP } from "../elements/p";
 import { CheckIcon } from "../icons/check";
 import {

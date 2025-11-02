@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useVerifyEmail } from "~/hooks/useFetchUser";
+import { useVerifyEmail } from "~/hooks/apis/useFetchUser";
 import { handleResponse } from "~/utils/handleResponse";
 
 export function VerifyEmail() {
