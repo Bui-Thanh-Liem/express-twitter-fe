@@ -13,14 +13,14 @@ export function TrendingPage() {
   const navigate = useNavigate();
   const { trendingItem } = useTrendingStore();
   const highlight = trendingItem?.highlight;
-  const relevantIds = trendingItem?.relevantIds || [];
+  const relevant_ids = trendingItem?.relevant_ids || [];
 
   const [limit, setLimit] = useState(5);
   const [allTweets, setAllTweets] = useState<ITweet[]>([]);
   const loaderRef = useRef<HTMLDivElement | null>(null);
 
   const { data, isLoading, error, isFetching } = useGetTweetsByIds({
-    ids: relevantIds.slice(0, limit),
+    ids: relevant_ids.slice(0, limit),
   });
 
   // Cập nhật danh sách khi fetch thành công
@@ -42,11 +42,11 @@ export function TrendingPage() {
       if (target.isIntersecting && !isFetching) {
         setLimit((prev) => {
           const next = prev + 5;
-          return next <= relevantIds.length ? next : prev;
+          return next <= relevant_ids.length ? next : prev;
         });
       }
     },
-    [isFetching, relevantIds.length]
+    [isFetching, relevant_ids.length]
   );
 
   useEffect(() => {
@@ -131,12 +131,12 @@ export function TrendingPage() {
           )}
 
           {/* Loader */}
-          {limit < relevantIds.length && (
+          {limit < relevant_ids.length && (
             <div ref={loaderRef} className="text-center py-6" />
           )}
 
           {/* End of list */}
-          {limit >= relevantIds.length && !isFetching && (
+          {limit >= relevant_ids.length && !isFetching && (
             <div className="text-center py-8">
               <p className="text-gray-500">
                 🎉 Bạn đã xem hết tất cả nội dung!
