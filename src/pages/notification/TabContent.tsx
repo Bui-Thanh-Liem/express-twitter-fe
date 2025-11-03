@@ -61,13 +61,13 @@ function NotiItem({ noti, onClick, onDelete }: Props) {
     setRead(true);
 
     //
-    console.log("noti?.refId:::", noti);
+    console.log("noti?.ref_id:::", noti);
 
-    if (!noti?.refId) return;
+    if (!noti?.ref_id) return;
 
     //
     if (noti.type === ENotificationType.Mention_like) {
-      const _tweet = noti.tweetRef as ITweet; // Mentions thì ref là tweet
+      const _tweet = noti.tweet_ref as ITweet; // Mentions thì ref là tweet
 
       // Được nhắc đến trong comment
       if (_tweet.type === ETweetType.Comment) {
@@ -84,14 +84,14 @@ function NotiItem({ noti, onClick, onDelete }: Props) {
 
     //
     if (noti.type === ENotificationType.Follow) {
-      const _user = noti.userRef as IUser; // Follow thì ref là user
+      const _user = noti.user_ref as IUser; // Follow thì ref là user
       navigate(`/${_user.username}`);
       return;
     }
 
     //
     if (noti.type === ENotificationType.Community) {
-      const _community = noti.communityRef as ICommunity;
+      const _community = noti.community_ref as ICommunity;
       navigate(`/communities/${_community?.slug}`);
       return;
     }
@@ -137,9 +137,9 @@ function NotiItem({ noti, onClick, onDelete }: Props) {
 
         {/* Extra row: type / ref */}
         {/* <div className="mt-2 flex items-center gap-2">
-          {noti.refId && (
+          {noti.ref_id && (
             <span className="text-xs text-slate-400 truncate">
-              Ref: {String(noti.refId)}
+              Ref: {String(noti.ref_id)}
             </span>
           )}
         </div> */}

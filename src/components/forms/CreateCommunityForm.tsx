@@ -118,8 +118,8 @@ export function CreateCommunityForm({
       bio: "",
       cover: "",
       category: "",
-      membershipType: EMembershipType.Open,
-      visibilityType: EVisibilityType.Public,
+      membership_type: EMembershipType.Open,
+      visibility_type: EVisibilityType.Public,
     },
   });
   const categories = cates?.data || [];
@@ -305,8 +305,8 @@ export function CreateCommunityForm({
             }))}
             placeholder="Chế độ xem"
             errors={errors}
-            id="visibilityType"
-            name="visibilityType"
+            id="visibility_type"
+            name="visibility_type"
             label="Cài đặt hiển thị"
             size="lg"
           />
@@ -319,8 +319,8 @@ export function CreateCommunityForm({
             size="lg"
             placeholder="Cài đặt tham gia"
             errors={errors}
-            id="membershipType"
-            name="membershipType"
+            id="membership_type"
+            name="membership_type"
             label="Cài đặt tham gia"
           />
         </div>

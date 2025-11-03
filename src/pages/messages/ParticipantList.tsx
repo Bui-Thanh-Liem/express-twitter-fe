@@ -31,7 +31,7 @@ export function ParticipantList({
   const [isOpen, setIsOpen] = useState(false);
 
   //
-  const isMentor = useCallback(
+  const is_mentor = useCallback(
     (_user: IUser) => _mentors.includes(_user._id),
     [_mentors]
   );
@@ -99,7 +99,7 @@ export function ParticipantList({
               >
                 <AvatarMain src={u.avatar} alt={u.name} className="w-10 h-10" />
                 <p className="max-w-28 line-clamp-1">{u.name}</p>
-                {isMentor(u) && (
+                {is_mentor(u) && (
                   <Crown
                     size={18}
                     color="orange"
@@ -108,15 +108,15 @@ export function ParticipantList({
                 )}
               </Link>
 
-              {(isMentor(user!) || user?._id === u._id) && (
+              {(is_mentor(user!) || user?._id === u._id) && (
                 <div className="items-center gap-x-3 hidden group-hover:flex">
-                  {!isMentor(u!) && isMentor(user!) && (
+                  {!is_mentor(u!) && is_mentor(user!) && (
                     <WrapIcon onClick={() => promoteUserToMentor(u._id)}>
                       <ChevronsUp size={18} color="#666" />
                     </WrapIcon>
                   )}
 
-                  {(!isMentor(u!) || u._id === user?._id) && (
+                  {(!is_mentor(u!) || u._id === user?._id) && (
                     <WrapIcon
                       className="p-1.5"
                       onClick={() => removeConversation(u._id)}

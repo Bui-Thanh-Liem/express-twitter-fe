@@ -10,9 +10,9 @@ export function ActionLikeTweet({ tweet }: { tweet: ITweet }) {
 
   //
   useEffect(() => {
-    setIsLiked(!!tweet.isLike);
+    setIsLiked(!!tweet.is_like);
     setCountLiked(tweet.likes_count ?? 0);
-  }, [tweet.isLike, tweet.likes_count]);
+  }, [tweet.is_like, tweet.likes_count]);
 
   //
   function handleLike() {

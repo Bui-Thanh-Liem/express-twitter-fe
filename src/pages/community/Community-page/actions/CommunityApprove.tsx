@@ -110,7 +110,7 @@ export function CommunityApprove({
   }, []);
 
   //
-  if (!community.isAdmin && !community.isMentor) return null;
+  if (!community.is_admin && !community.is_mentor) return null;
 
   //
   function onSeeMore() {

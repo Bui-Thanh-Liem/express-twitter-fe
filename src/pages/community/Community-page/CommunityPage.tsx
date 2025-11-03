@@ -185,8 +185,8 @@ export function CommunityPage() {
         </div>
 
         {/* Tweets and media*/}
-        {community.visibilityType === EVisibilityType.Public ||
-        community.isJoined ? (
+        {community.visibility_type === EVisibilityType.Public ||
+        community.is_joined ? (
           <Tabs defaultValue={ETweetType.Tweet.toString()} className="mb-12">
             <div className="bg-white sticky mt-4 top-0 z-50">
               <TabsList className="w-full">

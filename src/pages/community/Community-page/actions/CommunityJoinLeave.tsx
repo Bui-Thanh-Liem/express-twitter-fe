@@ -11,7 +11,7 @@ import type { ICommunity } from "~/shared/interfaces/schemas/community.interface
 import { handleResponse } from "~/utils/handleResponse";
 
 export function CommunityJoinLeave({ community }: { community: ICommunity }) {
-  const [isJoined, setIsJoined] = useState(community.isJoined);
+  const [is_joined, setIsJoined] = useState(community.is_joined);
 
   //
   const apiJoinCommunity = useJoinCommunity();
@@ -39,13 +39,13 @@ export function CommunityJoinLeave({ community }: { community: ICommunity }) {
 
   return (
     <>
-      {isJoined
-        ? !community.isAdmin && (
+      {is_joined
+        ? !community.is_admin && (
             <WrapIcon className="border border-red-100" onClick={handleLeave}>
               <LogOut size={18} color="#fb2c36" />
             </WrapIcon>
           )
-        : community?.membershipType === EMembershipType.Open && (
+        : community?.membership_type === EMembershipType.Open && (
             <ButtonMain size="sm" onClick={handleJoin}>
               Tham gia
             </ButtonMain>

@@ -26,8 +26,8 @@ export interface ITweet extends IBase {
   shares_count?: number;
   retweets_count?: number;
   quotes_count?: number;
-  isLike?: boolean;
-  isBookmark?: boolean;
+  is_like?: boolean;
+  is_bookmark?: boolean;
   retweet?: string; // id retWeet của tôi
   quote?: string; // // id quoteTweet của tôi
   total_views?: number;

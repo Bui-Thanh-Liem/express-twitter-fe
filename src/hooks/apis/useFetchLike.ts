@@ -52,12 +52,12 @@ import { apiCall } from "~/utils/callApi.util";
 //             ...old.data,
 //             items: old.data.items.map((tweet: ITweet) => {
 //               if (tweet._id === tweetId) {
-//                 const isCurrentlyLiked = tweet.isLike ?? false;
+//                 const isCurrentlyLiked = tweet.is_like ?? false;
 //                 const currentCount = tweet.likes_count ?? 0;
 
 //                 return {
 //                   ...tweet,
-//                   isLike: !isCurrentlyLiked,
+//                   is_like: !isCurrentlyLiked,
 //                   likes_count: isCurrentlyLiked
 //                     ? Math.max(0, currentCount - 1)
 //                     : currentCount + 1,
@@ -81,14 +81,14 @@ import { apiCall } from "~/utils/callApi.util";
 //         (old) => {
 //           if (!old?.data) return old;
 
-//           const isCurrentlyLiked = old.data.isLike ?? false;
+//           const isCurrentlyLiked = old.data.is_like ?? false;
 //           const currentCount = old.data.likes_count ?? 0;
 
 //           return {
 //             ...old,
 //             data: {
 //               ...old.data,
-//               isLike: !isCurrentlyLiked,
+//               is_like: !isCurrentlyLiked,
 //               likes_count: isCurrentlyLiked
 //                 ? Math.max(0, currentCount - 1)
 //                 : currentCount + 1,
@@ -176,7 +176,7 @@ import { apiCall } from "~/utils/callApi.util";
 //               if (tweet._id === tweetId) {
 //                 return {
 //                   ...tweet,
-//                   isLike: isNowLiked,
+//                   is_like: isNowLiked,
 //                   likes_count: newLikesCount ?? tweet.likes_count,
 //                 };
 //               }
@@ -202,7 +202,7 @@ import { apiCall } from "~/utils/callApi.util";
 //             ...old,
 //             data: {
 //               ...old.data,
-//               isLike: isNowLiked,
+//               is_like: isNowLiked,
 //               likes_count: newLikesCount ?? old.data.likes_count,
 //             },
 //           };
@@ -278,12 +278,12 @@ export const useLikeTweet = () => {
             ...old.data,
             items: old.data.items.map((tweet: ITweet) => {
               if (tweet._id === tweetId) {
-                const isCurrentlyLiked = tweet.isLike ?? false;
+                const isCurrentlyLiked = tweet.is_like ?? false;
                 const currentCount = tweet.likes_count ?? 0;
 
                 return {
                   ...tweet,
-                  isLike: !isCurrentlyLiked,
+                  is_like: !isCurrentlyLiked,
                   likes_count: isCurrentlyLiked
                     ? Math.max(0, currentCount - 1)
                     : currentCount + 1,
@@ -319,14 +319,14 @@ export const useLikeTweet = () => {
         (old) => {
           if (!old?.data) return old;
 
-          const isCurrentlyLiked = old.data.isLike ?? false;
+          const isCurrentlyLiked = old.data.is_like ?? false;
           const currentCount = old.data.likes_count ?? 0;
 
           return {
             ...old,
             data: {
               ...old.data,
-              isLike: !isCurrentlyLiked,
+              is_like: !isCurrentlyLiked,
               likes_count: isCurrentlyLiked
                 ? Math.max(0, currentCount - 1)
                 : currentCount + 1,
@@ -412,7 +412,7 @@ export const useLikeTweet = () => {
               if (tweet._id === tweetId) {
                 return {
                   ...tweet,
-                  isLike: isNowLiked,
+                  is_like: isNowLiked,
                   likes_count: newLikesCount ?? tweet.likes_count,
                 };
               }
@@ -448,7 +448,7 @@ export const useLikeTweet = () => {
             ...old,
             data: {
               ...old.data,
-              isLike: isNowLiked,
+              is_like: isNowLiked,
               likes_count: newLikesCount ?? old.data.likes_count,
             },
           };

@@ -9,7 +9,7 @@ export function ActionBookmarkTweet({ tweet }: { tweet: ITweet }) {
 
   //
   useEffect(() => {
-    setIsBookmarked(!!tweet.isBookmark);
+    setIsBookmarked(!!tweet.is_bookmark);
   }, []);
 
   //

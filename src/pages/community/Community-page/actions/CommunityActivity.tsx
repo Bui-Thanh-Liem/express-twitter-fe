@@ -41,11 +41,11 @@ export function CommunityActivity({ community }: { community: ICommunity }) {
   const activities = data?.data?.items || [];
 
   //
-  if (!community.isJoined) return null;
-  if (!community.isAdmin) {
+  if (!community.is_joined) return null;
+  if (!community.is_admin) {
     if (
-      (community.isMentor && !community.showLogForMentor) ||
-      (community.isMember && !community.showLogForMember)
+      (community.is_mentor && !community.show_log_for_mentor) ||
+      (community.is_member && !community.show_log_for_member)
     ) {
       return null;
     }

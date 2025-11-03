@@ -141,7 +141,7 @@ export function AuthPage() {
       <DialogMain
         open={isOpenLogin}
         onOpenChange={setIsOpenLogin}
-        textHeader="Đăng nhập vào X"
+        textHeader="Đăng nhập vào Dev&bug"
         textDesc="Vui lòng nhập thông tin để đăng nhập."
       >
         <LoginAccountForm
@@ -155,7 +155,7 @@ export function AuthPage() {
       <DialogMain
         open={isOpenForgotPass}
         onOpenChange={setIsOpenForgotPass}
-        textHeader="Tìm tài khoản X của bạn"
+        textHeader="Tìm tài khoản Dev&bug của bạn"
         textDesc="Nhập email liên kết với tài khoản để thay đổi mật khẩu của bạn."
       >
         <ForgotPasswordForm

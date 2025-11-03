@@ -89,8 +89,8 @@ export function CommunityCard({
           )}
         </CardHeader>
         <div className="absolute top-[72px] left-2 flex gap-2 items-center">
-          <CommunityTag text={community.visibilityType} />
-          <CommunityTag text={community.membershipType} />
+          <CommunityTag text={community.visibility_type} />
+          <CommunityTag text={community.membership_type} />
         </div>
       </Card>
     </div>

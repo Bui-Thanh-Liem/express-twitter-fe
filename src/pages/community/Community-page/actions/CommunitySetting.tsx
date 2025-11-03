@@ -42,18 +42,18 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
   const [mentors, setMentors] = useState<IUser[]>([]);
 
   //
-  const [inviteExpireDays, setInviteExpireDays] = useState(
-    community.inviteExpireDays
+  const [invite_expire_days, setInviteExpireDays] = useState(
+    community.invite_expire_days
   );
-  const debounceDays = useDebounce(inviteExpireDays, 1000);
+  const debounceDays = useDebounce(invite_expire_days, 1000);
 
-  const [isLogMentor, setIsLogMentor] = useState(community.showLogForMentor);
-  const [isLogMember, setIsLogMember] = useState(community.showLogForMember);
+  const [isLogMentor, setIsLogMentor] = useState(community.show_log_for_mentor);
+  const [isLogMember, setIsLogMember] = useState(community.show_log_for_member);
   const [isInviteMentor, setIsInviteMentor] = useState(
-    community.showInviteListForMentor
+    community.show_invite_list_for_mentor
   );
   const [isInviteMember, setIsInviteMember] = useState(
-    community.showInviteListForMentor
+    community.show_invite_list_for_mentor
   );
 
   // Search
@@ -86,13 +86,13 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
     }
 
     // Nếu debounceDays === giá trị gốc → không gọi API
-    if (debounceDays === community.inviteExpireDays) return;
+    if (debounceDays === community.invite_expire_days) return;
 
     (async () => {
       try {
         const res = await apiUpdate.mutateAsync({
           community_id: community._id,
-          inviteExpireDays: debounceDays,
+          invite_expire_days: debounceDays,
         });
 
         if (![200, 201].includes(res.statusCode)) {
@@ -105,7 +105,7 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
   }, [debounceDays]); // không thêm nữa bỏ qua eslint
 
   //
-  if (!community.isAdmin) return null;
+  if (!community.is_admin) return null;
 
   //
   async function handlePromoteMentor(user: IUser) {
@@ -173,7 +173,7 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
   async function handleChangeMembership(type: EMembershipType | string) {
     const res = await apiUpdate.mutateAsync({
       community_id: community._id,
-      membershipType: type as EMembershipType,
+      membership_type: type as EMembershipType,
     });
     if (res.statusCode !== 200 && res.statusCode !== 201) {
       toastSimple(res.message, "error");
@@ -184,7 +184,7 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
   async function handleChangeVisibility(type: EVisibilityType | string) {
     const res = await apiUpdate.mutateAsync({
       community_id: community._id,
-      visibilityType: type as EVisibilityType,
+      visibility_type: type as EVisibilityType,
     });
     if (res.statusCode !== 200 && res.statusCode !== 201) {
       toastSimple(res.message, "error");
@@ -204,8 +204,8 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
     try {
       const res = await apiUpdate.mutateAsync({
         community_id: community._id,
-        showLogForMentor: valMentor,
-        showLogForMember: valMember,
+        show_log_for_mentor: valMentor,
+        show_log_for_member: valMember,
       });
 
       if (![200, 201].includes(res.statusCode)) {
@@ -235,8 +235,8 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
     try {
       const res = await apiUpdate.mutateAsync({
         community_id: community._id,
-        showInviteListForMember: valMember,
-        showInviteListForMentor: valMentor,
+        show_invite_list_for_member: valMember,
+        show_invite_list_for_mentor: valMentor,
       });
 
       if (![200, 201].includes(res.statusCode)) {
@@ -277,25 +277,25 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
             <div className="flex items-center gap-x-5">
               <div className="flex items-center space-x-2">
                 <Switch
-                  id="showLogForMentor"
+                  id="show_log_for_mentor"
                   className="cursor-pointer"
                   checked={isLogMentor}
                   onCheckedChange={(c) => {
                     handleChangeShowLog(c, isLogMember);
                   }}
                 />
-                <Label htmlFor="showLogForMentor">Điều hành viên</Label>
+                <Label htmlFor="show_log_for_mentor">Điều hành viên</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Switch
-                  id="showLogForMember"
+                  id="show_log_for_member"
                   className="cursor-pointer"
                   checked={isLogMember}
                   onCheckedChange={(c) => {
                     handleChangeShowLog(isLogMentor, c);
                   }}
                 />
-                <Label htmlFor="showLogForMember">Thành viên</Label>
+                <Label htmlFor="show_log_for_member">Thành viên</Label>
               </div>
             </div>
           </div>
@@ -306,25 +306,27 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
             <div className="flex items-center gap-x-5">
               <div className="flex items-center space-x-2">
                 <Switch
-                  id="showInviteListForMentor"
+                  id="show_invite_list_for_mentor"
                   className="cursor-pointer"
                   checked={isInviteMentor}
                   onCheckedChange={(c) => {
                     handleChangeShowInvite(c, isInviteMember);
                   }}
                 />
-                <Label htmlFor="showInviteListForMentor">Điều hành viên</Label>
+                <Label htmlFor="show_invite_list_for_mentor">
+                  Điều hành viên
+                </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Switch
-                  id="showInviteListForMember"
+                  id="show_invite_list_for_member"
                   className="cursor-pointer"
                   checked={isInviteMember}
                   onCheckedChange={(c) => {
                     handleChangeShowInvite(isInviteMentor, c);
                   }}
                 />
-                <Label htmlFor="showInviteListForMember">Thành viên</Label>
+                <Label htmlFor="show_invite_list_for_member">Thành viên</Label>
               </div>
             </div>
           </div>
@@ -338,9 +340,9 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
                 max={50}
                 className={cn("w-[70%]")}
                 onValueChange={handleChangeDay}
-                defaultValue={[community.inviteExpireDays]}
+                defaultValue={[community.invite_expire_days]}
               />
-              <Label>{inviteExpireDays} Ngày</Label>
+              <Label>{invite_expire_days} Ngày</Label>
             </div>
           </div>
         </div>
@@ -352,14 +354,14 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
             <div className="ml-4">
               <RadioGroupSetting
                 options={Object.values(EMembershipType)}
-                value={community.membershipType}
+                value={community.membership_type}
                 onValueChange={handleChangeMembership}
               />
             </div>
             <p className="mb-2 font-medium mt-3">Cài đặt tham gia</p>
             <div className="ml-4">
               <RadioGroupSetting
-                value={community.visibilityType}
+                value={community.visibility_type}
                 onValueChange={handleChangeVisibility}
                 options={Object.values(EVisibilityType)}
               />

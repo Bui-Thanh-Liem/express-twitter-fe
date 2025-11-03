@@ -54,11 +54,11 @@ import { apiCall } from "~/utils/callApi.util";
 //             ...old.data,
 //             items: old.data.items.map((tweet: ITweet) => {
 //               if (tweet._id === tweetId) {
-//                 const isCurrentlyBookmarked = tweet.isBookmark ?? false;
+//                 const isCurrentlyBookmarked = tweet.is_bookmark ?? false;
 
 //                 return {
 //                   ...tweet,
-//                   isBookmark: !isCurrentlyBookmarked,
+//                   is_bookmark: !isCurrentlyBookmarked,
 //                 };
 //               }
 //               return tweet;
@@ -79,13 +79,13 @@ import { apiCall } from "~/utils/callApi.util";
 //         (old) => {
 //           if (!old?.data) return old;
 
-//           const isCurrentlyBookmarked = old.data.isBookmark ?? false;
+//           const isCurrentlyBookmarked = old.data.is_bookmark ?? false;
 
 //           return {
 //             ...old,
 //             data: {
 //               ...old.data,
-//               isBookmark: !isCurrentlyBookmarked,
+//               is_bookmark: !isCurrentlyBookmarked,
 //             },
 //           };
 //         }
@@ -169,7 +169,7 @@ import { apiCall } from "~/utils/callApi.util";
 //               if (tweet._id === tweetId) {
 //                 return {
 //                   ...tweet,
-//                   isBookmark: isNowBookmarked,
+//                   is_bookmark: isNowBookmarked,
 //                 };
 //               }
 //               return tweet;
@@ -194,7 +194,7 @@ import { apiCall } from "~/utils/callApi.util";
 //             ...old,
 //             data: {
 //               ...old.data,
-//               isBookmark: isNowBookmarked,
+//               is_bookmark: isNowBookmarked,
 //             },
 //           };
 //         }
@@ -273,7 +273,7 @@ export const useBookmarkTweet = () => {
               if (tweet._id === tweetId) {
                 return {
                   ...tweet,
-                  isBookmark: !(tweet.isBookmark ?? false), // Toggle bookmark
+                  is_bookmark: !(tweet.is_bookmark ?? false), // Toggle bookmark
                 };
               }
               return tweet;
@@ -310,7 +310,7 @@ export const useBookmarkTweet = () => {
             ...old,
             data: {
               ...old.data,
-              isBookmark: !(old.data.isBookmark ?? false),
+              is_bookmark: !(old.data.is_bookmark ?? false),
             },
           };
         }
@@ -392,7 +392,7 @@ export const useBookmarkTweet = () => {
               if (tweet._id === tweetId) {
                 return {
                   ...tweet,
-                  isBookmark: isNowBookmarked,
+                  is_bookmark: isNowBookmarked,
                 };
               }
               return tweet;
@@ -429,7 +429,7 @@ export const useBookmarkTweet = () => {
             ...old,
             data: {
               ...old.data,
-              isBookmark: isNowBookmarked,
+              is_bookmark: isNowBookmarked,
             },
           };
         }

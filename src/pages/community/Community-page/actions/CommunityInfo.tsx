@@ -70,7 +70,7 @@ export function CommunityInfo({ community }: { community: ICommunity }) {
           <section>
             <p className="font-medium pb-3">Quy tắc</p>
             <div className="pl-4 space-y-2">
-              {[community.membershipType, community.visibilityType].map(
+              {[community.membership_type, community.visibility_type].map(
                 (type) => (
                   <div key={type} className="flex items-start gap-3">
                     <div className="w-32">

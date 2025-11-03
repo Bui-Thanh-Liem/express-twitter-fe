@@ -65,11 +65,11 @@ export function CommunityInvitedList({ community }: { community: ICommunity }) {
   }, []);
 
   //
-  if (!community.isJoined) return null;
-  if (!community.isAdmin) {
+  if (!community.is_joined) return null;
+  if (!community.is_admin) {
     if (
-      (community.isMentor && !community.showInviteListForMentor) ||
-      (community.isMember && !community.showInviteListForMember)
+      (community.is_mentor && !community.show_invite_list_for_mentor) ||
+      (community.is_member && !community.show_invite_list_for_member)
     ) {
       return null;
     }

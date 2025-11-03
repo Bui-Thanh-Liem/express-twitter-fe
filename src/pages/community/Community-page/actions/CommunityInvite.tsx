@@ -10,11 +10,11 @@ export function CommunityInvite({ community }: { community: ICommunity }) {
   const [isOpen, setIsOpen] = useState(false);
 
   //
-  if (!community.isJoined) return;
+  if (!community.is_joined) return;
   if (
-    community.membershipType === EMembershipType.Invite_only &&
-    !community.isAdmin &&
-    !community.isMentor
+    community.membership_type === EMembershipType.Invite_only &&
+    !community.is_admin &&
+    !community.is_mentor
   )
     return null;
 
