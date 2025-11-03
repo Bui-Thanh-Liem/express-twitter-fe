@@ -16,6 +16,8 @@ import { useCommentSocket } from "~/socket/hooks/useCommentSocket";
 import { useUserStore } from "~/store/useUserStore";
 
 export function TweetDetailPage() {
+  console.log("TweetDetailPage");
+
   //
   const navigate = useNavigate();
   const { tweet_id } = useParams(); // Đặt tên params ở <App />

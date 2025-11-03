@@ -1,10 +1,13 @@
-import { BarChart3, Flag, Trash } from "lucide-react";
+import { BarChart3, CornerRightDown, Flag, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { useReportTweet } from "~/hooks/apis/useFetchReport";
 import { useDeleteTweet, useGetDetailTweet } from "~/hooks/apis/useFetchTweet";
 import { cn } from "~/lib/utils";
+import { ETweetStatus } from "~/shared/enums/status.enum";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import type { IMedia } from "~/shared/interfaces/common/media.interface";
+import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useDetailTweetStore } from "~/store/useDetailTweetStore";
@@ -29,7 +32,6 @@ import { ActionLikeTweet } from "./action-like-tweet";
 import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
 import { ActionShared } from "./action-shared";
 import { Content } from "./content";
-import { useReportTweet } from "~/hooks/apis/useFetchReport";
 
 // Component cho Media (Image hoặc Video)
 export const MediaContent = ({
@@ -132,9 +134,11 @@ export const TweetItem = ({
     parent_id,
     created_at,
     guest_view,
+    community_id,
   } = tweet;
 
   const author = user_id as unknown as IUser;
+  const community = community_id as unknown as ICommunity;
 
   // Gọi api detail để lấy các retweet/quoteTweet
   const { data } = useGetDetailTweet(parent_id || "");
@@ -144,8 +148,20 @@ export const TweetItem = ({
   const quoteTweet_user = quoteTweet.user_id as unknown as IUser;
 
   return (
-    <div key={_id} className="px-4 py-2 group hover:bg-gray-50">
+    <div key={_id} className="px-4 py-2 group hover:bg-gray-50 relative">
       {/* Header với thông tin người dùng */}
+      {community?.name && (
+        <div>
+          <Link
+            to={`/communities/${community.slug}`}
+            className="text-gray-500 hover:underline text-md"
+          >
+            {community?.name}
+          </Link>
+          <CornerRightDown className="inline-block ml-2 mt-2" size={14} />
+          <StatusTag status={tweet.status} className="inline-block ml-4" />
+        </div>
+      )}
       <div className="flex items-center mb-3">
         <AvatarMain src={author.avatar} alt={author.name} className="mr-3" />
         <div>
@@ -238,7 +254,14 @@ export const TweetItem = ({
 
         {/* Engagement Bar */}
         {isAction && (
-          <div className="flex items-center justify-between text-gray-500 border-t border-gray-100 pt-3">
+          <div
+            className={cn(
+              "flex items-center justify-between text-gray-500 border-t border-gray-100 pt-3",
+              tweet.status !== ETweetStatus.Ready
+                ? "cursor-not-allowed pointer-events-none"
+                : ""
+            )}
+          >
             {/* Comment */}
             <ActionCommentTweet tweet={tweet} />
 
@@ -342,4 +365,28 @@ function TweetAction({
       </div>
     </div>
   );
+}
+
+export function StatusTag({
+  status,
+  className,
+}: {
+  status: ETweetStatus;
+  className?: string;
+}) {
+  if (status === ETweetStatus.Ready) return null;
+  const _status = {
+    [ETweetStatus.Pending]: (
+      <div className="bg-orange-500 text-white font-medium inline-block rounded-2xl px-1.5 py-0.5">
+        <p className="text-xs">Chờ duyệt</p>
+      </div>
+    ),
+    [ETweetStatus.Reject]: (
+      <div className="bg-red-500 text-white font-medium inline-block rounded-2xl px-1.5 py-0.5">
+        <p className="text-xs">Từ chối</p>
+      </div>
+    ),
+  };
+
+  return <div className={className}>{_status[status]}</div>;
 }

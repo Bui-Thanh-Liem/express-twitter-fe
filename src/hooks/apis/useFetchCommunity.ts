@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
+  ChangeStatusTweetInCommunityDto,
   CreateCommunityDto,
   deleteInvitationDto,
   DemoteMentorDto,
@@ -9,6 +10,7 @@ import type {
   PromoteMentorDto,
   UpdateDto,
 } from "~/shared/dtos/req/community.dto";
+import { ETweetStatus } from "~/shared/enums/status.enum";
 import type { IQuery } from "~/shared/interfaces/common/query.interface";
 import type {
   ICommunity,
@@ -360,6 +362,27 @@ export const useDemoteMentor = () => {
         queryClient.invalidateQueries({ queryKey: ["communities"] }),
         queryClient.invalidateQueries({ queryKey: ["community"] }),
       ]);
+    },
+  });
+};
+
+// ➕ POST
+export const useChangeStatusTweet = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: ChangeStatusTweetInCommunityDto) =>
+      apiCall<boolean>(`/communities/change-status/`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: async (payload, { status }) => {
+      // Invalidate danh sách communities
+      if (status !== ETweetStatus.Ready) {
+        await queryClient.invalidateQueries({
+          queryKey: ["tweets", "community"],
+        });
+      }
     },
   });
 };

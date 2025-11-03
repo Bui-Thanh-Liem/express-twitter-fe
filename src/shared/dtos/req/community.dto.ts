@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { CONSTANT_REGEX } from "~/shared/constants";
+import { ETweetStatus } from "~/shared/enums/status.enum";
 import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";
 
 export const CreateCommunityDtoSchema = z.object({
@@ -80,6 +81,15 @@ export const deleteInvitationDtoSchema = z.object({
   }),
 });
 
+export const ChangeStatusTweetInCommunityDtoSchema = z.object({
+  community_id: z.string().trim().regex(CONSTANT_REGEX.ID_MONGO, {
+    message: "ObjectId không hợp lệ",
+  }),
+  tweet_id: z.string().trim().regex(CONSTANT_REGEX.ID_MONGO, {
+    message: "ObjectId không hợp lệ",
+  }),
+  status: z.nativeEnum(ETweetStatus),
+});
 export type CreateCommunityDto = z.infer<typeof CreateCommunityDtoSchema>;
 export type InvitationMembersDto = z.infer<typeof InvitationMembersDtoSchema>;
 export type JoinLeaveCommunityDto = z.infer<typeof JoinLeaveCommunityDtoSchema>;
@@ -89,3 +99,6 @@ export type PromoteMentorDto = z.infer<typeof PromoteMentorDtoSchema>;
 export type PinCommunityDto = z.infer<typeof PinCommunityDtoSchema>;
 export type UpdateDto = z.infer<typeof UpdateDtoSchema>;
 export type deleteInvitationDto = z.infer<typeof deleteInvitationDtoSchema>;
+export type ChangeStatusTweetInCommunityDto = z.infer<
+  typeof ChangeStatusTweetInCommunityDtoSchema
+>;

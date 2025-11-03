@@ -13,8 +13,10 @@ import {
   ItemMedia,
 } from "~/components/ui/item";
 import { WrapIcon } from "~/components/wrapIcon";
+import { useChangeStatusTweet } from "~/hooks/apis/useFetchCommunity";
 import { useGetTweetsPendingByCommunityId } from "~/hooks/apis/useFetchTweet";
 import { cn } from "~/lib/utils";
+import { ETweetStatus } from "~/shared/enums/status.enum";
 import { EMediaType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
@@ -57,14 +59,19 @@ export function TweetApproveSkeleton() {
   );
 }
 
-export function CommunityApprove({ community }: { community: ICommunity }) {
+export function CommunityApprove({
+  count,
+  community,
+}: {
+  community: ICommunity;
+  count: number;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [tweets, setTweets] = useState<ITweet[]>([]);
 
   //
   const total_page_ref = useRef(0);
-
   const { data, isLoading } = useGetTweetsPendingByCommunityId(
     {
       page: page.toString(),
@@ -73,6 +80,7 @@ export function CommunityApprove({ community }: { community: ICommunity }) {
     },
     isOpen
   );
+  const apiChangeStatusTweet = useChangeStatusTweet();
 
   // Mỗi lần fetch xong thì append thêm vào state
   useEffect(() => {
@@ -110,10 +118,25 @@ export function CommunityApprove({ community }: { community: ICommunity }) {
   }
 
   //
+  async function handleChangeStatusTweet(
+    tweet_id: string,
+    status: ETweetStatus
+  ) {
+    await apiChangeStatusTweet.mutateAsync({
+      status,
+      tweet_id,
+      community_id: community._id,
+    });
+  }
+
+  //
   return (
     <>
-      <WrapIcon className="border" onClick={() => setIsOpen(true)}>
+      <WrapIcon className="relative border" onClick={() => setIsOpen(true)}>
         <ListCheck size={18} />
+        <p className="absolute -top-1 -right-1 text-[10px] bg-sky-400 w-4 h-4 rounded-full text-center text-white">
+          {count}
+        </p>
       </WrapIcon>
 
       <DialogMain
@@ -171,10 +194,18 @@ export function CommunityApprove({ community }: { community: ICommunity }) {
                     </ItemDescription>
                   </ItemContent>
                   <ItemActions>
-                    <WrapIcon>
+                    <WrapIcon
+                      onClick={() =>
+                        handleChangeStatusTweet(tweet._id, ETweetStatus.Reject)
+                      }
+                    >
                       <X className="text-red-400" />
                     </WrapIcon>
-                    <WrapIcon>
+                    <WrapIcon
+                      onClick={() =>
+                        handleChangeStatusTweet(tweet._id, ETweetStatus.Ready)
+                      }
+                    >
                       <Check className="text-green-400" />
                     </WrapIcon>
                   </ItemActions>

@@ -31,10 +31,19 @@ import { ActionLikeTweet } from "./action-like-tweet";
 import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
 import { ActionShared } from "./action-shared";
 import { Content } from "./content";
-import { MediaContent, SkeletonTweet, TweetItem } from "./item-tweet";
+import {
+  MediaContent,
+  SkeletonTweet,
+  StatusTag,
+  TweetItem,
+} from "./item-tweet";
 import { Logo } from "../logo";
+import { cn } from "~/lib/utils";
+import { ETweetStatus } from "~/shared/enums/status.enum";
 
 export function TweetDetailDrawer() {
+  console.log("TweetDetailDrawer");
+
   //
   const { pathname } = useLocation();
 
@@ -98,7 +107,7 @@ export function TweetDetailDrawer() {
       console.log("leaveComment");
       if (tweet?._id) leaveComment(tweet._id);
     };
-  }, [joinComment, leaveComment, tweet?._id]);
+  }, [tweet?._id]);
 
   //
   useEffect(() => {
@@ -285,6 +294,7 @@ export function TweetDetailDrawer() {
         <div className="">
           {/*  */}
           <DrawerHeader>
+            <StatusTag status={tweet.status} />
             <DrawerTitle className="flex items-center space-x-2">
               <div className="flex items-center mb-3">
                 <AvatarMain
@@ -317,7 +327,14 @@ export function TweetDetailDrawer() {
           </DrawerHeader>
 
           {/* ACTIONS */}
-          <div className="p-4 sticky -top-4 bg-white z-50">
+          <div
+            className={cn(
+              "p-4 sticky -top-4 bg-white z-50",
+              tweet.status !== ETweetStatus.Ready
+                ? "cursor-not-allowed pointer-events-none"
+                : ""
+            )}
+          >
             <div className="flex items-center justify-between text-gray-500 border-y border-gray-100 py-3">
               {/* Comment */}
               <ActionCommentTweet tweet={tweet} />

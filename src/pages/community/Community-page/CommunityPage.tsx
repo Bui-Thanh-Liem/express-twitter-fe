@@ -18,14 +18,41 @@ import { CommunityInvitedList } from "./actions/CommunityInvitedList";
 import { CommunityTweets } from "./CommunityTweets";
 import { CommunityMedia } from "./CommunityMedia";
 import { CommunityApprove } from "./actions/CommunityApprove";
+import { useCommunitySocket } from "~/socket/hooks/useCommunitySocket";
+import { playNotificationSound } from "~/utils/notificationSound";
+import { useEffect, useState } from "react";
 
 export function CommunityPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const [countTweetApprove, setCountTweetApprove] = useState(0);
 
   //
   const { data, refetch, isLoading, error } = useGetOneCommunityBySlug(slug!);
   const community = data?.data;
+
+  //
+  const { joinCommunity, leaveCommunity } = useCommunitySocket((count) => {
+    //
+    if (countTweetApprove < count) {
+      playNotificationSound();
+    }
+    setCountTweetApprove(count);
+  });
+
+  //
+  useEffect(() => {
+    if (community?._id) {
+      joinCommunity(community._id);
+      console.log("joinCommunity");
+    }
+    return () => {
+      if (community?._id) {
+        console.log("joinCommunity");
+        leaveCommunity(community._id);
+      }
+    };
+  }, [community?._id]);
 
   // Error handling
   if (error) {
@@ -103,7 +130,10 @@ export function CommunityPage() {
               <CommunitySetting community={community} />
 
               {/*  */}
-              <CommunityApprove community={community} />
+              <CommunityApprove
+                community={community}
+                count={countTweetApprove}
+              />
 
               {/*  */}
               <CommunityActivity community={community} />
