@@ -288,7 +288,7 @@ export function Tweet({
             // Nếu upload thành công và type === video thì phải đợi kiểm duyệt
             if (mediaType == EMediaType.Video) {
               toastSimple(
-                "Video của bạn đang được xử lý, vui lòng chờ đợi trong vaif giây."
+                "Video của bạn đang được xử lý, vui lòng chờ đợi trong vài giây."
               );
             }
           }, 3000);
