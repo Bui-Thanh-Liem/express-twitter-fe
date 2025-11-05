@@ -84,8 +84,9 @@ export const apiCall = async <T>(
       result = await response.json();
     } else {
       // If refresh fails, redirect to login or handle accordingly
-      // localStorage.removeItem("access_token");
-      // localStorage.removeItem("refresh_token");
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user-storage");
 
       // You might want to redirect to login page here
       console.log("Lỗi khi gọi api refresh token:::", resRefreshToken);
