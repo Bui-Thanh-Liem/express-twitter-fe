@@ -72,12 +72,12 @@ function AvatarMain({
 
 function GroupAvatarMain({ srcs, max = 3 }: GroupAvatarMainProps) {
   console.log("srcs:::", srcs);
-  const visibleUsers = srcs.slice(0, max);
+  const visibleUsers = srcs?.slice(0, max);
 
   return (
     <div className="-space-y-2">
       <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2">
-        {visibleUsers.slice(0, 2).map((src) => (
+        {visibleUsers?.slice(0, 2).map((src) => (
           <AvatarMain
             key={src}
             src={src}
@@ -87,7 +87,7 @@ function GroupAvatarMain({ srcs, max = 3 }: GroupAvatarMainProps) {
         ))}
       </div>
       <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
-        {visibleUsers.slice(2, 4).map((src) => (
+        {visibleUsers?.slice(2, 4).map((src) => (
           <AvatarMain
             key={src}
             src={src}
