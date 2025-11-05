@@ -8,6 +8,17 @@ import type { RemoteImagesDto } from "~/shared/dtos/req/upload.dto";
 import type { ResUpload } from "~/shared/dtos/res/upload.dto";
 import { apiCall } from "~/utils/callApi.util";
 
+export const allowedImgTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+export const allowedVideoTypes = [
+  "image/gif",
+  "image/webp",
+  "video/mp4",
+  "video/webm",
+  "video/mov",
+  "video/avi",
+];
+
 // 📸 POST - Upload single image/video (Dynamic endpoint)
 export const useUploadMedia = () => {
   return useMutation({
@@ -70,17 +81,6 @@ export const useUploadMedia = () => {
 
 // 🔍 Validate file trước khi upload
 export const validateMediaFile = (file: File) => {
-  const allowedImgTypes = ["image/jpeg", "image/jpg", "image/png"];
-
-  const allowedVideoTypes = [
-    "image/gif",
-    "image/webp",
-    "video/mp4",
-    "video/webm",
-    "video/mov",
-    "video/avi",
-  ];
-
   if (allowedImgTypes.includes(file.type)) {
     if (file.size > CONSTANT_MAX_SIZE_IMAGE_UPLOAD) {
       throw new Error("Dung lượng ảnh quá lớn. Tối đa 5MB.");

@@ -5,6 +5,7 @@ import {
 } from "~/shared/constants";
 import { EMediaType } from "~/shared/enums/type.enum";
 import { toastSimple } from "~/utils/toastSimple.util";
+import { allowedImgTypes, allowedVideoTypes } from "./apis/useFetchUpload";
 
 export const MAX_FILE_COUNT = 5;
 
@@ -38,20 +39,6 @@ export const useMediaPreviewMulti = () => {
       const newFiles = Array.from(e.target.files || []);
       if (!newFiles.length) return;
 
-      const validImageTypes = [
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/webp",
-      ];
-      const validVideoTypes = [
-        "video/mp4",
-        "video/webm",
-        "video/mov",
-        "video/avi",
-        "video/quicktime",
-      ];
-
       setMediaItems((prev) => {
         const currentCount = prev.length;
         const remainingSlots = MAX_FILE_COUNT - currentCount;
@@ -72,8 +59,8 @@ export const useMediaPreviewMulti = () => {
           const type = getMediaType(file);
 
           if (
-            !validImageTypes.includes(file.type) &&
-            !validVideoTypes.includes(file.type)
+            !allowedImgTypes.includes(file.type) &&
+            !allowedVideoTypes.includes(file.type)
           ) {
             toastSimple(
               "Chỉ hỗ trợ file ảnh (JPEG, PNG, GIF, WebP) và video (MP4, WebM, MOV, AVI)",

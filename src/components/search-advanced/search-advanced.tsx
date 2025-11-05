@@ -10,6 +10,8 @@ import { VerifyIcon } from "../icons/verify";
 import { AvatarMain } from "../ui/avatar";
 import { Input } from "../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { useUserStore } from "~/store/useUserStore";
+import { toastSimpleVerify } from "~/utils/toastSimple.util";
 
 type SearchSize = "sm" | "md" | "lg";
 
@@ -32,6 +34,8 @@ export function SearchAdvanced({
   size = "md",
   placeholder = "Tìm kiếm",
 }: SearchBarProps) {
+  const { user } = useUserStore();
+
   //
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -65,12 +69,18 @@ export function SearchAdvanced({
   function onKeydown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.code === "Enter") {
       console.log("Search button enter");
+      if (!user?.verify) {
+        toastSimpleVerify();
+      }
       if (searchVal) navigate(`/search?q=${searchVal}`);
     }
   }
 
   //
   function onClickTrendingItem(tr: ITrending) {
+    if (!user?.verify) {
+      toastSimpleVerify();
+    }
     if (searchVal) navigate(`/search?q=${tr?.topic}`);
     setSearchVal(tr.topic!);
     setOpen(false);
@@ -78,6 +88,9 @@ export function SearchAdvanced({
 
   //
   function onClickUserItem(u: IUser) {
+    if (!user?.verify) {
+      toastSimpleVerify();
+    }
     if (searchVal) navigate(`/${u.username}`);
     setSearchVal(u.username!);
     setOpen(false);

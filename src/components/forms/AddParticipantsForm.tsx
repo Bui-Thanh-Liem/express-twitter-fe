@@ -23,6 +23,7 @@ import {
   UserFollowerSkeleton,
   UserSelected,
 } from "./CreateConversationForm";
+import { toastSimpleVerify } from "~/utils/toastSimple.util";
 
 export function AddParticipantsForm({
   setOpenForm,
@@ -129,6 +130,11 @@ export function AddParticipantsForm({
 
   //
   const onSubmit = async (data: AddParticipantsBodyDto) => {
+    if (!user?.verify) {
+      toastSimpleVerify();
+      return;
+    }
+
     const res = await apiAddParticipants.mutateAsync({
       payload: data,
       conv_id: conversation._id,

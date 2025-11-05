@@ -178,6 +178,8 @@ export function MessageView({
       try {
         //
         const resUploadMedia = await apiUploadMedia.mutateAsync(selectedFiles);
+        console.log("resUploadMedia:::", resUploadMedia);
+
         if (resUploadMedia.statusCode !== 200 || !resUploadMedia.data) {
           handleResponse(resUploadMedia, () => {
             setTimeout(() => {
@@ -316,7 +318,7 @@ export function MessageView({
           {/*  */}
           <div className="flex flex-col gap-3">
             {messages.map((msg) => {
-              return <MessageItem msg={msg} user={user as IUser} />;
+              return <MessageItem key={msg._id} msg={msg} user={user as IUser} />;
             })}
             <div ref={endOfMessagesRef} />
           </div>

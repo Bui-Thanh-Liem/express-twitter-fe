@@ -9,6 +9,8 @@ import { useFollowUser } from "~/hooks/apis/useFetchFollow";
 import { EConversationType } from "~/shared/enums/type.enum";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useChatBoxStore } from "~/store/useChatBoxStore";
+import { useUserStore } from "~/store/useUserStore";
+import { toastSimpleVerify } from "~/utils/toastSimple.util";
 
 interface IProfileActiveProps {
   isOwnProfile: boolean;
@@ -45,6 +47,8 @@ export function ProfileEdit({ currentUser }: { currentUser: IUser }) {
 
 //
 export function ProfileAction({ profile, isOwnProfile }: IProfileActiveProps) {
+  const { user } = useUserStore();
+
   //
   const { open, setConversation } = useChatBoxStore();
   const [isFollow, setIsFollow] = useState(false);
@@ -60,6 +64,11 @@ export function ProfileAction({ profile, isOwnProfile }: IProfileActiveProps) {
 
   //
   async function handleOpenCheckBox() {
+    if (!user?.verify) {
+      toastSimpleVerify();
+      return;
+    }
+
     const res = await apiCreateConversation.mutateAsync({
       type: EConversationType.Private,
       participants: [profile?._id],
@@ -72,6 +81,10 @@ export function ProfileAction({ profile, isOwnProfile }: IProfileActiveProps) {
 
   //
   function handleFollow() {
+    if (!user?.verify) {
+      toastSimpleVerify();
+      return;
+    }
     mutate({
       user_id: profile._id,
       username: profile.username || "",

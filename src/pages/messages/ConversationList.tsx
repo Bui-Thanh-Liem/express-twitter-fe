@@ -11,13 +11,13 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { SearchMain } from "~/components/ui/search";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useDebounce } from "~/hooks/useDebounce";
 import {
   useDeleteConversation,
   useGetMultiConversations,
   useReadConversation,
   useTogglePinConversation,
 } from "~/hooks/apis/useFetchConversations";
+import { useDebounce } from "~/hooks/useDebounce";
 import { cn } from "~/lib/utils";
 import { EConversationType } from "~/shared/enums/type.enum";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
@@ -285,6 +285,7 @@ export function ConversationList({
 
   // Mỗi lần fetch API xong thì merge vào state (loại bỏ duplicate)
   useEffect(() => {
+    //
     const items = data?.data?.items || [];
     const total_page = data?.data?.total_page;
     total_page_ref.current = total_page || 0;

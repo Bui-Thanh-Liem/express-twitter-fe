@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useFollowUser } from "~/hooks/apis/useFetchFollow";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import { useUserStore } from "~/store/useUserStore";
 import { VerifyIcon } from "../icons/verify";
 import { ShortInfoProfile } from "../ShortInfoProfile";
 import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
-import { useUserStore } from "~/store/useUserStore";
+import { toastSimpleVerify } from "~/utils/toastSimple.util";
 
 export function UserToFollowItemSkeleton() {
   return (
@@ -44,6 +45,20 @@ export function UserToFollowItem({ user }: { user: Partial<IUser> }) {
   }, [isError]);
 
   //
+  function handleToggleFollow() {
+    if (!userActive?.verify) {
+      toastSimpleVerify();
+      return;
+    }
+
+    setFollowed(!followed);
+    mutate({
+      user_id: user._id || "",
+      username: user.username || "",
+    });
+  }
+
+  //
   return (
     <div key={user._id} className="hover:bg-gray-100 px-4 py-3 cursor-pointer">
       <div className="flex justify-between items-center">
@@ -69,16 +84,7 @@ export function UserToFollowItem({ user }: { user: Partial<IUser> }) {
         {userActive?._id === user._id ? (
           <p className="text-gray-400">là bạn</p>
         ) : (
-          <ButtonMain
-            size="sm"
-            onClick={() => {
-              setFollowed(!followed);
-              mutate({
-                user_id: user._id || "",
-                username: user.username || "",
-              });
-            }}
-          >
+          <ButtonMain size="sm" onClick={handleToggleFollow}>
             {!followed ? "Theo dõi" : "Bỏ theo dõi"}
           </ButtonMain>
         )}

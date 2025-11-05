@@ -10,3 +10,14 @@ export function toastSimple(mess: string, type: ToastType = "info") {
     richColors: true,
   });
 }
+
+export function toastSimpleVerify() {
+  toast["warning"](
+    "Tài khoản của bạn chưa được xác minh, xác minh ở trang cá nhân của bạn.",
+    {
+      // position: "top-center",
+      description: formatDateToDateVN(new Date()),
+      richColors: true,
+    }
+  );
+}
