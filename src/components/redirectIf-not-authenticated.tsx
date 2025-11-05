@@ -11,8 +11,6 @@ export function RedirectIfNotAuthenticated({
 
   if (!user) {
     // Xóa token
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
     return <Navigate to="/" replace />;
   }
 
