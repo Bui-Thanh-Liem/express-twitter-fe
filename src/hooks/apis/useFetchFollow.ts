@@ -34,8 +34,9 @@ export const useFollowUser = () => {
             data: {
               ...oldData.data,
               isFollow,
-              follower_count:
-                (oldData?.data?.follower_count || 0) + (isFollow ? 1 : -1),
+              follower_count: Math.abs(
+                (oldData?.data?.follower_count || 0) + (isFollow ? 1 : -1)
+              ),
             } as IUser,
           };
         }
