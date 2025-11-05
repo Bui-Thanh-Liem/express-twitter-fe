@@ -6,9 +6,9 @@ import { CloseIcon } from "~/components/icons/close";
 import { ImageIcon } from "~/components/icons/image";
 import { TweetAudience } from "~/components/tweet/TweetAudience";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useCreateTweet } from "~/hooks/apis/useFetchTweet";
 import { useUploadWithValidation } from "~/hooks/apis/useFetchUpload";
+import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useMediaPreview } from "~/hooks/useMediaPreview";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
 import { cn } from "~/lib/utils";
@@ -288,7 +288,7 @@ export function Tweet({
             // Nếu upload thành công và type === video thì phải đợi kiểm duyệt
             if (mediaType == EMediaType.Video) {
               toastSimple(
-                "Video của bạn đang được xử lý, vui lòng chờ đợi trong vài giây."
+                "Video của bạn đang được xử lý, trong quá trình xử lý bạn có thể thực hiện các tương tác khác."
               );
             }
           }, 3000);

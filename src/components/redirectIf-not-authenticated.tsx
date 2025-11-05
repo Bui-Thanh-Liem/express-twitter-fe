@@ -10,6 +10,9 @@ export function RedirectIfNotAuthenticated({
   const user = useUserStore((state) => state.user);
 
   if (!user) {
+    // Xóa token
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
     return <Navigate to="/" replace />;
   }
 
