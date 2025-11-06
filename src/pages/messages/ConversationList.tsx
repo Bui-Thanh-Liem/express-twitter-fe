@@ -127,7 +127,12 @@ function ConversationItem({
           <GroupAvatarMain srcs={avatar as string[]} />
         )}
         <div>
-          <p className="font-medium">{name}</p>
+          <p className="font-medium">
+            {name}{" "}
+            {type === EConversationType.Group && (
+              <span className="inline-block">nhóm</span>
+            )}
+          </p>
           <p className="text-sm text-gray-500 truncate max-w-[160px]">
             {messageLastContent}
           </p>

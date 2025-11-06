@@ -98,7 +98,9 @@ export function ParticipantList({
                 className="flex items-center gap-3 cursor-pointer relative"
               >
                 <AvatarMain src={u.avatar} alt={u.name} className="w-10 h-10" />
-                <p className="max-w-28 line-clamp-1">{u.name}</p>
+                <p className="max-w-40 line-clamp-1 hover:underline">
+                  {u.name}
+                </p>
                 {is_mentor(u) && (
                   <Crown
                     size={18}

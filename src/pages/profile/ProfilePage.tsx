@@ -167,10 +167,12 @@ export function ProfilePage() {
               </div>
             )}
             {profile?.website && (
-              <a href={profile.website} target="_blank">
+              <a href={profile.website} target="_blank" className="group">
                 <div className="flex items-center space-x-1">
                   <Globe className="w-4 h-4" />
-                  <span>{profile?.website}</span>
+                  <span className="group-hover:underline">
+                    {profile?.website}
+                  </span>
                 </div>
               </a>
             )}
