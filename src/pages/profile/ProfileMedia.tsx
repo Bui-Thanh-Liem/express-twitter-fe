@@ -142,10 +142,7 @@ export function ProfileMedia({
       {allMedia.length > 0 && (
         <div className="grid grid-cols-3 gap-x-6 gap-y-0">
           {allMedia.map((m, index) => (
-            <div
-              key={m.media?.url || `media-${index}`}
-              className="aspect-square"
-            >
+            <div key={m.media?.url || `media-${index}`}>
               <MediaContent
                 tweet={m}
                 type={m.media?.type || EMediaType.Image}
@@ -163,7 +160,7 @@ export function ProfileMedia({
             {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={`loading-${index}`}
-                className="aspect-square bg-gray-200 animate-pulse rounded-lg"
+                className="bg-gray-200 animate-pulse rounded-lg"
               />
             ))}
           </div>

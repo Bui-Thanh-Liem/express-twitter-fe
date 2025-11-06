@@ -174,7 +174,7 @@ export function UpdateMeForm({
       <div className="space-y-6">
         {/* Cover Photo, avatar Section */}
         <div
-          className="relative h-44 w-full bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200 transition-colors"
+          className="relative h-44 w-full bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
           style={{
             backgroundImage: coverPreview ? `url(${coverPreview})` : "none",
             backgroundSize: "cover",

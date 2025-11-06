@@ -25,6 +25,7 @@ export function HLSPlayer({ src }: { src: string }) {
       // onPointerLeave={() => {
       //   playerRef.current?.pause();
       // }}
+      className="h-full"
     >
       <MediaProvider>
         {textTracks.map((track) => (

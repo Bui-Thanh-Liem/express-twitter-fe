@@ -189,7 +189,7 @@ export function SearchAdvanced({
         </div>
 
         {/*  */}
-        <p className="text-gray-500 text-base p-2 pt-3">
+        <p className="text-gray-500 text-base p-2 pt-3 line-clamp-2">
           Tìm kiếm mọi thứ bạn muốn{" "}
           {searchVal && <strong>"{searchVal}"</strong>}
         </p>
