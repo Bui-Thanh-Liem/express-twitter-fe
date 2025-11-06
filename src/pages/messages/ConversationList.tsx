@@ -130,7 +130,9 @@ function ConversationItem({
           <p className="font-medium">
             {name}{" "}
             {type === EConversationType.Group && (
-              <span className="inline-block">nhóm</span>
+              <span className="inline-block text-[10px] text-gray-400 p-0.5 px-1 border rounded-full">
+                nhóm
+              </span>
             )}
           </p>
           <p className="text-sm text-gray-500 truncate max-w-[160px]">
