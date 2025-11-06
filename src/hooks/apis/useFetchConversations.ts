@@ -125,7 +125,7 @@ export const useTogglePinConversation = () => {
   });
 };
 
-// ➕ DELETE
+// ❌ DELETE
 export const useDeleteConversation = () => {
   const queryClient = useQueryClient();
 

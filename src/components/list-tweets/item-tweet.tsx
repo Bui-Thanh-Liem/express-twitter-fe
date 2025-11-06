@@ -188,7 +188,7 @@ export const TweetItem = ({
       <div className="ml-14">
         {/* Nội dung tweet */}
         {content && tweet.type !== ETweetType.Retweet && (
-          <p className="text-gray-800 mb-3 leading-relaxed">
+          <p className="text-gray-800 mb-3 leading-relaxed whitespace-break-spaces">
             <Content content={content} mentions={mentions as any} />
           </p>
         )}

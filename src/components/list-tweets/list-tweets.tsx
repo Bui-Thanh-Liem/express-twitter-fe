@@ -41,7 +41,7 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
 
       if (page === 1) {
         // Nếu là trang đầu tiên, replace toàn bộ
-        setFeeds(newTweets);
+        setFeeds([...newTweets, _newCommunities]);
       } else {
         // Nếu là trang tiếp theo, append vào cuối
         setFeeds((prev) => {
@@ -199,7 +199,7 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
                   </p>
                   <div className="m-4 mt-2 grid grid-cols-3 items-center gap-x-3">
                     {communities.map((com) => (
-                      <CommunityCard community={com} />
+                      <CommunityCard community={com} key={com._id} />
                     ))}
                     <Link
                       to={"/communities/t/explore"}

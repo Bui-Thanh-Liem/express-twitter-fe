@@ -1,17 +1,22 @@
 import { Search, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useDebounce } from "~/hooks/useDebounce";
 import { useSearchPending } from "~/hooks/apis/useFetchSearch";
+import {
+  useCreateSearchHistory,
+  useDeleteSearchHistory,
+  useGetMultiSearchHistory,
+} from "~/hooks/apis/useFetchSearchHistory";
+import { useDebounce } from "~/hooks/useDebounce";
 import { cn } from "~/lib/utils";
 import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import { useUserStore } from "~/store/useUserStore";
+import { toastSimpleVerify } from "~/utils/toastSimple.util";
 import { VerifyIcon } from "../icons/verify";
 import { AvatarMain } from "../ui/avatar";
 import { Input } from "../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { useUserStore } from "~/store/useUserStore";
-import { toastSimpleVerify } from "~/utils/toastSimple.util";
 
 type SearchSize = "sm" | "md" | "lg";
 
@@ -47,6 +52,10 @@ export function SearchAdvanced({
   const debouncedValue = useDebounce(searchVal, 500);
 
   //
+  const apiCreateHistory = useCreateSearchHistory();
+  const apiDeleteHistory = useDeleteSearchHistory();
+
+  //
   const { data } = useSearchPending(
     {
       page: "1",
@@ -56,8 +65,17 @@ export function SearchAdvanced({
     !!debouncedValue && debouncedValue.length > 0
   );
 
+  const { data: resSearchHistory } = useGetMultiSearchHistory({
+    page: "1",
+    limit: "10",
+    q: debouncedValue,
+  });
+
   const users = data?.data?.users || [];
   const trending = data?.data?.trending || [];
+
+  //
+  const searHistory = resSearchHistory?.data?.items || [];
 
   //
   function onChangeSearch(val: string) {
@@ -72,7 +90,10 @@ export function SearchAdvanced({
       if (!user?.verify) {
         toastSimpleVerify();
       }
-      if (searchVal) navigate(`/search?q=${searchVal}`);
+      if (searchVal) {
+        apiCreateHistory.mutate({ text: searchVal });
+        navigate(`/search?q=${searchVal}`);
+      }
     }
   }
 
@@ -81,7 +102,10 @@ export function SearchAdvanced({
     if (!user?.verify) {
       toastSimpleVerify();
     }
-    if (searchVal) navigate(`/search?q=${tr?.topic}`);
+    if (searchVal) {
+      apiCreateHistory.mutate({ trending: tr._id });
+      navigate(`/search?q=${tr?.topic}`);
+    }
     setSearchVal(tr.topic!);
     setOpen(false);
   }
@@ -91,9 +115,18 @@ export function SearchAdvanced({
     if (!user?.verify) {
       toastSimpleVerify();
     }
-    if (searchVal) navigate(`/${u.username}`);
+    if (searchVal) {
+      apiCreateHistory.mutate({ user: u._id });
+      navigate(`/${u.username}`);
+    }
     setSearchVal(u.username!);
     setOpen(false);
+  }
+
+  function handleDeleteHistory(e: any, id: string) {
+    e.stopPropagation();
+    e.preventDefault();
+    apiDeleteHistory.mutate({ id });
   }
 
   //
@@ -187,6 +220,88 @@ export function SearchAdvanced({
             </>
           )}
         </div>
+
+        {!searchVal && (
+          <div className="max-h-[60vh] overflow-y-auto">
+            {searHistory.length > 0 && (
+              <ul>
+                {searHistory.map((sh) => {
+                  const shTrending = sh.trending as ITrending;
+                  const shUser = sh.user as IUser;
+
+                  if (shTrending) {
+                    return (
+                      <li
+                        key={shTrending._id}
+                        className="group cursor-pointer hover:bg-gray-100 p-2 rounded flex items-center gap-1"
+                        onClick={() => onClickTrendingItem(shTrending)}
+                      >
+                        <Search className="h-4 w-4 text-muted-foreground" />
+                        <h3 className="ml-4 text-md font-semibold">
+                          {shTrending.topic}
+                        </h3>
+                        <X
+                          size={18}
+                          className="hidden group-hover:flex ml-auto text-gray-400"
+                          onClick={(e) => handleDeleteHistory(e, sh._id)}
+                        />
+                      </li>
+                    );
+                  }
+
+                  if (shUser) {
+                    return (
+                      <li
+                        key={shUser._id}
+                        className="group cursor-pointer hover:bg-gray-100 p-2 rounded flex items-center gap-1"
+                        onClick={() => onClickUserItem(shUser)}
+                      >
+                        <AvatarMain
+                          src={shUser.avatar}
+                          alt={shUser.name}
+                          className="mr-3"
+                        />
+                        <div>
+                          <span className="flex items-center gap-2">
+                            <h3 className="text-md font-semibold">
+                              {shUser.name}
+                            </h3>
+                          </span>
+                          <p className="text-[14px] text-gray-400">
+                            {shUser.username}
+                          </p>
+                        </div>
+                        <X
+                          size={18}
+                          className="hidden group-hover:flex ml-auto text-gray-400"
+                          onClick={(e) => handleDeleteHistory(e, sh._id)}
+                        />
+                      </li>
+                    );
+                  }
+
+                  return (
+                    <li
+                      key={sh._id}
+                      className="group cursor-pointer hover:bg-gray-100 p-2 rounded flex items-center gap-1"
+                      onClick={() => {
+                        navigate(`/search?q=${sh.text}`);
+                      }}
+                    >
+                      <Search className="h-4 w-4 text-muted-foreground" />
+                      <h3 className="ml-4 text-md font-semibold">{sh.text}</h3>
+                      <X
+                        size={18}
+                        className="hidden group-hover:flex ml-auto text-gray-400"
+                        onClick={(e) => handleDeleteHistory(e, sh._id)}
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        )}
 
         {/*  */}
         <p className="text-gray-500 text-base p-2 pt-3 line-clamp-2">
