@@ -1,5 +1,5 @@
 import { Calendar, Globe, MapPin } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftIcon } from "~/components/icons/arrow-left";
 import { CloseIcon } from "~/components/icons/close";
@@ -28,6 +28,9 @@ export function ProfilePage() {
   const { user } = useUserStore();
   const { data, refetch, isLoading, error } = useGetOneByUsername(username!);
   const apiResendVerifyEmail = useResendVerifyEmail();
+
+  //
+  const [isLoadingSendMail, startTransition] = useTransition();
 
   // Extract profile data to avoid repetitive data?.data calls
   const profile = data?.data;
@@ -95,8 +98,10 @@ export function ProfilePage() {
 
   //
   async function resendVerifyEmail() {
-    const res = await apiResendVerifyEmail.mutateAsync();
-    handleResponse(res);
+    startTransition(async () => {
+      const res = await apiResendVerifyEmail.mutateAsync();
+      handleResponse(res);
+    });
   }
 
   return (
@@ -222,7 +227,12 @@ export function ProfilePage() {
                 Hãy xác minh để nhận được phản hồi tốt hơn, phân tích, duyệt web
                 không quảng cáo và nhiều hơn nữa. Nâng cấp hồ sơ của bạn ngay.
               </p>
-              <ButtonMain onClick={resendVerifyEmail}>Xác minh</ButtonMain>
+              <ButtonMain
+                loading={isLoadingSendMail}
+                onClick={resendVerifyEmail}
+              >
+                Xác minh
+              </ButtonMain>
             </div>
           )}
         </div>

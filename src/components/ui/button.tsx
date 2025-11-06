@@ -1,7 +1,8 @@
-import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 
+import { Loader2 } from "lucide-react";
 import { cn } from "~/lib/utils";
 
 type ButtonSize = "sm" | "md" | "lg";
@@ -9,6 +10,7 @@ type ButtonSize = "sm" | "md" | "lg";
 type ButtonMainProps = React.ComponentProps<typeof Button> & {
   fullWidth?: boolean;
   size?: ButtonSize;
+  loading?: boolean;
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -74,6 +76,8 @@ function ButtonMain({
   fullWidth,
   size = "md",
   variant,
+  loading,
+  children,
   ...props
 }: ButtonMainProps) {
   const classes = variant
@@ -89,10 +93,13 @@ function ButtonMain({
         fullWidth && "w-full",
         className
       )}
+      disabled={loading}
       {...props}
-    />
+    >
+      {loading ? <Loader2 className="animate-spin size-4" /> : children}
+    </Button>
   );
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export { Button, buttonVariants, ButtonMain };
+export { Button, ButtonMain, buttonVariants };

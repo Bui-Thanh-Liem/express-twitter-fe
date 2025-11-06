@@ -23,7 +23,7 @@ import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
-import { toastSimple } from "~/utils/toastSimple.util";
+import { toastSimple, toastSimpleVerify } from "~/utils/toastSimple.util";
 import { TweetItem } from "../list-tweets/item-tweet";
 import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
@@ -92,11 +92,11 @@ export function Tweet({
 
   //
   const {
-    register,
-    reset,
-    handleSubmit,
-    setValue,
     watch,
+    reset,
+    setValue,
+    register,
+    handleSubmit,
     formState: { isValid, isSubmitting },
   } = useForm<CreateTweetDto>({
     resolver: zodResolver(CreateTweetDtoSchema),
@@ -224,9 +224,14 @@ export function Tweet({
     setMentionIds((prev) => [...prev, user._id]);
   }
 
-  // Thực hiện gọi api
+  // Thực hiện gọi api đăng bài
   const onSubmit = useCallback(
     async (data: CreateTweetDto) => {
+      if (!user?.verify) {
+        toastSimpleVerify();
+        return;
+      }
+
       try {
         setIsUploading(true);
         let mediaUrl = uploadedMediaUrl;
