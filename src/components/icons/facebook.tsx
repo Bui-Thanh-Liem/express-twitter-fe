@@ -1,9 +1,9 @@
 export function FacebookIcon() {
   return (
     <svg
-      width={24}
-      height={24}
-      viewBox="0 0 24 24"
+      width={20}
+      height={20}
+      viewBox="0 0 20 20"
       fill="none"
       aria-hidden="true"
       className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1gs4q39 r-z80fyv r-19wmn03"
