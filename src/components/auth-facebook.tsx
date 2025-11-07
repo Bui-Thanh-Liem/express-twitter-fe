@@ -1,7 +1,7 @@
 import { toastSimple } from "~/utils/toastSimple.util";
 import { FacebookIcon } from "./icons/facebook";
 
-export function AuthApple() {
+export function AuthFacebook() {
   function handleClick() {
     toastSimple(
       "Tính năng đang được cập nhật, vui lòng chọn phương thức khác."

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
-import { AuthApple } from "~/components/auth-apple";
+import { AuthFacebook } from "~/components/auth-facebook";
 import { AuthGoogle } from "~/components/auth-google";
 import { TypographyH1 } from "~/components/elements/h1";
 import { TypographyH2 } from "~/components/elements/h2";
@@ -84,7 +84,7 @@ export function AuthPage() {
           </TypographyH2>
           <div className="space-y-2 w-80">
             <AuthGoogle />
-            <AuthApple />
+            <AuthFacebook />
           </div>
           <Divider className="w-80 my-4" />
           <ButtonMain

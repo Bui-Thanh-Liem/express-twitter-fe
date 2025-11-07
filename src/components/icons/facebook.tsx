@@ -3,11 +3,11 @@ export function FacebookIcon() {
     <svg
       width={20}
       height={20}
-      viewBox="0 0 20 20"
+      viewBox="0 0 24 24"
       fill="none"
       aria-hidden="true"
       className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1gs4q39 r-z80fyv r-19wmn03"
-      style={{ color: "#1877F2" }} // Màu xanh chủ đạo của Facebook
+      style={{ color: "#1877F2" }}
     >
       <g>
         <path

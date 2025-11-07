@@ -8,7 +8,7 @@ import {
   type LoginUserDto,
 } from "~/shared/dtos/req/auth.dto";
 import { handleResponse } from "~/utils/handleResponse";
-import { AuthApple } from "../auth-apple";
+import { AuthFacebook } from "../auth-facebook";
 import { AuthGoogle } from "../auth-google";
 import { TypographyP } from "../elements/p";
 import { Divider } from "../ui/divider";
@@ -61,7 +61,7 @@ export function LoginAccountForm({
     >
       <div className="mt-4 space-y-6 min-w-[460px]">
         <AuthGoogle />
-        <AuthApple />
+        <AuthFacebook />
 
         <div className="flex justify-center">
           <Divider className="w-80" />
