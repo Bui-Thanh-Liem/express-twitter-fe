@@ -1,10 +1,10 @@
 import { toastSimple } from "~/utils/toastSimple.util";
-import { AppleIcon } from "./icons/apple";
+import { FacebookIcon } from "./icons/facebook";
 
 export function AuthApple() {
   function handleClick() {
     toastSimple(
-      "Thiết bị của bạn không được hỗ trợ phương thức đăng nhập này, vui lòng chọn cách khách."
+      "Tính năng đang được cập nhật, vui lòng chọn phương thức khác."
     );
   }
 
@@ -13,7 +13,7 @@ export function AuthApple() {
       <div
         className={`h-12 border border-gray-300 hover:bg-gray-100 rounded-full flex justify-center items-center gap-4`}
       >
-        <AppleIcon /> <span>Đăng kí với Apple</span>
+        <FacebookIcon /> <span>Đăng kí với Facebook</span>
       </div>
     </div>
   );
