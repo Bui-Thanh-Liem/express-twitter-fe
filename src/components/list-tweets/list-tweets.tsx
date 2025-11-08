@@ -132,10 +132,10 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
     return (
       <div className="text-center py-8">
         <p className="text-gray-500 text-lg mb-2">
-          📝 Bạn chưa xác minh tài khoản
+          📝 Bạn chưa xác minh tài khoản,
         </p>
         <p className="text-gray-400">
-          Hãy vào trang cá nhân xác minh tài khoản của bạn.
+          kiểm tra email hoặc vào trang cá nhân xác minh tài khoản của bạn.
         </p>
       </div>
     );

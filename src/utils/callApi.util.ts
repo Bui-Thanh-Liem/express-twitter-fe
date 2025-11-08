@@ -63,7 +63,7 @@ export const apiCall = async <T>(
     const resRefreshToken =
       (await refreshResponse.json()) as OkResponse<ResLoginUser>;
 
-    if (resRefreshToken.statusCode === 200) {
+    if (resRefreshToken?.statusCode === 200) {
       localStorage.setItem(
         "access_token",
         resRefreshToken.data?.access_token || ""
