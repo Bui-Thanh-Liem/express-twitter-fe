@@ -156,11 +156,9 @@ export function ProfilePage() {
 
           {/* <!-- Bio --> */}
           <div className="mb-3">
-            {profile?.bio?.split("\\n").map((p) => (
-              <p className="leading-relaxed" key={p}>
-                {p}
-              </p>
-            ))}
+            <p className="leading-relaxed whitespace-break-spaces">
+              {profile?.bio}
+            </p>
           </div>
 
           {/* <!-- Location, Website and Join Date --> */}

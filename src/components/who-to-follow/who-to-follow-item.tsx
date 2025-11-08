@@ -77,11 +77,7 @@ export function UserToFollowItem({ user }: { user: Partial<IUser> }) {
               </Link>
             </ShortInfoProfile>
             <p className="text-xs text-muted-foreground">{user.username}</p>
-            {user.bio && (
-              <p className="line-clamp-3 max-w-[95%] whitespace-break-spaces">
-                {user.bio}
-              </p>
-            )}
+            {user.bio && <p className="line-clamp-3 max-w-[95%]">{user.bio}</p>}
           </div>
         </div>
 
