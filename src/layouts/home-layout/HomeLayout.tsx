@@ -11,9 +11,11 @@ import { useUnreadNotiStore } from "~/store/useUnreadNotiStore";
 import { useUserStore } from "~/store/useUserStore";
 import { SidebarLeft } from "./SidebarLeft";
 import { SidebarRight } from "./SidebarRight";
+import { useDetailTweetStore } from "~/store/useDetailTweetStore";
 
 export function HomeLayout() {
   const { isOpen } = useChatBoxStore();
+  const { isOpen: isOpenDT } = useDetailTweetStore();
   const { user } = useUserStore();
   const { setUnread, setUnreadByType } = useUnreadNotiStore();
   const { pathname } = useLocation();
@@ -60,9 +62,8 @@ export function HomeLayout() {
           </aside>
         ) : null}
       </div>
-
       {isOpen && <ChatBox />}
-      <TweetDetailDrawer />
+      {isOpenDT && <TweetDetailDrawer />}
     </div>
   );
 }
