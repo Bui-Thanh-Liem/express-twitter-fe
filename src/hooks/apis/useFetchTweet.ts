@@ -197,7 +197,7 @@ export const useGetTweetChildren = ({
     },
 
     // Lên getNewFeeds đọc giải thích
-    enabled: !!tweet_id,
+    enabled: Boolean(tweet_id),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: true,
