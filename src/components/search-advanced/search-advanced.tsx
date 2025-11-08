@@ -9,10 +9,11 @@ import {
 } from "~/hooks/apis/useFetchSearchHistory";
 import { useDebounce } from "~/hooks/useDebounce";
 import { cn } from "~/lib/utils";
+import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
-import { toastSimpleVerify } from "~/utils/toastSimple.util";
+import { toastSimple, toastSimpleVerify } from "~/utils/toastSimple.util";
 import { VerifyIcon } from "../icons/verify";
 import { AvatarMain } from "../ui/avatar";
 import { Input } from "../ui/input";
@@ -71,8 +72,10 @@ export function SearchAdvanced({
     q: debouncedValue,
   });
 
+  // Search pending
   const users = data?.data?.users || [];
   const trending = data?.data?.trending || [];
+  const communities = data?.data?.communities || [];
 
   //
   const searHistory = resSearchHistory?.data?.items || [];
@@ -121,6 +124,12 @@ export function SearchAdvanced({
     }
     setSearchVal(u.username!);
     setOpen(false);
+  }
+
+  //
+  function onClickCommunityItem(c: ICommunity) {
+    toastSimple("Tính năng đang được cập nhật.");
+    console.log("c :::", c);
   }
 
   function handleDeleteHistory(e: any, id: string) {
@@ -211,6 +220,34 @@ export function SearchAdvanced({
                         </span>
                         <p className="text-[14px] text-gray-400">
                           {u.username}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {users.length > 0 && communities.length > 0 && (
+                <hr className="my-2" />
+              )}
+
+              {/*  */}
+              {!!communities?.length && (
+                <ul>
+                  {communities.map((c) => (
+                    <li
+                      key={c._id}
+                      className="cursor-pointer hover:bg-gray-100 p-2 rounded flex items-center gap-1"
+                      onClick={() => onClickCommunityItem(c)}
+                    >
+                      <AvatarMain src={c.cover} alt={c.name} className="mr-3" />
+                      <div>
+                        <span className="flex items-center gap-2">
+                          <h3 className="text-md font-semibold">{c.name}</h3>
+                          <VerifyIcon active={!!c.verify} size={20} />
+                        </span>
+                        <p className="text-[14px] text-gray-400">
+                          {c.category}
                         </p>
                       </div>
                     </li>
