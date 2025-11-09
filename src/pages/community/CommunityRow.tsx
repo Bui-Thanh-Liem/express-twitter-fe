@@ -102,7 +102,7 @@ export function CommunityRow({
             size="sm"
             onClick={handleToggleFollow}
             variant="outline"
-            className={cn("", !joined ? "" : "text-red-400 border-red-300")}
+            className={cn("", !joined ? "" : "text-red-400 border-red-200")}
           >
             {!joined ? "Tham gia" : "Rời khỏi"}
           </ButtonMain>
