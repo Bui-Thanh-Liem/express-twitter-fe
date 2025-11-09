@@ -264,10 +264,14 @@ export function SearchAdvanced({
                           </div>
                         )}
                       </div>
-                      <div>
+                      <div className="flex-1">
                         <span className="flex items-center gap-2">
-                          <h3 className="text-md font-semibold">{c.name}</h3>
-                          <VerifyIcon active={!!c.verify} size={20} />
+                          <h3 className="text-md font-semibold line-clamp-1 max-w-[90%]">
+                            {c.name}
+                          </h3>
+                          <div>
+                            <VerifyIcon active={!!c.verify} size={20} />
+                          </div>
                         </span>
                         <p className="text-[14px] text-gray-400">
                           {c.category}
@@ -297,15 +301,19 @@ export function SearchAdvanced({
                         className="group cursor-pointer hover:bg-gray-100 p-2 rounded flex items-center gap-1"
                         onClick={() => onClickTrendingItem(shTrending)}
                       >
-                        <Search className="h-4 w-4 text-muted-foreground" />
-                        <h3 className="ml-4 text-md font-semibold">
+                        <div>
+                          <Search className="h-4 w-4 text-muted-foreground" />
+                        </div>
+                        <h3 className="ml-4 text-md line-clamp-1 max-w-[90%] font-semibold">
                           {shTrending.topic}
                         </h3>
-                        <X
-                          size={18}
-                          className="hidden group-hover:flex ml-auto text-gray-400"
-                          onClick={(e) => handleDeleteHistory(e, sh._id)}
-                        />
+                        <div>
+                          <X
+                            size={18}
+                            className="hidden group-hover:flex ml-auto text-gray-400"
+                            onClick={(e) => handleDeleteHistory(e, sh._id)}
+                          />
+                        </div>
                       </li>
                     );
                   }
@@ -322,9 +330,9 @@ export function SearchAdvanced({
                           alt={shUser.name}
                           className="mr-3"
                         />
-                        <div>
+                        <div className="flex-1">
                           <span className="flex items-center gap-2">
-                            <h3 className="text-md font-semibold">
+                            <h3 className="text-md font-semibold line-clamp-1 max-w-[90%]">
                               {shUser.name}
                             </h3>
                           </span>
@@ -361,15 +369,18 @@ export function SearchAdvanced({
                             </div>
                           )}
                         </div>
-                        <div>
+                        <div className="flex-1">
                           <span className="flex items-center gap-2">
-                            <h3 className="text-md font-semibold">
+                            <h3 className="text-md font-semibold line-clamp-1 max-w-[90%]">
                               {shCommunity.name}
                             </h3>
-                            <VerifyIcon
-                              active={!!shCommunity.verify}
-                              size={20}
-                            />
+
+                            <div>
+                              <VerifyIcon
+                                active={!!shCommunity.verify}
+                                size={20}
+                              />
+                            </div>
                           </span>
                           <p className="text-[14px] text-gray-400">
                             {shCommunity.category}
@@ -392,13 +403,19 @@ export function SearchAdvanced({
                         navigate(`/search?q=${sh.text}`);
                       }}
                     >
-                      <Search className="h-4 w-4 text-muted-foreground" />
-                      <h3 className="ml-4 text-md font-semibold">{sh.text}</h3>
-                      <X
-                        size={18}
-                        className="hidden group-hover:flex ml-auto text-gray-400"
-                        onClick={(e) => handleDeleteHistory(e, sh._id)}
-                      />
+                      <div>
+                        <Search className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      <h3 className="ml-4 text-md font-semibold line-clamp-1 max-w-[90%]">
+                        {sh.text}
+                      </h3>
+                      <div>
+                        <X
+                          size={18}
+                          className="hidden group-hover:flex ml-auto text-gray-400"
+                          onClick={(e) => handleDeleteHistory(e, sh._id)}
+                        />
+                      </div>
                     </li>
                   );
                 })}
