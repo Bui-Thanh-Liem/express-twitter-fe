@@ -14,7 +14,7 @@ import {
 } from "~/hooks/apis/useFetchCommunity";
 import { cn } from "~/lib/utils";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
-import { CommunityCard, CommunityCardSkeleton } from "../CommunityCard";
+import { CommunityRow, CommunityRowSkeleton } from "../CommunityRow";
 
 export function ExploreTab() {
   //
@@ -104,7 +104,7 @@ export function ExploreTab() {
         </Carousel>
       </div>
 
-      <div className="overflow-y-auto h-[calc(100vh-180px)] px-4">
+      <div className="overflow-y-auto h-[calc(100vh-180px)]">
         {/*  */}
         {!isLoading && allCommunities.length === 0 && page === 1 && (
           <p className="mt-24 p-4 text-center text-gray-500">
@@ -114,27 +114,27 @@ export function ExploreTab() {
 
         {/* Loading lần đầu */}
         {isLoading && page === 1 && (
-          <div className="grid grid-cols-3 gap-3">
+          <div>
             {Array.from({ length: 6 }).map((_, i) => (
-              <CommunityCardSkeleton key={`more-${i}`} />
+              <CommunityRowSkeleton key={`more-${i}`} />
             ))}
           </div>
         )}
 
         {/*  */}
         {allCommunities.length > 0 && (
-          <div className="grid grid-cols-3 gap-3">
-            {sortCommunity(allCommunities).map((community) => (
-              <CommunityCard key={community._id} community={community} />
+          <div>
+            {sortCommunity(allCommunities)?.map((community) => (
+              <CommunityRow key={community._id} community={community} />
             ))}
           </div>
         )}
 
         {/* Loading khi load thêm */}
         {isLoading && page > 1 ? (
-          <div className="grid grid-cols-3 gap-3 mt-3">
+          <div>
             {Array.from({ length: 2 }).map((_, i) => (
-              <CommunityCardSkeleton key={`more-${i}`} />
+              <CommunityRowSkeleton key={`more-${i}`} />
             ))}
           </div>
         ) : (

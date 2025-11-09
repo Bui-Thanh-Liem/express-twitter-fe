@@ -1,4 +1,5 @@
 import type { IBase } from "./base.interface";
+import type { ICommunity } from "./community.interface";
 import type { ITrending } from "./trending.interface";
 import type { IUser } from "./user.interface";
 
@@ -9,4 +10,5 @@ export interface ISearchHistory extends IBase {
   text?: string;
   trending?: string | ITrending;
   user?: string | IUser;
+  community?: string | ICommunity;
 }

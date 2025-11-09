@@ -42,8 +42,6 @@ import { cn } from "~/lib/utils";
 import { ETweetStatus } from "~/shared/enums/status.enum";
 
 export function TweetDetailDrawer() {
-  console.log("TweetDetailDrawer");
-
   //
   const { pathname } = useLocation();
 

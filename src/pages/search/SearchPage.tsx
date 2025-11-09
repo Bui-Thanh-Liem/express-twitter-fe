@@ -8,6 +8,7 @@ import { MediaTab } from "./MediaTab";
 import { PeopleTab } from "./PeopleTab";
 import { TopTab } from "./TopTab";
 import { TweetTab } from "./TweetTab";
+import { CommunityTab } from "./CommunityTab";
 
 export function SearchPage() {
   const [searchVal, setSearchVal] = useState("");
@@ -40,8 +41,19 @@ export function SearchPage() {
                   updateQuery({ add: { t: "top" }, remove: ["f"] })
                 }
               >
-                Tìm kiếm hàng đầu
+                Hàng đầu
               </TabsTrigger>
+
+              <TabsTrigger
+                className="cursor-pointer"
+                value="community"
+                onClick={() =>
+                  updateQuery({ add: { t: "top" }, remove: ["f"] })
+                }
+              >
+                Cộng đồng
+              </TabsTrigger>
+
               <TabsTrigger
                 className="cursor-pointer"
                 value="people"
@@ -49,6 +61,7 @@ export function SearchPage() {
               >
                 Mọi người
               </TabsTrigger>
+
               <TabsTrigger
                 className="cursor-pointer"
                 value="tweet"
@@ -56,6 +69,7 @@ export function SearchPage() {
               >
                 Bài viết
               </TabsTrigger>
+
               <TabsTrigger
                 className="cursor-pointer"
                 value="media"
@@ -75,6 +89,9 @@ export function SearchPage() {
             </TabsContent>
             <TabsContent value="tweet" className="px-0 pb-4">
               <TweetTab />
+            </TabsContent>
+            <TabsContent value="community" className="px-0 pb-4">
+              <CommunityTab />
             </TabsContent>
             <TabsContent value="people" className="px-0 pb-4">
               <PeopleTab />

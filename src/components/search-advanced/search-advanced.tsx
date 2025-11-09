@@ -13,8 +13,9 @@ import type { ICommunity } from "~/shared/interfaces/schemas/community.interface
 import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
-import { toastSimple, toastSimpleVerify } from "~/utils/toastSimple.util";
+import { toastSimpleVerify } from "~/utils/toastSimple.util";
 import { VerifyIcon } from "../icons/verify";
+import { Logo } from "../logo";
 import { AvatarMain } from "../ui/avatar";
 import { Input } from "../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -89,10 +90,8 @@ export function SearchAdvanced({
   //
   function onKeydown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.code === "Enter") {
-      console.log("Search button enter");
-      if (!user?.verify) {
-        toastSimpleVerify();
-      }
+      if (!handleCheckPermission()) return;
+
       if (searchVal) {
         apiCreateHistory.mutate({ text: searchVal });
         navigate(`/search?q=${searchVal}`);
@@ -102,10 +101,9 @@ export function SearchAdvanced({
 
   //
   function onClickTrendingItem(tr: ITrending) {
-    if (!user?.verify) {
-      toastSimpleVerify();
-    }
-    if (searchVal) {
+    if (!handleCheckPermission()) return;
+
+    if (tr) {
       apiCreateHistory.mutate({ trending: tr._id });
       navigate(`/search?q=${tr?.topic}`);
     }
@@ -115,10 +113,9 @@ export function SearchAdvanced({
 
   //
   function onClickUserItem(u: IUser) {
-    if (!user?.verify) {
-      toastSimpleVerify();
-    }
-    if (searchVal) {
+    if (!handleCheckPermission()) return;
+
+    if (u) {
       apiCreateHistory.mutate({ user: u._id });
       navigate(`/${u.username}`);
     }
@@ -128,14 +125,28 @@ export function SearchAdvanced({
 
   //
   function onClickCommunityItem(c: ICommunity) {
-    toastSimple("Tính năng đang được cập nhật.");
-    console.log("c :::", c);
+    if (!handleCheckPermission()) return;
+
+    if (c) {
+      apiCreateHistory.mutate({ community: c._id });
+      navigate(`/search?q=${c?.slug}`);
+    }
+    setSearchVal(c?.slug);
+    setOpen(false);
   }
 
   function handleDeleteHistory(e: any, id: string) {
     e.stopPropagation();
     e.preventDefault();
     apiDeleteHistory.mutate({ id });
+  }
+
+  function handleCheckPermission() {
+    if (!user?.verify) {
+      toastSimpleVerify();
+    }
+
+    return user?.verify;
   }
 
   //
@@ -237,10 +248,22 @@ export function SearchAdvanced({
                   {communities.map((c) => (
                     <li
                       key={c._id}
-                      className="cursor-pointer hover:bg-gray-100 p-2 rounded flex items-center gap-1"
+                      className="cursor-pointer hover:bg-gray-100 p-2 rounded flex items-center gap-2"
                       onClick={() => onClickCommunityItem(c)}
                     >
-                      <AvatarMain src={c.cover} alt={c.name} className="mr-3" />
+                      <div className="w-16 h-12 rounded-lg overflow-hidden">
+                        {c?.cover ? (
+                          <img
+                            src={c?.cover}
+                            alt="Cover Photo"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="bg-gray-300 w-full h-full flex items-center justify-center">
+                            <Logo size={32} className="text-gray-400 " />
+                          </div>
+                        )}
+                      </div>
                       <div>
                         <span className="flex items-center gap-2">
                           <h3 className="text-md font-semibold">{c.name}</h3>
@@ -265,6 +288,7 @@ export function SearchAdvanced({
                 {searHistory.map((sh) => {
                   const shTrending = sh.trending as ITrending;
                   const shUser = sh.user as IUser;
+                  const shCommunity = sh.community as ICommunity;
 
                   if (shTrending) {
                     return (
@@ -306,6 +330,49 @@ export function SearchAdvanced({
                           </span>
                           <p className="text-[14px] text-gray-400">
                             {shUser.username}
+                          </p>
+                        </div>
+                        <X
+                          size={18}
+                          className="hidden group-hover:flex ml-auto text-gray-400"
+                          onClick={(e) => handleDeleteHistory(e, sh._id)}
+                        />
+                      </li>
+                    );
+                  }
+
+                  if (shCommunity) {
+                    return (
+                      <li
+                        key={shCommunity._id}
+                        className="cursor-pointer hover:bg-gray-100 p-2 rounded flex items-center gap-2 group"
+                        onClick={() => onClickCommunityItem(shCommunity)}
+                      >
+                        <div className="w-16 h-12 rounded-lg overflow-hidden">
+                          {shCommunity?.cover ? (
+                            <img
+                              src={shCommunity?.cover}
+                              alt="Cover Photo"
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="bg-gray-300 w-full h-full flex items-center justify-center">
+                              <Logo size={32} className="text-gray-400 " />
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <span className="flex items-center gap-2">
+                            <h3 className="text-md font-semibold">
+                              {shCommunity.name}
+                            </h3>
+                            <VerifyIcon
+                              active={!!shCommunity.verify}
+                              size={20}
+                            />
+                          </span>
+                          <p className="text-[14px] text-gray-400">
+                            {shCommunity.category}
                           </p>
                         </div>
                         <X

@@ -193,7 +193,10 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
               </span>
             ) : (
               !!communities.length && (
-                <div className="border-b border-gray-200">
+                <div
+                  className="border-b border-gray-200"
+                  key={communities[0]?._id}
+                >
                   <p className="ml-4 mt-2 text-gray-500 font-medium">
                     Gợi ý tham gia
                   </p>

@@ -62,13 +62,13 @@ export function UserToFollowItem({ user }: { user: Partial<IUser> }) {
   return (
     <div key={user._id} className="hover:bg-gray-100 px-4 py-3 cursor-pointer">
       <div className="flex justify-between items-center">
-        <div className="flex gap-2">
+        <div className="flex-1 gap-2 flex">
           <AvatarMain src={user?.avatar} alt={user?.name} />
-          <div>
+          <div className="flex-1">
             <ShortInfoProfile profile={user as IUser} className="inline-block">
               <Link
                 to={`/${user?.username}`}
-                className="flex items-center gap-2"
+                className="inline-flex items-center gap-2"
               >
                 <p className="text-sm leading-snug font-semibold flex items-center gap-1 hover:underline hover:cursor-pointer">
                   {user.name}
@@ -77,7 +77,7 @@ export function UserToFollowItem({ user }: { user: Partial<IUser> }) {
               </Link>
             </ShortInfoProfile>
             <p className="text-xs text-muted-foreground">{user.username}</p>
-            {user.bio && <p className="line-clamp-3 max-w-[95%]">{user.bio}</p>}
+            {user.bio && <p className="line-clamp-2 max-w-[95%]">{user.bio}</p>}
           </div>
         </div>
 

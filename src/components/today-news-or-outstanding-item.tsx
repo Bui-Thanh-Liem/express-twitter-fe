@@ -70,7 +70,7 @@ export function TodayNewsOrOutstandingItem({
             {highlight?.map((h, i) => (
               <Avatar key={`${h.avatar}-${i}`} className="w-6 h-6">
                 <AvatarImage src={h.avatar} alt={h.content} />
-                <AvatarFallback>{item.category}</AvatarFallback>
+                <AvatarFallback>{item.category[0]}</AvatarFallback>
               </Avatar>
             ))}
           </div>

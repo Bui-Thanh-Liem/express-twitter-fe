@@ -5,10 +5,13 @@ import {
   UserToFollowItem,
   UserToFollowItemSkeleton,
 } from "~/components/who-to-follow/who-to-follow-item";
+import { useGetMultiCommunities } from "~/hooks/apis/useFetchCommunity";
 import { useSearchTweets, useSearchUsers } from "~/hooks/apis/useFetchSearch";
 import { cn } from "~/lib/utils";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import { CommunityRow, CommunityRowSkeleton } from "../community/CommunityRow";
+import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 
 export function TopTab() {
   const [searchParams] = useSearchParams();
@@ -23,6 +26,9 @@ export function TopTab() {
   const [pageTweet, setPageTweet] = useState(1);
   const [tweets, setTweets] = useState<ITweet[]>([]);
 
+  const [pageCommunity, setPageCommunity] = useState(1);
+  const [communities, setCommunities] = useState<ICommunity[]>([]);
+
   const total_page_user_ref = useRef(0);
   const { data, isLoading, refetch } = useSearchUsers({
     page: pageUser.toString(),
@@ -30,6 +36,17 @@ export function TopTab() {
     q: q ?? "",
     pf: pf ?? "",
     top: top ?? "",
+  });
+
+  const total_page_community_ref = useRef(0);
+  const {
+    data: dataCommunities,
+    isLoading: isLoadingCommunity,
+    refetch: refetchCommunity,
+  } = useGetMultiCommunities({
+    page: pageUser.toString(),
+    limit: "4",
+    q: q ?? "",
   });
 
   const total_page_tweet_ref = useRef(0);
@@ -53,6 +70,7 @@ export function TopTab() {
     setPageTweet(1);
     refetch();
     refetchTweets();
+    refetchCommunity();
   }, [q, pf, f]);
 
   // Mỗi lần fetch xong thì append thêm vào state
@@ -92,6 +110,25 @@ export function TopTab() {
     }
   }, [dataTweets?.data]);
 
+  useEffect(() => {
+    const items = dataCommunities?.data?.items || [];
+    const total_page = dataCommunities?.data?.total_page;
+    total_page_community_ref.current = total_page || 0;
+
+    if (items) {
+      setCommunities((prev) => {
+        // Loại bỏ duplicate tweets dựa trên _id
+        const existingIds = new Set(prev.map((com) => com._id));
+
+        const filteredNewCommunities = items.filter(
+          (com) => !existingIds.has(com._id)
+        );
+
+        return [...prev, ...filteredNewCommunities];
+      });
+    }
+  }, [dataTweets?.data]);
+
   //
   useEffect(() => {
     return () => {
@@ -114,6 +151,11 @@ export function TopTab() {
 
   function onDel(id: string) {
     setTweets((prev) => prev.filter((tw) => tw._id !== id));
+  }
+
+  //
+  function onSeeMoreCommunity() {
+    setPageCommunity((prev) => prev + 1);
   }
 
   const loadingTweet = isFetchingTweets || isLoadingTweets;
@@ -200,6 +242,52 @@ export function TopTab() {
           <div className="flex justify-center items-center h-20">
             <p className="text-gray-500 text-lg">
               Không có bài viết nào phù hợp với <strong>"{q}"</strong>
+            </p>
+          </div>
+        )}
+      </div>
+      <hr className="my-4" />
+      <div>
+        {/* Communities list */}
+        {communities.length > 0 && (
+          <div className="space-y-6">
+            {communities.map((com, index: number) => (
+              <span key={com._id}>
+                <CommunityRow community={com} />
+                {index < tweets.length - 1 && (
+                  <hr className="border-gray-200" />
+                )}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/*  */}
+        {isLoadingCommunity
+          ? Array.from({ length: 2 }).map((_, i) => (
+              <CommunityRowSkeleton key={`more-${i}`} />
+            ))
+          : !!tweets.length && (
+              <div className="px-4 py-3">
+                <p
+                  className={cn(
+                    "inline-block text-sm leading-snug font-semibold text-[#1d9bf0] cursor-pointer",
+                    total_page_community_ref.current <= pageCommunity
+                      ? "text-gray-300 pointer-events-none cursor-default"
+                      : ""
+                  )}
+                  onClick={onSeeMoreCommunity}
+                >
+                  Xem thêm
+                </p>
+              </div>
+            )}
+
+        {/*  */}
+        {!communities.length && !isLoadingCommunity && (
+          <div className="flex justify-center items-center h-20">
+            <p className="text-gray-500 text-lg">
+              Không có cộng đồng nào phù hợp với <strong>"{q}"</strong>
             </p>
           </div>
         )}
