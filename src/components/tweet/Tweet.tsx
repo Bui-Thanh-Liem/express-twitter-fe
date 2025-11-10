@@ -330,6 +330,12 @@ export function Tweet({
   const isFormDisabled = isContentEmpty || isSubmitting || isUploading;
 
   //
+  // Tạo id duy nhất dựa trên instance, ví dụ với nanoid hoặc Math.random()
+  const [inputId] = useState(
+    () => `image-upload-${tweetType}-${Math.random()}`
+  );
+
+  //
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex gap-4">
@@ -476,13 +482,13 @@ export function Tweet({
             <div className="flex items-center gap-1">
               <WrapIcon className="hover:bg-blue-100/60">
                 <label
-                  htmlFor={`image-upload-${tweetType}`}
+                  htmlFor={inputId}
                   className="cursor-pointer"
                   title="Thêm ảnh hoặc video"
                 >
                   <ImageIcon />
                   <input
-                    id={`image-upload-${tweetType}`}
+                    id={inputId}
                     className="hidden"
                     type="file"
                     accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/mov,video/avi,video/quicktime"

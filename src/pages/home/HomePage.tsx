@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { TypographyP } from "~/components/elements/p";
 import { cn } from "~/lib/utils";
-import { EFeedType, ETweetType } from "~/shared/enums/type.enum";
+import { EFeedType } from "~/shared/enums/type.enum";
+import { useReloadStore } from "~/store/useReloadStore";
 import { ListTweets } from "../../components/list-tweets/list-tweets";
 import { Tweet } from "../../components/tweet/Tweet";
-import { useReloadStore } from "~/store/useReloadStore";
 
 export function HomePage() {
   const { triggerReload } = useReloadStore();
@@ -49,7 +49,7 @@ export function HomePage() {
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="px-4 pt-4">
-          <Tweet key={ETweetType.Tweet} />
+          <Tweet />
         </div>
         <div className="border-b border-gray-100" />
         <ListTweets feedType={activeTab} />

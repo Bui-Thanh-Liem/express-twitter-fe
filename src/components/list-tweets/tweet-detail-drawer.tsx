@@ -4,6 +4,8 @@ import { BarChart3, Heart, MessageCircle, Repeat2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useGetTweetChildren } from "~/hooks/apis/useFetchTweet";
+import { cn } from "~/lib/utils";
+import { ETweetStatus } from "~/shared/enums/status.enum";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
@@ -13,6 +15,7 @@ import { useUserStore } from "~/store/useUserStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
 import { ArrowLeftIcon } from "../icons/arrow-left";
 import { VerifyIcon } from "../icons/verify";
+import { Logo } from "../logo";
 import { ShortInfoProfile } from "../ShortInfoProfile";
 import { TypingIndicator } from "../typing-indicator";
 import { AvatarMain } from "../ui/avatar";
@@ -37,9 +40,6 @@ import {
   StatusTag,
   TweetItem,
 } from "./item-tweet";
-import { Logo } from "../logo";
-import { cn } from "~/lib/utils";
-import { ETweetStatus } from "~/shared/enums/status.enum";
 
 export function TweetDetailDrawer() {
   //
@@ -319,7 +319,7 @@ export function TweetDetailDrawer() {
                 </div>
               </div>
             </DrawerTitle>
-            <DrawerDescription className="text-gray-700 text-base">
+            <DrawerDescription className="text-gray-700 text-base whitespace-break-spaces">
               <Content content={content} mentions={mentions as any} />
             </DrawerDescription>
           </DrawerHeader>

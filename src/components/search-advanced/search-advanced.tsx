@@ -406,7 +406,7 @@ export function SearchAdvanced({
                       <div>
                         <Search className="h-4 w-4 text-muted-foreground" />
                       </div>
-                      <h3 className="ml-4 text-md font-semibold line-clamp-1 max-w-[90%]">
+                      <h3 className="ml-4 flex-1 text-md font-semibold line-clamp-1 max-w-[90%]">
                         {sh.text}
                       </h3>
                       <div>

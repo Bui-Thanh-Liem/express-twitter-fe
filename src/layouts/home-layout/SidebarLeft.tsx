@@ -171,6 +171,11 @@ export function SidebarLeft() {
   }
 
   //
+  function handleOpenPost() {
+    setIsOpenPost(true);
+  }
+
+  //
   function onSuccessPost() {
     setIsOpenPost(false);
   }
@@ -218,13 +223,13 @@ export function SidebarLeft() {
         <div className="absolute w-full bottom-20 lg:bottom-28">
           <ButtonMain
             size="lg"
-            onClick={() => setIsOpenPost(true)}
+            onClick={handleOpenPost}
             className="w-full bg-black hover:bg-[#333] hidden lg:block"
           >
             Đăng Bài
           </ButtonMain>
           <WrapIcon
-            onClick={() => setIsOpenPost(true)}
+            onClick={handleOpenPost}
             className="bg-black hover:bg-[#333] ml-1 lg:hidden"
           >
             <Plus size={24} color="#fff" />
@@ -278,16 +283,16 @@ export function SidebarLeft() {
       </div>
 
       <DialogMain
+        width="2xl"
         isLogo={false}
         open={isOpenPost}
         onOpenChange={setIsOpenPost}
-        width="2xl"
       >
         <Tweet
           contentBtn="Đăng bài"
+          onSuccess={onSuccessPost}
           tweetType={ETweetType.Tweet}
           placeholder="Có chuyện gì thế ?"
-          onSuccess={onSuccessPost}
         />
       </DialogMain>
     </>
