@@ -158,6 +158,24 @@ export function Tweet({
     [handleFileChange]
   );
 
+  //
+  const handlePaste = useCallback(
+    (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+      const files = [];
+      const items = e.clipboardData.items;
+      for (const item of items) {
+        if (item.type.includes("image")) {
+          const file = item.getAsFile();
+          files.push(file);
+        }
+      }
+
+      //
+      handleFileSelect({ target: { files } } as any);
+    },
+    []
+  );
+
   // Thực hiện khi gọi api thành cong từ onSubmit
   const successForm = useCallback(
     (res: ResCreateTweet) => {
@@ -353,6 +371,7 @@ export function Tweet({
             maxLength={MAX_LENGTH_TWEET}
             onInput={handleTextareaInput}
             rows={1}
+            onPaste={handlePaste}
           />
 
           {/* Hashtag Suggest */}

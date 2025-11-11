@@ -119,6 +119,24 @@ export default function ChatBox() {
     [handleFileChange]
   );
 
+  //
+  const handlePaste = useCallback(
+    (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+      const files = [];
+      const items = e.clipboardData.items;
+      for (const item of items) {
+        if (item.type.includes("image")) {
+          const file = item.getAsFile();
+          files.push(file);
+        }
+      }
+
+      //
+      handleFileSelect({ target: { files } } as any);
+    },
+    []
+  );
+
   // Memoized handlers
   const handleEmojiClick = useCallback(
     (emoji: string) => {
@@ -283,6 +301,7 @@ export default function ChatBox() {
                     handleSubmit(onSubmit)(); // gọi submit form
                   }
                 }}
+                onPaste={handlePaste}
               />
             </div>
           </form>
