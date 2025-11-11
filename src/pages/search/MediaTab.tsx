@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { MediaContent } from "~/components/list-tweets/item-tweet";
+import { HLSPlayer } from "~/components/hls/HLSPlayer";
 import { ButtonMain } from "~/components/ui/button";
+import { Card, CardContent } from "~/components/ui/card";
 import { useSearchTweets } from "~/hooks/apis/useFetchSearch";
 import { EMediaType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
+import { useDetailTweetStore } from "~/store/useDetailTweetStore";
 
 export function MediaTab() {
   const [searchParams] = useSearchParams();
@@ -12,9 +14,12 @@ export function MediaTab() {
   const pf = searchParams.get("pf");
   const f = searchParams.get("f");
 
+  //
+    const { open, setTweet } = useDetailTweetStore();
+
   // State để quản lý pagination và data
   const [page, setPage] = useState(1);
-  const [allTweets, setAllTweets] = useState<ITweet[]>([]);
+  const [tweets, setTweets] = useState<ITweet[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
@@ -32,7 +37,7 @@ export function MediaTab() {
 
   //
   useEffect(() => {
-    setAllTweets([]);
+    setTweets([]);
     setPage(1);
     refetch();
   }, [q, pf, f]);
@@ -43,12 +48,12 @@ export function MediaTab() {
       const newTweets = data.data.items as ITweet[];
       if (page === 1) {
         // Nếu là trang đầu tiên, replace toàn bộ
-        setAllTweets(() => {
+        setTweets(() => {
           return newTweets;
         });
       } else {
         // Nếu là trang tiếp theo, append vào cuối
-        setAllTweets((prev) => {
+        setTweets((prev) => {
           // Loại bỏ duplicate tweets dựa trên _id
           const existingIds = new Set(prev.map((tweet) => tweet._id));
           const filteredNewTweets = newTweets.filter(
@@ -77,13 +82,13 @@ export function MediaTab() {
         hasMore &&
         !isLoading &&
         !isLoadingMore &&
-        allTweets.length > 0
+        tweets.length > 0
       ) {
         setIsLoadingMore(true);
         setPage((prev) => prev + 1);
       }
     },
-    [allTweets.length, hasMore, isLoading, isLoadingMore]
+    [tweets.length, hasMore, isLoading, isLoadingMore]
   );
 
   // Setup Intersection Observer
@@ -133,6 +138,14 @@ export function MediaTab() {
     setIsLoadingMore(false);
   }, [q]);
 
+  //
+  function handleClickMedia(tweet: ITweet) {
+    open();
+    if (tweet) {
+      setTweet(tweet);
+    }
+  }
+
   const loading = isLoading || isFetching;
 
   return (
@@ -151,18 +164,34 @@ export function MediaTab() {
         </div>
       )}
 
-      {/* Tweets list */}
-      {allTweets.length > 0 && (
-        <div className="grid grid-cols-3 gap-x-6 gap-y-0">
-          {allTweets.map((m, index) => (
-            <div key={m.media?.url || `media-${index}`}>
-              <MediaContent
-                tweet={m}
-                type={m.media?.type || EMediaType.Image}
-                url={m.media?.url || ""}
-              />
-            </div>
-          ))}
+      {/* Media grid */}
+      {tweets.length > 0 && (
+        <div className="grid grid-cols-3 gap-6">
+          {tweets.flatMap((tweet) => {
+            return tweet.media?.map((m, index) => (
+              <Card
+                key={`profile-media-${index}`}
+                className="h-36 overflow-hidden flex items-center justify-center cursor-pointer"
+                onClick={() => handleClickMedia(tweet)}
+              >
+                <CardContent className="p-0">
+                  {m?.type === EMediaType.Video ? (
+                    <HLSPlayer src={m?.url} />
+                  ) : (
+                    <img
+                      src={m?.url}
+                      alt={m?.url}
+                      className="object-cover w-full h-full"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.src = "/placeholder-image.png"; // Fallback image
+                      }}
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            ));
+          })}
         </div>
       )}
 
@@ -181,7 +210,7 @@ export function MediaTab() {
       )}
 
       {/* Empty state - chưa có data nhưng không phải total = 0 */}
-      {!loading && allTweets.length === 0 && page === 1 && (
+      {!loading && tweets.length === 0 && page === 1 && (
         <div className="text-center py-8">
           <p className="text-gray-500 text-lg mb-2">
             Không có hình ảnh hoặc video nào phù hợp với <strong>"{q}"</strong>
@@ -193,7 +222,7 @@ export function MediaTab() {
       <div ref={observerRef} className="h-10 w-full" />
 
       {/* End of content indicator */}
-      {!hasMore && allTweets.length > 0 && (
+      {!hasMore && tweets.length > 0 && (
         <div className="text-center py-8">
           <p className="text-gray-500">
             🎉 Bạn đã xem hết tất cả hình ảnh và video!
@@ -208,7 +237,7 @@ export function MediaTab() {
           <ButtonMain
             onClick={() => {
               setPage(1);
-              setAllTweets([]);
+              setTweets([]);
               setHasMore(true);
             }}
           >

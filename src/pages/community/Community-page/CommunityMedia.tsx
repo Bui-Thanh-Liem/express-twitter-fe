@@ -1,10 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { MediaContent } from "~/components/list-tweets/item-tweet";
+import { HLSPlayer } from "~/components/hls/HLSPlayer";
+import { Card, CardContent } from "~/components/ui/card";
 import { useGetCommunityTweets } from "~/hooks/apis/useFetchTweet";
 import { EMediaType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
+import { useDetailTweetStore } from "~/store/useDetailTweetStore";
 
 export function CommunityMedia({ community_id }: { community_id: string }) {
+  //
+    const { open, setTweet } = useDetailTweetStore();
+  
   // State để quản lý pagination và data
   const [page, setPage] = useState(1);
   const [tweets, setTweets] = useState<ITweet[]>([]);
@@ -33,11 +38,15 @@ export function CommunityMedia({ community_id }: { community_id: string }) {
       } else {
         // Nếu là trang tiếp theo, append vào cuối
         setTweets((prev) => {
-          // Loại bỏ duplicate media dựa trên url (hoặc _id nếu có)
-          const existingUrls = new Set(prev.map((media) => media.media?.url));
-          const filteredNewMedia = newMedia.filter(
-            (media) => !existingUrls.has(media.media?.url)
+          const existingUrls = new Set(
+            prev.flatMap((p) => p.media?.map((m) => m.url) || [])
           );
+
+          const filteredNewMedia = newMedia.map((item) => ({
+            ...item,
+            media: item.media?.filter((m) => !existingUrls.has(m.url)) || [],
+          }));
+
           return [...prev, ...filteredNewMedia];
         });
       }
@@ -130,23 +139,44 @@ export function CommunityMedia({ community_id }: { community_id: string }) {
     );
   }
 
+  //
+  function handleClickMedia(tweet: ITweet) {
+    open();
+    if (tweet) {
+      setTweet(tweet);
+    }
+  }
+
   return (
     <div className="px-4">
       {/* Media grid */}
       {tweets.length > 0 && (
-        <div className="grid grid-cols-3 gap-x-6 gap-y-0">
-          {tweets.map((m, index) => (
-            <div
-              key={m.media?.url || `media-${index}`}
-              className="aspect-square"
-            >
-              <MediaContent
-                tweet={m}
-                url={m.media?.url || ""}
-                type={m.media?.type || EMediaType.Image}
-              />
-            </div>
-          ))}
+        <div className="grid grid-cols-3 gap-6">
+          {tweets.flatMap((tweet) => {
+            return tweet.media?.map((m, index) => (
+              <Card
+                key={`profile-media-${index}`}
+                className="h-36 overflow-hidden flex items-center justify-center cursor-pointer"
+                onClick={() => handleClickMedia(tweet)}
+              >
+                <CardContent className="p-0">
+                  {m?.type === EMediaType.Video ? (
+                    <HLSPlayer src={m?.url} />
+                  ) : (
+                    <img
+                      src={m?.url}
+                      alt={m?.url}
+                      className="object-cover w-full h-full"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.src = "/placeholder-image.png"; // Fallback image
+                      }}
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            ));
+          })}
         </div>
       )}
 

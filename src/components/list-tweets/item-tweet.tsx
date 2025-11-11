@@ -1,12 +1,10 @@
 import { BarChart3, CornerRightDown, Flag, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
 import { useReportTweet } from "~/hooks/apis/useFetchReport";
 import { useDeleteTweet, useGetDetailTweet } from "~/hooks/apis/useFetchTweet";
 import { cn } from "~/lib/utils";
 import { ETweetStatus } from "~/shared/enums/status.enum";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
-import type { IMedia } from "~/shared/interfaces/common/media.interface";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
@@ -19,6 +17,8 @@ import { DotIcon } from "../icons/dot";
 import { VerifyIcon } from "../icons/verify";
 import { ShortInfoProfile } from "../ShortInfoProfile";
 import { AvatarMain } from "../ui/avatar";
+import { Card, CardContent } from "../ui/card";
+import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,11 +34,9 @@ import { ActionShared } from "./action-shared";
 import { Content } from "./content";
 
 // Component cho Media (Image hoặc Video)
-export const MediaContent = ({
-  url,
-  type,
-  tweet,
-}: IMedia & { tweet?: ITweet }) => {
+export const MediaContent = ({ tweet }: { tweet: ITweet }) => {
+  const { media } = tweet;
+
   //
   const { open, setTweet } = useDetailTweetStore();
 
@@ -47,41 +45,53 @@ export const MediaContent = ({
     open();
     if (tweet) {
       setTweet(tweet);
-      toast.info("Nhấn 2 lần vào điểm bất kì để đóng ", {
-        position: "top-center",
-        richColors: true,
-        duration: 2000,
-      });
     }
   }
 
-  if (!url) return <></>;
+  if (!media || !media.length) return <></>;
 
   return (
     <div
-      className={cn(
-        "w-full h-full aspect-video rounded-lg overflow-hidden mb-6 bg-gray-50",
-        tweet ? "cursor-pointer" : ""
-      )}
+      className={cn("", tweet ? "cursor-pointer" : "")}
       onClick={handleClickMedia}
     >
-      {type === EMediaType.Video ? (
-        <HLSPlayer src={url} />
-      ) : type === EMediaType.Image ? (
-        <img
-          src={url}
-          alt={url}
-          className="w-full h-full object-contain"
-          loading="lazy"
-          onError={(e) => {
-            e.currentTarget.src = "/placeholder-image.png"; // Fallback image
-          }}
-        />
-      ) : (
-        <div className="w-full h-full flex items-center justify-center">
-          <p className="text-gray-400">Định dạng media không hỗ trợ</p>
-        </div>
-      )}
+      <Carousel className="w-full">
+        <CarouselContent className="h-80 cursor-grab">
+          {media?.map((item) => (
+            <CarouselItem
+              key={item.url}
+              className={cn(
+                "md:basis-1/2 lg:basis-1/1",
+                media.length >= 2 ? "lg:basis-1/2" : ""
+              )}
+            >
+              <Card className="w-full h-full overflow-hidden flex items-center justify-center border bg-transparent">
+                <CardContent className="w-full h-full p-0 flex items-center justify-center">
+                  {item.type === EMediaType.Video ? (
+                    <HLSPlayer src={item.url} />
+                  ) : item.type === EMediaType.Image ? (
+                    <img
+                      src={item.url}
+                      alt={item.url}
+                      className="object-contain"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.src = "/placeholder-image.png"; // Fallback image
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <p className="text-gray-400">
+                        Định dạng media không hỗ trợ
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
     </div>
   );
 };
@@ -126,7 +136,6 @@ export const TweetItem = ({
 }) => {
   const {
     _id,
-    media,
     content,
     user_id,
     mentions,
@@ -194,13 +203,7 @@ export const TweetItem = ({
         )}
 
         {/* Media content */}
-        {tweet.type !== ETweetType.Retweet && (
-          <MediaContent
-            tweet={tweet}
-            url={media?.url || ""}
-            type={media?.type || EMediaType.Image}
-          />
-        )}
+        {tweet.type !== ETweetType.Retweet && <MediaContent tweet={tweet} />}
 
         {/* QuoteTweet and Retweet */}
         {tweet.type === ETweetType.QuoteTweet ||
@@ -243,11 +246,7 @@ export const TweetItem = ({
                 </p>
               )}
               {/* Media content */}
-              <MediaContent
-                tweet={quoteTweet}
-                url={quoteTweet.media?.url || ""}
-                type={quoteTweet.media?.type || EMediaType.Image}
-              />
+              <MediaContent tweet={quoteTweet} />
             </div>
           </div>
         ) : null}

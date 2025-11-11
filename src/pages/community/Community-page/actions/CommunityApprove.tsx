@@ -17,7 +17,6 @@ import { useChangeStatusTweet } from "~/hooks/apis/useFetchCommunity";
 import { useGetTweetsPendingByCommunityId } from "~/hooks/apis/useFetchTweet";
 import { cn } from "~/lib/utils";
 import { ETweetStatus } from "~/shared/enums/status.enum";
-import { EMediaType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
@@ -186,11 +185,7 @@ export function CommunityApprove({
                       {tweet.content}
                     </ItemDescription>
                     <ItemDescription className="pointer-events-none">
-                      <MediaContent
-                        tweet={tweet}
-                        url={tweet.media?.url || ""}
-                        type={tweet.media?.type || EMediaType.Image}
-                      />
+                      <MediaContent tweet={tweet} />
                     </ItemDescription>
                   </ItemContent>
                   <ItemActions>

@@ -44,8 +44,6 @@ export function CommunityRow({
     });
   }
 
-  console.log("community:::", community);
-
   //
   return (
     <div key={community._id} className="hover:bg-gray-100 px-4 py-3">

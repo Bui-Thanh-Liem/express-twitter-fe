@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { MediaContent } from "~/components/list-tweets/item-tweet";
+import { HLSPlayer } from "~/components/hls/HLSPlayer";
+import { Card, CardContent } from "~/components/ui/card";
 import { useGetProfileTweets } from "~/hooks/apis/useFetchTweet";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
+import { useDetailTweetStore } from "~/store/useDetailTweetStore";
 
 export function ProfileMedia({
   profile_id,
@@ -11,9 +13,12 @@ export function ProfileMedia({
   profile_id: string;
   isOwnProfile: boolean;
 }) {
+  //
+  const { open, setTweet } = useDetailTweetStore();
+
   // State để quản lý pagination và data
   const [page, setPage] = useState(1);
-  const [allMedia, setAllMedia] = useState<ITweet[]>([]);
+  const [tweets, setTweets] = useState<ITweet[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
@@ -33,19 +38,23 @@ export function ProfileMedia({
       const newMedia = data.data.items;
       if (page === 1) {
         // Nếu là trang đầu tiên, replace toàn bộ
-        setAllMedia(() => {
+        setTweets(() => {
           console.log("Setting initial media for profile:", profile_id);
           console.log("New media:", newMedia);
           return newMedia;
         });
       } else {
         // Nếu là trang tiếp theo, append vào cuối
-        setAllMedia((prev) => {
-          // Loại bỏ duplicate media dựa trên url (hoặc _id nếu có)
-          const existingUrls = new Set(prev.map((media) => media.media?.url));
-          const filteredNewMedia = newMedia.filter(
-            (media) => !existingUrls.has(media.media?.url)
+        setTweets((prev) => {
+          const existingUrls = new Set(
+            prev.flatMap((p) => p.media?.map((m) => m.url) || [])
           );
+
+          const filteredNewMedia = newMedia.map((item) => ({
+            ...item,
+            media: item.media?.filter((m) => !existingUrls.has(m.url)) || [],
+          }));
+
           return [...prev, ...filteredNewMedia];
         });
       }
@@ -69,7 +78,7 @@ export function ProfileMedia({
       hasMore &&
       !isLoading &&
       !isLoadingMore &&
-      allMedia.length > 0
+      tweets.length > 0
     ) {
       setIsLoadingMore(true);
       setPage((prev) => prev + 1);
@@ -124,7 +133,7 @@ export function ProfileMedia({
         <button
           onClick={() => {
             setPage(1);
-            setAllMedia([]);
+            setTweets([]);
             setHasMore(true);
             window.location.reload();
           }}
@@ -136,20 +145,44 @@ export function ProfileMedia({
     );
   }
 
+  //
+  function handleClickMedia(tweet: ITweet) {
+    open();
+    if (tweet) {
+      setTweet(tweet);
+    }
+  }
+
   return (
     <div className="px-4">
       {/* Media grid */}
-      {allMedia.length > 0 && (
-        <div className="grid grid-cols-3 gap-x-6 gap-y-0">
-          {allMedia.map((m, index) => (
-            <div key={m.media?.url || `media-${index}`}>
-              <MediaContent
-                tweet={m}
-                type={m.media?.type || EMediaType.Image}
-                url={m.media?.url || ""}
-              />
-            </div>
-          ))}
+      {tweets.length > 0 && (
+        <div className="grid grid-cols-3 gap-6">
+          {tweets.flatMap((tweet) => {
+            return tweet.media?.map((m, index) => (
+              <Card
+                key={`profile-media-${index}`}
+                className="h-36 overflow-hidden flex items-center justify-center cursor-pointer"
+                onClick={() => handleClickMedia(tweet)}
+              >
+                <CardContent className="p-0">
+                  {m?.type === EMediaType.Video ? (
+                    <HLSPlayer src={m?.url} />
+                  ) : (
+                    <img
+                      src={m?.url}
+                      alt={m?.url}
+                      className="object-cover w-full h-full"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.src = "/placeholder-image.png"; // Fallback image
+                      }}
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            ));
+          })}
         </div>
       )}
 
@@ -168,7 +201,7 @@ export function ProfileMedia({
       )}
 
       {/* Empty state - chưa có data nhưng không phải total = 0 */}
-      {!isLoading && allMedia.length === 0 && page === 1 && (
+      {!isLoading && tweets.length === 0 && page === 1 && (
         <div className="text-center py-8">
           <p className="text-gray-500 text-lg mb-2">📷 Chưa có media nào</p>
           <p className="text-gray-400">
@@ -183,7 +216,7 @@ export function ProfileMedia({
       <div ref={observerRef} className="h-10 w-full" />
 
       {/* End of content indicator */}
-      {!hasMore && allMedia.length > 0 && (
+      {!hasMore && tweets.length > 0 && (
         <div className="text-center py-8">
           <p className="text-gray-500">
             🎉 Bạn đã xem hết tất cả hình ảnh và video!

@@ -9,7 +9,7 @@ import { WrapIcon } from "~/components/wrapIcon";
 import { useCreateTweet } from "~/hooks/apis/useFetchTweet";
 import { useUploadWithValidation } from "~/hooks/apis/useFetchUpload";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
-import { useMediaPreview } from "~/hooks/useMediaPreview";
+import { useMediaPreviewMulti } from "~/hooks/useMediaPreviewMulti";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
 import { cn } from "~/lib/utils";
 import {
@@ -19,6 +19,7 @@ import {
 import type { ResCreateTweet } from "~/shared/dtos/res/tweet.dto";
 import { ETweetAudience } from "~/shared/enums/common.enum";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
+import type { PreviewMediaProps } from "~/shared/interfaces/common/media.interface";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
@@ -27,6 +28,8 @@ import { toastSimple, toastSimpleVerify } from "~/utils/toastSimple.util";
 import { TweetItem } from "../list-tweets/item-tweet";
 import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
+import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { CircularProgress } from "../ui/circular-progress";
 import { HashtagSuggest } from "./HashtagSuggest";
 import { Mentions } from "./Mentions";
@@ -35,8 +38,8 @@ import { TweetCommunity } from "./TweetCommunity";
 // Constants
 const DEFAULT_VALUES: CreateTweetDto = {
   content: "",
-  audience: ETweetAudience.Everyone,
   type: ETweetType.Tweet,
+  audience: ETweetAudience.Everyone,
 };
 
 //
@@ -75,18 +78,8 @@ export function Tweet({
   const [communityId, setCommunityId] = useState("");
 
   const { insertEmoji } = useEmojiInsertion(textareaRef);
-  const {
-    selectedFile,
-    previewUrl,
-    uploadedMediaUrl,
-    mediaType,
-    uploadProgress,
-    setUploadedMediaUrl,
-    setUploadProgress,
-    handleFileChange,
-    removeMedia,
-    formatFileSize,
-  } = useMediaPreview();
+
+  const { mediaItems, handleFileChange, removeMedia } = useMediaPreviewMulti();
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -181,12 +174,10 @@ export function Tweet({
     (res: ResCreateTweet) => {
       reset(DEFAULT_VALUES);
       removeMedia(); // Clear media after successful submission
-      setUploadedMediaUrl("");
-      setUploadProgress(0);
       setMentionIds([]);
       if (onSuccess) onSuccess(res); // Sử dụng cho bên ngoài component cha (VD: đống modal)
     },
-    [removeMedia, reset, setUploadProgress, setUploadedMediaUrl, onSuccess]
+    [removeMedia, reset, onSuccess]
   );
 
   // Select hashtag
@@ -252,30 +243,22 @@ export function Tweet({
 
       try {
         setIsUploading(true);
-        let mediaUrl = uploadedMediaUrl;
+        let medias: { url: string; type: EMediaType }[] = [];
+        const selectedFiles = mediaItems.map((file) => file.file);
 
         // Upload media first if file is selected and not already uploaded
-        if (selectedFile && !uploadedMediaUrl) {
-          console.log(`Uploading ${mediaType}...`);
-
-          // Simulate progress for better UX (if your API doesn't support progress)
-          setUploadProgress(10);
-
+        if (selectedFiles.length > 0) {
           try {
-            const resUploadMedia = await apiUploadMedia.mutateAsync([
-              selectedFile,
-            ]);
-            setUploadProgress(90);
+            const resUploadMedia = await apiUploadMedia.mutateAsync(
+              selectedFiles
+            );
             if (resUploadMedia.statusCode !== 200 || !resUploadMedia.data) {
               handleResponse(resUploadMedia);
               return;
             }
 
-            mediaUrl = resUploadMedia.data[0].url;
-            setUploadedMediaUrl(mediaUrl);
-            setUploadProgress(100);
+            medias = resUploadMedia.data;
           } catch (uploadError) {
-            setUploadProgress(0);
             console.error("Error submitting uploadMedia:", uploadError);
             toastSimple((uploadError as { message: string }).message);
           }
@@ -299,46 +282,33 @@ export function Tweet({
             community_id: communityId,
             audience: ETweetAudience.Everyone,
           }),
-          media: mediaUrl ? { url: mediaUrl, type: mediaType! } : undefined,
+          media: medias?.length > 0 ? medias : undefined,
         };
 
         const resCreateTweet = await apiCreateTweet.mutateAsync(tweetData);
 
         handleResponse(resCreateTweet, () => {
           successForm(resCreateTweet.data!);
-
-          setTimeout(() => {
-            // Nếu upload thành công và type === video thì phải đợi kiểm duyệt
-            if (mediaType == EMediaType.Video) {
-              toastSimple(
-                "Video của bạn đang được xử lý, trong quá trình xử lý bạn có thể thực hiện các tương tác khác."
-              );
-            }
-          }, 3000);
         });
       } catch (error) {
         console.error("Error submitting tweet:", error);
         const errorMessage =
           error instanceof Error ? error.message : "Có lỗi xảy ra khi đăng bài";
         toastSimple(errorMessage);
-        setUploadProgress(0);
       } finally {
         setIsUploading(false);
       }
     },
     [
-      uploadedMediaUrl,
-      selectedFile,
+      user?.verify,
+      mediaItems,
       tweet?._id,
       audience,
       tweetType,
       mentionIds,
       communityId,
-      mediaType,
       apiCreateTweet,
-      setUploadProgress,
       apiUploadMedia,
-      setUploadedMediaUrl,
       successForm,
     ]
   );
@@ -395,76 +365,10 @@ export function Tweet({
           </Mentions>
 
           {/* Media preview */}
-          {previewUrl && (
-            <div
-              key={tweetType}
-              className="relative mt-3 rounded-xl overflow-hidden border border-gray-200 inline-block max-w-full"
-            >
-              {mediaType === EMediaType.Image ? (
-                <img
-                  src={previewUrl}
-                  alt="Preview"
-                  className="max-w-full max-h-80 object-cover"
-                />
-              ) : mediaType === EMediaType.Video ? (
-                <video
-                  src={previewUrl}
-                  controls
-                  className="max-w-full max-h-80"
-                  preload="metadata"
-                >
-                  Trình duyệt của bạn không hỗ trợ video.
-                </video>
-              ) : null}
-
-              <WrapIcon
-                onClick={removeMedia}
-                className="absolute top-2 right-2 bg-gray-500 hover:bg-gray-400 transition-opacity z-10"
-              >
-                <CloseIcon />
-              </WrapIcon>
-
-              {isUploading && (
-                <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
-                  <div className="text-white text-sm bg-black bg-opacity-70 px-3 py-2 rounded-2xl flex flex-col items-center gap-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Đang đăng{" "}
-                      {mediaType === EMediaType.Video ? "video" : "ảnh"}...
-                    </div>
-                    {mediaType === EMediaType.Video && uploadProgress > 0 && (
-                      <div className="w-32">
-                        <div className="bg-gray-700 rounded-full h-2">
-                          <div
-                            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${uploadProgress}%` }}
-                          ></div>
-                        </div>
-                        <div className="text-xs mt-1 text-center">
-                          {uploadProgress}%
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {uploadedMediaUrl && !isUploading && (
-                <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
-                  ✓ Đã upload {mediaType === EMediaType.Video ? "video" : "ảnh"}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* File info */}
-          {(mediaType === EMediaType.Video ||
-            mediaType === EMediaType.Image) && (
-            <div className="bg-[#EAFAFF] bg-opacity-60 text-black font-semibold text-xs p-2 rounded">
-              {mediaType === EMediaType.Video ? "🎬" : "🖼️"}{" "}
-              {selectedFile?.name} ({formatFileSize(selectedFile?.size || 0)})
-            </div>
-          )}
+          <PreviewMediaMulti
+            mediaItems={mediaItems}
+            removeMedia={removeMedia}
+          />
 
           <div className="my-3 flex justify-between items-center">
             {/*  */}
@@ -507,12 +411,13 @@ export function Tweet({
                 >
                   <ImageIcon />
                   <input
+                    multiple
+                    type="file"
                     id={inputId}
                     className="hidden"
-                    type="file"
-                    accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/mov,video/avi,video/quicktime"
-                    onChange={handleFileSelect}
                     disabled={isUploading}
+                    onChange={handleFileSelect}
+                    accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/mov,video/avi,video/quicktime"
                   />
                 </label>
               </WrapIcon>
@@ -533,18 +438,56 @@ export function Tweet({
               />
 
               <ButtonMain type="submit" disabled={isFormDisabled}>
-                {isUploading
-                  ? `${contentBtn} ${
-                      mediaType === EMediaType.Video ? "video" : "ảnh"
-                    }...`
-                  : isSubmitting
-                  ? "Đang đăng..."
-                  : contentBtn}
+                {contentBtn}
               </ButtonMain>
             </div>
           </div>
         </div>
       </div>
     </form>
+  );
+}
+
+//
+export function PreviewMediaMulti({
+  mediaItems,
+  removeMedia,
+}: PreviewMediaProps) {
+  if (!mediaItems.length) {
+    return null;
+  }
+
+  return (
+    <Carousel className="w-full mt-3">
+      <CarouselContent className="h-80 cursor-grab">
+        {mediaItems.map((item, i) => (
+          <CarouselItem key={item.id} className="md:basis-1/2 lg:basis-1/2">
+            <Card className="relative w-full h-full overflow-hidden flex items-center justify-center border">
+              <WrapIcon
+                className="absolute top-0 right-0 bg-transparent cursor-pointer hover:bg-transparent"
+                onClick={() => removeMedia(item.id)}
+              >
+                <CloseIcon size={16} color="red" />
+              </WrapIcon>
+              <CardContent className="w-full h-full p-0 flex items-center justify-center">
+                {item.mediaType === EMediaType.Image ? (
+                  <img
+                    src={item.previewUrl}
+                    className="object-contain rounded"
+                    alt={`media-${i}`}
+                  />
+                ) : (
+                  <video
+                    src={item.previewUrl}
+                    controls
+                    className="object-contain rounded"
+                  />
+                )}
+              </CardContent>
+            </Card>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+    </Carousel>
   );
 }

@@ -21,14 +21,12 @@ import { WrapIcon } from "~/components/wrapIcon";
 import { useGetMultiMessages } from "~/hooks/apis/useFetchMessages";
 import { useUploadWithValidation } from "~/hooks/apis/useFetchUpload";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
-import {
-  useMediaPreviewMulti,
-  type MediaItem,
-} from "~/hooks/useMediaPreviewMulti";
+import { useMediaPreviewMulti } from "~/hooks/useMediaPreviewMulti";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
 import { cn } from "~/lib/utils";
 import { CONSTANT_MAX_LENGTH_TEXT } from "~/shared/constants";
 import { EConversationType, EMediaType } from "~/shared/enums/type.enum";
+import type { PreviewMediaProps } from "~/shared/interfaces/common/media.interface";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
@@ -41,11 +39,6 @@ import { toastSimple } from "~/utils/toastSimple.util";
 import { AddParticipants } from "./AddParticipants";
 import { CreateConversation } from "./CreateConversation";
 import { ParticipantList } from "./ParticipantList";
-
-interface PreviewProps {
-  mediaItems: MediaItem[];
-  removeMedia: (id: string) => void;
-}
 
 //
 export function MessageView({
@@ -518,7 +511,10 @@ export function MessageSkeleton() {
 }
 
 //
-export function PreviewMediaMulti({ mediaItems, removeMedia }: PreviewProps) {
+export function PreviewMediaMulti({
+  mediaItems,
+  removeMedia,
+}: PreviewMediaProps) {
   const [openCarousel, setOpenCarousel] = useState(false);
 
   return (

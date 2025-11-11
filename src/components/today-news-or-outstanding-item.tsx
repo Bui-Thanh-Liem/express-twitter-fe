@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { cn } from "~/lib/utils";
 import type { IResTodayNewsOrOutstanding } from "~/shared/dtos/res/trending.dto";
+import { EMediaType } from "~/shared/enums/type.enum";
 import { useTrendingStore } from "~/store/useTrendingStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
-import { MediaContent } from "./list-tweets/item-tweet";
+import { HLSPlayer } from "./hls/HLSPlayer";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export function TodayNewsOrOutstandingItemSkeleton() {
@@ -82,7 +83,23 @@ export function TodayNewsOrOutstandingItem({
       </div>
       {isMedia && (
         <div className="w-32 h-20">
-          <MediaContent type={item.media?.type} url={item.media?.url} />
+          {item.media.type === EMediaType.Video ? (
+            <HLSPlayer src={item.media.url} />
+          ) : item.media.type === EMediaType.Image ? (
+            <img
+              src={item.media.url}
+              alt={item.media.url}
+              className="object-contain"
+              loading="lazy"
+              onError={(e) => {
+                e.currentTarget.src = "/placeholder-image.png"; // Fallback image
+              }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <p className="text-gray-400">Định dạng media không hỗ trợ</p>
+            </div>
+          )}
         </div>
       )}
     </div>

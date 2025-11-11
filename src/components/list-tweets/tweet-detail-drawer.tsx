@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, Heart, MessageCircle, Repeat2 } from "lucide-react";
+import { BarChart3, Heart, MessageCircle, Repeat2, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useGetTweetChildren } from "~/hooks/apis/useFetchTweet";
@@ -13,12 +13,21 @@ import { useCommentSocket } from "~/socket/hooks/useCommentSocket";
 import { useDetailTweetStore } from "~/store/useDetailTweetStore";
 import { useUserStore } from "~/store/useUserStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
+import { HLSPlayer } from "../hls/HLSPlayer";
 import { ArrowLeftIcon } from "../icons/arrow-left";
 import { VerifyIcon } from "../icons/verify";
 import { Logo } from "../logo";
 import { ShortInfoProfile } from "../ShortInfoProfile";
 import { TypingIndicator } from "../typing-indicator";
 import { AvatarMain } from "../ui/avatar";
+import { Card, CardContent } from "../ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
 import {
   Drawer,
   DrawerContent,
@@ -34,12 +43,7 @@ import { ActionLikeTweet } from "./action-like-tweet";
 import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
 import { ActionShared } from "./action-shared";
 import { Content } from "./content";
-import {
-  MediaContent,
-  SkeletonTweet,
-  StatusTag,
-  TweetItem,
-} from "./item-tweet";
+import { SkeletonTweet, StatusTag, TweetItem } from "./item-tweet";
 
 export function TweetDetailDrawer() {
   //
@@ -230,34 +234,73 @@ export function TweetDetailDrawer() {
   //
   return (
     <Drawer direction="right" open={isOpen}>
-      <DrawerOverlay className="bg-black/90" />
+      <DrawerOverlay
+        className="bg-black/70"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      />
 
       {/* Các phần tử nằm trên overlay, ngoài DrawerOverlay */}
       {isOpen && (
-        <div
-          className="fixed top-0 left-0 w-3/4 z-[100] h-screen p-4 pl-28"
-          onClick={() => close()}
-        >
+        <div className="fixed top-0 left-0 w-3/4 z-[100] h-screen p-4 pl-28">
           {/* Content tweet */}
           <div className="h-full relative">
             {prevTweet && (
               <WrapIcon
-                className="absolute -left-16 bg-black cursor-pointer hover:bg-black/85 z-[2000]"
+                className="absolute -left-16 bg-gray-400 cursor-pointer hover:bg-gray-400/90 z-[2000]"
                 onClick={handleClickPrev}
               >
-                <ArrowLeftIcon color="#fff" />
+                <ArrowLeftIcon size={24} color="#fff" />
               </WrapIcon>
             )}
 
-            <div className="h-[92%] w-[70%] lg:w-full">
+            <WrapIcon
+              className="absolute -left-16 bg-gray-400 cursor-pointer hover:bg-gray-400/90 z-[1000]"
+              onClick={() => close()}
+            >
+              <X size={24} color="#fff" />
+            </WrapIcon>
+
+            <div className="h-[92%] flex items-center">
               {media ? (
-                <MediaContent
-                  tweet={undefined}
-                  url={media?.url || ""}
-                  type={media?.type || EMediaType.Image}
-                />
+                <Carousel className="w-full">
+                  <CarouselContent className="h-[80vh] cursor-grab">
+                    {media?.map((item) => (
+                      <CarouselItem key={item.url} className="lg:basis-1/1">
+                        <Card className="w-full h-full overflow-hidden flex items-center justify-center border-0 bg-transparent">
+                          <CardContent className="w-full h-full p-0 flex items-center justify-center">
+                            {item.type === EMediaType.Video ? (
+                              <HLSPlayer src={item.url} />
+                            ) : item.type === EMediaType.Image ? (
+                              <img
+                                src={item.url}
+                                alt={item.url}
+                                className="object-contain w-full h-full"
+                                loading="lazy"
+                                onError={(e) => {
+                                  e.currentTarget.src =
+                                    "/placeholder-image.png"; // Fallback image
+                                }}
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <p className="text-gray-400">
+                                  Định dạng media không hỗ trợ
+                                </p>
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="left-8 text-white hover:bg-gray-400" />
+                  <CarouselNext className="right-8 text-white hover:bg-gray-400" />
+                </Carousel>
               ) : (
-                <div className="h-full flex items-center justify-center text-white">
+                <div className="h-full w-full flex items-center justify-center">
                   <Logo className="text-gray-400" size={300} />
                 </div>
               )}
