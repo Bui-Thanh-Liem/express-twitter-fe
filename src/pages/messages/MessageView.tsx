@@ -14,15 +14,13 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "~/components/ui/carousel";
 import { CircularProgress } from "~/components/ui/circular-progress";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useGetMultiMessages } from "~/hooks/apis/useFetchMessages";
 import { useUploadWithValidation } from "~/hooks/apis/useFetchUpload";
+import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import {
   useMediaPreviewMulti,
   type MediaItem,
@@ -151,6 +149,8 @@ export function MessageView({
   //
   const handleFileSelect = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      console.log("handleFileSelect - e:::", e);
+
       handleFileChange(e);
     },
     [handleFileChange]
@@ -163,6 +163,24 @@ export function MessageView({
       setMessages([]);
     };
   }, []);
+
+  //
+  const handlePaste = useCallback(
+    (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+      const files = [];
+      const items = e.clipboardData.items;
+      for (const item of items) {
+        if (item.type.includes("image")) {
+          const file = item.getAsFile();
+          files.push(file);
+        }
+      }
+
+      //
+      handleFileSelect({ target: { files } } as any);
+    },
+    []
+  );
 
   //
   function onSeeMore() {
@@ -380,7 +398,6 @@ export function MessageView({
               </ButtonMain>
             </div>
             <textarea
-              id="editor"
               {...register("text")}
               ref={textareaRef}
               autoComplete="off"
@@ -398,6 +415,7 @@ export function MessageView({
                   handleSubmit(onSubmit)(); // gọi submit form
                 }
               }}
+              onPaste={handlePaste}
             />
           </div>
         </form>
@@ -561,8 +579,8 @@ export function PreviewMediaMulti({ mediaItems, removeMedia }: PreviewProps) {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
+          {/* <CarouselPrevious />
+          <CarouselNext /> */}
         </Carousel>
       )}
     </>
