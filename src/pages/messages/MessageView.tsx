@@ -318,7 +318,9 @@ export function MessageView({
           {/*  */}
           <div className="flex flex-col gap-3">
             {messages.map((msg) => {
-              return <MessageItem key={msg._id} msg={msg} user={user as IUser} />;
+              return (
+                <MessageItem key={msg._id} msg={msg} user={user as IUser} />
+              );
             })}
             <div ref={endOfMessagesRef} />
           </div>
@@ -378,6 +380,7 @@ export function MessageView({
               </ButtonMain>
             </div>
             <textarea
+              id="editor"
               {...register("text")}
               ref={textareaRef}
               autoComplete="off"
