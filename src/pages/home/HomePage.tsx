@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TypographyP } from "~/components/elements/p";
 import { cn } from "~/lib/utils";
 import { EFeedType } from "~/shared/enums/type.enum";
@@ -7,7 +7,7 @@ import { ListTweets } from "../../components/list-tweets/list-tweets";
 import { Tweet } from "../../components/tweet/Tweet";
 
 export function HomePage() {
-  const { triggerReload } = useReloadStore();
+  const { triggerReload, reloadKey } = useReloadStore();
 
   // State để quản lý tab hiện tại
   const [activeTab, setActiveTab] = useState<EFeedType>(EFeedType.All);
@@ -16,6 +16,14 @@ export function HomePage() {
     "flex-1 h-full flex items-center justify-center text-gray-500 cursor-pointer hover:bg-gray-100 font-semibold transition-colors relative";
   const classActive =
     "text-black font-bold after:absolute after:bottom-0.5 after:left-1/2 after:-translate-x-1/2 after:w-26 after:h-1 after:rounded-full after:bg-[#1D9BF0]";
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0; // scroll lên đầu container
+    }
+  }, [reloadKey]);
 
   return (
     <main className="relative h-screen flex flex-col">
@@ -47,7 +55,7 @@ export function HomePage() {
       </div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div ref={containerRef} className="flex-1 overflow-y-auto">
         <div className="px-4 pt-4">
           <Tweet />
         </div>
