@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { TweetDetailDrawer } from "~/components/list-tweets/tweet-detail-drawer";
 import { cn } from "~/lib/utils";
 import ChatBox from "~/pages/messages/ChatBox";
+import { DetailAttachmentDrawer } from "~/pages/messages/detail-all-attachments";
 import { CONSTANT_EVENT_NAMES } from "~/shared/constants";
 import { useNotificationSocket } from "~/socket/hooks/useNotificationSocket";
 import { socket } from "~/socket/socket";
@@ -62,6 +63,7 @@ export function HomeLayout() {
       </div>
       {isOpen && <ChatBox />}
       <TweetDetailDrawer />
+      <DetailAttachmentDrawer />
     </div>
   );
 }

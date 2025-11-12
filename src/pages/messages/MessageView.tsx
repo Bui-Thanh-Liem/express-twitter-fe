@@ -33,6 +33,7 @@ import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useChatSocket } from "~/socket/hooks/useChatSocket";
 import { useStatusSocket } from "~/socket/hooks/useStatusSocket";
 import { useConversationActiveStore } from "~/store/useConversationActiveStore";
+import { useDetailAttachment } from "~/store/useDetailAttachment";
 import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { toastSimple } from "~/utils/toastSimple.util";
@@ -287,9 +288,6 @@ export function MessageView({
             <>
               <AddParticipants conversation={conversation} />
               <ParticipantList conversation={conversation} />
-              {/* <WrapIcon>
-                  <DotIcon />
-                </WrapIcon> */}
             </>
           ) : (
             <CreateConversation
@@ -587,6 +585,8 @@ export function PreviewMediaMulti({
 export const MessageItem = ({ msg, user }: { msg: IMessage; user: IUser }) => {
   const { attachments } = msg;
 
+  const { setMediaSelected } = useDetailAttachment();
+
   const navigate = useNavigate();
 
   const sender = msg.sender as unknown as IUser;
@@ -652,13 +652,18 @@ export const MessageItem = ({ msg, user }: { msg: IMessage; user: IUser }) => {
                     alt={`attachment-${i}`}
                     className="w-full object-contain rounded-lg"
                     loading="lazy"
+                    onClick={() => setMediaSelected(a)}
                   />
                 );
               }
 
               if (a.type === EMediaType.Video) {
                 return (
-                  <div key={i} className="overflow-hidden rounded-lg bg-black">
+                  <div
+                    key={i}
+                    onClick={() => setMediaSelected(a)}
+                    className="overflow-hidden rounded-lg bg-black"
+                  >
                     <HLSPlayer src={a.url} />
                   </div>
                 );

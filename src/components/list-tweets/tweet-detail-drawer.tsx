@@ -296,8 +296,12 @@ export function TweetDetailDrawer() {
                       </CarouselItem>
                     ))}
                   </CarouselContent>
-                  <CarouselPrevious className="left-8 text-white hover:bg-gray-400" />
-                  <CarouselNext className="right-8 text-white hover:bg-gray-400" />
+                  {media?.length > 2 && (
+                    <>
+                      <CarouselPrevious className="left-8 text-white hover:bg-gray-400" />
+                      <CarouselNext className="right-8 text-white hover:bg-gray-400" />
+                    </>
+                  )}
                 </Carousel>
               ) : (
                 <div className="h-full w-full flex items-center justify-center">
