@@ -14,6 +14,14 @@ import { ProfileIcon } from "~/components/icons/profile";
 import { Tweet } from "~/components/tweet/Tweet";
 import { AvatarMain } from "~/components/ui/avatar";
 import { ButtonMain } from "~/components/ui/button";
+import { Card, CardContent } from "~/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "~/components/ui/carousel";
 import { DialogMain } from "~/components/ui/dialog";
 import {
   DropdownMenu,
@@ -39,6 +47,14 @@ type NavItem = {
   path: string;
   countNoti?: number;
 };
+
+const images = [
+  "./message.png",
+  "./community.png",
+  "./detail-tweet.png",
+  "./explore.png",
+  "./home.png",
+];
 
 export function SidebarLeft() {
   //
@@ -282,6 +298,7 @@ export function SidebarLeft() {
         </div>
       </div>
 
+      {/*  */}
       <DialogMain
         width="2xl"
         isLogo={false}
@@ -294,6 +311,32 @@ export function SidebarLeft() {
           tweetType={ETweetType.Tweet}
           placeholder="Có chuyện gì thế ?"
         />
+      </DialogMain>
+
+      {/*  */}
+      <DialogMain
+        width="2xl"
+        isLogo={false}
+        open={isOpenPost}
+        onOpenChange={setIsOpenPost}
+      >
+        <Carousel className="w-full max-w-xs">
+          <CarouselContent>
+            {images.map((_, index) => (
+              <CarouselItem key={index}>
+                <div className="p-1">
+                  <Card>
+                    <CardContent className="flex aspect-square items-center justify-center p-6">
+                      <img src={_} alt={_} />
+                    </CardContent>
+                  </Card>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
       </DialogMain>
     </>
   );
