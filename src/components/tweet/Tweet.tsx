@@ -12,6 +12,7 @@ import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useMediaPreviewMulti } from "~/hooks/useMediaPreviewMulti";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
 import { cn } from "~/lib/utils";
+import { CONSTANT_MAX_LENGTH_CONTENT } from "~/shared/constants";
 import {
   CreateTweetDtoSchema,
   type CreateTweetDto,
@@ -41,9 +42,6 @@ const DEFAULT_VALUES: CreateTweetDto = {
   type: ETweetType.Tweet,
   audience: ETweetAudience.Everyone,
 };
-
-//
-const MAX_LENGTH_TWEET = 280;
 
 export function Tweet({
   tweet,
@@ -338,7 +336,7 @@ export function Tweet({
             spellCheck="false"
             className="border-0 outline-0 w-full text-lg placeholder:text-gray-500 bg-transparent resize-none"
             placeholder={placeholder}
-            maxLength={MAX_LENGTH_TWEET}
+            maxLength={CONSTANT_MAX_LENGTH_CONTENT}
             onInput={handleTextareaInput}
             rows={1}
             onPaste={handlePaste}
@@ -432,7 +430,7 @@ export function Tweet({
 
               <CircularProgress
                 value={contentValue?.length || 0}
-                max={MAX_LENGTH_TWEET}
+                max={CONSTANT_MAX_LENGTH_CONTENT}
                 size={18}
                 strokeWidth={2}
               />
