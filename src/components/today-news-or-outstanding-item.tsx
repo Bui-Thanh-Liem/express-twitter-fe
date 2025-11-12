@@ -83,9 +83,9 @@ export function TodayNewsOrOutstandingItem({
       </div>
       {isMedia && (
         <div className="w-32 h-20">
-          {item.media.type === EMediaType.Video ? (
+          {item.media?.type === EMediaType.Video ? (
             <HLSPlayer src={item.media.url} />
-          ) : item.media.type === EMediaType.Image ? (
+          ) : item.media?.type === EMediaType.Image ? (
             <img
               src={item.media.url}
               alt={item.media.url}

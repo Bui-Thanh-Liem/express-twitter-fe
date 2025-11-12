@@ -14,13 +14,10 @@ import { ProfileIcon } from "~/components/icons/profile";
 import { Tweet } from "~/components/tweet/Tweet";
 import { AvatarMain } from "~/components/ui/avatar";
 import { ButtonMain } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "~/components/ui/carousel";
 import { DialogMain } from "~/components/ui/dialog";
 import {
@@ -72,6 +69,7 @@ export function SidebarLeft() {
   const [unreadCountNoti, setUnreadCountNoti] = useState(0);
   const [unreadCountConv, setUnreadCountConv] = useState(0);
   const [isOpenPost, setIsOpenPost] = useState(false);
+  const [isOpenIntro, setIsOpenIntro] = useState(!user?.verify);
 
   //
   function onClickNav(path: string, name: string) {
@@ -315,27 +313,21 @@ export function SidebarLeft() {
 
       {/*  */}
       <DialogMain
-        width="2xl"
+        textHeader="Xác minh tài khoản của bạn để: xem bài viết, nhắn tin, cộng đồng, ..."
+        textDesc="Kiểm tra email hoặc yêu cầu gửi lại mail ở trang cá nhân của bạn."
+        width="7xl"
         isLogo={false}
-        open={isOpenPost}
-        onOpenChange={setIsOpenPost}
+        open={isOpenIntro}
+        onOpenChange={setIsOpenIntro}
       >
-        <Carousel className="w-full max-w-xs">
-          <CarouselContent>
+        <Carousel>
+          <CarouselContent className="cursor-grab">
             {images.map((_, index) => (
               <CarouselItem key={index}>
-                <div className="p-1">
-                  <Card>
-                    <CardContent className="flex aspect-square items-center justify-center p-6">
-                      <img src={_} alt={_} />
-                    </CardContent>
-                  </Card>
-                </div>
+                <img src={_} alt={_} />
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
         </Carousel>
       </DialogMain>
     </>
