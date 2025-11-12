@@ -112,7 +112,7 @@ export function Tweet({
   const handleTextareaInput = useCallback(
     (e: React.FormEvent<HTMLTextAreaElement>) => {
       const textarea = e.currentTarget;
-      const newValue = autoResize(textarea, 12);
+      const newValue = autoResize(textarea, 30);
       if (newValue !== contentValue) {
         setValue("content", newValue);
       }

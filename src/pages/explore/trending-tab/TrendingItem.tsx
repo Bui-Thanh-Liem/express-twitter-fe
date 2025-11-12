@@ -41,11 +41,11 @@ export function TrendingItem({ item, idx }: { item: ITrending; idx: number }) {
 
   //
   function handleSearch() {
-    if (item.topic) {
-      navigate(`/search?q=${item.topic}`);
+    if (item?.topic) {
+      navigate(`/search?q=${item.topic.replace("#", "")}`);
       return;
     }
-    if (item.hashtag)
+    if (item?.hashtag)
       navigate(`/search?q=${(item.hashtag as unknown as IHashtag).name}`);
   }
 

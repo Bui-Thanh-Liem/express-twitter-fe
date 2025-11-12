@@ -65,7 +65,7 @@ export function HashtagSuggest({
                 className="cursor-pointer hover:bg-gray-100 p-2 rounded"
                 onClick={() => handleSelect(h)}
               >
-                #{h.name}
+                {h.name}
               </li>
             ))}
             {!hashtags.length && (
