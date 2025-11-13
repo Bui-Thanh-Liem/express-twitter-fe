@@ -26,7 +26,10 @@ import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
 import { cn } from "~/lib/utils";
 import { CONSTANT_MAX_LENGTH_TEXT } from "~/shared/constants";
 import { EConversationType, EMediaType } from "~/shared/enums/type.enum";
-import type { PreviewMediaProps } from "~/shared/interfaces/common/media.interface";
+import type {
+  IMedia,
+  PreviewMediaProps,
+} from "~/shared/interfaces/common/media.interface";
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { IMessage } from "~/shared/interfaces/schemas/message.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
@@ -585,7 +588,7 @@ export function PreviewMediaMulti({
 export const MessageItem = ({ msg, user }: { msg: IMessage; user: IUser }) => {
   const { attachments } = msg;
 
-  const { setMediaSelected } = useDetailAttachment();
+  const { setMediaSelected, setMediaList } = useDetailAttachment();
 
   const navigate = useNavigate();
 
@@ -595,6 +598,12 @@ export const MessageItem = ({ msg, user }: { msg: IMessage; user: IUser }) => {
   //
   function onPreviewProfile() {
     navigate(`/${sender?.username}`);
+  }
+
+  //
+  function onClickMedia(media: IMedia) {
+    setMediaSelected(media);
+    setMediaList(attachments);
   }
 
   return (
@@ -652,7 +661,7 @@ export const MessageItem = ({ msg, user }: { msg: IMessage; user: IUser }) => {
                     alt={`attachment-${i}`}
                     className="w-full object-contain rounded-lg"
                     loading="lazy"
-                    onClick={() => setMediaSelected(a)}
+                    onClick={() => onClickMedia(a)}
                   />
                 );
               }
@@ -661,7 +670,7 @@ export const MessageItem = ({ msg, user }: { msg: IMessage; user: IUser }) => {
                 return (
                   <div
                     key={i}
-                    onClick={() => setMediaSelected(a)}
+                    onClick={() => onClickMedia(a)}
                     className="overflow-hidden rounded-lg bg-black"
                   >
                     <HLSPlayer src={a.url} />

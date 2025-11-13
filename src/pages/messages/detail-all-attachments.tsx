@@ -13,15 +13,28 @@ import {
 import { Drawer, DrawerContent, DrawerOverlay } from "~/components/ui/drawer";
 import { WrapIcon } from "~/components/wrapIcon";
 import { EMediaType } from "~/shared/enums/type.enum";
+import type { IMedia } from "~/shared/interfaces/common/media.interface";
 import { useDetailAttachment } from "~/store/useDetailAttachment";
 
 export function DetailAttachmentDrawer() {
   //
-  const { mediaSelected, setMediaSelected } = useDetailAttachment();
+  const { mediaList, mediaSelected, setMediaSelected, setMediaList } =
+    useDetailAttachment();
 
   //
   if (!mediaSelected) {
     return <></>;
+  }
+
+  //
+  function onClickMedia(media: IMedia) {
+    setMediaSelected(media);
+  }
+
+  //
+  function onClose() {
+    setMediaSelected();
+    setMediaList();
   }
 
   //
@@ -42,7 +55,7 @@ export function DetailAttachmentDrawer() {
           <div className="h-full relative">
             <WrapIcon
               className="absolute -left-16 bg-gray-400 cursor-pointer hover:bg-gray-400/90 z-[1000]"
-              onClick={() => setMediaSelected()}
+              onClick={onClose}
             >
               <X size={24} color="#fff" />
             </WrapIcon>
@@ -79,17 +92,33 @@ export function DetailAttachmentDrawer() {
           className="w-full max-w-xs"
         >
           <CarouselContent className="-mt-1 h-[80vh] cursor-grab">
-            {Array.from({ length: 10 }).map((_, index) => (
+            {mediaList?.map((media, index) => (
               <CarouselItem
                 key={index}
                 className="pt-1 md:basis-1/3 lg:basis-1/6"
               >
                 <div className="p-1">
-                  <Card>
+                  <Card onClick={() => onClickMedia(media)}>
                     <CardContent className="flex items-center justify-center p-6">
-                      <span className="text-3xl font-semibold">
-                        {index + 1}
-                      </span>
+                      {media.type === EMediaType.Video ? (
+                        <HLSPlayer src={media.url} />
+                      ) : media.type === EMediaType.Image ? (
+                        <img
+                          src={media.url}
+                          alt={media.url}
+                          className="object-contain w-full h-full"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.src = "/placeholder-image.png"; // Fallback image
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <p className="text-gray-400">
+                            Định dạng media không hỗ trợ
+                          </p>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </div>
