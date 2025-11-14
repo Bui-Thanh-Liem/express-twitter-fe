@@ -26,7 +26,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { useLogout } from "~/hooks/apis/useFetchAuth";
+import { useLogout } from "~/apis/useFetchAuth";
 import { cn } from "~/lib/utils";
 import { CONSTANT_DEFAULT_TITLE_DOCUMENT } from "~/shared/constants/default-title-document";
 import { ETweetType } from "~/shared/enums/type.enum";

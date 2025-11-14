@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { HLSPlayer } from "~/components/hls/HLSPlayer";
 import { Card, CardContent } from "~/components/ui/card";
-import { useGetProfileTweets } from "~/hooks/apis/useFetchTweet";
+import { useGetProfileTweets } from "~/apis/useFetchTweet";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import { useDetailTweetStore } from "~/store/useDetailTweetStore";

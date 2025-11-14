@@ -11,7 +11,7 @@ import {
 import {
   useGetAllCategories,
   useGetMultiCommunities,
-} from "~/hooks/apis/useFetchCommunity";
+} from "~/apis/useFetchCommunity";
 import { cn } from "~/lib/utils";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import { CommunityRow, CommunityRowSkeleton } from "../CommunityRow";

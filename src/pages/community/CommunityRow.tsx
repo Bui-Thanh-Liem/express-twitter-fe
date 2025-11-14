@@ -4,7 +4,7 @@ import { VerifyIcon } from "~/components/icons/verify";
 import { Logo } from "~/components/logo";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { ButtonMain } from "~/components/ui/button";
-import { useJoinCommunity } from "~/hooks/apis/useFetchCommunity";
+import { useJoinCommunity } from "~/apis/useFetchCommunity";
 import { cn } from "~/lib/utils";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";

@@ -15,7 +15,7 @@ import {
   ItemTitle,
 } from "~/components/ui/item";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useGetMultiActivities } from "~/hooks/apis/useFetchCommunity";
+import { useGetMultiActivities } from "~/apis/useFetchCommunity";
 import { EActivityType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import { toastSimple } from "~/utils/toastSimple.util";

@@ -8,7 +8,7 @@ import { WrapIcon } from "~/components/wrapIcon";
 import {
   useDeleteInvitation,
   useGetMultiInvitations,
-} from "~/hooks/apis/useFetchCommunity";
+} from "~/apis/useFetchCommunity";
 import { cn } from "~/lib/utils";
 import type {
   ICommunity,

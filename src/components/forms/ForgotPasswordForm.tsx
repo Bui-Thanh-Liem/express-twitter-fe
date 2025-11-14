@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useForgotPassword } from "~/hooks/apis/useFetchAuth";
+import { useForgotPassword } from "~/apis/useFetchAuth";
 import {
   ForgotPasswordDtoSchema,
   type ForgotPasswordDto,

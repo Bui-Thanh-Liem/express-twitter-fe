@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Label } from "~/components/ui/label";
-import { useRegister } from "~/hooks/apis/useFetchAuth";
+import { useRegister } from "~/apis/useFetchAuth";
 import {
   RegisterUserDtoSchema,
   type RegisterUserDto,

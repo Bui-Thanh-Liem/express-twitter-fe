@@ -1,7 +1,7 @@
 import { BarChart3, CornerRightDown, Flag, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useReportTweet } from "~/hooks/apis/useFetchReport";
-import { useDeleteTweet, useGetDetailTweet } from "~/hooks/apis/useFetchTweet";
+import { useReportTweet } from "~/apis/useFetchReport";
+import { useDeleteTweet, useGetDetailTweet } from "~/apis/useFetchTweet";
 import { cn } from "~/lib/utils";
 import { ETweetStatus } from "~/shared/enums/status.enum";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";

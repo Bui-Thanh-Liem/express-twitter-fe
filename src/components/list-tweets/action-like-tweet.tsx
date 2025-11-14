@@ -1,6 +1,6 @@
 import { Heart } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useLikeTweet } from "~/hooks/apis/useFetchLike";
+import { useLikeTweet } from "~/apis/useFetchLike";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 
 export function ActionLikeTweet({ tweet }: { tweet: ITweet }) {

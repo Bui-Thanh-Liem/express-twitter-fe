@@ -10,7 +10,7 @@ import {
 } from "~/components/ui/carousel";
 import { SearchMain } from "~/components/ui/search";
 import { useDebounce } from "~/hooks/useDebounce";
-import { useGetMultiCommunitiesOwner } from "~/hooks/apis/useFetchCommunity";
+import { useGetMultiCommunitiesOwner } from "~/apis/useFetchCommunity";
 import { cn } from "~/lib/utils";
 import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";

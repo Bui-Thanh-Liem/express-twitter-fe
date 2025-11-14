@@ -6,7 +6,7 @@ import {
   UserToFollowItemSkeleton,
 } from "~/components/who-to-follow/who-to-follow-item";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useGetMultiMMCommunityById } from "~/hooks/apis/useFetchCommunity";
+import { useGetMultiMMCommunityById } from "~/apis/useFetchCommunity";
 import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";

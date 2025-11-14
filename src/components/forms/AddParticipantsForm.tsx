@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDebounce } from "~/hooks/useDebounce";
-import { useAddParticipants } from "~/hooks/apis/useFetchConversations";
-import { useGetFollowedById } from "~/hooks/apis/useFetchUser";
+import { useAddParticipants } from "~/apis/useFetchConversations";
+import { useGetFollowedById } from "~/apis/useFetchUser";
 import { cn } from "~/lib/utils";
 import {
   ParticipantsDtoSchema,

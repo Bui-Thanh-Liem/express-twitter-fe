@@ -13,8 +13,8 @@ import {
   ItemMedia,
 } from "~/components/ui/item";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useChangeStatusTweet } from "~/hooks/apis/useFetchCommunity";
-import { useGetTweetsPendingByCommunityId } from "~/hooks/apis/useFetchTweet";
+import { useChangeStatusTweet } from "~/apis/useFetchCommunity";
+import { useGetTweetsPendingByCommunityId } from "~/apis/useFetchTweet";
 import { cn } from "~/lib/utils";
 import { ETweetStatus } from "~/shared/enums/status.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { UserToFollowItemSkeleton } from "~/components/who-to-follow/who-to-follow-item";
-import { useGetMultiCommunities } from "~/hooks/apis/useFetchCommunity";
+import { useGetMultiCommunities } from "~/apis/useFetchCommunity";
 import { cn } from "~/lib/utils";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import { CommunityRow } from "../community/CommunityRow";

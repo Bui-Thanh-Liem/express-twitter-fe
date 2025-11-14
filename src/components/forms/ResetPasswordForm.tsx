@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useResetPassword } from "~/hooks/apis/useFetchAuth";
+import { useResetPassword } from "~/apis/useFetchAuth";
 import {
   ResetPasswordDtoSchema,
   type ResetPasswordDto,

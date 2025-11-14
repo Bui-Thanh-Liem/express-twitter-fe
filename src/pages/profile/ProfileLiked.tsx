@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { SkeletonTweet, TweetItem } from "~/components/list-tweets/item-tweet";
-import { useGetTweetLiked } from "~/hooks/apis/useFetchTweet";
+import { useGetTweetLiked } from "~/apis/useFetchTweet";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 
 export function ProfileLiked({ profile_id }: { profile_id: string }) {

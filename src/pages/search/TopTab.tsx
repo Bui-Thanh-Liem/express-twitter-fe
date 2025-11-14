@@ -5,8 +5,8 @@ import {
   UserToFollowItem,
   UserToFollowItemSkeleton,
 } from "~/components/who-to-follow/who-to-follow-item";
-import { useGetMultiCommunities } from "~/hooks/apis/useFetchCommunity";
-import { useSearchTweets, useSearchUsers } from "~/hooks/apis/useFetchSearch";
+import { useGetMultiCommunities } from "~/apis/useFetchCommunity";
+import { useSearchTweets, useSearchUsers } from "~/apis/useFetchSearch";
 import { cn } from "~/lib/utils";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";

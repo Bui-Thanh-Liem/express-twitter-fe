@@ -5,7 +5,7 @@ import { VerifyIcon } from "~/components/icons/verify";
 import { ButtonMain } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useGetOneCommunityBySlug } from "~/hooks/apis/useFetchCommunity";
+import { useGetOneCommunityBySlug } from "~/apis/useFetchCommunity";
 import { ETweetType, EVisibilityType } from "~/shared/enums/type.enum";
 import { formatDateToDateVN } from "~/utils/formatDateToDateVN";
 import { ProfileSkeleton } from "../../profile/ProfilePage";

@@ -21,7 +21,7 @@ export const useRegister = () => {
 
   return useMutation({
     mutationFn: (credentials: RegisterUserDto) =>
-      apiCall<ResLoginUser>("/auth/register", {
+      apiCall<ResLoginUser>("/auth/signup", {
         method: "POST",
         body: JSON.stringify(credentials),
       }),

@@ -5,7 +5,7 @@ import {
 } from "~/shared/constants";
 import { EMediaType } from "~/shared/enums/type.enum";
 import { toastSimple } from "~/utils/toastSimple.util";
-import { allowedImgTypes, allowedVideoTypes } from "./apis/useFetchUpload";
+import { allowedImgTypes, allowedVideoTypes } from "../apis/useFetchUpload";
 
 export const MAX_FILE_COUNT = 5;
 

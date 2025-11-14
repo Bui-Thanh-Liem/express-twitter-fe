@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TabsContent } from "~/components/ui/tabs";
-import { useGetTrending } from "~/hooks/apis/useFetchTrending";
+import { useGetTrending } from "~/apis/useFetchTrending";
 import { cn } from "~/lib/utils";
 import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";
 import { TrendingItem, TrendingItemSkeleton } from "./TrendingItem";

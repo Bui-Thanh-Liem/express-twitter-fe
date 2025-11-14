@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useGetOutstandingThisWeek } from "~/hooks/apis/useFetchTrending";
+import { useGetOutstandingThisWeek } from "~/apis/useFetchTrending";
 import { cn } from "~/lib/utils";
 import {
   TodayNewsOrOutstandingItem,

@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useGetTodayNews } from "~/hooks/apis/useFetchTrending";
+import { useGetTodayNews } from "~/apis/useFetchTrending";
 import { cn } from "~/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { WrapIcon } from "../wrapIcon";

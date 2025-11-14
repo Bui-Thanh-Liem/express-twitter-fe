@@ -5,9 +5,9 @@ import { Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDebounce } from "~/hooks/useDebounce";
-import { useCreateConversation } from "~/hooks/apis/useFetchConversations";
-import { useUploadWithValidation } from "~/hooks/apis/useFetchUpload";
-import { useGetFollowedById } from "~/hooks/apis/useFetchUser";
+import { useCreateConversation } from "~/apis/useFetchConversations";
+import { useUploadWithValidation } from "~/apis/useFetchUpload";
+import { useGetFollowedById } from "~/apis/useFetchUser";
 import { cn } from "~/lib/utils";
 import {
   CreateConversationDtoSchema,

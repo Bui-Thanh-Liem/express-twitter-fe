@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { HLSPlayer } from "~/components/hls/HLSPlayer";
 import { Card, CardContent } from "~/components/ui/card";
-import { useGetCommunityTweets } from "~/hooks/apis/useFetchTweet";
+import { useGetCommunityTweets } from "~/apis/useFetchTweet";
 import { EMediaType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import { useDetailTweetStore } from "~/store/useDetailTweetStore";
 
 export function CommunityMedia({ community_id }: { community_id: string }) {
   //
-    const { open, setTweet } = useDetailTweetStore();
-  
+  const { open, setTweet } = useDetailTweetStore();
+
   // State để quản lý pagination và data
   const [page, setPage] = useState(1);
   const [tweets, setTweets] = useState<ITweet[]>([]);

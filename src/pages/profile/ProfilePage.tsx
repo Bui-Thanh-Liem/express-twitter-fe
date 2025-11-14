@@ -8,10 +8,7 @@ import { AvatarMain } from "~/components/ui/avatar";
 import { ButtonMain } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { WrapIcon } from "~/components/wrapIcon";
-import {
-  useGetOneByUsername,
-  useResendVerifyEmail,
-} from "~/hooks/apis/useFetchUser";
+import { useGetOneByUsername, useResendVerifyEmail } from "~/apis/useFetchUser";
 import { CONSTANT_DEFAULT_TITLE_DOCUMENT } from "~/shared/constants/default-title-document";
 import { ETweetType } from "~/shared/enums/type.enum";
 import { useUserStore } from "~/store/useUserStore";

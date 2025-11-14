@@ -26,7 +26,7 @@ import {
   usePromoteMentor,
   useUpdateCommunity,
   useGetMultiMMCommunityById,
-} from "~/hooks/apis/useFetchCommunity";
+} from "~/apis/useFetchCommunity";
 import { cn } from "~/lib/utils";
 import { CONSTANT_MAX_LENGTH_MENTOR } from "~/shared/constants";
 import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";

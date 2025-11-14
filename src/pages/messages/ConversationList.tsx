@@ -16,7 +16,7 @@ import {
   useGetMultiConversations,
   useReadConversation,
   useTogglePinConversation,
-} from "~/hooks/apis/useFetchConversations";
+} from "~/apis/useFetchConversations";
 import { useDebounce } from "~/hooks/useDebounce";
 import { cn } from "~/lib/utils";
 import { EConversationType } from "~/shared/enums/type.enum";

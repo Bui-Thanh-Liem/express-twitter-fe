@@ -5,7 +5,7 @@ import { SkeletonTweet, TweetItem } from "~/components/list-tweets/item-tweet";
 import { SearchMain } from "~/components/ui/search";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useDebounce } from "~/hooks/useDebounce";
-import { useGetTweetBookmarked } from "~/hooks/apis/useFetchTweet";
+import { useGetTweetBookmarked } from "~/apis/useFetchTweet";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 
 export function BookmarkPage() {

@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { HLSPlayer } from "~/components/hls/HLSPlayer";
 import { ButtonMain } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
-import { useSearchTweets } from "~/hooks/apis/useFetchSearch";
+import { useSearchTweets } from "~/apis/useFetchSearch";
 import { EMediaType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import { useDetailTweetStore } from "~/store/useDetailTweetStore";
@@ -15,7 +15,7 @@ export function MediaTab() {
   const f = searchParams.get("f");
 
   //
-    const { open, setTweet } = useDetailTweetStore();
+  const { open, setTweet } = useDetailTweetStore();
 
   // State để quản lý pagination và data
   const [page, setPage] = useState(1);

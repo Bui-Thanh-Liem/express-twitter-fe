@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { useGetNewFeeds } from "~/hooks/apis/useFetchTweet";
+import { useGetNewFeeds } from "~/apis/useFetchTweet";
 import { CommunityCard } from "~/pages/community/CommunityCard";
 import { EFeedType, ETweetType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";

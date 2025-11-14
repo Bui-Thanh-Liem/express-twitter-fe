@@ -13,7 +13,7 @@ import { ResetPasswordForm } from "~/components/forms/ResetPasswordForm";
 import { ButtonMain } from "~/components/ui/button";
 import { DialogMain } from "~/components/ui/dialog";
 import { Divider } from "~/components/ui/divider";
-import { useGetMe } from "~/hooks/apis/useFetchAuth";
+import { useGetMe } from "~/apis/useFetchAuth";
 import { useUserStore } from "~/store/useUserStore";
 import { Logo } from "../../components/logo";
 
