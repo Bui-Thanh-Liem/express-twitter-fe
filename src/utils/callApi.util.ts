@@ -4,9 +4,6 @@ import { useUserStore } from "~/store/useUserStore";
 
 const apiUrl = import.meta.env.VITE_SERVER_API_URL;
 
-console.log("🔍 VITE_SERVER_URL:", import.meta.env.VITE_SERVER_API_URL);
-console.log("🔍 All env:", import.meta.env);
-
 export const apiCall = async <T>(
   endpoint: string,
   options: any = {},
