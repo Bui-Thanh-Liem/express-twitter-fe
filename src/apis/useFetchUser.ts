@@ -55,8 +55,8 @@ export const useVerifyEmail = () => {
         body: JSON.stringify(credentials),
       }),
     onSuccess: (res) => {
-      if (res.statusCode === 200 && res.data) {
-        setUser({ ...user, verify: res.data } as IUser);
+      if (res.statusCode === 200 && res.metadata) {
+        setUser({ ...user, verify: res.metadata } as IUser);
         navigate("/home");
       }
     },

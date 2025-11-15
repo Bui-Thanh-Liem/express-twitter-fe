@@ -50,7 +50,7 @@ export function Mentions({
     debouncedValue,
     !!debouncedValue && debouncedValue.length > 0
   );
-  const mentions = data?.data || [];
+  const mentions = data?.metadata || [];
 
   // Memoize onSelect để tránh re-render không cần thiết
   const handleSelect = useCallback(

@@ -29,7 +29,7 @@ export function OutstandingThisWeek() {
 
   // Mỗi lần fetch xong thì append thêm vào state
   useEffect(() => {
-    const items = data?.data || [];
+    const items = data?.metadata || [];
     if (items.length > 0) {
       setOutstanding((prev) => {
         // Create a Set of existing IDs for quick lookup

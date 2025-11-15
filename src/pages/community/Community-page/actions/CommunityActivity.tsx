@@ -38,7 +38,7 @@ export function CommunityActivity({ community }: { community: ICommunity }) {
     },
     isOpen
   );
-  const activities = data?.data?.items || [];
+  const activities = data?.metadata?.items || [];
 
   //
   if (!community.is_joined) return null;

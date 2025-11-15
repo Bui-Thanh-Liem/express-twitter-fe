@@ -73,8 +73,8 @@ export function CreateCommunityForm({
 
   // Mỗi lần fetch API xong thì merge vào state (loại bỏ duplicate)
   useEffect(() => {
-    const items = data?.data?.items || [];
-    const total_page = data?.data?.total_page;
+    const items = data?.metadata?.items || [];
+    const total_page = data?.metadata?.total_page;
     total_page_ref.current = total_page || 0;
 
     if (page === 1 && debouncedSearchVal) {
@@ -122,7 +122,7 @@ export function CreateCommunityForm({
       visibility_type: EVisibilityType.Public,
     },
   });
-  const categories = cates?.data || [];
+  const categories = cates?.metadata || [];
   const valBio = watch("bio");
 
   //
@@ -171,11 +171,11 @@ export function CreateCommunityForm({
 
     if (coverFile) {
       const resUploadCover = await apiUploadMedia.mutateAsync([coverFile]);
-      if (resUploadCover.statusCode !== 200 || !resUploadCover.data) {
+      if (resUploadCover.statusCode !== 200 || !resUploadCover.metadata) {
         handleResponse(resUploadCover);
         return;
       }
-      data.cover = resUploadCover?.data[0].url;
+      data.cover = resUploadCover?.metadata[0].url;
     }
 
     const res = await apiCreateCommunity.mutateAsync({

@@ -153,7 +153,7 @@ export const TweetItem = ({
   const { data } = useGetDetailTweet(parent_id || "");
 
   //
-  const quoteTweet = data?.data ? data?.data : ({} as ITweet);
+  const quoteTweet = data?.metadata ? data?.metadata : ({} as ITweet);
   const quoteTweet_user = quoteTweet.user_id as unknown as IUser;
 
   return (

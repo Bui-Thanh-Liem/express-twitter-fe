@@ -250,12 +250,12 @@ export function Tweet({
             const resUploadMedia = await apiUploadMedia.mutateAsync(
               selectedFiles
             );
-            if (resUploadMedia.statusCode !== 200 || !resUploadMedia.data) {
+            if (resUploadMedia.statusCode !== 200 || !resUploadMedia.metadata) {
               handleResponse(resUploadMedia);
               return;
             }
 
-            medias = resUploadMedia.data;
+            medias = resUploadMedia.metadata;
           } catch (uploadError) {
             console.error("Error submitting uploadMedia:", uploadError);
             toastSimple((uploadError as { message: string }).message);
@@ -286,7 +286,7 @@ export function Tweet({
         const resCreateTweet = await apiCreateTweet.mutateAsync(tweetData);
 
         handleResponse(resCreateTweet, () => {
-          successForm(resCreateTweet.data!);
+          successForm(resCreateTweet.metadata!);
         });
       } catch (error) {
         console.error("Error submitting tweet:", error);

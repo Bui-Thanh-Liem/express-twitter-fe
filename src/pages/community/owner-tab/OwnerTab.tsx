@@ -61,8 +61,8 @@ export function OwnerTab() {
 
   // Mỗi lần fetch API xong thì merge vào state (loại bỏ duplicate)
   useEffect(() => {
-    const items = data?.data?.items || [];
-    const total_page = data?.data?.total_page;
+    const items = data?.metadata?.items || [];
+    const total_page = data?.metadata?.total_page;
     total_page_ref.current = total_page || 0;
 
     if (page === 1 && (debouncedSearchVal || debouncedCarouselVal)) {

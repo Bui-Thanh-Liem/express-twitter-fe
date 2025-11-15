@@ -126,8 +126,8 @@ export function CreateConversationForm({
 
   // Mỗi lần fetch API xong thì merge vào state (loại bỏ duplicate)
   useEffect(() => {
-    const items = data?.data?.items || [];
-    const total_page = data?.data?.total_page;
+    const items = data?.metadata?.items || [];
+    const total_page = data?.metadata?.total_page;
     total_page_ref.current = total_page || 0;
 
     if (page === 1 && debouncedSearchVal) {
@@ -225,12 +225,12 @@ export function CreateConversationForm({
     if (avatarFile) {
       const resUploadAvatar = await apiUploadMedia.mutateAsync([avatarFile]);
 
-      if (resUploadAvatar.statusCode !== 200 || !resUploadAvatar.data) {
+      if (resUploadAvatar.statusCode !== 200 || !resUploadAvatar.metadata) {
         handleResponse(resUploadAvatar);
         return;
       }
 
-      data.avatar = resUploadAvatar?.data[0].url;
+      data.avatar = resUploadAvatar?.metadata[0].url;
     }
 
     const res = await apiCreateConversation.mutateAsync(data);

@@ -26,7 +26,7 @@ export function TrendingPage() {
   // Cập nhật danh sách khi fetch thành công
   useEffect(() => {
     if (data?.statusCode === 200) {
-      setAllTweets(data.data || []);
+      setAllTweets(data.metadata || []);
     }
   }, [data]);
 

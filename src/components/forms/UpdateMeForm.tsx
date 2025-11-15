@@ -103,11 +103,11 @@ export function UpdateMeForm({
           const resUploadAvatar = await apiUploadMedia.mutateAsync([
             avatarFile,
           ]);
-          if (resUploadAvatar.statusCode !== 200 || !resUploadAvatar.data) {
+          if (resUploadAvatar.statusCode !== 200 || !resUploadAvatar.metadata) {
             handleResponse(resUploadAvatar);
             return;
           }
-          data.avatar = resUploadAvatar?.data[0].url;
+          data.avatar = resUploadAvatar?.metadata[0].url;
         }
       }
 
@@ -118,11 +118,11 @@ export function UpdateMeForm({
 
         if (resRemoteImages.statusCode === 200) {
           const resUploadCover = await apiUploadMedia.mutateAsync([coverFile]);
-          if (resUploadCover.statusCode !== 200 || !resUploadCover.data) {
+          if (resUploadCover.statusCode !== 200 || !resUploadCover.metadata) {
             handleResponse(resUploadCover);
             return;
           }
-          data.cover_photo = resUploadCover?.data[0].url;
+          data.cover_photo = resUploadCover?.metadata[0].url;
         }
       }
 
@@ -134,8 +134,8 @@ export function UpdateMeForm({
 
       const res = await apiUpdateMe.mutateAsync(data);
       handleResponse(res, successForm);
-      if (res.data?.username !== usernameRef.current) {
-        navigate(`/${res.data?.username}`, { replace: true });
+      if (res.metadata?.username !== usernameRef.current) {
+        navigate(`/${res.metadata?.username}`, { replace: true });
       }
     } catch (error) {
       toastSimple((error as { message: string })?.message, "error");

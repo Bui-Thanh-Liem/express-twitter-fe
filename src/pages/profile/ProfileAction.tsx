@@ -73,8 +73,8 @@ export function ProfileAction({ profile, isOwnProfile }: IProfileActiveProps) {
       type: EConversationType.Private,
       participants: [profile?._id],
     });
-    if (res.statusCode === 200 && res?.data) {
-      setConversation(res?.data);
+    if (res.statusCode === 200 && res?.metadata) {
+      setConversation(res?.metadata);
       open();
     }
   }

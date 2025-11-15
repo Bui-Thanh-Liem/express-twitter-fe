@@ -74,12 +74,12 @@ export function SearchAdvanced({
   });
 
   // Search pending
-  const users = data?.data?.users || [];
-  const trending = data?.data?.trending || [];
-  const communities = data?.data?.communities || [];
+  const users = data?.metadata?.users || [];
+  const trending = data?.metadata?.trending || [];
+  const communities = data?.metadata?.communities || [];
 
   //
-  const searHistory = resSearchHistory?.data?.items || [];
+  const searHistory = resSearchHistory?.metadata?.items || [];
 
   //
   function onChangeSearch(val: string) {

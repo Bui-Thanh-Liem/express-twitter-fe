@@ -92,8 +92,8 @@ export function TweetDetailPage() {
 
   // Khi có data mới => append vào list
   useEffect(() => {
-    if (comments?.data?.items) {
-      const newComments = comments.data.items as ITweet[];
+    if (comments?.metadata?.items) {
+      const newComments = comments.metadata.items as ITweet[];
 
       if (page === 1) {
         setTweetComments(newComments);
@@ -173,7 +173,7 @@ export function TweetDetailPage() {
   }
 
   // Not found
-  if (data?.statusCode === 404 || !data?.data) {
+  if (data?.statusCode === 404 || !data?.metadata) {
     return (
       <div className="flex flex-col items-center justify-center h-96">
         <h2 className="text-xl font-bold text-gray-600 mb-2">
@@ -197,12 +197,12 @@ export function TweetDetailPage() {
       </div>
 
       <div className="max-h-screen overflow-y-auto pb-6">
-        <TweetItem tweet={data?.data} onSuccessDel={() => {}} />
+        <TweetItem tweet={data?.metadata} onSuccessDel={() => {}} />
 
         {/*  */}
         <div className="p-4 border-y border-gray-100 pb-0">
           <Tweet
-            tweet={data?.data}
+            tweet={data?.metadata}
             contentBtn="Bình luận"
             tweetType={ETweetType.Comment}
             placeholder="Đăng bình luận của bạn"

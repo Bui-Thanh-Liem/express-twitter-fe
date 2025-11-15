@@ -29,7 +29,7 @@ export function HashtagSuggest({
     limit: "20",
     q: debouncedValue.replace("#", ""),
   });
-  const hashtags = data?.data?.items || [];
+  const hashtags = data?.metadata?.items || [];
 
   // Memoize onSelect để tránh re-render không cần thiết
   const handleSelect = useCallback(

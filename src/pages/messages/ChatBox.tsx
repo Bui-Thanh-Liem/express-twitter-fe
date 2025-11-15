@@ -86,10 +86,10 @@ export default function ChatBox() {
 
   //
   useEffect(() => {
-    const _messages = data?.data?.items || [];
+    const _messages = data?.metadata?.items || [];
     console.log("co set lai messages khong ");
     setMessages(_messages);
-  }, [data?.data?.items]);
+  }, [data?.metadata?.items]);
 
   //
   const { register, reset, handleSubmit, setValue, watch } = useForm<{

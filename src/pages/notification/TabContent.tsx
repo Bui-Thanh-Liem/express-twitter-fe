@@ -193,8 +193,8 @@ export function TabContent({
 
   // Mỗi lần fetch xong thì append thêm vào state
   useEffect(() => {
-    const items = data?.data?.items || [];
-    const total_page = data?.data?.total_page ?? 1;
+    const items = data?.metadata?.items || [];
+    const total_page = data?.metadata?.total_page ?? 1;
     total_page_ref.current = total_page;
     if (items.length) {
       if (page === 1) {

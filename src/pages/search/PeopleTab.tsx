@@ -34,14 +34,14 @@ export function PeopleTab() {
 
   // Mỗi lần fetch xong thì append thêm vào state
   useEffect(() => {
-    const items = data?.data?.items || [];
-    const total_page = data?.data?.total_page;
+    const items = data?.metadata?.items || [];
+    const total_page = data?.metadata?.total_page;
     total_page_ref.current = total_page || 0;
 
     if (items) {
       setUsers((prev) => [...prev, ...items]);
     }
-  }, [data?.data]);
+  }, [data?.metadata]);
 
   //
   useEffect(() => {

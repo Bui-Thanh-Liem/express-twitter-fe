@@ -1,5 +1,6 @@
 import type { OkResponse } from "~/shared/classes/response.class";
 import type { ResLoginUser } from "~/shared/dtos/res/auth.dto";
+import { useUserStore } from "~/store/useUserStore";
 
 const apiUrl = import.meta.env.VITE_SERVER_API_URL;
 
@@ -8,17 +9,23 @@ console.log("🔍 All env:", import.meta.env);
 
 export const apiCall = async <T>(
   endpoint: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  options: any = {}
+  options: any = {},
+  isClientId: boolean = false
 ): Promise<OkResponse<T>> => {
   console.log("Đang gọi api::");
 
+  const user = useUserStore.getState().user;
   const access_token = localStorage.getItem("access_token");
 
   // Tạo headers object
   const headers: HeadersInit = {
     Authorization: access_token ? `Bearer ${access_token}` : "",
   };
+
+  //
+  if (isClientId && user) {
+    headers["x-client-id"] = user?._id || "";
+  }
 
   // CHỈ set Content-Type cho non-FormData requests
   if (!(options.body instanceof FormData)) {
@@ -66,17 +73,17 @@ export const apiCall = async <T>(
     if (resRefreshToken?.statusCode === 200) {
       localStorage.setItem(
         "access_token",
-        resRefreshToken.data?.access_token || ""
+        resRefreshToken.metadata?.access_token || ""
       );
       localStorage.setItem(
         "refresh_token",
-        resRefreshToken.data?.refresh_token || ""
+        resRefreshToken.metadata?.refresh_token || ""
       );
 
       // Update the Authorization header with new token
       config.headers = {
         ...config.headers,
-        Authorization: `Bearer ${resRefreshToken.data?.access_token}`,
+        Authorization: `Bearer ${resRefreshToken.metadata?.access_token}`,
       };
 
       // Retry the original request with new token

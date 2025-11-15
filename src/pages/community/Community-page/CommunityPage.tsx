@@ -29,7 +29,7 @@ export function CommunityPage() {
 
   //
   const { data, refetch, isLoading, error } = useGetOneCommunityBySlug(slug!);
-  const community = data?.data;
+  const community = data?.metadata;
 
   //
   const { joinCommunity, leaveCommunity } = useCommunitySocket((count) => {

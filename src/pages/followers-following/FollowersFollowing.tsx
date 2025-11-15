@@ -21,7 +21,7 @@ export function FollowersFollowing() {
 
   // ✅ Lấy dữ liệu user
   const { data } = useGetOneByUsername(username!);
-  const profile = data?.data;
+  const profile = data?.metadata;
 
   // ✅ Khi người dùng đổi tab → điều hướng sang route tương ứng
   const handleTabChange = (value: string) => {

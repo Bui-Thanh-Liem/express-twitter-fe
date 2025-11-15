@@ -16,7 +16,7 @@ export const useUserStore = create<State>()(
       clearUser: () => set({ user: null }),
     }),
     {
-      name: "user-storage", // tên key trong localStorage
+      name: "user_storage", // tên key trong localStorage
       partialize: (state) => ({ user: state.user }), // chỉ lưu user, không lưu hàm
     }
   )

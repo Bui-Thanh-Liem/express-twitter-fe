@@ -12,7 +12,7 @@ export function FollowersPage() {
   const { username } = useParams();
 
   const { data } = useGetOneByUsername(username!);
-  const profile = data?.data;
+  const profile = data?.metadata;
 
   const [page, setPage] = useState(1);
   const [users, setUsers] = useState<IUser[]>([]);
@@ -29,14 +29,14 @@ export function FollowersPage() {
 
   // Mỗi lần fetch xong thì append thêm vào state
   useEffect(() => {
-    const items = fd?.data?.items || [];
-    const total_page = fd?.data?.total_page;
+    const items = fd?.metadata?.items || [];
+    const total_page = fd?.metadata?.total_page;
     total_page_ref.current = total_page || 0;
 
     if (items) {
       setUsers((prev) => [...prev, ...items]);
     }
-  }, [fd?.data]);
+  }, [fd?.metadata]);
 
   //
   useEffect(() => {

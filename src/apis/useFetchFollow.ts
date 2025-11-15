@@ -23,7 +23,7 @@ export const useFollowUser = () => {
 
     // Chạy SAU khi gọi api (thành công)
     onSuccess: (result, { username }) => {
-      const isFollow = result.data?.status === "Follow";
+      const isFollow = result.metadata?.status === "Follow";
 
       queryClient.setQueryData<OkResponse<IUser>>(
         ["user", username],
@@ -32,10 +32,10 @@ export const useFollowUser = () => {
           return {
             ...oldData,
             data: {
-              ...oldData.data,
+              ...oldData.metadata,
               isFollow,
               follower_count: Math.abs(
-                (oldData?.data?.follower_count || 0) + (isFollow ? 1 : -1)
+                (oldData?.metadata?.follower_count || 0) + (isFollow ? 1 : -1)
               ),
             } as IUser,
           };

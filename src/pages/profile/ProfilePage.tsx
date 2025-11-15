@@ -29,8 +29,8 @@ export function ProfilePage() {
   //
   const [isLoadingSendMail, startTransition] = useTransition();
 
-  // Extract profile data to avoid repetitive data?.data calls
-  const profile = data?.data;
+  // Extract profile data to avoid repetitive data?.metadata calls
+  const profile = data?.metadata;
 
   //
   const [isOpenVerify, setOpenVerify] = useState(false);

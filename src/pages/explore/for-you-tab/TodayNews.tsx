@@ -26,7 +26,7 @@ export function TodayNews() {
 
   // Mỗi lần fetch xong thì append thêm vào state
   useEffect(() => {
-    const items = data?.data || [];
+    const items = data?.metadata || [];
     if (items.length > 0) {
       setNews((prev) => {
         // Create a Set of existing IDs for quick lookup

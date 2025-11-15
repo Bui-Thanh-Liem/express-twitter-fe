@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { useGetMe } from "~/apis/useFetchAuth";
 import { AuthFacebook } from "~/components/auth-facebook";
 import { AuthGoogle } from "~/components/auth-google";
 import { TypographyH1 } from "~/components/elements/h1";
@@ -13,7 +14,6 @@ import { ResetPasswordForm } from "~/components/forms/ResetPasswordForm";
 import { ButtonMain } from "~/components/ui/button";
 import { DialogMain } from "~/components/ui/dialog";
 import { Divider } from "~/components/ui/divider";
-import { useGetMe } from "~/apis/useFetchAuth";
 import { useUserStore } from "~/store/useUserStore";
 import { Logo } from "../../components/logo";
 
@@ -35,12 +35,14 @@ export function AuthPage() {
 
       // Nếu đăng nhập thành công thì gọi api getMe lưu vào Store global
       const resGetMe = await getMe.mutateAsync();
-      if (resGetMe.statusCode === 200 && resGetMe?.data) {
-        setUser(resGetMe.data);
+      console.log("resGetMe::", resGetMe);
+
+      if (resGetMe.statusCode === 200 && resGetMe?.metadata) {
+        setUser(resGetMe.metadata);
       }
     }
-    if (status) onLoginOAuthSuccess();
-  }, [getMe, params, setUser, status]);
+    if (["login", "signup"].includes(status)) onLoginOAuthSuccess();
+  }, [status]);
 
   //
   const [isOpenRegister, setIsOpenRegister] = useState(false);

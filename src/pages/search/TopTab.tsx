@@ -75,8 +75,8 @@ export function TopTab() {
 
   // Mỗi lần fetch xong thì append thêm vào state
   useEffect(() => {
-    const items = data?.data?.items || [];
-    const total_page = data?.data?.total_page;
+    const items = data?.metadata?.items || [];
+    const total_page = data?.metadata?.total_page;
     total_page_user_ref.current = total_page || 0;
 
     if (items) {
@@ -89,11 +89,11 @@ export function TopTab() {
         return [...prev, ...filteredNewUsers];
       });
     }
-  }, [data?.data]);
+  }, [data?.metadata]);
 
   useEffect(() => {
-    const items = dataTweets?.data?.items || [];
-    const total_page = dataTweets?.data?.total_page;
+    const items = dataTweets?.metadata?.items || [];
+    const total_page = dataTweets?.metadata?.total_page;
     total_page_tweet_ref.current = total_page || 0;
 
     if (items) {
@@ -108,11 +108,11 @@ export function TopTab() {
         return [...prev, ...filteredNewTweets];
       });
     }
-  }, [dataTweets?.data]);
+  }, [dataTweets?.metadata]);
 
   useEffect(() => {
-    const items = dataCommunities?.data?.items || [];
-    const total_page = dataCommunities?.data?.total_page;
+    const items = dataCommunities?.metadata?.items || [];
+    const total_page = dataCommunities?.metadata?.total_page;
     total_page_community_ref.current = total_page || 0;
 
     if (items) {
@@ -127,7 +127,7 @@ export function TopTab() {
         return [...prev, ...filteredNewCommunities];
       });
     }
-  }, [dataTweets?.data]);
+  }, [dataTweets?.metadata]);
 
   //
   useEffect(() => {

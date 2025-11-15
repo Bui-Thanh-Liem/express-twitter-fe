@@ -28,8 +28,8 @@ export function CommunityMedia({ community_id }: { community_id: string }) {
 
   // Effect để xử lý khi có data mới
   useEffect(() => {
-    if (data?.data?.items) {
-      const newMedia = data.data.items;
+    if (data?.metadata?.items) {
+      const newMedia = data.metadata.items;
       if (page === 1) {
         // Nếu là trang đầu tiên, replace toàn bộ
         setTweets(() => {

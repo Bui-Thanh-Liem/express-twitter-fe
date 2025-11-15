@@ -41,7 +41,7 @@ export const useUploadMedia = () => {
           body: imageFormData,
         }).then((response) => {
           if (response.statusCode >= 200 && response.statusCode < 300) {
-            return response.data || [];
+            return response.metadata || [];
           }
           throw new Error(response.message);
         });
@@ -61,7 +61,7 @@ export const useUploadMedia = () => {
           body: videoFormData,
         }).then((response) => {
           if (response.statusCode >= 200 && response.statusCode < 300) {
-            return response.data || [];
+            return response.metadata || [];
           }
           throw new Error(response.message);
         });

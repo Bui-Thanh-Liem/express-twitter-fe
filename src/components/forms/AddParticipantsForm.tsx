@@ -62,9 +62,10 @@ export function AddParticipantsForm({
     );
 
     const items =
-      data?.data?.items.filter((user) => !participant_ids.includes(user._id)) ||
-      [];
-    const total_page = data?.data?.total_page;
+      data?.metadata?.items.filter(
+        (user) => !participant_ids.includes(user._id)
+      ) || [];
+    const total_page = data?.metadata?.total_page;
     total_page_ref.current = total_page || 0;
 
     if (page === 1 && debouncedSearchVal) {

@@ -22,14 +22,14 @@ export function TweetCommunity({
   }, [onchange, selectedOption]);
 
   const { data } = useGetAllBareCommunities();
-  const communities = data?.data
+  const communities = data?.metadata
     ? [
         {
           _id: "",
           name: "Dòng thời gian của tôi",
           icon: <User color="#fff" size={20} />,
         },
-        ...data.data,
+        ...data.metadata,
       ]
     : [];
 

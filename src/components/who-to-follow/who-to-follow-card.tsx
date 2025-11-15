@@ -17,8 +17,8 @@ export function WhoToFollowCard() {
   const [open, setOpen] = useState(false);
 
   const whoToFollows = useMemo(
-    () => data?.data?.items || [],
-    [data?.data?.items]
+    () => data?.metadata?.items || [],
+    [data?.metadata?.items]
   );
 
   useEffect(() => {

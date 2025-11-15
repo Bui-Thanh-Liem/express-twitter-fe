@@ -20,7 +20,10 @@ export function TodayNewsCard() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
-  const news = useMemo(() => data?.data?.slice(0, 3) || [], [data?.data]);
+  const news = useMemo(
+    () => data?.metadata?.slice(0, 3) || [],
+    [data?.metadata]
+  );
 
   useEffect(() => {
     setOpen(window.location.hash !== "#news-today");

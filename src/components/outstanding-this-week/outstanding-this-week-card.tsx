@@ -19,8 +19,8 @@ export function OutstandingThisWeekCard() {
   const [open, setOpen] = useState(false);
 
   const outstanding = useMemo(
-    () => data?.data?.slice(0, 3) || [],
-    [data?.data]
+    () => data?.metadata?.slice(0, 3) || [],
+    [data?.metadata]
   );
 
   //

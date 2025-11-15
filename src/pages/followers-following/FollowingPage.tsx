@@ -12,7 +12,7 @@ export function FollowingPage() {
   const { username } = useParams();
 
   const { data } = useGetOneByUsername(username!);
-  const profile = data?.data;
+  const profile = data?.metadata;
 
   const [page, setPage] = useState(1);
   const [users, setUsers] = useState<IUser[]>([]);
@@ -29,14 +29,14 @@ export function FollowingPage() {
 
   // Mỗi lần fetch xong thì append thêm vào state
   useEffect(() => {
-    const items = fg?.data?.items || [];
-    const total_page = fg?.data?.total_page;
+    const items = fg?.metadata?.items || [];
+    const total_page = fg?.metadata?.total_page;
     total_page_ref.current = total_page || 0;
 
     if (items) {
       setUsers((prev) => [...prev, ...items]);
     }
-  }, [fg?.data]);
+  }, [fg?.metadata]);
 
   //
   useEffect(() => {

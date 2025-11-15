@@ -69,7 +69,7 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
     { page: "1", limit: "20", q: debouncedSearchVal }, // mentor sẽ max 20 và không phân trang (phân trang chỉ ảnh hưởng tới members)
     isOpen
   );
-  const communityMM = data?.data;
+  const communityMM = data?.metadata;
 
   //
   useEffect(() => {

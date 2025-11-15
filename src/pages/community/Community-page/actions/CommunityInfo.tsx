@@ -32,7 +32,7 @@ export function CommunityInfo({ community }: { community: ICommunity }) {
     { page: "1", limit: "20" }, // mentor sẽ max 20 và không phân trang (phân trang chỉ ảnh hưởng tới members)
     isOpen
   );
-  const communityDetail = data?.data;
+  const communityDetail = data?.metadata;
 
   //
   const renderUserList = (title: string, users?: IUser[]) => (

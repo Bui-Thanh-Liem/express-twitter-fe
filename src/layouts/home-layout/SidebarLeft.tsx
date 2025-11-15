@@ -1,7 +1,8 @@
-import { Plus } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 import type { ReactNode } from "react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useLogout } from "~/apis/useFetchAuth";
 import { TypographyP } from "~/components/elements/p";
 import { BookmarkIcon } from "~/components/icons/bookmark";
 import { CommunityIcon } from "~/components/icons/communities";
@@ -26,7 +27,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { useLogout } from "~/apis/useFetchAuth";
 import { cn } from "~/lib/utils";
 import { CONSTANT_DEFAULT_TITLE_DOCUMENT } from "~/shared/constants/default-title-document";
 import { ETweetType } from "~/shared/enums/type.enum";
@@ -329,6 +329,14 @@ export function SidebarLeft() {
             ))}
           </CarouselContent>
         </Carousel>
+
+        <div className="text-end mt-3">
+          <a href="https://mail.google.com/mail/u/0/" target="_blank">
+            <ButtonMain className="animate-bounce">
+              Đi tới email của bạn <ArrowRight />
+            </ButtonMain>
+          </a>
+        </div>
       </DialogMain>
     </>
   );

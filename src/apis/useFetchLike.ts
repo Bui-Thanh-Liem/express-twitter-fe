@@ -39,10 +39,10 @@ export const useLikeTweet = () => {
       const updateTweetInFeeds = (
         old: OkResponse<ResMultiType<ITweet>> | undefined
       ) => {
-        if (!old?.data?.items) return old;
+        if (!old?.metadata?.items) return old;
 
         // Tìm tweet trong page này
-        const tweetIndex = old.data.items.findIndex(
+        const tweetIndex = old.metadata.items.findIndex(
           (tweet) => tweet._id === tweetId
         );
 
@@ -55,8 +55,8 @@ export const useLikeTweet = () => {
         return {
           ...old,
           data: {
-            ...old.data,
-            items: old.data.items.map((tweet: ITweet) => {
+            ...old.metadata,
+            items: old.metadata.items.map((tweet: ITweet) => {
               if (tweet._id === tweetId) {
                 const isCurrentlyLiked = tweet.is_like ?? false;
                 const currentCount = tweet.likes_count ?? 0;
@@ -97,15 +97,15 @@ export const useLikeTweet = () => {
       queryClient.setQueryData<OkResponse<ITweet>>(
         ["tweet", tweetId],
         (old) => {
-          if (!old?.data) return old;
+          if (!old?.metadata) return old;
 
-          const isCurrentlyLiked = old.data.is_like ?? false;
-          const currentCount = old.data.likes_count ?? 0;
+          const isCurrentlyLiked = old.metadata.is_like ?? false;
+          const currentCount = old.metadata.likes_count ?? 0;
 
           return {
             ...old,
             data: {
-              ...old.data,
+              ...old.metadata,
               is_like: !isCurrentlyLiked,
               likes_count: isCurrentlyLiked
                 ? Math.max(0, currentCount - 1)
@@ -119,9 +119,9 @@ export const useLikeTweet = () => {
       queryClient.setQueriesData<OkResponse<ResMultiType<ITweet>>>(
         { queryKey: ["tweets", "liked"], exact: false },
         (old) => {
-          if (!old?.data?.items) return old;
+          if (!old?.metadata?.items) return old;
 
-          const tweetIndex = old.data.items.findIndex(
+          const tweetIndex = old.metadata.items.findIndex(
             (tweet) => tweet._id === tweetId
           );
 
@@ -130,9 +130,9 @@ export const useLikeTweet = () => {
             return {
               ...old,
               data: {
-                ...old.data,
-                items: old.data.items.filter((tweet) => tweet._id !== tweetId),
-                total: Math.max(0, old.data.total - 1),
+                ...old.metadata,
+                items: old.metadata.items.filter((tweet) => tweet._id !== tweetId),
+                total: Math.max(0, old.metadata.total - 1),
               },
             };
           }
@@ -169,16 +169,16 @@ export const useLikeTweet = () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSuccess: (result, tweetId) => {
-      const isNowLiked = result.data?.status === "Like";
-      const newLikesCount = result.data?.likes_count;
+      const isNowLiked = result.metadata?.status === "Like";
+      const newLikesCount = result.metadata?.likes_count;
 
       // ✅ Sync từ server cho TẤT CẢ pages
       const syncTweetInFeeds = (
         old: OkResponse<ResMultiType<ITweet>> | undefined
       ) => {
-        if (!old?.data?.items) return old;
+        if (!old?.metadata?.items) return old;
 
-        const tweetIndex = old.data.items.findIndex(
+        const tweetIndex = old.metadata.items.findIndex(
           (tweet) => tweet._id === tweetId
         );
 
@@ -187,8 +187,8 @@ export const useLikeTweet = () => {
         return {
           ...old,
           data: {
-            ...old.data,
-            items: old.data.items.map((tweet: ITweet) => {
+            ...old.metadata,
+            items: old.metadata.items.map((tweet: ITweet) => {
               if (tweet._id === tweetId) {
                 return {
                   ...tweet,
@@ -222,14 +222,14 @@ export const useLikeTweet = () => {
       queryClient.setQueryData<OkResponse<ITweet>>(
         ["tweet", tweetId],
         (old) => {
-          if (!old?.data) return old;
+          if (!old?.metadata) return old;
 
           return {
             ...old,
             data: {
-              ...old.data,
+              ...old.metadata,
               is_like: isNowLiked,
-              likes_count: newLikesCount ?? old.data.likes_count,
+              likes_count: newLikesCount ?? old.metadata.likes_count,
             },
           };
         }

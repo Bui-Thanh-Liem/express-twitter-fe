@@ -42,8 +42,8 @@ export function ExploreTab() {
 
   // Mỗi lần fetch API xong thì merge vào state (loại bỏ duplicate)
   useEffect(() => {
-    const items = data?.data?.items || [];
-    const total_page = data?.data?.total_page;
+    const items = data?.metadata?.items || [];
+    const total_page = data?.metadata?.total_page;
     total_page_ref.current = total_page || 0;
 
     if (page === 1 && (searchVal || cate)) {
@@ -83,7 +83,7 @@ export function ExploreTab() {
       <div className="flex mb-4 px-4">
         <Carousel className="group w-full">
           <CarouselContent className="-ml-1">
-            {cates?.data?.map((_) => (
+            {cates?.metadata?.map((_) => (
               <CarouselItem key={_} className="pl-1 md:basis-1/3 lg:basis-1/4">
                 <Card
                   className={cn(

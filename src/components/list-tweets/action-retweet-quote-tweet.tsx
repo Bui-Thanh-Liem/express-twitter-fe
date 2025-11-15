@@ -63,7 +63,7 @@ export function ActionRetweetQuoteTweet({ tweet }: { tweet: ITweet }) {
     const resCreateTweet = await apiCreateTweet.mutateAsync(tweetData);
 
     handleResponse(resCreateTweet, () => {
-      setRetweet(resCreateTweet.data?.insertedId);
+      setRetweet(resCreateTweet.metadata?.insertedId);
       setCountTQTweet((prev) => prev + 1);
     });
   }

@@ -86,8 +86,8 @@ export function MessageView({
 
   // Mỗi lần fetch API xong thì merge vào state (loại bỏ duplicate)
   useEffect(() => {
-    const items = data?.data?.items || [];
-    const total_page = data?.data?.total_page;
+    const items = data?.metadata?.items || [];
+    const total_page = data?.metadata?.total_page;
     total_page_ref.current = total_page || 0;
 
     if (page === 1) {
@@ -195,10 +195,10 @@ export function MessageView({
         const resUploadMedia = await apiUploadMedia.mutateAsync(selectedFiles);
         console.log("resUploadMedia:::", resUploadMedia);
 
-        if (resUploadMedia.statusCode !== 200 || !resUploadMedia.data) {
+        if (resUploadMedia.statusCode !== 200 || !resUploadMedia.metadata) {
           handleResponse(resUploadMedia, () => {
             setTimeout(() => {
-              const isVideo = resUploadMedia.data!.some(
+              const isVideo = resUploadMedia.metadata!.some(
                 (i) => i.type === EMediaType.Video
               );
               if (isVideo) {
@@ -211,7 +211,7 @@ export function MessageView({
           return;
         }
 
-        medias = resUploadMedia.data;
+        medias = resUploadMedia.metadata;
       } catch (uploadError) {
         console.error("Error submitting uploadMedia:", uploadError);
         toastSimple((uploadError as { message: string }).message);

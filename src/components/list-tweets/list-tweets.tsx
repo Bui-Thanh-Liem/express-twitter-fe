@@ -31,12 +31,12 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
 
   // Effect để xử lý khi có data mới
   useEffect(() => {
-    if (data?.data?.items) {
-      const newTweets = data.data.items as ITweet[];
+    if (data?.metadata?.items) {
+      const newTweets = data.metadata.items as ITweet[];
 
       // Chèn cộng đồng vào newFeeds
-      const extraType = data.data.extra?.type;
-      const newCommunities = data.data.extra?.items as ICommunity[];
+      const extraType = data.metadata.extra?.type;
+      const newCommunities = data.metadata.extra?.items as ICommunity[];
       const _newCommunities = { type: extraType, extra: newCommunities } as any;
 
       if (page === 1) {

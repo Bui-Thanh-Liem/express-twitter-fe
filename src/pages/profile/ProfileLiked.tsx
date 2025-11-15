@@ -22,8 +22,8 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
 
   // Effect để xử lý khi có data mới
   useEffect(() => {
-    if (data?.data?.items) {
-      const newTweets = data.data.items as ITweet[];
+    if (data?.metadata?.items) {
+      const newTweets = data.metadata.items as ITweet[];
       if (page === 1) {
         // Nếu là trang đầu tiên, replace toàn bộ
         setAllTweets(() => {

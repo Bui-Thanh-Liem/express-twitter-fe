@@ -2,25 +2,25 @@
 abstract class AResponse<T = any> {
   statusCode: number = 200
   message: string
-  data?: T // dùng khi success
+  metadata?: T // dùng khi success
   stack?: any // dùng khi error
-  constructor({ statusCode, message, data, stack }: { statusCode: number; message: string; data?: T; stack?: any }) {
+  constructor({ statusCode, message, metadata, stack }: { statusCode: number; message: string; metadata?: T; stack?: any }) {
     this.statusCode = statusCode
     this.message = message
-    this.data = data
+    this.metadata = metadata
     this.stack = stack
   }
 }
 
 export class OkResponse<T = any> extends AResponse<T> {
-  constructor(message = 'OK', data?: T) {
-    super({ statusCode: 200, message, data })
+  constructor(message = 'OK', metadata?: T) {
+    super({ statusCode: 200, message, metadata })
   }
 }
 
 export class CreatedResponse<T = any> extends AResponse<T> {
-  constructor(message = 'Created', data?: T) {
-    super({ statusCode: 201, message, data })
+  constructor(message = 'Created', metadata?: T) {
+    super({ statusCode: 201, message, metadata })
   }
 }
 

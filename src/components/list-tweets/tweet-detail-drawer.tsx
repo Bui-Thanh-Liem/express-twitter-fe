@@ -128,8 +128,8 @@ export function TweetDetailDrawer() {
 
   // Khi có data mới => append vào list
   useEffect(() => {
-    if (data?.data?.items) {
-      const newComments = data.data.items as ITweet[];
+    if (data?.metadata?.items) {
+      const newComments = data.metadata.items as ITweet[];
 
       if (page === 1) {
         setTweetComments(newComments);
@@ -146,7 +146,7 @@ export function TweetDetailDrawer() {
       }
       setIsLoadingMore(false);
     }
-  }, [data?.data?.items, page]);
+  }, [data?.metadata?.items, page]);
 
   // Observer callback
   const handleObserver = useCallback(

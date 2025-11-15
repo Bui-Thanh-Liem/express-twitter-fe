@@ -28,8 +28,8 @@ export const useRegister = () => {
     onSuccess: (data) => {
       if (data.statusCode === 201) {
         // Lưu token
-        localStorage.setItem("access_token", data.data?.access_token || "");
-        localStorage.setItem("refresh_token", data.data?.refresh_token || "");
+        localStorage.setItem("access_token", data.metadata?.access_token || "");
+        localStorage.setItem("refresh_token", data.metadata?.refresh_token || "");
 
         // Invalidate user data để refetch
         queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -38,8 +38,8 @@ export const useRegister = () => {
         // Nếu đăng nhập thành công thì gọi api getMe lưu vào Store global
         (async () => {
           const resGetMe = await getMe.mutateAsync();
-          if (resGetMe.statusCode === 200 && resGetMe?.data) {
-            setUser(resGetMe.data);
+          if (resGetMe.statusCode === 200 && resGetMe?.metadata) {
+            setUser(resGetMe.metadata);
           }
         })();
 
@@ -65,14 +65,14 @@ export const useLogin = () => {
     onSuccess: (data) => {
       if (data.statusCode === 200) {
         // Lưu token
-        localStorage.setItem("access_token", data.data?.access_token || "");
-        localStorage.setItem("refresh_token", data.data?.refresh_token || "");
+        localStorage.setItem("access_token", data.metadata?.access_token || "");
+        localStorage.setItem("refresh_token", data.metadata?.refresh_token || "");
 
         // Nếu đăng nhập thành công thì gọi api getMe lưu vào Store global
         (async () => {
           const resGetMe = await getMe.mutateAsync();
-          if (resGetMe.statusCode === 200 && resGetMe?.data) {
-            setUser(resGetMe.data);
+          if (resGetMe.statusCode === 200 && resGetMe?.metadata) {
+            setUser(resGetMe.metadata);
           }
         })();
 
@@ -141,10 +141,10 @@ export const useUpdateMe = () => {
       });
 
       //
-      if (_data.statusCode === 200 && _data?.data) {
+      if (_data.statusCode === 200 && _data?.metadata) {
         setUser({
           ...user,
-          ..._data.data,
+          ..._data.metadata,
         });
       }
     },

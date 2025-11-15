@@ -41,10 +41,10 @@ export const useBookmarkTweet = () => {
       const updateTweetInFeeds = (
         old: OkResponse<ResMultiType<ITweet>> | undefined
       ) => {
-        if (!old?.data?.items) return old;
+        if (!old?.metadata?.items) return old;
 
         // Tìm tweet trong page này
-        const tweetIndex = old.data.items.findIndex(
+        const tweetIndex = old.metadata.items.findIndex(
           (tweet) => tweet._id === tweetId
         );
 
@@ -57,8 +57,8 @@ export const useBookmarkTweet = () => {
         return {
           ...old,
           data: {
-            ...old.data,
-            items: old.data.items.map((tweet: ITweet) => {
+            ...old.metadata,
+            items: old.metadata.items.map((tweet: ITweet) => {
               if (tweet._id === tweetId) {
                 return {
                   ...tweet,
@@ -93,13 +93,13 @@ export const useBookmarkTweet = () => {
       queryClient.setQueryData<OkResponse<ITweet>>(
         ["tweet", tweetId],
         (old) => {
-          if (!old?.data) return old;
+          if (!old?.metadata) return old;
 
           return {
             ...old,
             data: {
-              ...old.data,
-              is_bookmark: !(old.data.is_bookmark ?? false),
+              ...old.metadata,
+              is_bookmark: !(old.metadata.is_bookmark ?? false),
             },
           };
         }
@@ -109,9 +109,9 @@ export const useBookmarkTweet = () => {
       queryClient.setQueriesData<OkResponse<ResMultiType<ITweet>>>(
         { queryKey: ["tweets", "bookmarked"], exact: false },
         (old) => {
-          if (!old?.data?.items) return old;
+          if (!old?.metadata?.items) return old;
 
-          const tweetIndex = old.data.items.findIndex(
+          const tweetIndex = old.metadata.items.findIndex(
             (tweet) => tweet._id === tweetId
           );
 
@@ -120,9 +120,9 @@ export const useBookmarkTweet = () => {
             return {
               ...old,
               data: {
-                ...old.data,
-                items: old.data.items.filter((tweet) => tweet._id !== tweetId),
-                total: Math.max(0, old.data.total - 1),
+                ...old.metadata,
+                items: old.metadata.items.filter((tweet) => tweet._id !== tweetId),
+                total: Math.max(0, old.metadata.total - 1),
               },
             };
           }
@@ -159,15 +159,15 @@ export const useBookmarkTweet = () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSuccess: (result, tweetId) => {
-      const isNowBookmarked = result.data?.status === "Bookmark";
+      const isNowBookmarked = result.metadata?.status === "Bookmark";
 
       // ✅ Sync từ server cho TẤT CẢ pages
       const syncTweetInFeeds = (
         old: OkResponse<ResMultiType<ITweet>> | undefined
       ) => {
-        if (!old?.data?.items) return old;
+        if (!old?.metadata?.items) return old;
 
-        const tweetIndex = old.data.items.findIndex(
+        const tweetIndex = old.metadata.items.findIndex(
           (tweet) => tweet._id === tweetId
         );
 
@@ -176,8 +176,8 @@ export const useBookmarkTweet = () => {
         return {
           ...old,
           data: {
-            ...old.data,
-            items: old.data.items.map((tweet: ITweet) => {
+            ...old.metadata,
+            items: old.metadata.items.map((tweet: ITweet) => {
               if (tweet._id === tweetId) {
                 return {
                   ...tweet,
@@ -212,12 +212,12 @@ export const useBookmarkTweet = () => {
       queryClient.setQueryData<OkResponse<ITweet>>(
         ["tweet", tweetId],
         (old) => {
-          if (!old?.data) return old;
+          if (!old?.metadata) return old;
 
           return {
             ...old,
             data: {
-              ...old.data,
+              ...old.metadata,
               is_bookmark: isNowBookmarked,
             },
           };
