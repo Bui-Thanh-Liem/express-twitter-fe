@@ -117,7 +117,7 @@ export const useUploadWithValidation = () => {
 export const useRemoveImages = () => {
   return useMutation({
     mutationFn: async (credentials: RemoteImagesDto) =>
-      apiCall("/uploads/remove/images", {
+      apiCall("/uploads/images", {
         method: "DELETE",
         body: JSON.stringify(credentials),
       }),
