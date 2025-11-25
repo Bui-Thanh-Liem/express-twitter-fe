@@ -35,6 +35,7 @@ import { CircularProgress } from "../ui/circular-progress";
 import { HashtagSuggest } from "./HashtagSuggest";
 import { Mentions } from "./Mentions";
 import { TweetCommunity } from "./TweetCommunity";
+import { useReloadStore } from "~/store/useReloadStore";
 
 // Constants
 const DEFAULT_VALUES: CreateTweetDto = {
@@ -59,6 +60,9 @@ export function Tweet({
   const { user } = useUserStore();
   const apiCreateTweet = useCreateTweet();
   const apiUploadMedia = useUploadWithValidation();
+
+  // 
+  const { triggerReload } = useReloadStore();
 
   // Hashtag
   const [openHashtag, setOpenHashtag] = useState(false);
@@ -173,6 +177,7 @@ export function Tweet({
       reset(DEFAULT_VALUES);
       removeMedia(); // Clear media after successful submission
       setMentionIds([]);
+      triggerReload()
       if (onSuccess) onSuccess(res); // Sử dụng cho bên ngoài component cha (VD: đống modal)
     },
     [removeMedia, reset, onSuccess]
