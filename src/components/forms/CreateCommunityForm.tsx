@@ -2,15 +2,15 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Upload } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { useDebounce } from "~/hooks/useDebounce";
 import {
   useCreateCommunity,
   useGetAllCategories,
 } from "~/apis/useFetchCommunity";
 import { useUploadWithValidation } from "~/apis/useFetchUpload";
 import { useGetFollowedById } from "~/apis/useFetchUser";
+import { useDebounce } from "~/hooks/useDebounce";
 import { cn } from "~/lib/utils";
 import {
   CreateCommunityDtoSchema,
@@ -46,6 +46,7 @@ export function CreateCommunityForm({
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [userSelected, setUserSelected] = useState<IUser[]>([]);
   const [userInvited, setUserInvited] = useState<string[]>([]);
+  const [isPending, startTransition] = useTransition();
 
   //
   const { user } = useUserStore();
@@ -156,35 +157,37 @@ export function CreateCommunityForm({
 
   //
   const onSubmit = async (data: CreateCommunityDto) => {
-    if (!data.category && !categoryText) {
-      toastSimple(
-        "Danh mục / dịch vụ không được để trống, bạn có thể tạo mới hoặc chọn mục đã có sẵn.",
-        "error"
-      );
-      return;
-    }
-
-    if (categoryText.length > 10) {
-      toastSimple("Danh mục / dịch vụ tối đa 16 kí tự.", "error");
-      return;
-    }
-
-    if (coverFile) {
-      const resUploadCover = await apiUploadMedia.mutateAsync([coverFile]);
-      if (resUploadCover.statusCode !== 200 || !resUploadCover.metadata) {
-        handleResponse(resUploadCover);
+    startTransition(async () => {
+      if (!data.category && !categoryText) {
+        toastSimple(
+          "Danh mục / dịch vụ không được để trống, bạn có thể tạo mới hoặc chọn mục đã có sẵn.",
+          "error"
+        );
         return;
       }
-      data.cover = resUploadCover?.metadata[0].url;
-    }
 
-    const res = await apiCreateCommunity.mutateAsync({
-      ...data,
-      category: categoryText || data.category,
-      ...(userInvited.length > 0 ? { member_ids: userInvited } : {}),
+      if (categoryText.length > 10) {
+        toastSimple("Danh mục / dịch vụ tối đa 16 kí tự.", "error");
+        return;
+      }
+
+      if (coverFile) {
+        const resUploadCover = await apiUploadMedia.mutateAsync([coverFile]);
+        if (resUploadCover.statusCode !== 200 || !resUploadCover.metadata) {
+          handleResponse(resUploadCover);
+          return;
+        }
+        data.cover = resUploadCover?.metadata[0].url;
+      }
+
+      const res = await apiCreateCommunity.mutateAsync({
+        ...data,
+        category: categoryText || data.category,
+        ...(userInvited.length > 0 ? { member_ids: userInvited } : {}),
+      });
+
+      handleResponse(res, successForm);
     });
-
-    handleResponse(res, successForm);
   };
 
   //
@@ -415,8 +418,13 @@ export function CreateCommunityForm({
           >
             Hủy
           </ButtonMain>
-          <ButtonMain size="lg" className="w-1/2">
-            Tiếp theo
+          <ButtonMain
+            size="lg"
+            className="w-1/2"
+            loading={isPending}
+            disabled={isPending}
+          >
+            Tạo
           </ButtonMain>
         </div>
       </div>

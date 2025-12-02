@@ -7,8 +7,9 @@ import { ETweetAudience } from "~/shared/enums/common.enum";
 import { EFeedType, EMediaType, ETweetType } from "~/shared/enums/type.enum";
 
 export const MediaSchema = z.object({
-  url: z.string().url({ message: "Invalid media URL" }),
-  type: z.nativeEnum(EMediaType),
+  url: z.string().url({ message: "Url không hợp lệ" }).optional(),
+  resource_type: z.nativeEnum(EMediaType),
+  public_id: z.string().trim(),
 });
 
 export const CreateTweetDtoSchema = z.object({

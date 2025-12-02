@@ -13,7 +13,6 @@ import { useCommentSocket } from "~/socket/hooks/useCommentSocket";
 import { useDetailTweetStore } from "~/store/useDetailTweetStore";
 import { useUserStore } from "~/store/useUserStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
-import { HLSPlayer } from "../hls/HLSPlayer";
 import { ArrowLeftIcon } from "../icons/arrow-left";
 import { VerifyIcon } from "../icons/verify";
 import { Logo } from "../logo";
@@ -271,9 +270,9 @@ export function TweetDetailDrawer() {
                       <CarouselItem key={item.url} className="lg:basis-1/1">
                         <Card className="w-full h-full overflow-hidden flex items-center justify-center border-0 bg-transparent">
                           <CardContent className="w-full h-full p-0 flex items-center justify-center">
-                            {item.type === EMediaType.Video ? (
-                              <HLSPlayer src={item.url} />
-                            ) : item.type === EMediaType.Image ? (
+                            {item.resource_type === EMediaType.Video ? (
+                              <video src={item.url} controls />
+                            ) : item.resource_type === EMediaType.Image ? (
                               <img
                                 src={item.url}
                                 alt={item.url}

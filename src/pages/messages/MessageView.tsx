@@ -2,8 +2,9 @@ import { Send } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useGetMultiMessages } from "~/apis/useFetchMessages";
+import { useUploadWithValidation } from "~/apis/useFetchUpload";
 import { EmojiSelector } from "~/components/emoji-picker";
-import { HLSPlayer } from "~/components/hls/HLSPlayer";
 import { CloseIcon } from "~/components/icons/close";
 import { ImageIcon } from "~/components/icons/image";
 import { Logo } from "~/components/logo";
@@ -18,8 +19,6 @@ import {
 import { CircularProgress } from "~/components/ui/circular-progress";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useGetMultiMessages } from "~/apis/useFetchMessages";
-import { useUploadWithValidation } from "~/apis/useFetchUpload";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useMediaPreviewMulti } from "~/hooks/useMediaPreviewMulti";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
@@ -187,7 +186,7 @@ export function MessageView({
   //
   const onSubmit = useCallback(
     async (data: { text: string }) => {
-      let medias: { url: string; type: EMediaType }[] = [];
+      let medias: IMedia[] = [];
       const selectedFiles = mediaItems.map((file) => file.file);
 
       try {
@@ -199,7 +198,7 @@ export function MessageView({
           handleResponse(resUploadMedia, () => {
             setTimeout(() => {
               const isVideo = resUploadMedia.metadata!.some(
-                (i) => i.type === EMediaType.Video
+                (i) => i.resource_type === EMediaType.Video
               );
               if (isVideo) {
                 toastSimple(
@@ -653,7 +652,7 @@ export const MessageItem = ({ msg, user }: { msg: IMessage; user: IUser }) => {
             )}
           >
             {attachments.map((a, i) => {
-              if (a.type === EMediaType.Image) {
+              if (a.resource_type === EMediaType.Image) {
                 return (
                   <img
                     key={i}
@@ -666,14 +665,19 @@ export const MessageItem = ({ msg, user }: { msg: IMessage; user: IUser }) => {
                 );
               }
 
-              if (a.type === EMediaType.Video) {
+              if (a.resource_type === EMediaType.Video) {
                 return (
                   <div
                     key={i}
                     onClick={() => onClickMedia(a)}
                     className="overflow-hidden rounded-lg bg-black"
                   >
-                    <HLSPlayer src={a.url} />
+                    {/* <HLSPlayer src={a.url} /> */}
+                    <video
+                      src={a.url}
+                      controls
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 );
               }

@@ -1,7 +1,6 @@
 "use client";
 
 import { X } from "lucide-react";
-import { HLSPlayer } from "~/components/hls/HLSPlayer";
 import { Card, CardContent } from "~/components/ui/card";
 import {
   Carousel,
@@ -61,9 +60,13 @@ export function DetailAttachmentDrawer() {
             </WrapIcon>
 
             <div className="h-[90%] z-[1000]">
-              {mediaSelected.type === EMediaType.Video ? (
-                <HLSPlayer src={mediaSelected.url} />
-              ) : mediaSelected.type === EMediaType.Image ? (
+              {mediaSelected.resource_type === EMediaType.Video ? (
+                <video
+                  src={mediaSelected.url}
+                  controls
+                  className="w-full h-full object-cover"
+                />
+              ) : mediaSelected.resource_type === EMediaType.Image ? (
                 <img
                   src={mediaSelected.url}
                   alt={mediaSelected.url}
@@ -100,9 +103,13 @@ export function DetailAttachmentDrawer() {
                 <div className="p-1">
                   <Card onClick={() => onClickMedia(media)}>
                     <CardContent className="flex items-center justify-center p-6">
-                      {media.type === EMediaType.Video ? (
-                        <HLSPlayer src={media.url} />
-                      ) : media.type === EMediaType.Image ? (
+                      {media.resource_type === EMediaType.Video ? (
+                        <video
+                          src={media.url}
+                          controls
+                          className="w-full h-full object-cover"
+                        />
+                      ) : media.resource_type === EMediaType.Image ? (
                         <img
                           src={media.url}
                           alt={media.url}

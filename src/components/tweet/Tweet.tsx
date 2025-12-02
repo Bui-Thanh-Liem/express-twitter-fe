@@ -1,13 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useCreateTweet } from "~/apis/useFetchTweet";
+import { useUploadWithValidation } from "~/apis/useFetchUpload";
 import { EmojiSelector } from "~/components/emoji-picker";
 import { CloseIcon } from "~/components/icons/close";
 import { ImageIcon } from "~/components/icons/image";
 import { TweetAudience } from "~/components/tweet/TweetAudience";
 import { WrapIcon } from "~/components/wrapIcon";
-import { useCreateTweet } from "~/apis/useFetchTweet";
-import { useUploadWithValidation } from "~/apis/useFetchUpload";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useMediaPreviewMulti } from "~/hooks/useMediaPreviewMulti";
 import { useTextareaAutoResize } from "~/hooks/useTextareaAutoResize";
@@ -20,9 +20,13 @@ import {
 import type { ResCreateTweet } from "~/shared/dtos/res/tweet.dto";
 import { ETweetAudience } from "~/shared/enums/common.enum";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
-import type { PreviewMediaProps } from "~/shared/interfaces/common/media.interface";
+import type {
+  IMedia,
+  PreviewMediaProps,
+} from "~/shared/interfaces/common/media.interface";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
+import { useReloadStore } from "~/store/useReloadStore";
 import { useUserStore } from "~/store/useUserStore";
 import { handleResponse } from "~/utils/handleResponse";
 import { toastSimple, toastSimpleVerify } from "~/utils/toastSimple.util";
@@ -35,7 +39,6 @@ import { CircularProgress } from "../ui/circular-progress";
 import { HashtagSuggest } from "./HashtagSuggest";
 import { Mentions } from "./Mentions";
 import { TweetCommunity } from "./TweetCommunity";
-import { useReloadStore } from "~/store/useReloadStore";
 
 // Constants
 const DEFAULT_VALUES: CreateTweetDto = {
@@ -61,7 +64,7 @@ export function Tweet({
   const apiCreateTweet = useCreateTweet();
   const apiUploadMedia = useUploadWithValidation();
 
-  // 
+  //
   const { triggerReload } = useReloadStore();
 
   // Hashtag
@@ -177,7 +180,7 @@ export function Tweet({
       reset(DEFAULT_VALUES);
       removeMedia(); // Clear media after successful submission
       setMentionIds([]);
-      triggerReload()
+      triggerReload();
       if (onSuccess) onSuccess(res); // Sử dụng cho bên ngoài component cha (VD: đống modal)
     },
     [removeMedia, reset, onSuccess]
@@ -246,7 +249,7 @@ export function Tweet({
 
       try {
         setIsUploading(true);
-        let medias: { url: string; type: EMediaType }[] = [];
+        let medias: IMedia[] = [];
         const selectedFiles = mediaItems.map((file) => file.file);
 
         // Upload media first if file is selected and not already uploaded
@@ -260,6 +263,7 @@ export function Tweet({
               return;
             }
 
+            console.log("TresUploadMedia :::", resUploadMedia);
             medias = resUploadMedia.metadata;
           } catch (uploadError) {
             console.error("Error submitting uploadMedia:", uploadError);
@@ -440,7 +444,11 @@ export function Tweet({
                 strokeWidth={2}
               />
 
-              <ButtonMain type="submit" disabled={isFormDisabled}>
+              <ButtonMain
+                type="submit"
+                loading={isUploading}
+                disabled={isFormDisabled}
+              >
                 {contentBtn}
               </ButtonMain>
             </div>

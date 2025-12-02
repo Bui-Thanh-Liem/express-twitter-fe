@@ -5,8 +5,10 @@ import {
   CONSTANT_MAX_SIZE_VIDEO_UPLOAD,
 } from "~/shared/constants";
 import type { RemoteImagesDto } from "~/shared/dtos/req/upload.dto";
-import type { ResUpload } from "~/shared/dtos/res/upload.dto";
+import type { IMedia } from "~/shared/interfaces/common/media.interface";
 import { apiCall } from "~/utils/callApi.util";
+
+const uploadEndpoint = "/uploads/cloudinary";
 
 export const allowedImgTypes = ["image/jpeg", "image/jpg", "image/png"];
 
@@ -22,12 +24,14 @@ export const allowedVideoTypes = [
 // 📸 POST - Upload single image/video (Dynamic endpoint)
 export const useUploadMedia = () => {
   return useMutation({
-    mutationFn: async (files: File[]): Promise<OkResponse<ResUpload[]>> => {
+    mutationFn: async (
+      files: File[]
+    ): Promise<OkResponse<IMedia[]>> => {
       // Phân loại files theo type
       const imageFiles = files.filter((file) => file.type.startsWith("image/"));
       const videoFiles = files.filter((file) => file.type.startsWith("video/"));
 
-      const uploadPromises: Promise<ResUpload[]>[] = [];
+      const uploadPromises: Promise<IMedia[]>[] = [];
 
       // Upload images nếu có
       if (imageFiles.length > 0) {
@@ -36,7 +40,7 @@ export const useUploadMedia = () => {
           imageFormData.append("images", file);
         });
 
-        const imageUpload = apiCall<ResUpload[]>("/uploads/images", {
+        const imageUpload = apiCall<IMedia[]>(uploadEndpoint, {
           method: "POST",
           body: imageFormData,
         }).then((response) => {
@@ -56,7 +60,7 @@ export const useUploadMedia = () => {
           videoFormData.append("videos", file);
         });
 
-        const videoUpload = apiCall<ResUpload[]>("/uploads/videos", {
+        const videoUpload = apiCall<IMedia[]>(uploadEndpoint, {
           method: "POST",
           body: videoFormData,
         }).then((response) => {
@@ -74,7 +78,7 @@ export const useUploadMedia = () => {
       return new OkResponse("Success", results.flat()); // Merge tất cả string[] thành một string[] duy nhất
     },
     onSuccess: () => {
-      console.log("Uploaded success");
+      console.log("Tải lên thành công!");
     },
   });
 };
@@ -117,9 +121,20 @@ export const useUploadWithValidation = () => {
 export const useRemoveImages = () => {
   return useMutation({
     mutationFn: async (credentials: RemoteImagesDto) =>
-      apiCall("/uploads/images", {
+      apiCall(uploadEndpoint, {
         method: "DELETE",
         body: JSON.stringify(credentials),
+      }),
+  });
+};
+
+// 🎯 Hook để signed
+export const useSignedMedia = () => {
+  return useMutation({
+    mutationFn: async (body: string[]) =>
+      apiCall("/uploads/signed", {
+        method: "POST",
+        body: JSON.stringify(body),
       }),
   });
 };

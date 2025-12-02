@@ -12,7 +12,6 @@ import { useDetailTweetStore } from "~/store/useDetailTweetStore";
 import { useUserStore } from "~/store/useUserStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
 import { handleResponse } from "~/utils/handleResponse";
-import { HLSPlayer } from "../hls/HLSPlayer";
 import { DotIcon } from "../icons/dot";
 import { VerifyIcon } from "../icons/verify";
 import { ShortInfoProfile } from "../ShortInfoProfile";
@@ -67,9 +66,10 @@ export const MediaContent = ({ tweet }: { tweet: ITweet }) => {
             >
               <Card className="w-full h-full overflow-hidden flex items-center justify-center border bg-transparent">
                 <CardContent className="w-full h-full p-0 flex items-center justify-center">
-                  {item.type === EMediaType.Video ? (
-                    <HLSPlayer src={item.url} />
-                  ) : item.type === EMediaType.Image ? (
+                  {item.resource_type === EMediaType.Video ? (
+                    // <HLSPlayer src={item.url} />
+                    <video src={item?.url} controls />
+                  ) : item.resource_type === EMediaType.Image ? (
                     <img
                       src={item.url}
                       alt={item.url}

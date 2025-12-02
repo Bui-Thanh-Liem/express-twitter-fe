@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useSearchTweets } from "~/apis/useFetchSearch";
-import { HLSPlayer } from "~/components/hls/HLSPlayer";
 import { ButtonMain } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { EMediaType } from "~/shared/enums/type.enum";
@@ -175,8 +174,13 @@ export function MediaTab() {
                 onClick={() => handleClickMedia(tweet)}
               >
                 <CardContent className="p-0">
-                  {m?.type === EMediaType.Video ? (
-                    <HLSPlayer src={m?.url} />
+                  {m?.resource_type === EMediaType.Video ? (
+                    // <HLSPlayer src={m?.url} />
+                    <video
+                      src={m?.url}
+                      controls
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <img
                       src={m?.url}

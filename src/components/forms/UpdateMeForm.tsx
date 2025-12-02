@@ -336,9 +336,10 @@ export function UpdateMeForm({
           <ButtonMain
             type="submit"
             className="flex-1"
+            loading={apiUpdateMe.isPending}
             disabled={apiUpdateMe.isPending}
           >
-            {apiUpdateMe.isPending ? "Đang cập nhật..." : "Cập nhật"}
+            Cập nhật
           </ButtonMain>
         </div>
       </div>
