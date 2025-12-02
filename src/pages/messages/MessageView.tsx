@@ -1,5 +1,5 @@
 import { Send } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useGetMultiMessages } from "~/apis/useFetchMessages";
@@ -52,6 +52,7 @@ export function MessageView({
   //
   const { user } = useUserStore();
   const { activeId } = useConversationActiveStore();
+  const [isPending, startTransition] = useTransition();
 
   //
   const [isOnl, setOnl] = useState(false);
@@ -186,45 +187,49 @@ export function MessageView({
   //
   const onSubmit = useCallback(
     async (data: { text: string }) => {
-      let medias: IMedia[] = [];
-      const selectedFiles = mediaItems.map((file) => file.file);
+      startTransition(async () => {
+        let medias: IMedia[] = [];
+        const selectedFiles = mediaItems.map((file) => file.file);
 
-      try {
-        //
-        const resUploadMedia = await apiUploadMedia.mutateAsync(selectedFiles);
-        console.log("resUploadMedia:::", resUploadMedia);
+        try {
+          //
+          const resUploadMedia = await apiUploadMedia.mutateAsync(
+            selectedFiles
+          );
+          console.log("resUploadMedia:::", resUploadMedia);
 
-        if (resUploadMedia.statusCode !== 200 || !resUploadMedia.metadata) {
-          handleResponse(resUploadMedia, () => {
-            setTimeout(() => {
-              const isVideo = resUploadMedia.metadata!.some(
-                (i) => i.resource_type === EMediaType.Video
-              );
-              if (isVideo) {
-                toastSimple(
-                  "Video của bạn đang được kiểm duyệt, nhận thông tin tại phần thông báo."
+          if (resUploadMedia.statusCode !== 200 || !resUploadMedia.metadata) {
+            handleResponse(resUploadMedia, () => {
+              setTimeout(() => {
+                const isVideo = resUploadMedia.metadata!.some(
+                  (i) => i.resource_type === EMediaType.Video
                 );
-              }
-            }, 3000);
-          });
-          return;
+                if (isVideo) {
+                  toastSimple(
+                    "Video của bạn đang được kiểm duyệt, nhận thông tin tại phần thông báo."
+                  );
+                }
+              }, 3000);
+            });
+            return;
+          }
+
+          medias = resUploadMedia.metadata;
+        } catch (uploadError) {
+          console.error("Error submitting uploadMedia:", uploadError);
+          toastSimple((uploadError as { message: string }).message);
         }
 
-        medias = resUploadMedia.metadata;
-      } catch (uploadError) {
-        console.error("Error submitting uploadMedia:", uploadError);
-        toastSimple((uploadError as { message: string }).message);
-      }
+        sendMessage({
+          content: data.text,
+          attachments: medias,
+          sender: user?._id || "",
+          conversation: conversation?._id || "",
+        });
 
-      sendMessage({
-        content: data.text,
-        attachments: medias,
-        sender: user?._id || "",
-        conversation: conversation?._id || "",
+        removeMedia();
+        reset();
       });
-
-      removeMedia();
-      reset();
     },
     [
       reset,
@@ -386,6 +391,8 @@ export function MessageView({
                 size="sm"
                 type="submit"
                 className="bg-transparent hover:bg-gray-50"
+                disabled={isPending}
+                loading={isPending}
               >
                 <Send color="#1d9bf0" />
               </ButtonMain>
@@ -403,7 +410,7 @@ export function MessageView({
               rows={3}
               maxLength={CONSTANT_MAX_LENGTH_TEXT}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
+                if (e.key === "Enter" && !e.shiftKey && contentValue.trim()) {
                   e.preventDefault(); // chặn xuống dòng mặc định
                   handleSubmit(onSubmit)(); // gọi submit form
                 }

@@ -160,7 +160,7 @@ export function CommunityPage() {
           {/* <!-- Bio --> */}
           <div className="mb-3">
             {community?.bio?.split("\\n").map((p) => (
-              <p className="leading-relaxed" key={p}>
+              <p className="leading-relaxed whitespace-break-spaces" key={p}>
                 {p}
               </p>
             ))}
