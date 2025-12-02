@@ -72,7 +72,7 @@ export function UpdateMeForm({
     setValue,
     getValues,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<UpdateMeDto>({
     resolver: zodResolver(UpdateMeDtoSchema),
     defaultValues: {
@@ -129,8 +129,6 @@ export function UpdateMeForm({
       if (data?.day_of_birth) {
         data.day_of_birth = data.day_of_birth?.toISOString() as unknown as Date;
       }
-
-      console.log("data :::", data);
 
       const res = await apiUpdateMe.mutateAsync(data);
       handleResponse(res, successForm);
@@ -336,8 +334,8 @@ export function UpdateMeForm({
           <ButtonMain
             type="submit"
             className="flex-1"
-            loading={apiUpdateMe.isPending}
-            disabled={apiUpdateMe.isPending}
+            loading={isSubmitting}
+            disabled={isSubmitting}
           >
             Cập nhật
           </ButtonMain>
