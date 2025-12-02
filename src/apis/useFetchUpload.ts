@@ -4,7 +4,6 @@ import {
   CONSTANT_MAX_SIZE_IMAGE_UPLOAD,
   CONSTANT_MAX_SIZE_VIDEO_UPLOAD,
 } from "~/shared/constants";
-import type { RemoteImagesDto } from "~/shared/dtos/req/upload.dto";
 import type { IMedia } from "~/shared/interfaces/common/media.interface";
 import { apiCall } from "~/utils/callApi.util";
 
@@ -24,9 +23,7 @@ export const allowedVideoTypes = [
 // 📸 POST - Upload single image/video (Dynamic endpoint)
 export const useUploadMedia = () => {
   return useMutation({
-    mutationFn: async (
-      files: File[]
-    ): Promise<OkResponse<IMedia[]>> => {
+    mutationFn: async (files: File[]): Promise<OkResponse<IMedia[]>> => {
       // Phân loại files theo type
       const imageFiles = files.filter((file) => file.type.startsWith("image/"));
       const videoFiles = files.filter((file) => file.type.startsWith("video/"));
@@ -117,10 +114,10 @@ export const useUploadWithValidation = () => {
   });
 };
 
-// 🎯 Hook để xóa nhiều ảnh từ urls
+// 🎯 Hook để xóa nhiều ảnh từ media
 export const useRemoveImages = () => {
   return useMutation({
-    mutationFn: async (credentials: RemoteImagesDto) =>
+    mutationFn: async (credentials: { urls: string[] }) =>
       apiCall(uploadEndpoint, {
         method: "DELETE",
         body: JSON.stringify(credentials),
