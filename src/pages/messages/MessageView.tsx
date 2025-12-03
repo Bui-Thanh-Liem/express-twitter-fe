@@ -1,4 +1,4 @@
-import { Send } from "lucide-react";
+import { LoaderCircle, Send } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -367,7 +367,10 @@ export function MessageView({
                 <WrapIcon className="hover:bg-blue-100/60">
                   <label
                     htmlFor="image-upload-in-chat"
-                    className="cursor-pointer"
+                    className={cn(
+                      "cursor-pointer",
+                      isPending ? "pointer-events-none" : ""
+                    )}
                     title="Thêm ảnh hoặc video"
                   >
                     <ImageIcon />
@@ -392,9 +395,12 @@ export function MessageView({
                 type="submit"
                 className="bg-transparent hover:bg-gray-50"
                 disabled={isPending}
-                loading={isPending}
               >
-                <Send color="#1d9bf0" />
+                {isPending ? (
+                  <LoaderCircle color="#1d9bf0" className="animate-spin" />
+                ) : (
+                  <Send color="#1d9bf0" />
+                )}
               </ButtonMain>
             </div>
             <textarea
@@ -416,6 +422,7 @@ export function MessageView({
                 }
               }}
               onPaste={handlePaste}
+              disabled={isPending}
             />
           </div>
         </form>

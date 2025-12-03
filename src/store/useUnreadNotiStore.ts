@@ -23,7 +23,7 @@ export const useUnreadNotiStore = create<State>()(
       },
     }),
     {
-      name: "unread-noti",
+      name: "unread_noti",
       partialize: (state) => ({
         unread: state.unread,
         unreadByType: state.unreadByType,

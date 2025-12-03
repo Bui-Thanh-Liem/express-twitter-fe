@@ -1,6 +1,7 @@
 import type { OkResponse } from "~/shared/classes/response.class";
 import type { ResLoginUser } from "~/shared/dtos/res/auth.dto";
 import { useUserStore } from "~/store/useUserStore";
+import { deleteStoredClient } from "./deleteStoredClient";
 
 const apiUrl = import.meta.env.VITE_SERVER_API_URL;
 
@@ -9,8 +10,6 @@ export const apiCall = async <T>(
   options: any = {},
   isClientId: boolean = false
 ): Promise<OkResponse<T>> => {
-  console.log("Đang gọi api::");
-
   const user = useUserStore.getState().user;
   const access_token = localStorage.getItem("access_token");
 
@@ -88,9 +87,7 @@ export const apiCall = async <T>(
       result = await response.json();
     } else {
       // If refresh fails, redirect to login or handle accordingly
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
-      localStorage.removeItem("user_storage");
+      deleteStoredClient();
 
       // You might want to redirect to login page here
       console.log("Lỗi khi gọi api refresh token:::", resRefreshToken);

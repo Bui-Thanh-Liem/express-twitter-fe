@@ -64,6 +64,8 @@ export function UpdateMeForm({
   const apiUploadMedia = useUploadWithValidation();
   const apiRemoteImages = useRemoveImages();
 
+  const [isUploading, setIsUploading] = useState(false);
+
   const {
     reset,
     watch,
@@ -89,11 +91,15 @@ export function UpdateMeForm({
     },
   });
   const valBio = watch("bio");
+  const isFormDisabled = isSubmitting || isUploading;
 
   //
   console.log("errors:::", errors);
   const onSubmit = async (data: UpdateMeDto) => {
     try {
+      setIsUploading(true);
+
+      //
       if (avatarFile) {
         const resRemoteImages = await apiRemoteImages.mutateAsync({
           urls: [getValues("avatar") || ""],
@@ -138,6 +144,8 @@ export function UpdateMeForm({
     } catch (error) {
       toastSimple((error as { message: string })?.message, "error");
       console.error("Update failed:", error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -327,6 +335,7 @@ export function UpdateMeForm({
             type="button"
             variant="outline"
             className="flex-1"
+            disabled={isFormDisabled}
             onClick={() => setOpenForm(false)}
           >
             Hủy bỏ
@@ -334,8 +343,8 @@ export function UpdateMeForm({
           <ButtonMain
             type="submit"
             className="flex-1"
-            loading={isSubmitting}
-            disabled={isSubmitting}
+            loading={isFormDisabled}
+            disabled={isFormDisabled}
           >
             Cập nhật
           </ButtonMain>

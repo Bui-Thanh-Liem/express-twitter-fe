@@ -11,6 +11,7 @@ import type { ResLoginUser } from "~/shared/dtos/res/auth.dto";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
 import { apiCall } from "~/utils/callApi.util";
+import { deleteStoredClient } from "~/utils/deleteStoredClient";
 
 // 🔐 POST - Register
 export const useRegister = () => {
@@ -29,7 +30,10 @@ export const useRegister = () => {
       if (data.statusCode === 201) {
         // Lưu token
         localStorage.setItem("access_token", data.metadata?.access_token || "");
-        localStorage.setItem("refresh_token", data.metadata?.refresh_token || "");
+        localStorage.setItem(
+          "refresh_token",
+          data.metadata?.refresh_token || ""
+        );
 
         // Invalidate user data để refetch
         queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -66,7 +70,10 @@ export const useLogin = () => {
       if (data.statusCode === 200) {
         // Lưu token
         localStorage.setItem("access_token", data.metadata?.access_token || "");
-        localStorage.setItem("refresh_token", data.metadata?.refresh_token || "");
+        localStorage.setItem(
+          "refresh_token",
+          data.metadata?.refresh_token || ""
+        );
 
         // Nếu đăng nhập thành công thì gọi api getMe lưu vào Store global
         (async () => {
@@ -99,8 +106,7 @@ export const useLogout = () => {
     onSuccess: (data) => {
       if (data.statusCode === 200) {
         // Xóa token
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+        deleteStoredClient();
 
         // Clear toàn bộ cache
         queryClient.clear();
