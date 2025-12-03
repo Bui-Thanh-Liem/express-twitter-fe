@@ -18,8 +18,8 @@ export const ChangePasswordDtoSchema = z
     confirm_new_password: z.string().trim(),
   })
   .refine((data) => data.new_password === data.confirm_new_password, {
-    path: ["confirm_password"],
-    message: "New password do not match",
+    path: ["confirm_new_password"],
+    message: "Mật khẩu mới không khớp",
   });
 
 export type verifyEmailDto = z.infer<typeof verifyEmailDtoSchema>;

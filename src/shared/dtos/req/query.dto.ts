@@ -3,7 +3,12 @@ import { CONSTANT_REGEX } from "~/shared/constants";
 
 export const QueryDtoSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(2).max(100).default(10),
+  limit: z.coerce
+    .number()
+    .int()
+    .min(2)
+    .max(100, "Tối đa 100 kí tự")
+    .default(10),
   q: z.string().trim().optional(),
   f: z.string().trim().optional(),
   t: z.string().trim().optional(),
@@ -12,7 +17,7 @@ export const QueryDtoSchema = z.object({
     .trim()
     .optional()
     .refine((val) => !val || val === "on", {
-      message: "People follow invalid (on)",
+      message: "Mọi người theo dõi không hợp lệ (on)",
     }),
   profile_id: z
     .string()

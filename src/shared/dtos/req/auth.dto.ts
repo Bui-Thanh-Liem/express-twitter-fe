@@ -57,22 +57,27 @@ export const ResetPasswordDtoSchema = z
   });
 
 export const UpdateMeDtoSchema = z.object({
-  name: z.string().min(1).max(16).trim().optional(),
+  name: z
+    .string()
+    .min(1, "Tối thiểu 1 kí tự")
+    .max(16, "Tối đa 16 kí tự")
+    .trim()
+    .optional(),
   day_of_birth: z.date().optional(),
-  bio: z.string().max(200).trim().optional(),
-  location: z.string().max(16).trim().optional(),
-  website: z.string().max(30).trim().optional(),
+  bio: z.string().max(200, "Tối đa 200 kí tự").trim().optional(),
+  location: z.string().max(16, "Tối đa 16 kí tự").trim().optional(),
+  website: z.string().max(30, "Tối đa 30 kí tự").trim().optional(),
   username: z
     .string()
-    .min(1)
+    .min(1, "Tối thiểu 1 kí tự")
     .max(20, { message: "Tối đa 20 kí tự" })
     .trim()
     .regex(CONSTANT_REGEX.USERNAME, {
       message: "Tên người dùng không hợp lệ (@liem_dev)",
     })
     .optional(),
-  avatar: z.string().max(400).trim().optional(),
-  cover_photo: z.string().max(400).trim().optional(),
+  avatar: z.string().max(400, "Tối đa 400 kí tự").trim().optional(),
+  cover_photo: z.string().max(400, "Tối đa 400 kí tự").trim().optional(),
 });
 
 export type RegisterUserDto = z.infer<typeof RegisterUserDtoSchema>;
