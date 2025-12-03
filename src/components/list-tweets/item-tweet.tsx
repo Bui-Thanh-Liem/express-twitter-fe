@@ -1,4 +1,12 @@
-import { BarChart3, CornerRightDown, Flag, Trash } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  BarChart3,
+  CornerRightDown,
+  Flag,
+  Trash,
+} from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useReportTweet } from "~/apis/useFetchReport";
 import { useDeleteTweet, useGetDetailTweet } from "~/apis/useFetchTweet";
@@ -146,8 +154,12 @@ export const TweetItem = ({
     community_id,
   } = tweet;
 
+  //
   const author = user_id as unknown as IUser;
   const community = community_id as unknown as ICommunity;
+
+  //
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // Gọi api detail để lấy các retweet/quoteTweet
   const { data } = useGetDetailTweet(parent_id || "");
@@ -197,9 +209,32 @@ export const TweetItem = ({
       <div className="ml-14">
         {/* Nội dung tweet */}
         {content && tweet.type !== ETweetType.Retweet && (
-          <p className="text-gray-800 mb-3 leading-relaxed whitespace-break-spaces">
-            <Content content={content} mentions={mentions as any} />
-          </p>
+          <>
+            <p
+              className={cn(
+                "text-gray-800 mb-3 leading-relaxed whitespace-break-spaces",
+                isExpanded ? "" : "line-clamp-10"
+              )}
+            >
+              <Content content={content} mentions={mentions as any} />
+            </p>
+            {content.split("\n").length > 10 && (
+              <div className="flex my-1">
+                <button
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="m-auto outline-none"
+                >
+                  <WrapIcon className="bg-gray-100">
+                    {isExpanded ? (
+                      <ArrowUp size={20} className="text-blue-400" />
+                    ) : (
+                      <ArrowDown size={20} className="text-blue-400" />
+                    )}
+                  </WrapIcon>
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         {/* Media content */}

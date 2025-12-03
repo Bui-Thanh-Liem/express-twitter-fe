@@ -181,6 +181,12 @@ export function Tweet({
       removeMedia(); // Clear media after successful submission
       setMentionIds([]);
       triggerReload();
+
+      // ⭐ Reset chiều cao textarea
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+      }
+
       if (onSuccess) onSuccess(res); // Sử dụng cho bên ngoài component cha (VD: đống modal)
     },
     [removeMedia, reset, onSuccess]
@@ -347,7 +353,6 @@ export function Tweet({
             placeholder={placeholder}
             maxLength={CONSTANT_MAX_LENGTH_CONTENT}
             onInput={handleTextareaInput}
-            rows={1}
             onPaste={handlePaste}
           />
 
