@@ -100,7 +100,7 @@ export function TodayNewsOrOutstandingItem({
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <p className="text-gray-400">Định dạng media không hỗ trợ</p>
+              <p className="text-gray-400">Định dạng không hỗ trợ</p>
             </div>
           )}
         </div>

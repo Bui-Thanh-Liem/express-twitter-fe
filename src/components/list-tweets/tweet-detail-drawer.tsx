@@ -286,7 +286,7 @@ export function TweetDetailDrawer() {
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
                                 <p className="text-gray-400">
-                                  Định dạng media không hỗ trợ
+                                  Định dạng không hỗ trợ
                                 </p>
                               </div>
                             )}
