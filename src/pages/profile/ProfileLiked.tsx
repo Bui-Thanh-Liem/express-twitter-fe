@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { SkeletonTweet, TweetItem } from "~/components/list-tweets/item-tweet";
 import { useGetTweetLiked } from "~/apis/useFetchTweet";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
+import { ButtonMain } from "~/components/ui/button";
 
 export function ProfileLiked({ profile_id }: { profile_id: string }) {
   // State để quản lý pagination và data
@@ -166,17 +167,16 @@ export function ProfileLiked({ profile_id }: { profile_id: string }) {
       {error && (
         <div className="text-center py-8">
           <p className="text-red-500 mb-4">❌ Có lỗi xảy ra khi tải dữ liệu</p>
-          <button
+          <ButtonMain
             onClick={() => {
               setPage(1);
               setAllTweets([]);
               setHasMore(true);
               window.location.reload();
             }}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
           >
             Thử lại
-          </button>
+          </ButtonMain>
         </div>
       )}
     </div>

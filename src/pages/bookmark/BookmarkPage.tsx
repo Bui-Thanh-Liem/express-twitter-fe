@@ -7,6 +7,7 @@ import { WrapIcon } from "~/components/wrapIcon";
 import { useDebounce } from "~/hooks/useDebounce";
 import { useGetTweetBookmarked } from "~/apis/useFetchTweet";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
+import { ButtonMain } from "~/components/ui/button";
 
 export function BookmarkPage() {
   // State để quản lý pagination và data
@@ -216,16 +217,15 @@ export function BookmarkPage() {
             <p className="text-red-500 mb-4">
               ❌ Có lỗi xảy ra khi tải dữ liệu
             </p>
-            <button
+            <ButtonMain
               onClick={() => {
                 setPage(1);
                 setAllTweets([]);
                 setHasMore(true);
               }}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
             >
               Thử lại
-            </button>
+            </ButtonMain>
           </div>
         )}
       </div>
