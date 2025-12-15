@@ -92,7 +92,7 @@ export function TodayNewsOrOutstandingItem({
             <img
               src={item.media.url}
               alt={item.media.url}
-              className="object-contain"
+              className="object-contain w-full h-full"
               loading="lazy"
               onError={(e) => {
                 e.currentTarget.src = "/placeholder-image.png"; // Fallback image

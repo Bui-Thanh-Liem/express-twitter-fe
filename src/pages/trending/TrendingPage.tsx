@@ -8,6 +8,7 @@ import { useGetTweetsByIds } from "~/apis/useFetchTrending";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import { useTrendingStore } from "~/store/useTrendingStore";
 import { formatTimeAgo } from "~/utils/formatTimeAgo";
+import { Content } from "~/components/list-tweets/content";
 
 export function TrendingPage() {
   const navigate = useNavigate();
@@ -80,6 +81,7 @@ export function TrendingPage() {
             {highlight?.map((h, i) => (
               <li key={h._id}>
                 <p>
+                  <Content content={h.content} mentions={[]} />
                   {h.content}
                   <Avatar
                     key={`${h.avatar}-${i}`}
