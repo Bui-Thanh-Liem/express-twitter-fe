@@ -14,10 +14,8 @@ export const useGetMultiByType = ({
   queries: IQuery<INotification>;
   type: ENotificationType;
 }) => {
-  const normalizedQueries = queries ? JSON.stringify(queries) : "";
-
   return useQuery({
-    queryKey: ["conversations", type, normalizedQueries],
+    queryKey: ["conversations", type, queries?.page],
     queryFn: () => {
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";

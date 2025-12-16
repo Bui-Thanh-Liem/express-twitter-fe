@@ -55,7 +55,7 @@ export const useLikeTweet = () => {
         // Tweet có trong page này → update
         return {
           ...old,
-          data: {
+          metadata: {
             ...old.metadata,
             items: old.metadata.items.map((tweet: ITweet) => {
               if (tweet._id === tweetId) {
@@ -105,7 +105,7 @@ export const useLikeTweet = () => {
 
           return {
             ...old,
-            data: {
+            metadata: {
               ...old.metadata,
               is_like: !isCurrentlyLiked,
               likes_count: isCurrentlyLiked
@@ -130,7 +130,7 @@ export const useLikeTweet = () => {
             // Remove từ liked list khi unlike
             return {
               ...old,
-              data: {
+              metadata: {
                 ...old.metadata,
                 items: old.metadata.items.filter(
                   (tweet) => tweet._id !== tweetId
@@ -181,7 +181,7 @@ export const useLikeTweet = () => {
       const isNowLiked = res.metadata?.status === "Like";
       const newLikesCount = res.metadata?.likes_count;
 
-      // ✅ Sync từ server cho TẤT CẢ pages
+      // ✅ Sync từ server cho (like/unlike) chính xác lại tất cả
       const syncTweetInFeeds = (
         old: OkResponse<ResMultiType<ITweet>> | undefined
       ) => {
@@ -195,7 +195,7 @@ export const useLikeTweet = () => {
 
         return {
           ...old,
-          data: {
+          metadata: {
             ...old.metadata,
             items: old.metadata.items.map((tweet: ITweet) => {
               if (tweet._id === tweetId) {
@@ -227,7 +227,7 @@ export const useLikeTweet = () => {
         syncTweetInFeeds
       );
 
-      // Sync detail
+      // Sync tweet detail
       queryClient.setQueryData<OkResponse<ITweet>>(
         ["tweet", tweetId],
         (old) => {
@@ -235,7 +235,7 @@ export const useLikeTweet = () => {
 
           return {
             ...old,
-            data: {
+            metadata: {
               ...old.metadata,
               is_like: isNowLiked,
               likes_count: newLikesCount ?? old.metadata.likes_count,

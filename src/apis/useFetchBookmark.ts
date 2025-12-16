@@ -57,7 +57,7 @@ export const useBookmarkTweet = () => {
         // Tweet có trong page này → update
         return {
           ...old,
-          data: {
+          metadata: {
             ...old.metadata,
             items: old.metadata.items.map((tweet: ITweet) => {
               if (tweet._id === tweetId) {
@@ -98,7 +98,7 @@ export const useBookmarkTweet = () => {
 
           return {
             ...old,
-            data: {
+            metadata: {
               ...old.metadata,
               is_bookmark: !(old.metadata.is_bookmark ?? false),
             },
@@ -120,7 +120,7 @@ export const useBookmarkTweet = () => {
             // Remove từ bookmarked list khi unbookmark
             return {
               ...old,
-              data: {
+              metadata: {
                 ...old.metadata,
                 items: old.metadata.items.filter(
                   (tweet) => tweet._id !== tweetId
@@ -184,7 +184,7 @@ export const useBookmarkTweet = () => {
 
         return {
           ...old,
-          data: {
+          metadata: {
             ...old.metadata,
             items: old.metadata.items.map((tweet: ITweet) => {
               if (tweet._id === tweetId) {
@@ -225,7 +225,7 @@ export const useBookmarkTweet = () => {
 
           return {
             ...old,
-            data: {
+            metadata: {
               ...old.metadata,
               is_bookmark: isNowBookmarked,
             },

@@ -10,13 +10,9 @@ export const useGetMultiMessages = (
   conversation_id: string,
   queries?: IQuery<IMessage>
 ) => {
-  const normalizedQueries = queries ? JSON.stringify(queries) : "";
-
   return useQuery({
-    queryKey: ["messages", conversation_id, normalizedQueries],
+    queryKey: ["messages", conversation_id, queries?.page],
     queryFn: () => {
-      console.log("co lien tu goi api hay khong");
-
       // Tạo query string từ queries object
       const queryString = queries ? buildQueryString(queries) : "";
       const url = `/messages/${conversation_id}/${
