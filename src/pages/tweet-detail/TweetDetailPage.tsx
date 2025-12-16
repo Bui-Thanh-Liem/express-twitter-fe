@@ -11,10 +11,11 @@ import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useCommentSocket } from "~/socket/hooks/useCommentSocket";
 import { useUserStore } from "~/store/useUserStore";
+import { Logo } from "~/components/logo";
+import { ButtonMain } from "~/components/ui/button";
+import { useBackUrlStore } from "~/store/useBackUrlStore";
 
 export function TweetDetailPage() {
-  console.log("TweetDetailPage");
-
   //
   const navigate = useNavigate();
   const { tweet_id } = useParams(); // Đặt tên params ở <App />
@@ -22,6 +23,7 @@ export function TweetDetailPage() {
   //
   const [tweetComments, setTweetComments] = useState<ITweet[]>([]);
   const { user } = useUserStore();
+  const { setBackUrl } = useBackUrlStore();
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -162,9 +164,24 @@ export function TweetDetailPage() {
     setIsLoadingMore(false);
   }, [tweet_id]);
 
-  //
+  // Xoá comment khỏi list
   function onDel(id: string) {
     setTweetComments((prev) => prev.filter((tw) => tw._id !== id));
+  }
+
+  // Back
+  function onBack() {
+    if (window.history.length <= 3) {
+      navigate("/");
+      return;
+    }
+    navigate(-1);
+  }
+
+  //
+  function onClickLogin() {
+    setBackUrl(window.location.pathname + window.location.search);
+    navigate("/");
   }
 
   //
@@ -173,13 +190,23 @@ export function TweetDetailPage() {
   }
 
   // Not found
-  if (data?.statusCode === 404 || !data?.metadata) {
+  const tweet = data?.metadata || null;
+  if (data?.statusCode === 404 || !tweet) {
     return (
-      <div className="flex flex-col items-center justify-center h-96">
+      <div className="flex flex-col items-center justify-center h-screen space-y-10">
+        <Logo size={64} className="mb-4" />
+
         <h2 className="text-xl font-bold text-gray-600 mb-2">
           Không tìm thấy bài viết
         </h2>
         <p className="text-gray-500">Bài viết không tồn tại hoặc đã bị xóa</p>
+
+        <div className="space-x-4">
+          <ButtonMain onClick={() => navigate("/")}>Trang Chủ</ButtonMain>
+          <ButtonMain variant={"outline"} onClick={() => navigate(0)}>
+            Tải lại
+          </ButtonMain>
+        </div>
       </div>
     );
   }
@@ -189,20 +216,28 @@ export function TweetDetailPage() {
       {/* Header */}
       <div className="px-3 flex justify-between items-center border border-gray-100">
         <div className="flex h-12 items-center gap-4">
-          <WrapIcon onClick={() => navigate(-1)}>
+          <WrapIcon onClick={onBack}>
             <ArrowLeftIcon color="#000" />
           </WrapIcon>
           <p className="font-semibold text-[20px]">Bài viết</p>
         </div>
+        <Logo size={36} />
+        {!user && (
+          <div>
+            <ButtonMain size="sm" className="w-full" onClick={onClickLogin}>
+              Đăng nhập
+            </ButtonMain>
+          </div>
+        )}
       </div>
 
       <div className="max-h-screen overflow-y-auto pb-6">
-        <TweetItem tweet={data?.metadata} onSuccessDel={() => {}} />
+        <TweetItem tweet={tweet} onSuccessDel={() => {}} />
 
         {/*  */}
         <div className="p-4 border-y border-gray-100 pb-0">
           <Tweet
-            tweet={data?.metadata}
+            tweet={tweet}
             contentBtn="Bình luận"
             tweetType={ETweetType.Comment}
             placeholder="Đăng bình luận của bạn"
@@ -211,7 +246,7 @@ export function TweetDetailPage() {
 
         <TypingIndicator show={!!newAuthorCmt} authorName={newAuthorCmt} />
         {/* COMMENTS */}
-        <div>
+        <div className="ml-14">
           {tweetComments?.length ? (
             tweetComments.map((tw) => {
               return <TweetItem tweet={tw} key={tw._id} onSuccessDel={onDel} />;

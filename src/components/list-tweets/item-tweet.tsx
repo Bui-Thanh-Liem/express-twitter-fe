@@ -63,7 +63,7 @@ export const MediaContent = ({ tweet }: { tweet: ITweet }) => {
       onClick={handleClickMedia}
     >
       <Carousel className="w-full">
-        <CarouselContent className="h-80 cursor-grab">
+        <CarouselContent className="h-full cursor-grab">
           {media?.map((item) => (
             <CarouselItem
               key={item.url}
@@ -89,9 +89,7 @@ export const MediaContent = ({ tweet }: { tweet: ITweet }) => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <p className="text-gray-400">
-                        Định dạng không hỗ trợ
-                      </p>
+                      <p className="text-gray-400">Định dạng không hỗ trợ</p>
                     </div>
                   )}
                 </CardContent>
@@ -157,6 +155,8 @@ export const TweetItem = ({
   //
   const author = user_id as unknown as IUser;
   const community = community_id as unknown as ICommunity;
+  const pathname = window.location.pathname;
+  const isComment = !pathname.includes("/tweet/");
 
   //
   const [isExpanded, setIsExpanded] = useState(false);
@@ -218,7 +218,7 @@ export const TweetItem = ({
             >
               <Content content={content} mentions={mentions as any} />
             </p>
-            {content.split("\n").length > 10 && (
+            {(content.split("\n").length > 10 || content.length > 500) && (
               <div className="flex my-1">
                 <button
                   onClick={() => setIsExpanded(!isExpanded)}
@@ -297,7 +297,7 @@ export const TweetItem = ({
             )}
           >
             {/* Comment */}
-            <ActionCommentTweet tweet={tweet} />
+            {isComment && <ActionCommentTweet tweet={tweet} />}
 
             {/* Retweet and Quote */}
             <ActionRetweetQuoteTweet tweet={tweet} />
@@ -401,6 +401,7 @@ function TweetAction({
   );
 }
 
+//
 export function StatusTag({
   status,
   className,

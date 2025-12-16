@@ -46,7 +46,7 @@ export function UserToFollowItem({ user }: { user: Partial<IUser> }) {
 
   //
   function handleToggleFollow() {
-    if (!userActive?.verify) {
+    if (user && !user?.verify) {
       toastSimpleVerify();
       return;
     }

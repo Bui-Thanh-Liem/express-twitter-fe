@@ -131,7 +131,7 @@ export function AddParticipantsForm({
 
   //
   const onSubmit = async (data: AddParticipantsBodyDto) => {
-    if (!user?.verify) {
+    if (user && !user?.verify) {
       toastSimpleVerify();
       return;
     }

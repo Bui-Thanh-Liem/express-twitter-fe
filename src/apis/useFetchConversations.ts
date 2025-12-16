@@ -13,6 +13,7 @@ import type { IConversation } from "~/shared/interfaces/schemas/conversation.int
 import type { ResMultiType } from "~/shared/types/response.type";
 import { buildQueryString } from "~/utils/buildQueryString";
 import { apiCall } from "~/utils/callApi.util";
+import { handleResponseOnlyErr } from "~/utils/handleResponse";
 
 // ➕ POST
 export const useCreateConversation = () => {
@@ -24,7 +25,13 @@ export const useCreateConversation = () => {
         method: "POST",
         body: JSON.stringify(payload),
       }),
-    onSuccess: () => {
+    onSuccess: (res) => {
+      //
+      if (![200, 201].includes(res.statusCode)) {
+        handleResponseOnlyErr(res);
+        return;
+      }
+
       // Invalidate danh sách conversations
       queryClient.invalidateQueries({ queryKey: ["conversations"] });
     },

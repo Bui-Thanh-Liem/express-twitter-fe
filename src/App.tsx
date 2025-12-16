@@ -27,6 +27,7 @@ import { ProfilePage } from "./pages/profile/ProfilePage";
 import { SearchPage } from "./pages/search/SearchPage";
 import { TrendingPage } from "./pages/trending/TrendingPage";
 import { TweetDetailPage } from "./pages/tweet-detail/TweetDetailPage";
+import { ProtectTweetDetail } from "./components/protect-tweet-detail";
 
 // Router config
 const router = createBrowserRouter([
@@ -43,6 +44,14 @@ const router = createBrowserRouter([
         ),
       },
       { path: "verify", element: <VerifyEmail /> },
+      {
+        path: "tweet/:tweet_id",
+        element: (
+          <ProtectTweetDetail>
+            <TweetDetailPage />
+          </ProtectTweetDetail>
+        ),
+      },
 
       // ✅ Bọc các route cần HomeLayout ở đây
       {
@@ -66,7 +75,6 @@ const router = createBrowserRouter([
           },
           { path: "communities/:slug", element: <CommunityPage /> },
           { path: "trending", element: <TrendingPage /> },
-          { path: "tweet/:tweet_id", element: <TweetDetailPage /> },
           {
             path: `:username/${following_tab}`,
             element: <FollowersFollowing />,

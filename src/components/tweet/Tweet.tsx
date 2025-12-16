@@ -248,7 +248,7 @@ export function Tweet({
   // Thực hiện gọi api đăng bài
   const onSubmit = useCallback(
     async (data: CreateTweetDto) => {
-      if (!user?.verify) {
+      if (user && !user?.verify) {
         toastSimpleVerify();
         return;
       }

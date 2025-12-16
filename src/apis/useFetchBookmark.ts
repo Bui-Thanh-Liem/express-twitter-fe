@@ -4,6 +4,7 @@ import type { ResToggleBookmark } from "~/shared/dtos/res/bookmark.dto";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { ResMultiType } from "~/shared/types/response.type";
 import { apiCall } from "~/utils/callApi.util";
+import { handleResponseOnlyErr } from "~/utils/handleResponse";
 
 export const useBookmarkTweet = () => {
   const queryClient = useQueryClient();
@@ -121,7 +122,9 @@ export const useBookmarkTweet = () => {
               ...old,
               data: {
                 ...old.metadata,
-                items: old.metadata.items.filter((tweet) => tweet._id !== tweetId),
+                items: old.metadata.items.filter(
+                  (tweet) => tweet._id !== tweetId
+                ),
                 total: Math.max(0, old.metadata.total - 1),
               },
             };
@@ -158,8 +161,14 @@ export const useBookmarkTweet = () => {
     },
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onSuccess: (result, tweetId) => {
-      const isNowBookmarked = result.metadata?.status === "Bookmark";
+    onSuccess: (res, tweetId) => {
+      //
+      if (![200, 201].includes(res.statusCode)) {
+        handleResponseOnlyErr(res);
+        return;
+      }
+
+      const isNowBookmarked = res.metadata?.status === "Bookmark";
 
       // ✅ Sync từ server cho TẤT CẢ pages
       const syncTweetInFeeds = (

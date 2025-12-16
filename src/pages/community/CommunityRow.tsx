@@ -33,7 +33,7 @@ export function CommunityRow({
 
   //
   function handleToggleFollow() {
-    if (!userActive?.verify) {
+    if (userActive && !userActive?.verify) {
       toastSimpleVerify();
       return;
     }

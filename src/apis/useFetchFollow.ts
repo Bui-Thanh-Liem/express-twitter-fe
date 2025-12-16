@@ -3,6 +3,7 @@ import type { OkResponse } from "~/shared/classes/response.class";
 import type { ResToggleFollow } from "~/shared/dtos/res/follow.dto";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { apiCall } from "~/utils/callApi.util";
+import { handleResponseOnlyErr } from "~/utils/handleResponse";
 
 //
 export const useFollowUser = () => {
@@ -22,9 +23,14 @@ export const useFollowUser = () => {
     },
 
     // Chạy SAU khi gọi api (thành công)
-    onSuccess: (result, { username }) => {
-      const isFollow = result.metadata?.status === "Follow";
+    onSuccess: (res, { username }) => {
+      //
+      if (![200, 201].includes(res.statusCode)) {
+        handleResponseOnlyErr(res);
+        return;
+      }
 
+      const isFollow = res.metadata?.status === "Follow";
       queryClient.setQueryData<OkResponse<IUser>>(
         ["user", username],
         (oldData) => {

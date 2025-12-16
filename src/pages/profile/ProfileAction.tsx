@@ -64,7 +64,7 @@ export function ProfileAction({ profile, isOwnProfile }: IProfileActiveProps) {
 
   //
   async function handleOpenCheckBox() {
-    if (!user?.verify) {
+    if (user && !user?.verify) {
       toastSimpleVerify();
       return;
     }
@@ -81,7 +81,7 @@ export function ProfileAction({ profile, isOwnProfile }: IProfileActiveProps) {
 
   //
   function handleFollow() {
-    if (!user?.verify) {
+    if (user && !user?.verify) {
       toastSimpleVerify();
       return;
     }

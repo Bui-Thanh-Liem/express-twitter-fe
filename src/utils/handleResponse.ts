@@ -16,10 +16,22 @@ export function handleResponse(
       richColors: true,
     });
   } else {
-    toast.error(message, {
+    toast.error(message?.replace("Error:", ""), {
       // position: "top-center",
       description: formatDateToDateVN(new Date()),
       richColors: true,
     });
+  }
+}
+
+export function handleResponseOnlyErr(res: OkResponse<any | boolean>) {
+  const { statusCode, message } = res;
+
+  if (statusCode !== 200 && statusCode !== 201) {
+    toast.error(message?.replace("Error:", ""), {
+      description: formatDateToDateVN(new Date()),
+      richColors: true,
+    });
+    return false;
   }
 }

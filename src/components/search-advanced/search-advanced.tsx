@@ -142,7 +142,7 @@ export function SearchAdvanced({
   }
 
   function handleCheckPermission() {
-    if (!user?.verify) {
+    if (user && !user?.verify) {
       toastSimpleVerify();
     }
 
