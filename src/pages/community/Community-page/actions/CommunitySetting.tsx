@@ -350,7 +350,7 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
         <div className="grid grid-cols-3 gap-x-4 mt-6">
           {/*  */}
           <div className="p-3 rounded-2xl border shadow">
-            <p className="mb-2 font-medium">Cài đặt hiển thị</p>
+            <p className="mb-2 font-medium mt-3">Cài đặt tham gia</p>
             <div className="ml-4">
               <RadioGroupSetting
                 options={Object.values(EMembershipType)}
@@ -358,7 +358,7 @@ export function CommunitySetting({ community }: { community: ICommunity }) {
                 onValueChange={handleChangeMembership}
               />
             </div>
-            <p className="mb-2 font-medium mt-3">Cài đặt tham gia</p>
+            <p className="mb-2 font-medium">Cài đặt hiển thị</p>
             <div className="ml-4">
               <RadioGroupSetting
                 value={community.visibility_type}
