@@ -310,7 +310,7 @@ export function CreateCommunityForm({
             errors={errors}
             id="visibility_type"
             name="visibility_type"
-            label="Cài đặt hiển thị"
+            label="Cài đặt tham gia"
             size="lg"
           />
           <SelectMain
@@ -324,7 +324,7 @@ export function CreateCommunityForm({
             errors={errors}
             id="membership_type"
             name="membership_type"
-            label="Cài đặt tham gia"
+            label="Cài đặt hiển thị"
           />
         </div>
 
