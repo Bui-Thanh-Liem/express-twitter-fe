@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useSearchTweets } from "~/apis/useFetchSearch";
+import { ErrorResponse } from "~/components/error";
 import { SkeletonTweet, TweetItem } from "~/components/list-tweets/item-tweet";
-import { ButtonMain } from "~/components/ui/button";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 
 export function TweetTab() {
@@ -187,18 +187,13 @@ export function TweetTab() {
 
       {/* Error */}
       {error && (
-        <div className="text-center py-8">
-          <p className="text-red-500 mb-4">❌ Có lỗi xảy ra khi tải dữ liệu</p>
-          <ButtonMain
-            onClick={() => {
-              setPage(1);
-              setAllTweets([]);
-              setHasMore(true);
-            }}
-          >
-            Thử lại
-          </ButtonMain>
-        </div>
+        <ErrorResponse
+          onRetry={() => {
+            setPage(1);
+            setAllTweets([]);
+            setHasMore(true);
+          }}
+        />
       )}
     </div>
   );

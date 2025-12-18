@@ -7,7 +7,7 @@ import {
   ForgotPasswordDtoSchema,
   type ForgotPasswordDto,
 } from "~/shared/dtos/req/auth.dto";
-import { handleResponse } from "~/utils/handleResponse";
+import { handleResponse } from "~/utils/toast";
 import { ButtonMain } from "../ui/button";
 import { InputMain } from "../ui/input";
 

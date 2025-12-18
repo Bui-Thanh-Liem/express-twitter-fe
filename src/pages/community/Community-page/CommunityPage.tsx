@@ -2,12 +2,11 @@ import { Calendar } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftIcon } from "~/components/icons/arrow-left";
 import { VerifyIcon } from "~/components/icons/verify";
-import { ButtonMain } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useGetOneCommunityBySlug } from "~/apis/useFetchCommunity";
 import { ETweetType, EVisibilityType } from "~/shared/enums/type.enum";
-import { formatDateToDateVN } from "~/utils/formatDateToDateVN";
+import { formatDateToDateVN } from "~/utils/date-time";
 import { ProfileSkeleton } from "../../profile/ProfilePage";
 import { CommunityInfo } from "./actions/CommunityInfo";
 import { CommunityInvite } from "./actions/CommunityInvite";
@@ -21,6 +20,7 @@ import { CommunityApprove } from "./actions/CommunityApprove";
 import { useCommunitySocket } from "~/socket/hooks/useCommunitySocket";
 import { playNotificationSound } from "~/utils/notificationSound";
 import { useEffect, useState } from "react";
+import { ErrorResponse } from "~/components/error";
 
 export function CommunityPage() {
   const { slug } = useParams();
@@ -56,17 +56,7 @@ export function CommunityPage() {
 
   // Error handling
   if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center h-96">
-        <h2 className="text-xl font-bold text-red-600 mb-2">
-          Không thể tải thông tin cộng đồng.
-        </h2>
-        <p className="text-gray-500 mb-4">
-          {error?.message || "Đã xảy ra lỗi khi tải dữ liệu"}
-        </p>
-        <ButtonMain onClick={() => refetch()}>Thử lại</ButtonMain>
-      </div>
-    );
+    return <ErrorResponse onRetry={() => refetch()} />;
   }
 
   // Loading state

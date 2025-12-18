@@ -7,7 +7,7 @@ import {
 import { useGetOutstandingThisWeek } from "~/apis/useFetchTrending";
 import { cn } from "~/lib/utils";
 import type { IResTodayNewsOrOutstanding } from "~/shared/dtos/res/trending.dto";
-import { toastSimple } from "~/utils/toastSimple.util";
+import { toastSimple } from "~/utils/toast";
 
 export function OutstandingThisWeek() {
   const location = useLocation();

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useGetProfileTweets } from "~/apis/useFetchTweet";
+import { ErrorResponse } from "~/components/error";
 import { Card, CardContent } from "~/components/ui/card";
 import { EMediaType, ETweetType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
@@ -127,20 +128,14 @@ export function ProfileMedia({
   // Error state
   if (error) {
     return (
-      <div className="text-center py-8">
-        <p className="text-red-500 mb-4">❌ Có lỗi xảy ra khi tải media</p>
-        <button
-          onClick={() => {
-            setPage(1);
-            setTweets([]);
-            setHasMore(true);
-            window.location.reload();
-          }}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-        >
-          Thử lại
-        </button>
-      </div>
+      <ErrorResponse
+        onRetry={() => {
+          setPage(1);
+          setTweets([]);
+          setHasMore(true);
+          window.location.reload();
+        }}
+      />
     );
   }
 

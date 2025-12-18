@@ -20,7 +20,6 @@ import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useCommentSocket } from "~/socket/hooks/useCommentSocket";
 import { useDetailTweetStore } from "~/store/useDetailTweetStore";
 import { useUserStore } from "~/store/useUserStore";
-import { formatTimeAgo } from "~/utils/formatTimeAgo";
 import { ArrowLeftIcon } from "../icons/arrow-left";
 import { VerifyIcon } from "../icons/verify";
 import { Logo } from "../logo";
@@ -51,6 +50,7 @@ import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
 import { ActionShared } from "./action-shared";
 import { Content } from "./content";
 import { SkeletonTweet, StatusTag, TweetItem } from "./item-tweet";
+import { formatTimeAgo } from "~/utils/date-time";
 
 export function TweetDetailDrawer() {
   //

@@ -7,7 +7,7 @@ import {
   LoginUserDtoSchema,
   type LoginUserDto,
 } from "~/shared/dtos/req/auth.dto";
-import { handleResponse } from "~/utils/handleResponse";
+import { handleResponse } from "~/utils/toast";
 import { AuthFacebook } from "../auth-facebook";
 import { AuthGoogle } from "../auth-google";
 import { TypographyP } from "../elements/p";

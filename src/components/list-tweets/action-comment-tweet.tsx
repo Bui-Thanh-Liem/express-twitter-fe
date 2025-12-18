@@ -5,7 +5,6 @@ import { ETweetType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useDetailTweetStore } from "~/store/useDetailTweetStore";
-import { formatTimeAgo } from "~/utils/formatTimeAgo";
 import { VerifyIcon } from "../icons/verify";
 import { Tweet } from "../tweet/Tweet";
 import { AvatarMain } from "../ui/avatar";
@@ -17,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Content } from "./content";
+import { formatTimeAgo } from "~/utils/date-time";
 
 export function ActionCommentTweet({ tweet }: { tweet: ITweet }) {
   //

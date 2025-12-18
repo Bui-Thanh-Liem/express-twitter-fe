@@ -7,8 +7,8 @@ import { WrapIcon } from "~/components/wrapIcon";
 import { useGetTweetsByIds } from "~/apis/useFetchTrending";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import { useTrendingStore } from "~/store/useTrendingStore";
-import { formatTimeAgo } from "~/utils/formatTimeAgo";
 import { Content } from "~/components/list-tweets/content";
+import { formatTimeAgo } from "~/utils/date-time";
 
 export function TrendingPage() {
   const navigate = useNavigate();

@@ -13,7 +13,7 @@ import type { IConversation } from "~/shared/interfaces/schemas/conversation.int
 import type { ResMultiType } from "~/shared/types/response.type";
 import { buildQueryString } from "~/utils/buildQueryString";
 import { apiCall } from "~/utils/callApi.util";
-import { handleResponseOnlyErr } from "~/utils/handleResponse";
+import { handleResponseOnlyErr } from "~/utils/toast";
 
 // ➕ POST
 export const useCreateConversation = () => {

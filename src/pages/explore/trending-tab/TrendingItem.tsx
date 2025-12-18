@@ -12,7 +12,7 @@ import { useReportTrending } from "~/apis/useFetchTrending";
 import { cn } from "~/lib/utils";
 import type { IHashtag } from "~/shared/interfaces/schemas/hashtag.interface";
 import type { ITrending } from "~/shared/interfaces/schemas/trending.interface";
-import { handleResponse } from "~/utils/handleResponse";
+import { handleResponse } from "~/utils/toast";
 
 export function TrendingItemSkeleton() {
   return (

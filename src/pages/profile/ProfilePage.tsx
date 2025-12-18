@@ -12,12 +12,13 @@ import { useGetOneByUsername, useResendVerifyEmail } from "~/apis/useFetchUser";
 import { CONSTANT_DEFAULT_TITLE_DOCUMENT } from "~/shared/constants/default-title-document";
 import { ETweetType } from "~/shared/enums/type.enum";
 import { useUserStore } from "~/store/useUserStore";
-import { formatDateToDateVN } from "~/utils/formatDateToDateVN";
-import { handleResponse } from "~/utils/handleResponse";
 import { ProfileAction } from "./ProfileAction";
 import { ProfileLiked } from "./ProfileLiked";
 import { ProfileMedia } from "./ProfileMedia";
 import { ProfileTweets } from "./ProfileTweets";
+import { handleResponse } from "~/utils/toast";
+import { formatDateToDateVN } from "~/utils/date-time";
+import { ErrorResponse } from "~/components/error";
 
 export function ProfilePage() {
   const navigate = useNavigate();
@@ -64,15 +65,11 @@ export function ProfilePage() {
   // Error handling
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-96">
-        <h2 className="text-xl font-bold text-red-600 mb-2">
-          Không thể tải hồ sơ
-        </h2>
-        <p className="text-gray-500 mb-4">
-          {error?.message || "Đã xảy ra lỗi khi tải dữ liệu"}
-        </p>
-        <ButtonMain onClick={() => refetch()}>Thử lại</ButtonMain>
-      </div>
+      <ErrorResponse
+        onRetry={() => {
+          refetch();
+        }}
+      />
     );
   }
 

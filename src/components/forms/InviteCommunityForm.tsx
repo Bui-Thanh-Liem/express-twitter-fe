@@ -14,8 +14,8 @@ import {
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
-import { handleResponse } from "~/utils/handleResponse";
-import { toastSimple } from "~/utils/toastSimple.util";
+import { handleResponse } from "~/utils/toast";
+import { toastSimple } from "~/utils/toast";
 import { ButtonMain } from "../ui/button";
 import { SearchMain } from "../ui/search";
 import {

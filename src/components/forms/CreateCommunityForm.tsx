@@ -19,8 +19,8 @@ import {
 import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
-import { handleResponse } from "~/utils/handleResponse";
-import { toastSimple } from "~/utils/toastSimple.util";
+import { handleResponse } from "~/utils/toast";
+import { toastSimple } from "~/utils/toast";
 import { ButtonMain } from "../ui/button";
 import { CircularProgress } from "../ui/circular-progress";
 import { Divider } from "../ui/divider";

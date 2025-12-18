@@ -27,7 +27,8 @@ import { useConversationSocket } from "~/socket/hooks/useConversationSocket";
 import { useStatusSocket } from "~/socket/hooks/useStatusSocket";
 import { useConversationActiveStore } from "~/store/useConversationActiveStore";
 import { useUserStore } from "~/store/useUserStore";
-import { formatTimeAgo } from "~/utils/formatTimeAgo";
+import { formatTimeAgo } from "~/utils/date-time";
+import { ErrorResponse } from "~/components/error";
 
 //
 function ConversationItemSkeleton() {
@@ -388,7 +389,7 @@ export function ConversationList({
       </div>
 
       {/*  */}
-      {!isLoading && allConversations.length === 0 && page === 1 && (
+      {!isLoading && allConversations.length === 0 && page === 1 && !error && (
         <p className="p-4 text-center text-gray-500">
           Không có cuộc trò chuyện
         </p>
@@ -411,9 +412,9 @@ export function ConversationList({
               (conversation) => (
                 <ConversationItem
                   currentUser={user}
-                  onTogglePinned={onPinnedConv}
                   onDeleted={onDeletedConv}
                   conversation={conversation}
+                  onTogglePinned={onPinnedConv}
                   key={conversation._id.toString()}
                   isActive={activeId === conversation._id}
                   onclick={() => handleClickConversation(conversation)}
@@ -450,11 +451,7 @@ export function ConversationList({
       </div>
 
       {/* Error state */}
-      {error && (
-        <p className="text-center text-red-500 p-6">
-          Có lỗi khi tải dữ liệu. Vui lòng thử lại!
-        </p>
-      )}
+      {error && <ErrorResponse onRetry={() => {}} />}
     </div>
   );
 }

@@ -3,8 +3,8 @@ import { cn } from "~/lib/utils";
 import type { IResTodayNewsOrOutstanding } from "~/shared/dtos/res/trending.dto";
 import { EMediaType } from "~/shared/enums/type.enum";
 import { useTrendingStore } from "~/store/useTrendingStore";
-import { formatTimeAgo } from "~/utils/formatTimeAgo";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { formatTimeAgo } from "~/utils/date-time";
 
 export function TodayNewsOrOutstandingItemSkeleton() {
   return (

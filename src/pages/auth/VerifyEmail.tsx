@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useVerifyEmail } from "~/apis/useFetchUser";
-import { handleResponse } from "~/utils/handleResponse";
+import { handleResponse } from "~/utils/toast";
 
 export function VerifyEmail() {
   const [params] = useSearchParams();

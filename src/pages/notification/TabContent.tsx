@@ -15,8 +15,8 @@ import type { INotification } from "~/shared/interfaces/schemas/notification.int
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useNotificationSocket } from "~/socket/hooks/useNotificationSocket";
-import { formatTimeAgo } from "~/utils/formatTimeAgo";
-import { handleResponse } from "~/utils/handleResponse";
+import { formatTimeAgo } from "~/utils/date-time";
+import { handleResponse } from "~/utils/toast";
 
 //
 type Props = {

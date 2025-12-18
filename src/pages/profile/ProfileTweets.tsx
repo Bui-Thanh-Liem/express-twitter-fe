@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { ErrorProcess } from "~/components/error-process";
 import { SkeletonTweet, TweetItem } from "~/components/list-tweets/item-tweet";
 import { NotFoundTweet } from "~/components/list-tweets/not-found-tweet";
 import { useGetProfileTweets } from "~/apis/useFetchTweet";
 import { ETweetType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
+import { ErrorResponse } from "~/components/error";
 
 export function ProfileTweets({
   ishl = "0",
@@ -153,8 +153,8 @@ export function ProfileTweets({
 
       {/* Error state */}
       {error && (
-        <ErrorProcess
-          onClick={() => {
+        <ErrorResponse
+          onRetry={() => {
             setPage(1);
             setAllTweets([]);
             setHasMore(true);

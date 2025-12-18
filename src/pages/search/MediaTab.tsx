@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useSearchTweets } from "~/apis/useFetchSearch";
-import { ButtonMain } from "~/components/ui/button";
+import { ErrorResponse } from "~/components/error";
 import { Card, CardContent } from "~/components/ui/card";
 import { EMediaType } from "~/shared/enums/type.enum";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
@@ -236,18 +236,13 @@ export function MediaTab() {
 
       {/* Error */}
       {error && (
-        <div className="text-center py-8">
-          <p className="text-red-500 mb-4">❌ Có lỗi xảy ra khi tải dữ liệu</p>
-          <ButtonMain
-            onClick={() => {
-              setPage(1);
-              setTweets([]);
-              setHasMore(true);
-            }}
-          >
-            Thử lại
-          </ButtonMain>
-        </div>
+        <ErrorResponse
+          onRetry={() => {
+            setPage(1);
+            setTweets([]);
+            setHasMore(true);
+          }}
+        />
       )}
     </div>
   );

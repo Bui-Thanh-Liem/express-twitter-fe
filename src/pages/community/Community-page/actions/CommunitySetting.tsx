@@ -32,8 +32,8 @@ import { CONSTANT_MAX_LENGTH_MENTOR } from "~/shared/constants";
 import { EMembershipType, EVisibilityType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
-import { handleResponse } from "~/utils/handleResponse";
-import { toastSimple } from "~/utils/toastSimple.util";
+import { handleResponse } from "~/utils/toast";
+import { toastSimple } from "~/utils/toast";
 import { infoMap } from "./CommunityInfo";
 
 export function CommunitySetting({ community }: { community: ICommunity }) {

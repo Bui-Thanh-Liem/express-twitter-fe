@@ -7,7 +7,7 @@ import { VerifyIcon } from "../icons/verify";
 import { ShortInfoProfile } from "../ShortInfoProfile";
 import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
-import { toastSimpleVerify } from "~/utils/toastSimple.util";
+import { toastSimpleVerify } from "~/utils/toast";
 
 export function UserToFollowItemSkeleton() {
   return (

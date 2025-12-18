@@ -9,7 +9,7 @@ import { cn } from "~/lib/utils";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
-import { toastSimpleVerify } from "~/utils/toastSimple.util";
+import { toastSimpleVerify } from "~/utils/toast";
 
 export function CommunityRow({
   community,

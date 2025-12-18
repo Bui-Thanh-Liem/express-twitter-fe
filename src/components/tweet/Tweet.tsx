@@ -28,8 +28,6 @@ import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useReloadStore } from "~/store/useReloadStore";
 import { useUserStore } from "~/store/useUserStore";
-import { handleResponse } from "~/utils/handleResponse";
-import { toastSimple, toastSimpleVerify } from "~/utils/toastSimple.util";
 import { TweetItem } from "../list-tweets/item-tweet";
 import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";
@@ -39,6 +37,7 @@ import { CircularProgress } from "../ui/circular-progress";
 import { HashtagSuggest } from "./HashtagSuggest";
 import { Mentions } from "./Mentions";
 import { TweetCommunity } from "./TweetCommunity";
+import { handleResponse, toastSimpleVerify } from "~/utils/toast";
 
 // Constants
 const DEFAULT_VALUES: CreateTweetDto = {
@@ -269,11 +268,13 @@ export function Tweet({
               return;
             }
 
-            console.log("TresUploadMedia :::", resUploadMedia);
             medias = resUploadMedia.metadata;
-          } catch (uploadError) {
-            console.error("Error submitting uploadMedia:", uploadError);
-            toastSimple((uploadError as { message: string }).message);
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          } catch (err) {
+            handleResponse({
+              statusCode: 500,
+              message: "Có lỗi xảy ra khi tải lên hình ảnh/video",
+            });
           }
         }
 
@@ -303,11 +304,12 @@ export function Tweet({
         handleResponse(resCreateTweet, () => {
           successForm(resCreateTweet.metadata!);
         });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
-        console.error("Error submitting tweet:", error);
-        const errorMessage =
-          error instanceof Error ? error.message : "Có lỗi xảy ra khi đăng bài";
-        toastSimple(errorMessage);
+        handleResponse({
+          statusCode: 500,
+          message: "Có lỗi xảy ra khi đăng bài",
+        });
       } finally {
         setIsUploading(false);
       }

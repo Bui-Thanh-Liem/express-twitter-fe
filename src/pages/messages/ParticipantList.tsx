@@ -12,7 +12,7 @@ import type { IConversation } from "~/shared/interfaces/schemas/conversation.int
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useConversationActiveStore } from "~/store/useConversationActiveStore";
 import { useUserStore } from "~/store/useUserStore";
-import { handleResponse } from "~/utils/handleResponse";
+import { handleResponse } from "~/utils/toast";
 
 export function ParticipantList({
   conversation,

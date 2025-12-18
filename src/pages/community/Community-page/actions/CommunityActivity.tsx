@@ -18,7 +18,7 @@ import { WrapIcon } from "~/components/wrapIcon";
 import { useGetMultiActivities } from "~/apis/useFetchCommunity";
 import { EActivityType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
-import { toastSimple } from "~/utils/toastSimple.util";
+import { toastSimple } from "~/utils/toast";
 
 const icons = {
   [EActivityType.Invite]: <UserPlus className="size-5 text-green-400" />,

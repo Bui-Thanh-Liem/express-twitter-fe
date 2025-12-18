@@ -7,7 +7,7 @@ import { WrapIcon } from "~/components/wrapIcon";
 import { useDebounce } from "~/hooks/useDebounce";
 import { useGetTweetBookmarked } from "~/apis/useFetchTweet";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
-import { ButtonMain } from "~/components/ui/button";
+import { ErrorResponse } from "~/components/error";
 
 export function BookmarkPage() {
   // State để quản lý pagination và data
@@ -131,6 +131,7 @@ export function BookmarkPage() {
     setAllTweets((prev) => prev.filter((tw) => tw._id !== id));
   }
 
+  const tweetLength = allTweets.length;
   return (
     <div>
       {/* Header */}
@@ -158,14 +159,12 @@ export function BookmarkPage() {
         {isLoading && page === 1 && <SkeletonTweet />}
 
         {/* Tweets list */}
-        {allTweets.length > 0 && (
+        {tweetLength > 0 && (
           <div className="space-y-6">
             {allTweets.map((tweet, index: number) => (
               <span key={tweet._id}>
                 <TweetItem tweet={tweet} onSuccessDel={onDel} />
-                {index < allTweets.length - 1 && (
-                  <hr className="border-gray-200" />
-                )}
+                {index < tweetLength - 1 && <hr className="border-gray-200" />}
               </span>
             ))}
           </div>
@@ -179,18 +178,22 @@ export function BookmarkPage() {
         )}
 
         {/* Empty state - chưa có data nhưng không phải total = 0 */}
-        {!isLoading && allTweets.length === 0 && page === 1 && !searchVal && (
-          <div className="text-center py-8">
-            <p className="text-gray-500 text-lg mb-2">
-              📑 Chưa có bài viết nào được đánh dấu
-            </p>
-            <p className="text-gray-400">
-              Hãy đánh dấu một số bài viết để chúng xuất hiện ở đây!
-            </p>
-          </div>
-        )}
+        {!isLoading &&
+          tweetLength === 0 &&
+          page === 1 &&
+          !searchVal &&
+          !error && (
+            <div className="text-center py-8">
+              <p className="text-gray-500 text-lg mb-2">
+                📑 Chưa có bài viết nào được đánh dấu
+              </p>
+              <p className="text-gray-400">
+                Hãy đánh dấu một số bài viết để chúng xuất hiện ở đây!
+              </p>
+            </div>
+          )}
 
-        {!isLoading && allTweets.length === 0 && page === 1 && searchVal && (
+        {!isLoading && tweetLength === 0 && page === 1 && searchVal && (
           <div className="text-center py-8">
             <p className="text-gray-500 text-lg mb-2">
               Không tìm thấy tweet nào khớp với "{searchVal}"
@@ -203,7 +206,7 @@ export function BookmarkPage() {
         <div ref={observerRef} className="h-10 w-full" />
 
         {/* End of content indicator */}
-        {!hasMore && allTweets.length > 0 && (
+        {!hasMore && tweetLength > 0 && (
           <div className="text-center py-8">
             <p className="text-gray-500">
               🎉 Bạn đã xem hết tất cả tweet đã đánh dấu!
@@ -213,20 +216,13 @@ export function BookmarkPage() {
 
         {/* Error */}
         {error && (
-          <div className="text-center py-8">
-            <p className="text-red-500 mb-4">
-              ❌ Có lỗi xảy ra khi tải dữ liệu
-            </p>
-            <ButtonMain
-              onClick={() => {
-                setPage(1);
-                setAllTweets([]);
-                setHasMore(true);
-              }}
-            >
-              Thử lại
-            </ButtonMain>
-          </div>
+          <ErrorResponse
+            onRetry={() => {
+              setPage(1);
+              setAllTweets([]);
+              setHasMore(true);
+            }}
+          />
         )}
       </div>
     </div>

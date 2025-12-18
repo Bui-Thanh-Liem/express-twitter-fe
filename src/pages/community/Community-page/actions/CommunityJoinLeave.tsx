@@ -5,7 +5,7 @@ import { WrapIcon } from "~/components/wrapIcon";
 import { useJoinCommunity, useLeaveCommunity } from "~/apis/useFetchCommunity";
 import { EMembershipType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
-import { handleResponse } from "~/utils/handleResponse";
+import { handleResponse } from "~/utils/toast";
 
 export function CommunityJoinLeave({ community }: { community: ICommunity }) {
   const [is_joined, setIsJoined] = useState(community.is_joined);

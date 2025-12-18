@@ -3,7 +3,7 @@ import type { OkResponse } from "~/shared/classes/response.class";
 import type { ResToggleFollow } from "~/shared/dtos/res/follow.dto";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { apiCall } from "~/utils/callApi.util";
-import { handleResponseOnlyErr } from "~/utils/handleResponse";
+import { handleResponseOnlyErr } from "~/utils/toast";
 
 //
 export const useFollowUser = () => {

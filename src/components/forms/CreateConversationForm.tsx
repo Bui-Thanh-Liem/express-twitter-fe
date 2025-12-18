@@ -16,7 +16,7 @@ import {
 import { EConversationType } from "~/shared/enums/type.enum";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
-import { handleResponse } from "~/utils/handleResponse";
+import { handleResponse } from "~/utils/toast";
 import { CloseIcon } from "../icons/close";
 import { AvatarMain } from "../ui/avatar";
 import { ButtonMain } from "../ui/button";

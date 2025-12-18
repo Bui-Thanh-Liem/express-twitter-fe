@@ -10,7 +10,7 @@ import { EConversationType } from "~/shared/enums/type.enum";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useChatBoxStore } from "~/store/useChatBoxStore";
 import { useUserStore } from "~/store/useUserStore";
-import { toastSimpleVerify } from "~/utils/toastSimple.util";
+import { toastSimpleVerify } from "~/utils/toast";
 
 interface IProfileActiveProps {
   isOwnProfile: boolean;

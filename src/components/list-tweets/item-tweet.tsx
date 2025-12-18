@@ -18,8 +18,6 @@ import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useDetailTweetStore } from "~/store/useDetailTweetStore";
 import { useUserStore } from "~/store/useUserStore";
-import { formatTimeAgo } from "~/utils/formatTimeAgo";
-import { handleResponse } from "~/utils/handleResponse";
 import { DotIcon } from "../icons/dot";
 import { VerifyIcon } from "../icons/verify";
 import { ShortInfoProfile } from "../ShortInfoProfile";
@@ -39,6 +37,8 @@ import { ActionLikeTweet } from "./action-like-tweet";
 import { ActionRetweetQuoteTweet } from "./action-retweet-quote-tweet";
 import { ActionShared } from "./action-shared";
 import { Content } from "./content";
+import { formatTimeAgo } from "~/utils/date-time";
+import { handleResponse } from "~/utils/toast";
 
 // Component cho Media (Image hoặc Video)
 export const MediaContent = ({ tweet }: { tweet: ITweet }) => {

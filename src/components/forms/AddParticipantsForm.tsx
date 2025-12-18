@@ -14,7 +14,6 @@ import {
 import type { IConversation } from "~/shared/interfaces/schemas/conversation.interface";
 import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useUserStore } from "~/store/useUserStore";
-import { handleResponse } from "~/utils/handleResponse";
 import { ButtonMain } from "../ui/button";
 import { Divider } from "../ui/divider";
 import { SearchMain } from "../ui/search";
@@ -23,7 +22,7 @@ import {
   UserFollowerSkeleton,
   UserSelected,
 } from "./CreateConversationForm";
-import { toastSimpleVerify } from "~/utils/toastSimple.util";
+import { handleResponse, toastSimpleVerify } from "~/utils/toast";
 
 export function AddParticipantsForm({
   setOpenForm,

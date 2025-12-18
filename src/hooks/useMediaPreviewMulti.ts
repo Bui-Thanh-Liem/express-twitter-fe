@@ -4,7 +4,7 @@ import {
   CONSTANT_MAX_SIZE_VIDEO_UPLOAD,
 } from "~/shared/constants";
 import { EMediaType } from "~/shared/enums/type.enum";
-import { toastSimple } from "~/utils/toastSimple.util";
+import { toastSimple } from "~/utils/toast";
 import { allowedImgTypes, allowedVideoTypes } from "../apis/useFetchUpload";
 
 export const MAX_FILE_COUNT = 5;

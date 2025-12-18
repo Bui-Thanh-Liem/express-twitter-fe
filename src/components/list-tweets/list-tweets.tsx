@@ -7,9 +7,9 @@ import { EFeedType, ETweetType } from "~/shared/enums/type.enum";
 import type { ICommunity } from "~/shared/interfaces/schemas/community.interface";
 import type { ITweet } from "~/shared/interfaces/schemas/tweet.interface";
 import { useUserStore } from "~/store/useUserStore";
-import { ErrorProcess } from "../error-process";
 import { ButtonMain } from "../ui/button";
 import { SkeletonTweet, TweetItem } from "./item-tweet";
+import { ErrorResponse } from "../error";
 
 export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
   const { user } = useUserStore();
@@ -153,8 +153,8 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
 
       {/* Error state */}
       {error && (
-        <ErrorProcess
-          onClick={() => {
+        <ErrorResponse
+          onRetry={() => {
             setPage(1);
             setFeeds([]);
             setHasMore(true);
