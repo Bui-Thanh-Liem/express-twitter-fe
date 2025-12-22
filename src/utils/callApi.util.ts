@@ -40,7 +40,7 @@ export const apiCall = async <T>(
 
   // Initial API call
   let response = await fetch(`${apiUrl}${endpoint}`, config);
-  console.log("Đang gọi api::", `${apiUrl}${endpoint}`);
+  // console.log("Đang gọi api::", `${apiUrl}${endpoint}`);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let result = (await response.json()) as OkResponse<any>;
 
