@@ -266,7 +266,7 @@ export function TabContent({
       {!notis.length && !isLoading && (
         <div className="flex justify-center flex-col items-center">
           <p className="text-xl mb-1">Chưa có gì ở đây</p>
-          <p className="text-gray-400 w-96 text-justify">{emptyText}</p>
+          <p className="text-gray-400 w-80 lg:w-96 text-justify">{emptyText}</p>
         </div>
       )}
 

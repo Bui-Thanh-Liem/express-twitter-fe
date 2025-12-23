@@ -151,7 +151,7 @@ export function ProfileMedia({
     <div className="px-4">
       {/* Media grid */}
       {tweets.length > 0 && (
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
           {tweets.flatMap((tweet) => {
             return tweet.media?.map((m, index) => (
               <Card

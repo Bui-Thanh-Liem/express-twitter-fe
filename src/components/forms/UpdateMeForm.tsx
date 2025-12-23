@@ -334,7 +334,7 @@ export function UpdateMeForm({
           <ButtonMain
             type="button"
             variant="outline"
-            className="flex-1"
+            className="lg:flex-1"
             disabled={isFormDisabled}
             onClick={() => setOpenForm(false)}
           >
@@ -342,7 +342,7 @@ export function UpdateMeForm({
           </ButtonMain>
           <ButtonMain
             type="submit"
-            className="flex-1"
+            className="lg:flex-1"
             loading={isFormDisabled}
             disabled={isFormDisabled}
           >

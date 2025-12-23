@@ -246,7 +246,7 @@ export function ProfilePage() {
                 Đăng lại
               </TabsTrigger>
               <TabsTrigger
-                className="cursor-pointer"
+                className="cursor-pointer line-clamp-2"
                 value={ETweetType.QuoteTweet.toString()}
               >
                 Đăng lại có trích dẫn

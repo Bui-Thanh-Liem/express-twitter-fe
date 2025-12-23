@@ -269,7 +269,7 @@ export function Tweet({
             }
 
             medias = resUploadMedia.metadata;
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
           } catch (err) {
             handleResponse({
               statusCode: 500,
@@ -304,7 +304,7 @@ export function Tweet({
         handleResponse(resCreateTweet, () => {
           successForm(resCreateTweet.metadata!);
         });
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         handleResponse({
           statusCode: 500,
@@ -384,7 +384,7 @@ export function Tweet({
             removeMedia={removeMedia}
           />
 
-          <div className="my-3 flex justify-between items-center">
+          <div className="my-3 flex justify-between items-center gap-2">
             {/*  */}
             {(tweetType === ETweetType.Tweet ||
               tweetType === ETweetType.QuoteTweet) && (
