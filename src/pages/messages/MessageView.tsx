@@ -17,7 +17,6 @@ import {
   CarouselItem,
 } from "~/components/ui/carousel";
 import { CircularProgress } from "~/components/ui/circular-progress";
-import { ScrollArea } from "~/components/ui/scroll-area";
 import { WrapIcon } from "~/components/wrapIcon";
 import { useEmojiInsertion } from "~/hooks/useEmojiInsertion";
 import { useMediaPreviewMulti } from "~/hooks/useMediaPreviewMulti";
@@ -37,8 +36,7 @@ import { useStatusSocket } from "~/socket/hooks/useStatusSocket";
 import { useConversationActiveStore } from "~/store/useConversationActiveStore";
 import { useDetailAttachment } from "~/store/useDetailAttachment";
 import { useUserStore } from "~/store/useUserStore";
-import { handleResponse } from "~/utils/toast";
-import { toastSimple } from "~/utils/toast";
+import { handleResponse, toastSimple } from "~/utils/toast";
 import { AddParticipants } from "./AddParticipants";
 import { CreateConversation } from "./CreateConversation";
 import { ParticipantList } from "./ParticipantList";
@@ -307,7 +305,7 @@ export function MessageView({
       </div>
 
       <div className="flex-1 flex flex-col">
-        <ScrollArea className="px-4 pt-2 h-[calc(100vh-260px)]">
+        <div className="px-4 pt-2 h-[calc(100vh-260px)] overflow-y-auto overflow-x-hidden">
           {/* Loading khi load thêm */}
           {isLoading ? (
             <div className="p-3">
@@ -348,7 +346,7 @@ export function MessageView({
               className="text-gray-100 translate-y-48 translate-x-54"
             />
           )}
-        </ScrollArea>
+        </div>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="relative border-t px-3">
@@ -570,7 +568,7 @@ export const MessageItem = ({ msg, user }: { msg: IMessage; user: IUser }) => {
         {attachments?.length > 0 && (
           <div
             className={cn(
-              `mt-2 max-w-[50%] flex flex-col gap-y-2`,
+              `mt-2 max-w-[70%] flex flex-col gap-y-2`,
               isMe ? "justify-end" : "justify-start"
             )}
           >
