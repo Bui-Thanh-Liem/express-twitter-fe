@@ -57,7 +57,9 @@ export function CommunitiesPage() {
           <p className="font-semibold text-[20px]">Cộng đồng</p>
         </div>
         <div className="flex items-center gap-x-3">
-          <span className={cn("hidden", isOpenSearch ? "block" : "")}>
+          <span
+            className={cn("hidden", isOpenSearch ? "block w-40 lg:w-auto" : "")}
+          >
             <SearchMain
               size="sm"
               value={searchVal}

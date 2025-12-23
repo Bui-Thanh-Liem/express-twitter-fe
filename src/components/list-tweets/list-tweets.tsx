@@ -10,6 +10,7 @@ import { useUserStore } from "~/store/useUserStore";
 import { ButtonMain } from "../ui/button";
 import { SkeletonTweet, TweetItem } from "./item-tweet";
 import { ErrorResponse } from "../error";
+import { cn } from "~/lib/utils";
 
 export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
   const { user } = useUserStore();
@@ -200,7 +201,11 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
                   <p className="ml-4 mt-2 text-gray-500 font-medium">
                     Gợi ý tham gia
                   </p>
-                  <div className="m-4 mt-2 grid grid-cols-3 items-center gap-x-3">
+                  <div
+                    className={cn(
+                      "m-4 mt-2 grid grid-cols-3 items-center gap-x-3"
+                    )}
+                  >
                     {communities.map((com) => (
                       <CommunityCard community={com} key={com._id} />
                     ))}
@@ -209,7 +214,8 @@ export const ListTweets = ({ feedType }: { feedType: EFeedType }) => {
                       className="animate-bounce duration-75"
                     >
                       <ButtonMain className="flex items-center ml-auto">
-                        Xem thêm <ArrowRight />
+                        <span className="hidden lg:inline">Xem thêm</span>{" "}
+                        <ArrowRight />
                       </ButtonMain>
                     </Link>
                   </div>

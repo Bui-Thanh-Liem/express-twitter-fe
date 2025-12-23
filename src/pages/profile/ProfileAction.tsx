@@ -11,6 +11,7 @@ import type { IUser } from "~/shared/interfaces/schemas/user.interface";
 import { useChatBoxStore } from "~/store/useChatBoxStore";
 import { useUserStore } from "~/store/useUserStore";
 import { toastSimpleVerify } from "~/utils/toast";
+import { LogOut } from "lucide-react";
 
 interface IProfileActiveProps {
   isOwnProfile: boolean;
@@ -95,7 +96,12 @@ export function ProfileAction({ profile, isOwnProfile }: IProfileActiveProps) {
   return (
     <>
       {isOwnProfile ? (
-        <ProfileEdit currentUser={profile as IUser} />
+        <div className="flex items-center gap-2 ">
+          <ProfileEdit currentUser={profile as IUser} />
+          <WrapIcon className="mt-20 border lg:hidden">
+            <LogOut size={20} color="red" />
+          </WrapIcon>
+        </div>
       ) : (
         <div className="flex items-center gap-x-3 mt-20">
           <WrapIcon className="border" onClick={handleOpenCheckBox}>
