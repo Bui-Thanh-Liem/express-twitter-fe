@@ -201,7 +201,7 @@ export function CreateCommunityForm({
       onSubmit={handleSubmit(onSubmit)}
       className="flex items-center justify-center"
     >
-      <div className="mt-4 space-y-6 min-w-[460px]">
+      <div className="mt-4 space-y-6 w-full md:min-w-[460px]">
         <div className="relative mb-4">
           <div
             className="relative h-44 w-full bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200 transition-colors"
@@ -269,7 +269,7 @@ export function CreateCommunityForm({
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label className="text-sm font-medium">
+            <Label className="text-sm font-medium line-clamp-1">
               Lĩnh vực / Danh mục (ưu tiên)
             </Label>
             <Input

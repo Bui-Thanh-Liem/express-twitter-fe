@@ -1,4 +1,4 @@
-import { ArrowRight, Plus } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { ReactNode } from "react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -38,10 +38,10 @@ import { playNotificationSound } from "~/utils/notificationSound";
 import { Logo } from "../../components/logo";
 import { WrapIcon } from "../../components/wrapIcon";
 
-type NavItem = {
+export type NavItem = {
   name: string;
   icon: ReactNode;
-  path: string;
+  path?: string;
   countNoti?: number;
 };
 
@@ -197,17 +197,17 @@ export function SidebarLeft() {
   return (
     <>
       <div className="relative h-full pt-1 ml-4 lg:ml-0">
-        <h2 className="text-lg font-semibold">
+        <h2 className="text-lg font-semibold hidden lg:block">
           <WrapIcon>
             <Logo size={40} />
           </WrapIcon>
         </h2>
         <ul className="space-y-3 text-sm text-gray-700">
           {navs.map((x) => {
-            const isActive = pathname.startsWith(x.path);
+            const isActive = pathname.startsWith(x?.path || "");
             return (
               <li key={x.name} className="cursor-pointer group relative">
-                <div onClick={() => onClickNav(x.path, x.name)}>
+                <div onClick={() => onClickNav(x.path || "", x.name)}>
                   <TypographyP
                     className={cn(
                       "text-[22px] p-3 group-hover:bg-gray-100 rounded-3xl flex items-center gap-3",
@@ -234,7 +234,7 @@ export function SidebarLeft() {
           })}
         </ul>
 
-        <div className="absolute w-full bottom-20 lg:bottom-28">
+        <div className="absolute w-full bottom-20 lg:bottom-28 hidden lg:block">
           <ButtonMain
             size="lg"
             onClick={handleOpenPost}
@@ -242,12 +242,6 @@ export function SidebarLeft() {
           >
             Đăng Bài
           </ButtonMain>
-          <WrapIcon
-            onClick={handleOpenPost}
-            className="bg-black hover:bg-[#333] ml-1 lg:hidden"
-          >
-            <Plus size={24} color="#fff" />
-          </WrapIcon>
         </div>
 
         <div className="absolute w-full bottom-6 lg:bottom-3 p-2 px-3 rounded-4xl hover:bg-gray-100 cursor-pointer flex items-center gap-3">
@@ -261,7 +255,7 @@ export function SidebarLeft() {
             <span className="text-sm text-gray-400">{user?.username}</span>
           </div>
 
-          <div className="absolute right-1 lg:right-4">
+          <div className="absolute right-1 lg:right-4 hidden lg:block">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="outline-0 outline-transparent">

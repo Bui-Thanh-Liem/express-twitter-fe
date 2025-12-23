@@ -50,7 +50,7 @@ export function CommunitiesPage() {
           <WrapIcon onClick={() => navigate(-1)}>
             <ArrowLeftIcon color="#000" />
           </WrapIcon>
-          <p className="font-semibold text-[20px]">Cộng đồng</p>
+          <p className="font-semibold text-[20px] hidden lg:block">Cộng đồng</p>
         </div>
         <div className="flex items-center gap-x-3">
           <span className={cn("hidden", isOpenSearch ? "block" : "")}>

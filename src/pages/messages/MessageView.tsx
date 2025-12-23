@@ -265,7 +265,7 @@ export function MessageView({
 
   //
   return (
-    <div className="col-span-8 h-full flex flex-col">
+    <div className="h-full flex flex-col">
       <div className="p-3 flex items-center justify-between bg-blue-50">
         <div className="flex items-center gap-3">
           {typeof conversation.avatar === "string" ? (
@@ -432,99 +432,6 @@ export function MessageView({
 }
 
 //
-export function MessageSkeleton() {
-  return (
-    <div className="col-span-8 h-full flex flex-col animate-pulse">
-      {/* Header Skeleton */}
-      <div className="p-3 flex items-center justify-between bg-blue-50 border-b">
-        <div className="flex items-center gap-3">
-          {/* Avatar */}
-          <div className="w-12 h-12 bg-gray-300 rounded-full" />
-
-          {/* Name and Status */}
-          <div className="space-y-2">
-            <div className="h-4 w-32 bg-gray-300 rounded" />
-            <div className="h-3 w-16 bg-gray-200 rounded" />
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gray-300 rounded-full" />
-          <div className="w-8 h-8 bg-gray-300 rounded-full" />
-        </div>
-      </div>
-
-      {/* Messages Area */}
-      <div className="flex-1 flex flex-col p-3">
-        <div className="pr-4 h-[calc(100vh-250px)] space-y-3">
-          {/* Message from other user */}
-          <div className="flex items-start gap-2">
-            <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0" />
-            <div className="space-y-2">
-              <div className="h-16 w-64 bg-gray-200 rounded-2xl" />
-            </div>
-          </div>
-
-          {/* Message from current user */}
-          <div className="flex items-start gap-2 justify-end">
-            <div className="h-12 w-48 bg-blue-200 rounded-2xl ml-auto" />
-          </div>
-
-          {/* Message from other user */}
-          <div className="flex items-start gap-2">
-            <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0" />
-            <div className="space-y-2">
-              <div className="h-20 w-72 bg-gray-200 rounded-2xl" />
-            </div>
-          </div>
-
-          {/* Message from current user */}
-          <div className="flex items-start gap-2 justify-end">
-            <div className="h-16 w-56 bg-blue-200 rounded-2xl ml-auto" />
-          </div>
-
-          {/* Message from other user */}
-          <div className="flex items-start gap-2">
-            <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0" />
-            <div className="space-y-2">
-              <div className="h-10 w-40 bg-gray-200 rounded-2xl" />
-            </div>
-          </div>
-
-          {/* Message from current user */}
-          <div className="flex items-start gap-2 justify-end">
-            <div className="h-14 w-52 bg-blue-200 rounded-2xl ml-auto" />
-          </div>
-
-          {/* Message from other user */}
-          <div className="flex items-start gap-2">
-            <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0" />
-            <div className="space-y-2">
-              <div className="h-12 w-60 bg-gray-200 rounded-2xl" />
-            </div>
-          </div>
-        </div>
-
-        {/* Input Area Skeleton */}
-        <div className="pt-4 border-t">
-          <div className="flex gap-2 items-end">
-            {/* Textarea skeleton */}
-            <div className="flex-1 h-20 bg-blue-100 rounded-xl" />
-
-            {/* Emoji button */}
-            <div className="w-10 h-10 bg-gray-200 rounded-full flex-shrink-0" />
-
-            {/* Send button */}
-            <div className="w-16 h-10 bg-gray-300 rounded-full flex-shrink-0" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-//
 export function PreviewMediaMulti({
   mediaItems,
   removeMedia,
@@ -653,7 +560,9 @@ export const MessageItem = ({ msg, user }: { msg: IMessage; user: IUser }) => {
                 : "bg-gray-100 text-gray-800 rounded-bl-none"
             )}
           >
-            <p className="whitespace-pre-line break-words">{msg.content}</p>
+            <p className="whitespace-pre-line break-words overflow-hidden">
+              {msg.content}
+            </p>
           </div>
         )}
 
@@ -704,3 +613,96 @@ export const MessageItem = ({ msg, user }: { msg: IMessage; user: IUser }) => {
     </div>
   );
 };
+
+//
+export function MessageSkeleton() {
+  return (
+    <div className="col-span-8 h-full flex flex-col animate-pulse">
+      {/* Header Skeleton */}
+      <div className="p-3 flex items-center justify-between bg-blue-50 border-b">
+        <div className="flex items-center gap-3">
+          {/* Avatar */}
+          <div className="w-12 h-12 bg-gray-300 rounded-full" />
+
+          {/* Name and Status */}
+          <div className="space-y-2">
+            <div className="h-4 w-32 bg-gray-300 rounded" />
+            <div className="h-3 w-16 bg-gray-200 rounded" />
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-gray-300 rounded-full" />
+          <div className="w-8 h-8 bg-gray-300 rounded-full" />
+        </div>
+      </div>
+
+      {/* Messages Area */}
+      <div className="flex-1 flex flex-col p-3">
+        <div className="pr-4 h-[calc(100vh-250px)] space-y-3">
+          {/* Message from other user */}
+          <div className="flex items-start gap-2">
+            <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0" />
+            <div className="space-y-2">
+              <div className="h-16 w-64 bg-gray-200 rounded-2xl" />
+            </div>
+          </div>
+
+          {/* Message from current user */}
+          <div className="flex items-start gap-2 justify-end">
+            <div className="h-12 w-48 bg-blue-200 rounded-2xl ml-auto" />
+          </div>
+
+          {/* Message from other user */}
+          <div className="flex items-start gap-2">
+            <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0" />
+            <div className="space-y-2">
+              <div className="h-20 w-72 bg-gray-200 rounded-2xl" />
+            </div>
+          </div>
+
+          {/* Message from current user */}
+          <div className="flex items-start gap-2 justify-end">
+            <div className="h-16 w-56 bg-blue-200 rounded-2xl ml-auto" />
+          </div>
+
+          {/* Message from other user */}
+          <div className="flex items-start gap-2">
+            <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0" />
+            <div className="space-y-2">
+              <div className="h-10 w-40 bg-gray-200 rounded-2xl" />
+            </div>
+          </div>
+
+          {/* Message from current user */}
+          <div className="flex items-start gap-2 justify-end">
+            <div className="h-14 w-52 bg-blue-200 rounded-2xl ml-auto" />
+          </div>
+
+          {/* Message from other user */}
+          <div className="flex items-start gap-2">
+            <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0" />
+            <div className="space-y-2">
+              <div className="h-12 w-60 bg-gray-200 rounded-2xl" />
+            </div>
+          </div>
+        </div>
+
+        {/* Input Area Skeleton */}
+        <div className="pt-4 border-t">
+          <div className="flex gap-2 items-end">
+            {/* Textarea skeleton */}
+            <div className="flex-1 h-20 bg-blue-100 rounded-xl" />
+
+            {/* Emoji button */}
+            <div className="w-10 h-10 bg-gray-200 rounded-full flex-shrink-0" />
+
+            {/* Send button */}
+            <div className="w-16 h-10 bg-gray-300 rounded-full flex-shrink-0" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

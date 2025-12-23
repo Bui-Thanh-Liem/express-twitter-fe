@@ -36,7 +36,9 @@ export function MessagePage() {
         </div>
 
         {/* Message view */}
-        <MessageView conversation={conversationActive} />
+        <div className="col-span-8">
+          <MessageView conversation={conversationActive} />
+        </div>
       </div>
     </div>
   );

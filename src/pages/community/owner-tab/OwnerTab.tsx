@@ -107,7 +107,7 @@ export function OwnerTab() {
     <div>
       {/*  */}
       <div className="mb-4 px-4 flex items-center justify-between">
-        <div className="w-[40%]">
+        <div className="lg:w-[40%]">
           <SearchMain
             size="md"
             value={searchVal}
@@ -116,7 +116,7 @@ export function OwnerTab() {
           />
         </div>
 
-        <div className="w-[50%]">
+        <div className="w-0 lg:w-[50%]">
           <Carousel setApi={setApi} className="w-[82%]">
             <CarouselContent className="-ml-1">
               {carouselItems.map((_) => (
@@ -129,8 +129,8 @@ export function OwnerTab() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="hidden lg:inline-flex" />
+            <CarouselNext className="hidden lg:inline-flex" />
           </Carousel>
         </div>
       </div>
@@ -145,7 +145,7 @@ export function OwnerTab() {
 
         {/* Loading lần đầu */}
         {isLoading && page === 1 && (
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 ml:grid-cols-3 gap-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <CommunityCardSkeleton key={`more-${i}`} />
             ))}
@@ -154,7 +154,7 @@ export function OwnerTab() {
 
         {/*  */}
         {allCommunities.length > 0 && (
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 ml:grid-cols-3 gap-3">
             {sortCommunity(allCommunities).map((community) => (
               <CommunityCard
                 key={community._id}

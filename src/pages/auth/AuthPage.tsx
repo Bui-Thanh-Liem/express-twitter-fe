@@ -72,12 +72,14 @@ export function AuthPage() {
   }, [hash]);
 
   return (
-    <div className="m-auto w-[700px] md:w-[800px] lg:w-[1200px]">
-      <div className="h-screen flex justify-between items-center">
-        <div className="flex-1">
+    <div className="md:w-[800px] lg:w-[1200px]">
+      <div className="flex justify-between items-center">
+        <div className="flex-1 hidden lg:flex">
           <Logo size={332} className="w-[240px] lg:w-auto" />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col justify-center items-center text-center py-20">
+          <Logo className="w-[60px] m-auto mb-6 h-[60px] md:hidden" />
+
           <TypographyH1 className="text-7xl lg:text-5xl hidden lg:block">
             Đang diễn ra ngay bây giờ
           </TypographyH1>

@@ -12,6 +12,7 @@ import { useUnreadNotiStore } from "~/store/useUnreadNotiStore";
 import { useUserStore } from "~/store/useUserStore";
 import { SidebarLeft } from "./SidebarLeft";
 import { SidebarRight } from "./SidebarRight";
+import { NavForMobile } from "~/components/nav-for-mobile";
 
 export function HomeLayout() {
   const { isOpen } = useChatBoxStore();
@@ -41,14 +42,14 @@ export function HomeLayout() {
   return (
     <div className="w-full">
       <div className="mx-auto flex h-screen overflow-hidden">
-        <aside className="w-[8%] lg:w-[22%] pr-4 h-screen">
+        <aside className="w-0 lg:w-[22%] lg:pr-4 h-screen">
           <SidebarLeft />
         </aside>
 
         <main
           className={cn(
-            "w-[64%] lg:w-[50%] col-span-6 border-r border-l border-gray-200",
-            isMessage && "w-[90%] lg:w-[78%]"
+            "w-[100%] lg:w-[50%] col-span-6 border-r border-l border-gray-200",
+            isMessage && "w-full lg:w-[90%]"
           )}
         >
           <Outlet />
@@ -56,11 +57,12 @@ export function HomeLayout() {
 
         {/* Trường hơp đặt biệt trang message */}
         {!isMessage ? (
-          <aside className="flex-1 h-screen">
+          <aside className="h-screen w-0 md:flex-1">
             <SidebarRight />
           </aside>
         ) : null}
       </div>
+      <NavForMobile />
       {isOpen && <ChatBox />}
       <TweetDetailDrawer />
       <DetailAttachmentDrawer />

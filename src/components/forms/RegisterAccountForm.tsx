@@ -32,9 +32,9 @@ export function RegisterAccountForm({
     defaultValues: {
       name: "",
       email: "",
-      day_of_birth: new Date(),
       password: "",
       confirm_password: "",
+      day_of_birth: new Date(),
     },
   });
 
@@ -55,7 +55,7 @@ export function RegisterAccountForm({
       onSubmit={handleSubmit(onSubmit)}
       className="flex items-center justify-center"
     >
-      <div className="mt-4 space-y-6 min-w-[460px]">
+      <div className="mt-4 space-y-6 w-full md:min-w-[460px]">
         <InputMain
           id="name"
           isMaxLength

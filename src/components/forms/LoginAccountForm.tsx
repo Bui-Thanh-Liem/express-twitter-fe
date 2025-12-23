@@ -59,7 +59,7 @@ export function LoginAccountForm({
       onSubmit={handleSubmit(onSubmit)}
       className="flex items-center justify-center"
     >
-      <div className="mt-4 space-y-6 min-w-[460px]">
+      <div className="mt-4 space-y-6 w-full md:min-w-[460px]">
         <AuthGoogle />
         <AuthFacebook />
 
@@ -90,7 +90,7 @@ export function LoginAccountForm({
           placeholder="Nhập mật khẩu của bạn"
         />
 
-        <ButtonMain size="lg" className="w-full">
+        <ButtonMain type="submit" size="lg" className="w-full">
           Tiếp theo
         </ButtonMain>
         <ButtonMain
