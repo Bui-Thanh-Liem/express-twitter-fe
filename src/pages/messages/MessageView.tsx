@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useGetMultiMessages } from "~/apis/useFetchMessages";
 import { useUploadWithValidation } from "~/apis/useFetchUpload";
 import { EmojiSelector } from "~/components/emoji-picker";
+import { ArrowLeftIcon } from "~/components/icons/arrow-left";
 import { CloseIcon } from "~/components/icons/close";
 import { ImageIcon } from "~/components/icons/image";
 import { Logo } from "~/components/logo";
@@ -44,8 +45,10 @@ import { ParticipantList } from "./ParticipantList";
 //
 export function MessageView({
   conversation,
+  onBack,
 }: {
   conversation: IConversation | null;
+  onBack: () => void;
 }) {
   //
   const { user } = useUserStore();
@@ -266,6 +269,14 @@ export function MessageView({
     <div className="h-full flex flex-col">
       <div className="p-3 flex items-center justify-between bg-blue-50">
         <div className="flex items-center gap-3">
+          <WrapIcon
+            className="md:hidden lg:hidden"
+            onClick={() => {
+              onBack();
+            }}
+          >
+            <ArrowLeftIcon color="#000" />
+          </WrapIcon>
           {typeof conversation.avatar === "string" ? (
             <AvatarMain
               src={conversation.avatar}

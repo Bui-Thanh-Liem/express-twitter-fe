@@ -42,7 +42,7 @@ export function HomeLayout() {
   return (
     <div className="w-full">
       <div className="mx-auto flex h-screen overflow-hidden">
-        <aside className="w-0 lg:w-[22%] lg:pr-4 h-screen">
+        <aside className="hidden lg:block w-0 lg:w-[22%] lg:pr-4 h-screen">
           <SidebarLeft />
         </aside>
 

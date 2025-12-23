@@ -47,10 +47,14 @@ export function CommunitiesPage() {
       {/* Header */}
       <div className="px-3 flex justify-between items-center border border-gray-100">
         <div className="flex h-12 items-center gap-4">
-          <WrapIcon onClick={() => navigate(-1)}>
+          <WrapIcon
+            onClick={() => navigate(-1)}
+            aria-label="Quay lại"
+            className="hidden lg:block"
+          >
             <ArrowLeftIcon color="#000" />
           </WrapIcon>
-          <p className="font-semibold text-[20px] hidden lg:block">Cộng đồng</p>
+          <p className="font-semibold text-[20px]">Cộng đồng</p>
         </div>
         <div className="flex items-center gap-x-3">
           <span className={cn("hidden", isOpenSearch ? "block" : "")}>

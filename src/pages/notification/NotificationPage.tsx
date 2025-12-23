@@ -29,7 +29,11 @@ export function NotificationPage() {
       {/* Header */}
       <div className="px-3 flex justify-between items-center border border-gray-100">
         <div className="flex h-12 items-center gap-6 ">
-          <WrapIcon onClick={() => navigate(-1)} aria-label="Quay lại">
+          <WrapIcon
+            onClick={() => navigate(-1)}
+            aria-label="Quay lại"
+            className="hidden lg:block"
+          >
             <ArrowLeftIcon color="#000" />
           </WrapIcon>
           <p className="font-semibold text-[20px]">Thông báo</p>

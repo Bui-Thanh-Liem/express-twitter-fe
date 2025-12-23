@@ -381,7 +381,7 @@ export function ConversationList({
       {/*  */}
       <div className="mx-3 my-4">
         <SearchMain
-          size="md"
+          size="lg"
           value={searchVal}
           onClear={() => setSearchVal("")}
           onChange={setSearchVal}
